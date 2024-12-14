@@ -1,0 +1,15 @@
+footer {
+  grid-area: Footer;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  bottom: 0;
+
+  .legal {
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 0.5em;
+  }
+}

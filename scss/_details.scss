@@ -1,0 +1,20 @@
+details {
+    summary {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    summary::after {
+        content: '\25BA'; /* Unicode arrow symbol */
+        margin-left: 5px; /* Adjust the value as needed */
+    }
+
+    summary::after {
+        display: none;
+    }
+
+    .post-category {
+        padding: 0.375rem 0;
+    }
+}

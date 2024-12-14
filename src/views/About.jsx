@@ -9,8 +9,6 @@ import ContentComponent from './components/ContentComponent';
 import LoadingComponent from './components/LoadingComponent';
 import FoundersComponent from './components/FoundersComponent';
 
-import '../../dist/css/About.css';
-
 function About() {
   const dispatch = useDispatch();
   

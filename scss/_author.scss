@@ -1,0 +1,98 @@
+section.author {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
+  margin: 6rem 0;
+  flex-wrap: wrap;
+
+  div.author {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    width: 100%;
+    flex-wrap: wrap;
+
+    .author-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+
+      .author-roles-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        position: relative;
+        gap: 1.5rem;
+
+        .title {
+          padding: 0.5em;
+        }
+
+        h4:not(:last-child)::after {
+          content: '|';
+          position: absolute;
+          padding: 0 1rem;
+        }
+      }
+    }
+
+    .author-bio {
+      width: fit-content;
+    }
+  }
+}
+
+.author-pic {
+  width: auto;
+  padding: 0;
+  font-size: 0;
+
+  img {
+    width: auto;
+    height: 100%;
+  }
+}
+
+.author-card.card {
+  gap: 0.374rem;
+  height: fit-content;
+  padding: 0;
+  max-width: 500px;
+
+  .author-role,
+  .author-bio,
+  .author-contact {
+    width: 100%;
+    padding: 0.5rem;
+  }
+
+  .author-role {
+    h5 {
+      text-transform: capitalize;
+    }
+  }
+
+  p {
+    text-align: left;
+    height: 100%;
+  }
+
+  .author-contact {
+    button {
+      background-color: white;
+      width: fit-content;
+      padding: 0;
+      margin: 0;
+
+      i {
+        color: black;
+      }
+    }
+  }
+}

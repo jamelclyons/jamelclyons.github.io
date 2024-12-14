@@ -1,0 +1,148 @@
+@use './variables';
+@use './_header-mobile.scss';
+@use '_hamburger-menu.scss';
+@use './_header-tablet.scss';
+@use './_header-desktop.scss';
+
+header {
+  grid-area: Navigation;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  width: 100vw;
+  opacity: 0.85;
+  padding: 0.25rem 0;
+  overflow: auto;
+
+  a {
+    text-decoration: none;
+    list-style: none;
+  }
+
+  ul {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    width: 100%;
+
+    li {
+      width: 100%;
+      list-style: none;
+
+      h2 {
+        padding: 0.25em;
+      }
+
+      &:hover {
+        background-color: black;
+        h2 {
+          color: white;
+        }
+      }
+    }
+  }
+
+  h3 {
+    text-transform: uppercase;
+  }
+
+  .header {
+    display: flex;
+    width: 100%;
+    height: 4rem;
+    overflow: hidden;
+
+    .leftSide,
+    .rightSide {
+      align-items: center;
+      height: 100%;
+    }
+
+    .left-menu {
+      display: none;
+    }
+
+    .center {
+      grid-area: Center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 4rem;
+      padding: 0 1rem;
+
+      .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        height: 100%;
+      }
+    }
+
+    .rightSide {
+      grid-area: RightSide;
+      display: flex;
+      justify-content: end;
+      position: relative;
+    }
+  }
+
+  nav.dropdown {
+    display: none;
+  }
+
+  nav.dropdown {
+    display: none;
+    flex-direction: column;
+    gap: 0.75em;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 0;
+    max-height: 100vh;
+    transition: height 2s;
+
+    &.is-active {
+      display: flex;
+      height: 100%;
+    }
+
+    ul {
+      flex-direction: column;
+    }
+
+    .menu-top-container {
+      overflow: hidden;
+
+      .menu {
+        display: grid;
+        grid-auto-rows: 4rem;
+      }
+    }
+  }
+
+  @keyframes dropdown {
+    0% {
+      display: none;
+      height: 0;
+      opacity: 0;
+    }
+
+    100% {
+      display: flex;
+      height: fit-content;
+      opacity: 1;
+    }
+  }
+
+  @keyframes hamburger {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+}
