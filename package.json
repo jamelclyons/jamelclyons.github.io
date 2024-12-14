@@ -11,7 +11,7 @@
     "vite": "vite -c vite.config.js",
     "serve": "vite preview",
     "update-dev": "git push github-portfolio development",
-    "update-prod": "git push github-portfolio",
+    "update-prod": "git push github-portfolio master",
     "gulp": "gulp"
   },
   "dependencies": {
