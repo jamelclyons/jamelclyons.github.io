@@ -1,0 +1,1 @@
+@media screen and (min-width: 700px){header .header{justify-content:space-evenly}header .header .leftSide{grid-area:LeftSide;display:flex;position:relative;justify-content:end}header .header .leftSide .auth{position:absolute;left:1rem}header .header .center{width:100%}}

@@ -1,0 +1,29 @@
+@use './_content.scss';
+@use './_founders.scss';
+
+.mission-statement-card.card {
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0.5em;
+  width: fit-content;
+  background-color: black;
+
+  h3 {
+    color: white;
+  }
+}
+
+div.about {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  margin: 6rem 0;
+  width: 100%;
+  height: 100%;
+
+  section {
+    margin: 0;
+    min-height: fit-content;
+  }
+}

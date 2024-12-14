@@ -1,14 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
     <title>Jamel C. Lyons</title>
-</head>
-<body>
-    <h1>Portfolio</h1>
+  </head>
+  <body>
+    <header>
+      <div class="header">
+        <div class="leftSide">
+          <div class="auth"></div>
+
+          <div class="left-menu" id="left-menu"></div>
+        </div>
+
+        <div class="center"></div>
+
+        <div class="rightSide">
+          <div class="hamburger" id="toggle">
+            <h1 class="top" id="open">III</h1>
+
+            <h1 class="close" id="close">X</h1>
+          </div>
+
+          <div class="right-menu" id="right-menu"></div>
+        </div>
+      </div>
+
+      <nav class="dropdown" id="dropdown"></nav>
+    </header>
 
     <div id="root"></div>
-    <script type="module" src="/src/index.jsx" defer></script>
-</body>
+
+    <footer>
+      <div class="social-bar">
+        <a href="" target="_blank">
+          <i class="fa fa-facebook fa-fw"></i>
+        </a>
+
+        <a href="" target="_blank">
+          <i class="fa fa-twitter fa-fw"></i>
+        </a>
+
+        <a href="mailto:" target="_blank">
+          <i class="fa fa-envelope fa-fw"></i>
+        </a>
+
+        <a href="" target="_blank">
+          <i class="fa fa-linkedin fa-fw"></i>
+        </a>
+
+        <a href="" target="_blank">
+          <i class="fa fa-instagram fa-fw"></i>
+        </a>
+      </div>
+
+      <span class="legal">Copyright . All Rights Reserved.</span>
+    </footer>
+    <script type="module" src="/src/main.jsx" defer></script>
+  </body>
 </html>
