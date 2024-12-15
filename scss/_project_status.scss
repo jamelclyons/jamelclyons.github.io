@@ -1,0 +1,78 @@
+.project-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+  max-width: 1000px;
+}
+
+progress {
+  appearance: none;
+  border: none;
+  height: 1.5rem;
+  background-color: white;
+  border-radius: var(--seven-tech-border-radius);
+  box-shadow: var(--seven-tech-input-shadow) inset;
+}
+
+progress::-webkit-progress-bar {
+  background-color: white;
+  border-radius: var(--seven-tech-border-radius);
+  box-shadow: var(--seven-tech-input-shadow) inset;
+  -webkit-animation: animate-stripes 5s linear infinite;
+}
+
+progress[value]::-webkit-progress-value {
+  background-image:
+    -webkit-linear-gradient(
+      -45deg,
+      transparent 33%,
+      rgba(0, 0, 0, 0.1) 33%,
+      rgba(0, 0, 0, 0.1) 66%,
+      transparent 66%
+    ),
+    - webkit-linear-gradient(
+        top,
+        rgba(255, 255, 255, 0.25),
+        rgba(0, 0, 0, 0.25)
+      ),
+    - webkit-linear-gradient(left, limegreen, var(--seven-tech-color-success));
+  background-size:
+    35px 20px,
+    100% 100%,
+    100% 100%;
+  -webkit-animation: animate-stripes 5s linear infinite;
+  border-radius: var(--seven-tech-border-radius);
+  box-shadow: var(--seven-tech-input-shadow) inset;
+}
+
+progress[value]::-moz-progress-bar {
+  background-image:
+    -moz-linear-gradient(
+      135deg,
+      transparent,
+      transparent 33%,
+      rgba(0, 0, 0, 0.1) 33%,
+      rgba(0, 0, 0, 0.1) 66%,
+      transparent 66%
+    ),
+    - moz-linear-gradient(top, rgba(255, 255, 255, 0.25), rgba(0, 0, 0, 0.2)),
+    - moz-linear-gradient(left, limegreen, var(--seven-tech-color-success));
+  background-size:
+    35px 20px,
+    100% 100%,
+    100% 100%;
+  animation: animate-stripes 5s linear infinite;
+}
+
+@keyframes animate-stripes {
+  from {
+    background-position: 0% 0;
+  }
+
+  to {
+    background-position: 100% 0;
+  }
+}

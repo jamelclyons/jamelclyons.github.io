@@ -5,6 +5,7 @@
     "src": "src/index.jsx",
     "isEntry": true,
     "dynamicImports": [
+      "src/views/Home.jsx",
       "src/views/About.jsx"
     ]
   },
@@ -15,6 +16,16 @@
     "isDynamicEntry": true,
     "imports": [
       "src/index.jsx"
+    ]
+  },
+  "src/views/Home.jsx": {
+    "file": "Home.js",
+    "name": "Home",
+    "src": "src/views/Home.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/index.jsx",
+      "src/views/About.jsx"
     ]
   }
 }

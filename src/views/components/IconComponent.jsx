@@ -1,26 +1,16 @@
-function IconComponent(props) {
-  const { icon, url } = props;
+function IconComponent({ icon }) {
+  if (!(icon instanceof Object)) return null;
 
   return (
-    <>
-      {icon instanceof Object && (
-        <>
-          <div className="icon">
-            {icon['icon_url'] ? (
-              <a href={`${url}`}>
-                <img src={`${icon['icon_url']}`} />
-              </a>
-            ) : (
-              icon['fa_icon'] && (
-                <a href={`${url}`}>
-                  <i className={`${icon['fa_icon']}`}></i>
-                </a>
-              )
-            )}
-          </div>
-        </>
-      )}
-    </>
+    <div className="icon">
+      <a href={icon.url || "#"}>
+        {icon.icon_url ? (
+          <img src={icon.icon_url} alt="icon" />
+        ) : (
+          icon.class_name && <i className={icon.class_name}></i>
+        )}
+      </a>
+    </div>
   );
 }
 

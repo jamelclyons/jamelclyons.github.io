@@ -1,0 +1,12 @@
+@use '_gallery.scss';
+@use '_project_status.scss';
+@use '_project_skills_bar.scss';
+
+.project-card .card {
+  height: 50rem;
+  
+}
+
+a {
+  text-decoration: none;
+}

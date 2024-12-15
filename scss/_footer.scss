@@ -1,3 +1,5 @@
+@use '_social-bar.scss';
+
 footer {
   grid-area: Footer;
   width: 100vw;
@@ -5,8 +7,6 @@ footer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: absolute;
-  bottom: 0;
 
   .legal {
     font-size: 0.8rem;

@@ -1,0 +1,18 @@
+@use '_project_card.scss';
+@use '_tax_list.scss';
+
+.front-page {
+  section {
+    min-height: fit-content;
+
+    main.portfolio {
+      margin: 0;
+    }
+  }
+}
+
+section {
+  main.portfolio {
+    margin: 6rem 0;
+  }
+}

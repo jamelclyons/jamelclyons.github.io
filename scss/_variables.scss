@@ -1,9 +1,9 @@
-$backgroundColor: white;
-$cardBackgroundColor: white;
-$logo: black;
-$textColor: black;
-$mainButton: red;
-$buttonBackgroundColor: black;
-$buttonText: white;
-
-$paddingTop: 3rem;
+:root {
+  --icon-color: black;
+  --header-background-color: blue;
+  --header-box-shadow: 4px 4px 10px gray;
+  --card-background-color: blue;
+  --card-box-shadow: 4px 4px 10px gray;
+  --footer-background-color: blue;
+  --footer-box-shadow: 4px 4px 10px gray;
+}
