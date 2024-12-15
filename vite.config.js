@@ -1,16 +1,23 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import reactRefresh from '@vitejs/plugin-react-refresh';
 
 import rollupConfig from './rollup.config.js';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), reactRefresh()],
+  root: ".", // Set the root directory (main project directory)
   server: {
-    port: 3000,
+    port: 3000,         // Port for Vite dev server
+    cors: true,         // Allow cross-origin requests
+    open: false,        // Let BrowserSync handle opening the browser
+    watch: {
+      include: ['src/**/*.jsx'], // Watch changes in JSX files
+    },
   },
   build: {
     watch: {
-        include: ['src/**/*.jsx', 'src/**/*.js'],
+      include: ['src/**/*.jsx'],
     },
     manifest: true,
     sourcemap: true,
@@ -18,7 +25,7 @@ export default defineConfig({
     modulePreload: false,
     outDir: 'dist/',
     assetsDir: 'js',
-    input: './src/index.jsx',
+    input: 'index.html',
     rollupOptions: rollupConfig
-},
+  },
 });

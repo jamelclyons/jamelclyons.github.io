@@ -13,14 +13,9 @@
   }
 }
 
-div.about {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  margin: 6rem 0;
+.about {
+  margin: 6rem 0 0;
   width: 100%;
-  height: 100%;
 
   section {
     margin: 0;
