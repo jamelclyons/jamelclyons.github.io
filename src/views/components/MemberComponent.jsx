@@ -1,38 +1,37 @@
 import React from 'react';
 
-import MemberNavigationComponent from './MemberNavigationComponent';
+import MemberKnowledgeComponent from './MemberKnowledgeComponent';
 
 function MemberIntroductionComponent(props) {
-  const { title, avatarURL, fullName, bio, resume } = props;
-
-  const portfolioElement = document.getElementById('seven_tech_portfolio');
+  const { user, languages, frameworks, technologies } = props;
 
   return (
     <>
-      {(resume || portfolioElement) && (
-        <MemberNavigationComponent
-          resume={resume}
-          portfolioElement={portfolioElement}
-        />
-      )}
-
-      <h2 class="title">{fullName}</h2>
-
-      <div className="author-info">
-        <div class="author">
-          <div class="author-card card">
-            <div class="author-pic">
-              <img src={avatarURL} alt="" />
+      <div className="author-intro">
+        <div className="author-info">
+          {user.bio && (
+            <div className="author-bio-card card">
+              <h3 className="author-bio">
+                <q>{user.bio}</q>
+              </h3>
             </div>
+          )}
+
+          <div class="author">
+            <div class="author-card card">
+              <div class="author-pic">
+                <img src={user.avatar_url} alt="" />
+              </div>
+            </div>
+            <h2 class="title">{user.title}</h2>
           </div>
-          <h4 class="title">{title}</h4>
         </div>
 
-        {bio && (
-          <div class="author-card card">
-            <p class="author-bio">{bio}</p>
-          </div>
-        )}
+        <MemberKnowledgeComponent
+          languages={languages}
+          frameworks={frameworks}
+          technologies={technologies}
+        />
       </div>
     </>
   );

@@ -24,8 +24,7 @@
     "src": "src/views/Home.jsx",
     "isDynamicEntry": true,
     "imports": [
-      "src/index.jsx",
-      "src/views/About.jsx"
+      "src/index.jsx"
     ]
   }
 }

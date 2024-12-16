@@ -47,13 +47,13 @@ function Home(props) {
 
   return (
     <>
-      <About user={user} />
-      <MemberIntroductionComponent />
-      <MemberKnowledgeComponent
+      <MemberIntroductionComponent
+        user={user}
         languages={languages}
         frameworks={frameworks}
         technologies={technologies}
       />
+
       <PortfolioComponent
         portfolio={portfolio}
         projectTypes={projectTypes}
