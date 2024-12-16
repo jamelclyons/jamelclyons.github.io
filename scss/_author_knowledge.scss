@@ -1,0 +1,42 @@
+:root {
+  --total-skills: 7;
+  --icon-width: 12rem;
+  --animation-duration: calc(var(--total-skills) * 1.5s);
+}
+
+.author-knowledge {
+  display: flex;
+  width: 100%;
+}
+
+.author-knowledge-slide {
+  display: flex;
+  gap: 2rem;
+  animation: var(--animation-duration) slide infinite linear;
+}
+
+.author-knowledge-slide:hover {
+  animation-play-state: paused;
+}
+
+.author-knowledge-slide {
+  .icon {
+    padding: 0;
+    width: var(--icon-width);
+
+    i {
+      font-size: 4rem;
+    }
+
+    img {
+      width: auto;
+      height: 4rem;
+    }
+  }
+}
+
+@keyframes slide {
+  100% {
+    transform: translateX(calc(-100% / 2));
+  }
+}

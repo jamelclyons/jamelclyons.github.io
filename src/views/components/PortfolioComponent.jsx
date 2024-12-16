@@ -1,19 +1,12 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
 
 import Projects from './Projects';
 import TaxList from './TaxList';
-
-import { getPortfolio } from '../../controllers/portfolioSlice';
+import TaxListIcon from './TaxListIcon';
 
 function PortfolioComponent(props) {
-  const dispatch = useDispatch();
-
-  const { portfolio } = useSelector((state) => state.portfolio);
-
-  useEffect(() => {
-    dispatch(getPortfolio());
-  }, []);
+  const { portfolio, projectTypes, languages, frameworks, technologies } =
+    props;
 
   return (
     <>
@@ -23,13 +16,13 @@ function PortfolioComponent(props) {
 
         <Projects projects={portfolio} />
 
-        {/* <TaxList tax={projectTypes} title={'Project Types'} />
+        <TaxList tax={projectTypes} title={'Project Types'} />
 
-        <TaxList tax={skills} title={'Skills'} />
+        <TaxListIcon tax={languages} title={'Languages'} />
 
-        <TaxList tax={frameworks} title={'Frameworks'} />
+        <TaxListIcon tax={frameworks} title={'Frameworks'} />
 
-        <TaxList tax={technologies} title={'Technologies'} /> */}
+        <TaxListIcon tax={technologies} title={'Technologies'} />
       </main>
       {/* )} */}
     </>

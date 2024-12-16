@@ -7,6 +7,7 @@ import ProjectDescription from './ProjectDescription';
 
 function Projects(props) {
   const { projects } = props;
+  
   return (
     <>
       {Array.isArray(projects)
@@ -14,6 +15,7 @@ function Projects(props) {
             // <a href={`${project.url}`}>
               <div key={index} className="project-card card">
                 <h2>{project.title}</h2>
+
                 <Gallery gallery={project.gallery} />
 
                 <ProjectStatus project_status={project.project_status} />

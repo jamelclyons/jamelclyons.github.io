@@ -1,4 +1,6 @@
-function TaxList(props) {
+import ProjectSkillsBar from './ProjectSkillsBar';
+
+function TaxListIcon(props) {
   const { tax, title } = props;
 console.log(tax);
 console.log(title);
@@ -13,18 +15,11 @@ console.log(title);
         <h4 className="title">{title}</h4>
 
         <div className="tax-row">
-          {tax.map((project_tag, index) => (
-            <button
-              key={index}
-              className="tag"
-              onClick={() => handleClick(project_tag.url)}>
-              <h3>{project_tag.title}</h3>
-            </button>
-          ))}
+          <ProjectSkillsBar skills={tax} />
         </div>
       </div>
     )
   );
 }
 
-export default TaxList;
+export default TaxListIcon;

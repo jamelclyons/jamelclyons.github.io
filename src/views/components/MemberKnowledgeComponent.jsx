@@ -2,7 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import IconComponent from './IconComponent';
 
 function MemberKnowledgeComponent(props) {
-  const { knowledge } = props;
+  const { languages, frameworks, technologies } = props;
+
+  const knowledge = [...languages, ...frameworks, ...technologies];
+
   const skillsSlideRef = useRef(null);
 
   useEffect(() => {
@@ -23,18 +26,17 @@ function MemberKnowledgeComponent(props) {
     <>
       <div className="author-knowledge">
         <div className="author-knowledge-slide" ref={skillsSlideRef}>
-          {Array.isArray(knowledge) && knowledge.length > 0 && 
+          {Array.isArray(knowledge) &&
+            knowledge.length > 0 &&
             knowledge.map((knowledge) => (
               <div className="icon" key={knowledge.id}>
                 <IconComponent icon={knowledge} url={knowledge.url} />
               </div>
-            ))
-          }
+            ))}
         </div>
       </div>
     </>
   );
-  
 }
 
 export default MemberKnowledgeComponent;

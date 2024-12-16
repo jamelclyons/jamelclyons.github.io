@@ -1,5 +1,9 @@
 import { createSlice, createAsyncThunk, isAnyOf } from '@reduxjs/toolkit';
 
+import db from '../services/firebase/config';
+
+import { collection, getDocs } from "firebase/firestore";
+
 const initialState = {
   taxonomiesLoading: false,
   taxonomiesError: '',
@@ -8,6 +12,8 @@ const initialState = {
   projects: '',
   projectTypes: '',
   projectType: '',
+  languages: '',
+  language: '',
   skills: '',
   skill: '',
   frameworks: '',
@@ -23,53 +29,48 @@ const initialState = {
 
 export const getProjectTypes = createAsyncThunk('taxonomies/getProjectTypes', async () => {
   try {
-    const response = await fetch(`/wp-json/seven-tech/communications/v1/taxonomies/project-types`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    const querySnapshot = await getDocs(collection(db, "projectTypes"));
+
+    let projectTypes = [];
+
+    querySnapshot.forEach((doc) => {
+      projectTypes.push(doc.data());
     });
 
-    const responseData = await response.json();
-
-    return responseData;
+    return projectTypes;
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
   }
 });
 
-export const getSkills = createAsyncThunk('taxonomies/getSkills', async () => {
+export const getLanguages = createAsyncThunk('taxonomies/getLanguages', async () => {
   try {
-    const response = await fetch(`/wp-json/seven-tech/communications/v1/taxonomies/skills`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    const querySnapshot = await getDocs(collection(db, "languages"));
+
+    let languages = [];
+
+    querySnapshot.forEach((doc) => {
+      languages.push(doc.data());
     });
 
-    const responseData = await response.json();
-
-    return responseData;
+    return languages;
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
   }
 });
-
 
 export const getFrameworks = createAsyncThunk('taxonomies/getFrameworks', async () => {
   try {
-    const response = await fetch(`/wp-json/seven-tech/communications/v1/taxonomies/frameworks`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    const querySnapshot = await getDocs(collection(db, "frameworks"));
+
+    let frameworks = [];
+
+    querySnapshot.forEach((doc) => {
+      frameworks.push(doc.data());
     });
-
-    const responseData = await response.json();
-
-    return responseData;
+    return frameworks;
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
@@ -78,16 +79,15 @@ export const getFrameworks = createAsyncThunk('taxonomies/getFrameworks', async 
 
 export const getTechnologies = createAsyncThunk('taxonomies/getTechnologies', async () => {
   try {
-    const response = await fetch(`/wp-json/seven-tech/communications/v1/taxonomies/technologies`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    const querySnapshot = await getDocs(collection(db, "technologies"));
+
+    let technologies = [];
+
+    querySnapshot.forEach((doc) => {
+      technologies.push(doc.data());
     });
-
-    const responseData = await response.json();
-
-    return responseData;
+console.log(technologies);
+    return technologies;
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
@@ -177,28 +177,28 @@ export const taxonomiesSlice = createSlice({
         state.taxonomiesError = '';
         state.taxonomiesErrorMessage = action.payload.errorMessage;
         state.taxonomiesStatusCode = action.payload.statusCode;
-        state.projectTypes = action.payload.projectTypes;
+        state.projectTypes = action.payload;
       })
-      .addCase(getSkills.fulfilled, (state, action) => {
+      .addCase(getLanguages.fulfilled, (state, action) => {
         state.taxonomiesLoading = false;
         state.taxonomiesError = '';
         state.taxonomiesErrorMessage = action.payload.errorMessage;
         state.taxonomiesStatusCode = action.payload.statusCode;
-        state.skills = action.payload.skills;
+        state.languages = action.payload;
       })
       .addCase(getFrameworks.fulfilled, (state, action) => {
         state.taxonomiesLoading = false;
         state.taxonomiesError = '';
         state.taxonomiesErrorMessage = action.payload.errorMessage;
         state.taxonomiesStatusCode = action.payload.statusCode;
-        state.frameworks = action.payload.frameworks;
+        state.frameworks = action.payload;
       })
       .addCase(getTechnologies.fulfilled, (state, action) => {
         state.taxonomiesLoading = false;
         state.taxonomiesError = '';
         state.taxonomiesErrorMessage = action.payload.errorMessage;
         state.taxonomiesStatusCode = action.payload.statusCode;
-        state.technologies = action.payload.technologies;
+        state.technologies = action.payload;
       })
       .addMatcher(isAnyOf(
         getProjectType.fulfilled,
@@ -218,7 +218,6 @@ export const taxonomiesSlice = createSlice({
       })
       .addMatcher(isAnyOf(
         getProjectTypes.pending,
-        getSkills.pending,
         getFrameworks.pending,
         getTechnologies.pending,
         getProjectType.pending,
@@ -233,7 +232,6 @@ export const taxonomiesSlice = createSlice({
       })
       .addMatcher(isAnyOf(
         getProjectTypes.rejected,
-        getSkills.rejected,
         getFrameworks.rejected,
         getTechnologies.rejected,
         getProjectType.rejected,
