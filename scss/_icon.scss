@@ -5,12 +5,14 @@ a {
 .icon {
   padding: 0.5rem;
 
-  img {
-    width: auto;
-    height: 6rem;
-  }
+  a {
+    img {
+      box-shadow: var(--box-shadow);
+      border-radius: var(--border-radius);
+    }
 
-  i {
-    font-size: 6rem;
+    i {
+      font-size: 6rem;
+    }
   }
 }

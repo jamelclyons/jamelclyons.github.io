@@ -14,7 +14,7 @@ function Projects(props) {
         ? projects.map((project, index) => (
             // <a href={`${project.url}`}>
               <div key={index} className="project-card card">
-                <h2>{project.title}</h2>
+                <h2 className='title'>{project.title}</h2>
 
                 <Gallery gallery={project.gallery} />
 

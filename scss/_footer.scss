@@ -3,10 +3,10 @@
 footer {
   grid-area: Footer;
   width: 100vw;
-  height: 5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-top: 1rem;
 
   .legal {
     font-size: 0.8rem;

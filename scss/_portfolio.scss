@@ -1,6 +1,10 @@
 @use '_project_card.scss';
 @use '_tax_list.scss';
 
+.portfolio {
+  padding: 0 1rem;
+}
+
 .front-page {
   section {
     min-height: fit-content;

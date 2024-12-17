@@ -45,7 +45,7 @@ function Gallery(props) {
     <>
       {gallery && gallery.length > 0 ? (
         <>
-          <h5 className='title'>{title}</h5>
+          {title && <h5 className="title">{title}</h5>}
 
           <div className="gallery">
             {currentPhotoIndex !== 0 ? (
@@ -71,7 +71,7 @@ function Gallery(props) {
                 </span>
               )}
             </div>
-            
+
             {currentPhotoIndex !== props.gallery.length - 1 ? (
               <button className="arrow-right" onClick={nextPhoto}>
                 <h2>V</h2>

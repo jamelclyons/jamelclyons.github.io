@@ -29,9 +29,7 @@ function MemberKnowledgeComponent(props) {
           {Array.isArray(knowledge) &&
             knowledge.length > 0 &&
             knowledge.map((knowledge) => (
-              <div className="icon" key={knowledge.id}>
-                <IconComponent icon={knowledge} url={knowledge.url} />
-              </div>
+              <IconComponent icon={knowledge} url={knowledge.url} />
             ))}
         </div>
       </div>

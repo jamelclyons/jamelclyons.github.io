@@ -33,7 +33,7 @@
         img {
           width: auto;
           max-height: 50vh;
-          border-radius: 2rem;
+          border-radius: var(--border-radius);
           box-shadow: var(--card-box-shadow);
         }
       }
