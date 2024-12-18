@@ -3,7 +3,6 @@
 @use './_fonts.scss';
 @use './_body.scss';
 @use './_header.scss';
-@use './_home.scss';
 @use './_buttons.scss';
 @use './_section.scss';
 @use './_cards.scss';
@@ -32,6 +31,11 @@
 @use './_member_card.scss';
 @use './_page.scss';
 @use './author_list';
-@use './_about.scss';
 @use './_footer.scss';
 @use './_icon.scss';
+
+@use './_home.scss';
+
+@use './_about.scss';
+
+@use './_resume.scss';
