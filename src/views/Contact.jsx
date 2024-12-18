@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import ContentComponent from './components/ContentComponent';
-// import MessageCardComponent from './components/MessageCardComponent';
-// import StatusBarComponent from './components/StatusBarComponent';
+import MessageCardComponent from './components/MessageCardComponent';
+import StatusBarComponent from './components/StatusBarComponent';
 import LoadingComponent from './components/LoadingComponent';
 
 import { getContent } from '../controllers/contentSlice';
@@ -60,14 +60,14 @@ const dispatch = useDispatch();
     <>
       <main className="contact">
         <h2 className="title">{title}</h2>
-<h1>contact</h1>
+
         <ContentComponent content={content} />
 
-        {/* <div className="contact-card card">
+        <div className="contact-card card">
           <MessageCardComponent page={'/contact'} />
-        </div> */}
+        </div>
 
-        {/* <StatusBarComponent messageType={messageType} message={message} /> */}
+        <StatusBarComponent messageType={messageType} message={message} />
       </main>
     </>
   );
