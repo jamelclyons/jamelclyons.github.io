@@ -1,0 +1,1 @@
+{"version":3,"file":"Resume.js","sources":["../../src/views/Resume.jsx"],"sourcesContent":["import React from 'react'\n\nfunction Resume() {\n  return (\n    <div>Resume</div>\n  )\n}\n\nexport default Resume"],"names":["Resume","jsx","children"],"mappings":"+BAEA,SAASA,GAAS,CAEd,OAAAC,EAAAA,IAAC,OAAIC,SAAM,QAAA,CAAA,CAEf"}

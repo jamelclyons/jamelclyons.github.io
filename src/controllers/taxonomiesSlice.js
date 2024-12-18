@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk, isAnyOf } from '@reduxjs/toolkit';
 
-import db from '../services/firebase/config';
-
-import { collection, getDocs } from "firebase/firestore";
+const db = window.db;
+const collection = window.collection;
+const getDocs = window.getDocs;
 
 const initialState = {
   taxonomiesLoading: false,
@@ -29,7 +29,7 @@ const initialState = {
 
 export const getProjectTypes = createAsyncThunk('taxonomies/getProjectTypes', async () => {
   try {
-    const querySnapshot = await getDocs(collection(db, "projectTypes"));
+    const querySnapshot = await window.getDocs(window.collection(window.db, "projectTypes"));
 
     let projectTypes = [];
 
@@ -46,7 +46,7 @@ export const getProjectTypes = createAsyncThunk('taxonomies/getProjectTypes', as
 
 export const getLanguages = createAsyncThunk('taxonomies/getLanguages', async () => {
   try {
-    const querySnapshot = await getDocs(collection(db, "languages"));
+    const querySnapshot = await window.getDocs(window.collection(window.db, "languages"));
 
     let languages = [];
 
@@ -63,13 +63,14 @@ export const getLanguages = createAsyncThunk('taxonomies/getLanguages', async ()
 
 export const getFrameworks = createAsyncThunk('taxonomies/getFrameworks', async () => {
   try {
-    const querySnapshot = await getDocs(collection(db, "frameworks"));
+    const querySnapshot = await window.getDocs(window.collection(window.db, "frameworks"));
 
     let frameworks = [];
 
     querySnapshot.forEach((doc) => {
       frameworks.push(doc.data());
     });
+    
     return frameworks;
   } catch (error) {
     console.error(error);
@@ -79,14 +80,14 @@ export const getFrameworks = createAsyncThunk('taxonomies/getFrameworks', async 
 
 export const getTechnologies = createAsyncThunk('taxonomies/getTechnologies', async () => {
   try {
-    const querySnapshot = await getDocs(collection(db, "technologies"));
+    const querySnapshot = await window.getDocs(window.collection(window.db, "technologies"));
 
     let technologies = [];
 
     querySnapshot.forEach((doc) => {
       technologies.push(doc.data());
     });
-console.log(technologies);
+
     return technologies;
   } catch (error) {
     console.error(error);

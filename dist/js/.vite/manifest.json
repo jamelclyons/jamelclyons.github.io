@@ -1,4 +1,11 @@
 {
+  "_PortfolioComponent.js": {
+    "file": "PortfolioComponent.js",
+    "name": "PortfolioComponent",
+    "imports": [
+      "src/index.jsx"
+    ]
+  },
   "src/index.jsx": {
     "file": "index.js",
     "name": "index",
@@ -6,7 +13,10 @@
     "isEntry": true,
     "dynamicImports": [
       "src/views/Home.jsx",
-      "src/views/About.jsx"
+      "src/views/About.jsx",
+      "src/views/Portfolio.jsx",
+      "src/views/Resume.jsx",
+      "src/views/Contact.jsx"
     ]
   },
   "src/views/About.jsx": {
@@ -18,10 +28,39 @@
       "src/index.jsx"
     ]
   },
+  "src/views/Contact.jsx": {
+    "file": "Contact.js",
+    "name": "Contact",
+    "src": "src/views/Contact.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/index.jsx"
+    ]
+  },
   "src/views/Home.jsx": {
     "file": "Home.js",
     "name": "Home",
     "src": "src/views/Home.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/index.jsx",
+      "_PortfolioComponent.js"
+    ]
+  },
+  "src/views/Portfolio.jsx": {
+    "file": "Portfolio.js",
+    "name": "Portfolio",
+    "src": "src/views/Portfolio.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/index.jsx",
+      "_PortfolioComponent.js"
+    ]
+  },
+  "src/views/Resume.jsx": {
+    "file": "Resume.js",
+    "name": "Resume",
+    "src": "src/views/Resume.jsx",
     "isDynamicEntry": true,
     "imports": [
       "src/index.jsx"

@@ -1,11 +1,8 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import About from './About';
-
 import PortfolioComponent from './components/PortfolioComponent';
 import MemberIntroductionComponent from './components/MemberComponent';
-import MemberKnowledgeComponent from './components/MemberKnowledgeComponent';
 
 import { getPortfolio } from '../controllers/portfolioSlice';
 import {

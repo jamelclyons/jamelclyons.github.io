@@ -3,13 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { getPortfolio } from '../controllers/portfolioSlice';
 import {
+  getLanguages,
   getProjectTypes,
-  getSkills,
   getFrameworks,
-  getTechnologies,
+  getTechnologies
 } from '../controllers/taxonomiesSlice';
 
-import LoadingComponent from './components/global/LoadingComponent';
+import LoadingComponent from './components/LoadingComponent';
 import PortfolioComponent from './components/PortfolioComponent';
 
 function Portfolio() {
@@ -31,7 +31,7 @@ function Portfolio() {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(getSkills());
+    dispatch(getLanguages());
   }, [dispatch]);
 
   useEffect(() => {

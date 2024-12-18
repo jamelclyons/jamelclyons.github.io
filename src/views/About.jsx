@@ -17,7 +17,7 @@ import Member from './components/Member';
 
 function About(props) {
   const { user } = props;
-
+console.log(user);
   return (
     <>
       <main className="about">

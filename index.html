@@ -7,21 +7,22 @@
     <script
       src="https://kit.fontawesome.com/83f87b1660.js"
       crossorigin="anonymous"></script>
-    <script>
-      function toggleMenu() {
-        var dropdown = document.querySelector('#dropdown');
-        var open = document.querySelectorAll('#open');
-        var close = document.querySelector('#close');
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js';
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+      } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js';
 
-        close.classList.toggle('is-active');
-
-        open.forEach(function (btn) {
-          btn.classList.toggle('not-active');
-        });
-
-        dropdown.classList.toggle('is-active');
-      }
+      window.initializeApp = initializeApp;
+      window.getFirestore = getFirestore;
+      window.collection = collection;
+      window.getDocs = getDocs;
     </script>
+    <script
+      type="module"
+      src="https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js"></script>
     <title>Jamel C. Lyons</title>
   </head>
   <body>

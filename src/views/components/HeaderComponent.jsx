@@ -1,38 +1,77 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 function HeaderComponent(props) {
   const { name } = props;
 
+  const [dropdown, setDropdown] = useState('hide');
+
+  const toggleMenu = () => {
+    if (dropdown == 'hide') {
+      setDropdown('show');
+    } else {
+      setDropdown('hide');
+    }
+  };
+
   return (
-    <header>
-      <div class="header">
-        <div class="leftSide">
-          <div class="auth"></div>
+    <>
+      <header>
+        <div class="header">
+          <div className="top">
+            <div class="leftSide">
+              <div class="auth"></div>
 
-          <div class="left-menu" id="left-menu"></div>
-        </div>
+              <div class="left-menu" id="left-menu"></div>
+            </div>
 
-        <div class="center">
-          <h1 className="title">{name}</h1>
-        </div>
+            <div class="center">
+              <h1 className="title">{name}</h1>
+            </div>
 
-        <div class="rightSide">
-          <div class="hamburger" id="toggle" onclick="toggleMenu()">
-            <h1 class="top" id="open">
-              III
-            </h1>
+            <div class="rightSide">
+              <div class="hamburger" id="toggle" onClick={toggleMenu}>
+                <h1 class="open" id="open">
+                  III
+                </h1>
 
-            <h1 class="close" id="close">
-              X
-            </h1>
+                <h1 class="close" id="close">
+                  X
+                </h1>
+              </div>
+
+              <div class="right-menu" id="right-menu"></div>
+            </div>
           </div>
 
-          <div class="right-menu" id="right-menu"></div>
+          {dropdown == 'show' && (
+            <nav class="dropdown" id="dropdown">
+              <ul className="links">
+                <li>
+                  <a href="/#/about">
+                    <h2 className="title">ABOUT</h2>
+                  </a>
+                </li>
+                <li>
+                  <a href="/#/portfolio">
+                    <h2 className="title">PORTFOLIO</h2>
+                  </a>
+                </li>
+                <li>
+                  <a href="/#/resume">
+                    <h2 className="title">RESUME</h2>
+                  </a>
+                </li>
+                <li>
+                  <a href="/#/contact">
+                    <h2 className="title">CONTACT</h2>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          )}
         </div>
-      </div>
-
-      <nav class="dropdown" id="dropdown"></nav>
-    </header>
+      </header>
+    </>
   );
 }
 

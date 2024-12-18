@@ -1,0 +1,47 @@
+{
+  "_firebase-firestore.js": {
+    "file": "js/firebase-firestore.js",
+    "name": "firebase-firestore"
+  },
+  "src/index.jsx": {
+    "file": "js/index.js",
+    "name": "index",
+    "src": "src/index.jsx",
+    "isEntry": true,
+    "imports": [
+      "_firebase-firestore.js"
+    ],
+    "dynamicImports": [
+      "src/views/Home.jsx",
+      "src/views/About.jsx",
+      "src/services/firebase/config.js",
+      "src/services/firebase/config.js"
+    ]
+  },
+  "src/services/firebase/config.js": {
+    "file": "js/config.js",
+    "name": "config",
+    "src": "src/services/firebase/config.js",
+    "isDynamicEntry": true
+  },
+  "src/views/About.jsx": {
+    "file": "js/About.js",
+    "name": "About",
+    "src": "src/views/About.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/index.jsx",
+      "_firebase-firestore.js"
+    ]
+  },
+  "src/views/Home.jsx": {
+    "file": "js/Home.js",
+    "name": "Home",
+    "src": "src/views/Home.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/index.jsx",
+      "_firebase-firestore.js"
+    ]
+  }
+}

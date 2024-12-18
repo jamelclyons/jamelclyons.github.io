@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk, isAnyOf } from '@reduxjs/toolkit';
 
-import db from '../services/firebase/config';
-
-import { collection, getDocs } from "firebase/firestore";
+import {} from '../services/firebase/config';
 
 const initialState = {
   portfolioLoading: false,
@@ -14,14 +12,14 @@ const initialState = {
 
 export const getPortfolio = createAsyncThunk('portfolio/getPortfolio', async () => {
   try {
-    const querySnapshot = await getDocs(collection(db, "portfolio"));
+    const querySnapshot = await window.getDocs(window.collection(window.db, "portfolio"));
 
     let portfolio = [];
 
     querySnapshot.forEach((doc) => {
       portfolio.push(doc.data());
     });
-    
+
     return portfolio;
   } catch (error) {
     console.error(error);
