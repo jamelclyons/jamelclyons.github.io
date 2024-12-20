@@ -2,8 +2,6 @@ import ProjectSkillsBar from './ProjectSkillsBar';
 
 function TaxListIcon(props) {
   const { tax, title } = props;
-console.log(tax);
-console.log(title);
 
   const handleClick = (slug) => {
     window.location.href = slug;

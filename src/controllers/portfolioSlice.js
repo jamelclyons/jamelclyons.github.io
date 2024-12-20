@@ -1,6 +1,13 @@
 import { createSlice, createAsyncThunk, isAnyOf } from '@reduxjs/toolkit';
 
-import {} from '../services/firebase/config';
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+} from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js';
+
+import { db } from '../services/firebase/config';
 
 const initialState = {
   portfolioLoading: false,
@@ -12,7 +19,7 @@ const initialState = {
 
 export const getPortfolio = createAsyncThunk('portfolio/getPortfolio', async () => {
   try {
-    const querySnapshot = await window.getDocs(window.collection(window.db, "portfolio"));
+    const querySnapshot = await getDocs(collection(db, "portfolio"));
 
     let portfolio = [];
 

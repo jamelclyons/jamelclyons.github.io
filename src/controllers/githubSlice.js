@@ -25,24 +25,24 @@ const initialState = {
     socialAccounts: []
 };
 
-export const getUser = createAsyncThunk('github/getUser', async (username) => {
+// export const getUser = createAsyncThunk('github/getUser', async (username) => {
 
-    try {
-        const response = await fetch(`${getUserURL}/${username}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        });
+//     try {
+//         const response = await fetch(`${getUserURL}/${username}`, {
+//             method: 'GET',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//         });
 
-        const responseData = await response.json();
-
-        return responseData;
-    } catch (error) {
-        console.error(error);
-        throw new Error(error.message);
-    }
-});
+//         const responseData = await response.json();
+// console.log(responseData);
+//         return responseData;
+//     } catch (error) {
+//         console.error(error);
+//         throw new Error(error.message);
+//     }
+// });
 
 export const getOrganizations = createAsyncThunk('github/getFoundersWithTerm', async (username) => {
 
@@ -128,12 +128,12 @@ export const githubSlice = createSlice({
     initialState,
     extraReducers: (builder) => {
         builder
-            .addCase(getUser.fulfilled, (state, action) => {
-                state.githubLoading = false;
-                state.githubStatusCode = action.payload.statusCode
-                state.githubErrorMessage = action.payload.errorMessage
-                state.user = action.payload
-            })
+            // .addCase(getUser.fulfilled, (state, action) => {
+            //     state.githubLoading = false;
+            //     state.githubStatusCode = action.payload.statusCode
+            //     state.githubErrorMessage = action.payload.errorMessage
+            //     state.user = action.payload
+            // })
             .addCase(getOrganizations.fulfilled, (state, action) => {
                 state.founderLoading = false
                 state.founderError = null
@@ -151,22 +151,22 @@ export const githubSlice = createSlice({
                 state.githubErrorMessage = action.payload.errorMessage
                 state.socialAccounts = action.payload
             })
-            .addMatcher(isAnyOf(
-                getUser.pending,
-            ), (state) => {
-                state.founderLoading = true
-                state.founderStatusCode = ''
-                state.founderErrorMessage = ''
-                state.founderError = ''
-            })
-            .addMatcher(isAnyOf(
-                getUser.rejected,
-            ), (state, action) => {
-                state.founderLoading = false
-                state.founderStatusCode = action.error.code
-                state.founderErrorMessage = action.error.message
-                state.founderError = action.error
-            })
+            // .addMatcher(isAnyOf(
+            //     getUser.pending,
+            // ), (state) => {
+            //     state.founderLoading = true
+            //     state.founderStatusCode = ''
+            //     state.founderErrorMessage = ''
+            //     state.founderError = ''
+            // })
+            // .addMatcher(isAnyOf(
+            //     getUser.rejected,
+            // ), (state, action) => {
+            //     state.founderLoading = false
+            //     state.founderStatusCode = action.error.code
+            //     state.founderErrorMessage = action.error.message
+            //     state.founderError = action.error
+            // })
     }
 })
 

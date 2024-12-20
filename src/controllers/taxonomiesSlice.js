@@ -1,8 +1,13 @@
 import { createSlice, createAsyncThunk, isAnyOf } from '@reduxjs/toolkit';
 
-const db = window.db;
-const collection = window.collection;
-const getDocs = window.getDocs;
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+} from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js';
+
+import { db } from '../services/firebase/config';
 
 const initialState = {
   taxonomiesLoading: false,
@@ -29,7 +34,7 @@ const initialState = {
 
 export const getProjectTypes = createAsyncThunk('taxonomies/getProjectTypes', async () => {
   try {
-    const querySnapshot = await window.getDocs(window.collection(window.db, "projectTypes"));
+    const querySnapshot = await getDocs(collection(db, "projectTypes"));
 
     let projectTypes = [];
 
@@ -46,7 +51,7 @@ export const getProjectTypes = createAsyncThunk('taxonomies/getProjectTypes', as
 
 export const getLanguages = createAsyncThunk('taxonomies/getLanguages', async () => {
   try {
-    const querySnapshot = await window.getDocs(window.collection(window.db, "languages"));
+    const querySnapshot = await getDocs(collection(db, "languages"));
 
     let languages = [];
 
@@ -63,14 +68,14 @@ export const getLanguages = createAsyncThunk('taxonomies/getLanguages', async ()
 
 export const getFrameworks = createAsyncThunk('taxonomies/getFrameworks', async () => {
   try {
-    const querySnapshot = await window.getDocs(window.collection(window.db, "frameworks"));
+    const querySnapshot = await getDocs(collection(db, "frameworks"));
 
     let frameworks = [];
 
     querySnapshot.forEach((doc) => {
       frameworks.push(doc.data());
     });
-    
+
     return frameworks;
   } catch (error) {
     console.error(error);
@@ -80,7 +85,7 @@ export const getFrameworks = createAsyncThunk('taxonomies/getFrameworks', async 
 
 export const getTechnologies = createAsyncThunk('taxonomies/getTechnologies', async () => {
   try {
-    const querySnapshot = await window.getDocs(window.collection(window.db, "technologies"));
+    const querySnapshot = await getDocs(collection(db, "technologies"));
 
     let technologies = [];
 

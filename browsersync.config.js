@@ -5,7 +5,6 @@ module.exports = {
     server: {
         baseDir: ".",          // Serve files from the 'dist' folder (where Vite outputs)
     },
-    files: ['**/*.js', '**/*.css'],
     cors: true,
     reloadOnRestart: true,
     notify: false,                // Disable BrowserSync "Connected" notification

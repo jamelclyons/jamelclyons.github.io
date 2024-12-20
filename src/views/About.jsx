@@ -1,33 +1,31 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { getMissionStatement } from '../controllers/aboutSlice';
-import { getContent } from '../controllers/contentSlice';
-import {
-  getUser,
-  getOrganizations,
-  getRepos,
-  getSocialAccounts,
-} from '../controllers/githubSlice';
-
+import MemberInfoComponent from './components/MemberInfoComponent';
 import ContentComponent from './components/ContentComponent';
-import LoadingComponent from './components/LoadingComponent';
-import FoundersComponent from './components/FoundersComponent';
-import Member from './components/Member';
+import { getContent } from '../controllers/contentSlice';
 
 function About(props) {
   const { user } = props;
-console.log(user);
+
+  const { content } = useSelector((state) => state.content);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getContent('about'));
+  }, [dispatch]);
+
   return (
     <>
       <main className="about">
-        <div className="mission-statement-card card">
-          <h3 className="mission-statement">
-            <q>{user.bio}</q>
-          </h3>
-        </div>
+        <MemberInfoComponent user={user} />
 
-        <Member url={user.avatar_url} email={user.email} />
+        {Array.isArray(content.story) && (
+          <div className="story">
+            <ContentComponent content={content.story} />
+          </div>
+        )}
       </main>
     </>
   );

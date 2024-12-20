@@ -1,4 +1,11 @@
 {
+  "_ContentComponent.js": {
+    "file": "ContentComponent.js",
+    "name": "ContentComponent",
+    "imports": [
+      "src/index.jsx"
+    ]
+  },
   "_PortfolioComponent.js": {
     "file": "PortfolioComponent.js",
     "name": "PortfolioComponent",

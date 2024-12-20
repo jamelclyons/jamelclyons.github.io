@@ -10,14 +10,17 @@ export default defineConfig({
     react(),
     reactRefresh()
   ],
-  base: '/jamelclyons.github.io/',
+  define: {
+    'process.env': process.env, // Ensure all environment variables are available
+  },
+  base: '/',
   root: ".", // Set the root directory (main project directory)
   server: {
     port: 3000,         // Port for Vite dev server
     cors: true,         // Allow cross-origin requests
     open: false,        // Let BrowserSync handle opening the browser
     watch: {
-      include: ['src/**/*.jsx', 'src/**/*.js'], // Watch changes in JSX files
+      ignored: ['**/node_modules/**', '**/dist/**'],
     },
     historyApiFallback: true, // Ensures all routes fallback to index.html
   },

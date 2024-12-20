@@ -12,8 +12,8 @@ const Portfolio = lazy(() => import('./views/Portfolio.jsx'));
 const Resume = lazy(() => import('./views/Resume.jsx'));
 const Contact = lazy(() => import('./views/Contact.jsx'));
 
+import { getUser } from './controllers/userSlice';
 import {
-  getUser,
   getOrganizations,
   getRepos,
   getSocialAccounts,
@@ -22,23 +22,23 @@ import {
 function App() {
   const dispatch = useDispatch();
 
-  const { user, socialAccounts } = useSelector((state) => state.github);
+  const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
-    dispatch(getUser('jamelclyons'));
+    dispatch(getUser());
   }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(getOrganizations('jamelclyons'));
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(getOrganizations('jamelclyons'));
+  // }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(getRepos('jamelclyons'));
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(getRepos('jamelclyons'));
+  // }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(getSocialAccounts('jamelclyons'));
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(getSocialAccounts('jamelclyons'));
+  // }, [dispatch]);
 
   return (
     <>
@@ -54,7 +54,10 @@ function App() {
           </Routes>
         </Suspense>
       </Router>
-      <FooterComponent socialAccounts={socialAccounts} email={user.email} />
+      <FooterComponent
+        socialAccounts={user.social_accounts}
+        email={user.email}
+      />
     </>
   );
 }

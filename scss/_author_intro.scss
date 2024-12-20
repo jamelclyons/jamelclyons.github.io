@@ -1,3 +1,4 @@
+@use './author_info';
 @use './author_knowledge';
 
 .author-intro {
@@ -5,38 +6,4 @@
   flex-direction: column;
   gap: 2rem;
   height: 100vh;
-
-  .author-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .author-bio-card {
-    width: fit-content;
-    background-color: black;
-    color: white;
-  }
-
-  .author {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    width: 100%;
-
-    .author-card {
-      box-shadow: none;
-
-      .author-pic {
-        img {
-          width: auto;
-          max-height: 50vh;
-          border-radius: var(--border-radius);
-          box-shadow: var(--card-box-shadow);
-        }
-      }
-    }
-  }
 }

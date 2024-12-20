@@ -5,15 +5,12 @@ function ContentComponent(props) {
 
   return (
     <>
-      {content && (
-        <>
-          {content.map((content, index) => (
-            <div
-              key={index}
-              dangerouslySetInnerHTML={{ __html: content }}></div>
-          ))}
-        </>
-      )}
+      {Array.isArray(content) &&
+        content.map((element, index) => (
+          <div key={index} className="content">
+            {element}
+          </div>
+        ))}
     </>
   );
 }

@@ -9,10 +9,15 @@ import LoadingComponent from './components/LoadingComponent';
 import { getContent } from '../controllers/contentSlice';
 
 function ContactComponent() {
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-  const { contentLoading, contentStatusCode, contentErrorMessage, title, content } =
-    useSelector((state) => state.content);
+  const {
+    contentLoading,
+    contentStatusCode,
+    contentErrorMessage,
+    title,
+    content,
+  } = useSelector((state) => state.content);
   const {
     contactLoading,
     contactStatusCode,
@@ -21,7 +26,7 @@ const dispatch = useDispatch();
   } = useSelector((state) => state.contact);
 
   useEffect(() => {
-    dispatch(getContent('/contact'));
+    dispatch(getContent('contact'));
   }, [dispatch]);
 
   useEffect(() => {
@@ -49,7 +54,13 @@ const dispatch = useDispatch();
     }
   }, [contactSuccessMessage]);
 
-  const [messageType, setMessageType] = useState('');
+  useEffect(() => {
+    if (content.message) {
+      setMessage(content.message);
+    }
+  }, [content]);
+
+  const [messageType, setMessageType] = useState('success');
   const [message, setMessage] = useState('');
 
   if (contentLoading) {
@@ -59,9 +70,7 @@ const dispatch = useDispatch();
   return (
     <>
       <main className="contact">
-        <h2 className="title">{title}</h2>
-
-        <ContentComponent content={content} />
+        {content.title && <h2 className="title">{content.title}</h2>}
 
         <div className="contact-card card">
           <MessageCardComponent page={'/contact'} />

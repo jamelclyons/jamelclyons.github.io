@@ -3,7 +3,6 @@ import SocialBar from './SocialBar';
 
 function FooterComponent(props) {
   const { socialAccounts, email } = props;
-
   const year = new Date().getFullYear();
 
   return (
