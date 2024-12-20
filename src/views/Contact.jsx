@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import ContentComponent from './components/ContentComponent';
 import MessageCardComponent from './components/MessageCardComponent';
 import StatusBarComponent from './components/StatusBarComponent';
 import LoadingComponent from './components/LoadingComponent';
@@ -69,15 +68,17 @@ function ContactComponent() {
 
   return (
     <>
-      <main className="contact">
-        {content.title && <h2 className="title">{content.title}</h2>}
+      <section className="contact">
+        <main>
+          {content.title && <h2 className="title">{content.title}</h2>}
 
-        <div className="contact-card card">
-          <MessageCardComponent page={'/contact'} />
-        </div>
+          <div className="contact-card card">
+            <MessageCardComponent page={'/contact'} />
+          </div>
 
-        <StatusBarComponent messageType={messageType} message={message} />
-      </main>
+          <StatusBarComponent messageType={messageType} message={message} />
+        </main>
+      </section>
     </>
   );
 }

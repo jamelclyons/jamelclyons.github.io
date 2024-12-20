@@ -18,7 +18,7 @@ function About(props) {
 
   return (
     <>
-      <main className="about">
+      <section className="about">
         <MemberInfoComponent user={user} />
 
         {Array.isArray(content.story) && (
@@ -26,7 +26,7 @@ function About(props) {
             <ContentComponent content={content.story} />
           </div>
         )}
-      </main>
+      </section>
     </>
   );
 }

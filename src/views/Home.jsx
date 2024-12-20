@@ -44,20 +44,22 @@ function Home(props) {
 
   return (
     <>
-      <MemberIntroductionComponent
-        user={user}
-        languages={languages}
-        frameworks={frameworks}
-        technologies={technologies}
-      />
+      <section>
+        <MemberIntroductionComponent
+          user={user}
+          languages={languages}
+          frameworks={frameworks}
+          technologies={technologies}
+        />
 
-      <PortfolioComponent
-        portfolio={portfolio}
-        projectTypes={projectTypes}
-        languages={languages}
-        frameworks={frameworks}
-        technologies={technologies}
-      />
+        <PortfolioComponent
+          portfolio={portfolio}
+          projectTypes={projectTypes}
+          languages={languages}
+          frameworks={frameworks}
+          technologies={technologies}
+        />
+      </section>
     </>
   );
 }
