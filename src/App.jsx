@@ -9,8 +9,11 @@ import FooterComponent from './views/components/FooterComponent.jsx';
 const Home = lazy(() => import('./views/Home.jsx'));
 const About = lazy(() => import('./views/About.jsx'));
 const Portfolio = lazy(() => import('./views/Portfolio.jsx'));
+const Project = lazy(() => import('./views/Project.jsx'));
+const Search = lazy(() => import('./views/Search.jsx'));
 const Resume = lazy(() => import('./views/Resume.jsx'));
 const Contact = lazy(() => import('./views/Contact.jsx'));
+const Add = lazy(() => import('./views/Add.jsx'));
 
 import { getUser } from './controllers/userSlice';
 import {
@@ -49,8 +52,17 @@ function App() {
             <Route exact path="/" element={<Home user={user} />} />
             <Route path="/about" element={<About user={user} />} />
             <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/portfolio/:project" element={<Project />} />
+            <Route
+              path="/projects/project-types/:taxonomy"
+              element={<Search />}
+            />
+            <Route path="/projects/languages/:taxonomy" element={<Search />} />
+            <Route path="/projects/frameworks/:taxonomy" element={<Search />} />
+            <Route path="/projects/technologies/:taxonomy" element={<Search />} />
             <Route path="/resume" element={<Resume />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/add" element={<Add />} />
           </Routes>
         </Suspense>
       </Router>

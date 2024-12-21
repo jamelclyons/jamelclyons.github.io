@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Projects from './Projects';
+import ProjectsComponent from './ProjectsComponent';
 import TaxList from './TaxList';
 import TaxListIcon from './TaxListIcon';
 
@@ -10,21 +10,21 @@ function PortfolioComponent(props) {
 
   return (
     <>
-      {/* {portfolio && ( */}
-      <main className="portfolio">
-        <h1 class="title">portfolio</h1>
+      {portfolio && (
+        <main className="portfolio">
+          <h1 class="title">portfolio</h1>
 
-        <Projects projects={portfolio} />
+          <ProjectsComponent projects={portfolio} />
 
-        <TaxList tax={projectTypes} title={'Project Types'} />
+          <TaxList tax={projectTypes} title={'Project Types'} />
 
-        <TaxListIcon tax={languages} title={'Languages'} />
+          <TaxListIcon tax={languages} title={'Languages'} />
 
-        <TaxListIcon tax={frameworks} title={'Frameworks'} />
+          <TaxListIcon tax={frameworks} title={'Frameworks'} />
 
-        <TaxListIcon tax={technologies} title={'Technologies'} />
-      </main>
-      {/* )} */}
+          <TaxListIcon tax={technologies} title={'Technologies'} />
+        </main>
+      )}
     </>
   );
 }

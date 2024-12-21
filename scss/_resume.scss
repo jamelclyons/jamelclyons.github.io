@@ -1,10 +1,10 @@
-.resume {
+@use './error_page.scss';
+
+section.resume {
+  margin-top: 6.25rem;
+
   iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    padding-top: 5rem;
+    width: 100vw;
+    height: 100vh;
   }
 }

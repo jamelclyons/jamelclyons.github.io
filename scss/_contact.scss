@@ -1,2 +1,7 @@
 @use './status-bar.scss';
 @use './message-card';
+@use './error_page.scss';
+
+.contact {
+  justify-content: center;
+}

@@ -1,0 +1,27 @@
+@use '_project_status.scss';
+@use '_versions.scss';
+@use '_design.scss';
+@use '_development.scss';
+@use '_delivery.scss';
+
+.project-process {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 1000px;
+
+  .project-process-design,
+  .project-process-development,
+  .project-process-delivery {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+  }
+}

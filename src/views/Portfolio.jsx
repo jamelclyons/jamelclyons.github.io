@@ -6,14 +6,15 @@ import {
   getLanguages,
   getProjectTypes,
   getFrameworks,
-  getTechnologies
+  getTechnologies,
 } from '../controllers/taxonomiesSlice';
 
 import LoadingComponent from './components/LoadingComponent';
 import PortfolioComponent from './components/PortfolioComponent';
+import StatusBarComponent from './components/StatusBarComponent';
 
 function Portfolio() {
-  const { portfolioLoading, portfolioErrorMessage, portfolio } = useSelector(
+  const { portfolioLoading, portfolio, portfolioErrorMessage } = useSelector(
     (state) => state.portfolio
   );
   const { projectTypes, skills, frameworks, technologies } = useSelector(
@@ -47,15 +48,24 @@ function Portfolio() {
   }
 
   return (
-    <>
-      <PortfolioComponent
-        portfolio={portfolio}
-        projectTypes={projectTypes}
-        skills={skills}
-        frameworks={frameworks}
-        technologies={technologies}
-      />
-    </>
+    <section className='portfolio'>
+      <>
+        {portfolio ? (
+          <PortfolioComponent
+            portfolio={portfolio}
+            projectTypes={projectTypes}
+            skills={skills}
+            frameworks={frameworks}
+            technologies={technologies}
+          />
+        ) : (
+          <StatusBarComponent
+            messageType={'error'}
+            message={portfolioErrorMessage}
+          />
+        )}
+      </>
+    </section>
   );
 }
 

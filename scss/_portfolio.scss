@@ -1,16 +1,7 @@
 @use '_project_card.scss';
 @use '_tax_list.scss';
+@use './error_page.scss';
 
-.portfolio {
-  padding: 0 1rem;
-}
-
-.front-page {
-  section {
-    min-height: fit-content;
-
-    main.portfolio {
-      margin: 0;
-    }
-  }
+section.portfolio {
+    margin-top: 6.25rem;
 }

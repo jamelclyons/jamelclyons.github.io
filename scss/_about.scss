@@ -1,6 +1,7 @@
 @use './_content.scss';
 @use './_founders.scss';
 @use './_cards.scss';
+@use './error_page.scss';
 
 .mission-statement-card.card {
   flex-direction: row;
@@ -15,6 +16,7 @@
 }
 
 .about {
+  margin-top: 6.25rem;
   .story {
     display: flex;
     flex-direction: column;

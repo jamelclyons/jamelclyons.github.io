@@ -44,7 +44,7 @@ function Home(props) {
 
   return (
     <>
-      <section>
+      <section className='home'>
         <MemberIntroductionComponent
           user={user}
           languages={languages}

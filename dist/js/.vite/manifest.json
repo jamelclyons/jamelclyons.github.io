@@ -3,7 +3,60 @@
     "file": "PortfolioComponent.js",
     "name": "PortfolioComponent",
     "imports": [
+      "src/index.jsx",
+      "_ProjectsComponent.js",
+      "_TaxListIcon.js"
+    ]
+  },
+  "_ProjectDescription.js": {
+    "file": "ProjectDescription.js",
+    "name": "ProjectDescription",
+    "imports": [
       "src/index.jsx"
+    ]
+  },
+  "_ProjectSkillsBar.js": {
+    "file": "ProjectSkillsBar.js",
+    "name": "ProjectSkillsBar",
+    "imports": [
+      "src/index.jsx"
+    ]
+  },
+  "_ProjectStatus.js": {
+    "file": "ProjectStatus.js",
+    "name": "ProjectStatus",
+    "imports": [
+      "src/index.jsx"
+    ]
+  },
+  "_ProjectsComponent.js": {
+    "file": "ProjectsComponent.js",
+    "name": "ProjectsComponent",
+    "imports": [
+      "src/index.jsx",
+      "_ProjectDescription.js"
+    ]
+  },
+  "_StatusBarComponent.js": {
+    "file": "StatusBarComponent.js",
+    "name": "StatusBarComponent",
+    "imports": [
+      "src/index.jsx"
+    ]
+  },
+  "_TaxList.js": {
+    "file": "TaxList.js",
+    "name": "TaxList",
+    "imports": [
+      "src/index.jsx"
+    ]
+  },
+  "_TaxListIcon.js": {
+    "file": "TaxListIcon.js",
+    "name": "TaxListIcon",
+    "imports": [
+      "src/index.jsx",
+      "_ProjectDescription.js"
     ]
   },
   "src/index.jsx": {
@@ -15,8 +68,11 @@
       "src/views/Home.jsx",
       "src/views/About.jsx",
       "src/views/Portfolio.jsx",
+      "src/views/Project.jsx",
+      "src/views/Search.jsx",
       "src/views/Resume.jsx",
-      "src/views/Contact.jsx"
+      "src/views/Contact.jsx",
+      "src/views/Add.jsx"
     ]
   },
   "src/views/About.jsx": {
@@ -28,13 +84,24 @@
       "src/index.jsx"
     ]
   },
+  "src/views/Add.jsx": {
+    "file": "Add.js",
+    "name": "Add",
+    "src": "src/views/Add.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/index.jsx",
+      "_StatusBarComponent.js"
+    ]
+  },
   "src/views/Contact.jsx": {
     "file": "Contact.js",
     "name": "Contact",
     "src": "src/views/Contact.jsx",
     "isDynamicEntry": true,
     "imports": [
-      "src/index.jsx"
+      "src/index.jsx",
+      "_StatusBarComponent.js"
     ]
   },
   "src/views/Home.jsx": {
@@ -44,7 +111,10 @@
     "isDynamicEntry": true,
     "imports": [
       "src/index.jsx",
-      "_PortfolioComponent.js"
+      "_PortfolioComponent.js",
+      "_ProjectDescription.js",
+      "_ProjectsComponent.js",
+      "_TaxListIcon.js"
     ]
   },
   "src/views/Portfolio.jsx": {
@@ -54,7 +124,23 @@
     "isDynamicEntry": true,
     "imports": [
       "src/index.jsx",
-      "_PortfolioComponent.js"
+      "_PortfolioComponent.js",
+      "_StatusBarComponent.js",
+      "_ProjectsComponent.js",
+      "_ProjectDescription.js",
+      "_TaxListIcon.js"
+    ]
+  },
+  "src/views/Project.jsx": {
+    "file": "Project.js",
+    "name": "Project",
+    "src": "src/views/Project.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/index.jsx",
+      "_ProjectDescription.js",
+      "_TaxListIcon.js",
+      "_StatusBarComponent.js"
     ]
   },
   "src/views/Resume.jsx": {
@@ -64,6 +150,18 @@
     "isDynamicEntry": true,
     "imports": [
       "src/index.jsx"
+    ]
+  },
+  "src/views/Search.jsx": {
+    "file": "Search.js",
+    "name": "Search",
+    "src": "src/views/Search.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/index.jsx",
+      "_ProjectsComponent.js",
+      "_StatusBarComponent.js",
+      "_ProjectDescription.js"
     ]
   }
 }

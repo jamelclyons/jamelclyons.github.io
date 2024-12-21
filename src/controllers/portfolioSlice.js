@@ -9,17 +9,35 @@ import {
 
 import { db } from '../services/firebase/config';
 
+const portfolioCollection = collection(db, 'portfolio');
+
 const initialState = {
   portfolioLoading: false,
   portfolioError: '',
   portfolioErrorMessage: '',
   portfolioStatusCode: '',
   portfolio: '',
+  projects: '',
+  title: '',
+  description: '',
+  features: '',
+  currency: '',
+  price: '',
+  solution_gallery: '',
+  project_urls: '',
+  project_details: '',
+  the_solution: '',
+  the_problem: '',
+  project_team: '',
+  project_types: '',
+  skills: '',
+  frameworks: '',
+  technologies: ''
 };
 
-export const getPortfolio = createAsyncThunk('portfolio/getPortfolio', async () => {
+export const addProject = createAsyncThunk('portfolio/addProject', async () => {
   try {
-    const querySnapshot = await getDocs(collection(db, "portfolio"));
+    const querySnapshot = await getDocs(portfolioCollection);
 
     let portfolio = [];
 
@@ -34,57 +52,50 @@ export const getPortfolio = createAsyncThunk('portfolio/getPortfolio', async () 
   }
 });
 
-export const getPortfolioProjectsByUser = createAsyncThunk('portfolio/getPortfolioProjectsByUser', async (nicename) => {
+export const getPortfolio = createAsyncThunk('portfolio/getPortfolio', async () => {
   try {
-    const response = await fetch(`/wp-json/seven-tech/portfolio/v1/projects/user/${nicename}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    const querySnapshot = await getDocs(portfolioCollection);
+
+    let portfolio = [];
+
+    querySnapshot.forEach((doc) => {
+      portfolio.push(doc.data());
     });
 
-    const responseData = await response.json();
-
-    return responseData;
+    return portfolio;
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
   }
 });
 
-export const getPortfolioProjectsByTaxonomy = createAsyncThunk('portfolio/getPortfolioProjectsByTaxonomy', async (taxonomy) => {
+export const getProject = createAsyncThunk('portfolio/getProject', async (project) => {
   try {
-    const response = await fetch(`/wp-json/seven-tech/portfolio/v1/projects/taxonomies/${taxonomy}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+    const docRef = doc(portfolioCollection, project);
+    const docSnap = await getDoc(docRef);
 
-    const responseData = await response.json();
+    if (!docSnap.exists()) {
+      throw new Error("Could not be found.");
+    }
 
-    return responseData;
+    return docSnap.data();
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
   }
 });
 
-export const getPortfolioProjectsWithTerm = createAsyncThunk('portfolio/getPortfolioProjectsWithTerm', async ({ taxonomy, term }) => {
+export const getProjectsBy = createAsyncThunk('portfolio/getProjectsBy', async (taxonomy) => {
   try {
-    const response = await fetch(`/wp-json/seven-tech/portfolio/v1/projects/taxonomies/${taxonomy}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        term: term
-      })
-    });
+    const contentCollection = collection(db, 'portfolio');
+    const docRef = doc(contentCollection, taxonomy);
+    const docSnap = await getDoc(docRef);
 
-    const responseData = await response.json();
+    if (!docSnap.exists()) {
+      throw new Error("Could not be found.");
+    }
 
-    return responseData;
+    return docSnap.data();
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
@@ -96,23 +107,45 @@ export const portfolioSlice = createSlice({
   initialState,
   extraReducers: (builder) => {
     builder
-      .addMatcher(isAnyOf(
-        getPortfolio.fulfilled,
-        getPortfolioProjectsByUser.fulfilled,
-        getPortfolioProjectsByTaxonomy.fulfilled,
-        getPortfolioProjectsWithTerm.fulfilled
-      ), (state, action) => {
+      .addCase(getPortfolio.fulfilled, (state, action) => {
         state.portfolioLoading = false;
         state.portfolioError = '';
         state.portfolioErrorMessage = action.payload.errorMessage;
         state.portfolioStatusCode = action.payload.statusCode;
         state.portfolio = action.payload;
       })
+      .addCase(getProject.fulfilled, (state, action) => {
+        state.portfolioLoading = false;
+        state.portfolioError = '';
+        state.portfolioErrorMessage = action.payload.errorMessage;
+        state.portfolioStatusCode = action.payload.statusCode;
+        state.title = action.payload.title;
+        state.description = action.payload.description;
+        state.features = action.payload.features;
+        state.currency = action.payload.currency;
+        state.price = action.payload.price;
+        state.solution_gallery = action.payload.solution_gallery;
+        state.project_urls = action.payload.project_urls;
+        state.project_details = action.payload.project_details;
+        state.the_solution = action.payload.the_solution;
+        state.the_problem = action.payload.the_problem;
+        state.project_team = action.payload.project_team;
+        state.project_types = action.payload.project_types;
+        state.skills = action.payload.skills;
+        state.frameworks = action.payload.frameworks;
+        state.technologies = action.payload.technologies;
+      })
+      .addCase(getProjectsBy.fulfilled, (state, action) => {
+        state.portfolioLoading = false;
+        state.portfolioError = '';
+        state.portfolioErrorMessage = action.payload.errorMessage;
+        state.portfolioStatusCode = action.payload.statusCode;
+        state.projects = action.payload;
+      })
       .addMatcher(isAnyOf(
         getPortfolio.pending,
-        getPortfolioProjectsByUser.pending,
-        getPortfolioProjectsByTaxonomy.pending,
-        getPortfolioProjectsWithTerm.pending
+        getProject.pending,
+        getProjectsBy.pending,
       ), (state) => {
         state.portfolioLoading = true;
         state.portfolioError = '';
@@ -121,9 +154,8 @@ export const portfolioSlice = createSlice({
       })
       .addMatcher(isAnyOf(
         getPortfolio.rejected,
-        getPortfolioProjectsByUser.rejected,
-        getPortfolioProjectsByTaxonomy.rejected,
-        getPortfolioProjectsWithTerm.rejected
+        getProject.rejected,
+        getProjectsBy.rejected,
       ), (state, action) => {
         state.portfolioLoading = false;
         state.portfolioError = action.error;

@@ -2,7 +2,6 @@
 @use './_variables.scss';
 @use './_fonts.scss';
 @use './_body.scss';
-@use './_header.scss';
 @use './_buttons.scss';
 @use './_section.scss';
 @use './_cards.scss';
@@ -18,7 +17,6 @@
 @use './post.scss';
 @use './_tables.scss';
 @use './_input.scss';
-@use './_search.scss';
 @use './_tag.scss';
 @use './_category.scss';
 @use './_author.scss';
@@ -31,12 +29,17 @@
 @use './_member_card.scss';
 @use './_page.scss';
 @use './author_list';
-@use './_footer.scss';
 @use './_icon.scss';
 
+@use './_header.scss';
+
 @use './_home.scss';
-
 @use './_about.scss';
-
+@use './_portfolio.scss';
+@use './_project.scss';
+@use './_search.scss';
 @use './_resume.scss';
 @use './_contact.scss';
+@use './_add.scss';
+
+@use './_footer.scss';

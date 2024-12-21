@@ -3,10 +3,6 @@ import ProjectSkillsBar from './ProjectSkillsBar';
 function TaxListIcon(props) {
   const { tax, title } = props;
 
-  const handleClick = (slug) => {
-    window.location.href = slug;
-  };
-
   return (
     Array.isArray(tax) && (
       <div className="tax-list">

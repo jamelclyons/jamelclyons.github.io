@@ -3,7 +3,7 @@ function IconComponent({ icon }) {
 
   return (
     <div className="icon">
-      <a href={icon.url || "#"}>
+      <a href={`#${icon.url}`}>
         {icon.icon_url ? (
           <img src={icon.icon_url} alt="icon" />
         ) : (
