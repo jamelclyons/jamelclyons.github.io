@@ -24,6 +24,10 @@ function Portfolio() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    document.title = `Portfolio - Jamel C. Lyons`;
+  }, []);
+
+  useEffect(() => {
     dispatch(getPortfolio());
   }, [dispatch]);
 
@@ -48,7 +52,7 @@ function Portfolio() {
   }
 
   return (
-    <section className='portfolio'>
+    <section className="portfolio">
       <>
         {portfolio ? (
           <PortfolioComponent

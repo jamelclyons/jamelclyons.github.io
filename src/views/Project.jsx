@@ -9,66 +9,40 @@ import StatusBarComponent from './components/StatusBarComponent';
 import { getProject } from '../controllers/portfolioSlice';
 
 function Project() {
-  const { project } = useParams();
+  const { projectID } = useParams();
 
-  const {
-    portfolioLoading,
-    portfolioErrorMessage,
-    title,
-    description,
-    features,
-    currency,
-    price,
-    solution_gallery,
-    project_urls,
-    project_details,
-    the_solution,
-    the_problem,
-    project_team,
-    project_types,
-    languages,
-    frameworks,
-    technologies,
-  } = useSelector((state) => state.portfolio);
+  const { portfolioLoading, portfolioErrorMessage, project } = useSelector(
+    (state) => state.portfolio
+  );
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getProject(project));
-  }, [dispatch, project]);
+    if (projectID) {
+      dispatch(getProject(projectID));
+    }
+  }, [dispatch, projectID]);
+
+  useEffect(() => {
+    document.title = project.title;
+  }, [project.title]);
 
   if (portfolioLoading) {
     return <LoadingComponent />;
   }
-
+  console.log(project);
   return (
-    <section className='project'>
+    <section className="project">
       <>
         {portfolioErrorMessage ? (
-          <main className='error-page'>
+          <main className="error-page">
             <StatusBarComponent
               messageType={'error'}
               message={portfolioErrorMessage}
             />
           </main>
         ) : (
-          <ProjectComponent
-            title={title}
-            description={description}
-            features={features}
-            currency={currency}
-            price={price}
-            solution_gallery={solution_gallery}
-            project_urls={project_urls}
-            project_details={project_details}
-            the_solution={the_solution}
-            the_problem={the_problem}
-            project_team={project_team}
-            projectTypesProp={project_types}
-            languagesProp={languages}
-            frameworksProp={frameworks}
-            technologiesProp={technologies}
-          />
+          <ProjectComponent project={project} />
         )}
       </>
     </section>

@@ -9,6 +9,10 @@ function Contact() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    document.title = `Contact - Jamel C. Lyons`;
+  }, []);
+
+  useEffect(() => {
     dispatch(setShowStatusBar('show'));
   }, []);
 

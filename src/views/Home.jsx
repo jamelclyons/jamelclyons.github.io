@@ -24,6 +24,10 @@ function Home(props) {
   );
 
   useEffect(() => {
+    document.title = 'Jamel C. Lyons';
+  }, []);
+
+  useEffect(() => {
     dispatch(getPortfolio());
   }, []);
 

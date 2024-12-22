@@ -1,6 +1,10 @@
-import React from 'react';
+import { useEffect } from 'react';
 
 function Resume() {
+  useEffect(() => {
+    document.title = `Resume - Jamel C. Lyons`;
+  }, []);
+
   return (
     <section className="resume">
       <main>

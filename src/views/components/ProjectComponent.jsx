@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import Gallery from './Gallery';
 import ProjectDescription from './ProjectDescription';
-import ProjectDetails from './ProjectDetails';
+import Details from './project/Details';
 import TheSolution from './TheSolution';
 import ProjectURLs from './ProjectURLs';
 import TheProblem from './TheProblem';
@@ -22,51 +22,35 @@ import {
 function ProjectComponent(props) {
   const dispatch = useDispatch();
 
-  const {
-    title,
-    description,
-    features,
-    currency,
-    price,
-    solution_gallery,
-    project_urls,
-    project_details,
-    the_solution,
-    the_problem,
-    project_team,
-    projectTypesProp,
-    languagesProp,
-    frameworksProp,
-    technologiesProp,
-  } = props;
+  const { project } = props;
 
-  const [project_types, setProjectTypes] = useState([]);
+  const [types, setTypes] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [frameworks, setFrameworks] = useState([]);
   const [technologies, setTechnologies] = useState([]);
 
   useEffect(() => {
-    if (Array.isArray(projectTypesProp)) {
+    if (Array.isArray(project.types)) {
       const fetchProjectTypes = async () => {
         const projectTypeData = await Promise.all(
-          projectTypesProp.map(async (tax) => {
+          project.types.map(async (tax) => {
             const projectType = await dispatch(getProjectType(tax));
             return projectType.payload;
           })
         );
 
-        setProjectTypes(projectTypeData);
+        setTypes(projectTypeData);
       };
 
       fetchProjectTypes();
     }
-  }, [projectTypesProp, dispatch]);
+  }, [project.types, dispatch]);
 
   useEffect(() => {
-    if (Array.isArray(languagesProp)) {
+    if (Array.isArray(project.languages)) {
       const fetchLanguages = async () => {
         const languageData = await Promise.all(
-          languagesProp.map(async (tax) => {
+          project.languages.map(async (tax) => {
             const language = await dispatch(getLanguage(tax));
             return language.payload;
           })
@@ -77,13 +61,13 @@ function ProjectComponent(props) {
 
       fetchLanguages();
     }
-  }, [languagesProp, dispatch]);
+  }, [project.languages, dispatch]);
 
   useEffect(() => {
-    if (Array.isArray(frameworksProp)) {
+    if (Array.isArray(project.frameworks)) {
       const fetchFrameworks = async () => {
         const frameworkData = await Promise.all(
-          frameworksProp.map(async (tax) => {
+          project.frameworks.map(async (tax) => {
             const framework = await dispatch(getFramework(tax));
             return framework.payload;
           })
@@ -94,13 +78,13 @@ function ProjectComponent(props) {
 
       fetchFrameworks();
     }
-  }, [frameworksProp, dispatch]);
+  }, [project.frameworks, dispatch]);
 
   useEffect(() => {
-    if (Array.isArray(technologiesProp)) {
+    if (Array.isArray(project.technologies)) {
       const fetchTechnologies = async () => {
         const techData = await Promise.all(
-          technologiesProp.map(async (tech) => {
+          project.technologies.map(async (tech) => {
             const technology = await dispatch(getTechnology(tech));
             return technology.payload;
           })
@@ -111,34 +95,24 @@ function ProjectComponent(props) {
 
       fetchTechnologies();
     }
-  }, [technologiesProp, dispatch]);
+  }, [project.technologies, dispatch]);
 
   return (
     <>
       <main className="project">
-        {title && <h1 class="title">{title}</h1>}
+        {project.title && <h1 class="title">{project.title}</h1>}
 
-        <Gallery gallery={solution_gallery} />
+        <ProjectDescription description={project.description} />
 
-        <ProjectDescription description={description} />
+        <ProjectURLs project_urls={project.urlsList} />
 
-        <TheSolution
-          features={features}
-          currency={currency}
-          price={price}
-          the_solution={the_solution}
-        />
+        <TheSolution solution={project.solution} />
 
-        <ProjectURLs project_urls={project_urls} />
+        <TheProcess process={project.process} />
 
-        {/* Project details is for clients only */}
-        <ProjectDetails project_details={project_details} />
+        <TheProblem the_problem={project.problem} />
 
-        <TheProcess />
-
-        <TheProblem the_problem={the_problem} />
-
-        <TaxList tax={project_types} title={'project types'} />
+        <TaxList tax={types} title={'types'} />
 
         <TaxListIcon tax={languages} title={'languages'} />
 
@@ -146,7 +120,8 @@ function ProjectComponent(props) {
 
         <TaxListIcon tax={technologies} title={'technologies'} />
 
-        <ProjectTeam project_team={project_team} />
+        {/* Project details is for clients only */}
+        <Details project_details={project.detailsList} />
       </main>
     </>
   );

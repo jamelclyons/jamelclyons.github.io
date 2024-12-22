@@ -18,20 +18,29 @@ function Search() {
   const dispatch = useDispatch();
 
   const path = window.location.hash;
+  const parts = path?.split('/');
+  const taxonomy = parts[2]?.replace(/-/g, '_') ?? '';
+  const term = parts[3] ?? '';
+  const params = {
+    taxonomy: taxonomy,
+    term: term,
+  };
 
   useEffect(() => {
     if (path) {
-      const parts = path.split('/');
-      const taxonomy = parts[2].replace(/-/g, '_');
-      const term = parts[3];
-      const params = {
-        taxonomy: taxonomy,
-        term: term,
-      };
-
       dispatch(getProjectsBy(params));
     }
   }, [path, dispatch]);
+
+  useEffect(() => {
+    if (path) {
+      const skillClass =
+        taxonomy?.charAt(0).toUpperCase() + taxonomy?.slice(1).toLowerCase() ?? '';
+      const skill = term?.charAt(0).toUpperCase() + term?.slice(1).toLowerCase() ?? '';
+
+      document.title = `Projects > ${skillClass} > ${skill}`;
+    }
+  }, [path, taxonomy, term]);
 
   useEffect(() => {
     if (portfolioLoading) {

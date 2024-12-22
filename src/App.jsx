@@ -54,7 +54,7 @@ function App() {
             <Route exact path="/" element={<Home user={user} />} />
             <Route path="/about" element={<About user={user} />} />
             <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/portfolio/:project" element={<Project />} />
+            <Route path="/portfolio/:projectID" element={<Project />} />
             <Route
               path="/projects/project-types/:taxonomy"
               element={<Search />}

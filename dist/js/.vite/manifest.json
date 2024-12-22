@@ -43,8 +43,7 @@
     "file": "TaxListIcon.js",
     "name": "TaxListIcon",
     "imports": [
-      "src/index.jsx",
-      "_ProjectDescription.js"
+      "src/index.jsx"
     ]
   },
   "src/index.jsx": {
@@ -113,11 +112,11 @@
     "imports": [
       "src/index.jsx",
       "_PortfolioComponent.js",
-      "_ProjectDescription.js",
+      "_TaxListIcon.js",
       "_ContactComponent.js",
       "_ProjectsComponent.js",
-      "_StatusBarComponent.js",
-      "_TaxListIcon.js"
+      "_ProjectDescription.js",
+      "_StatusBarComponent.js"
     ]
   },
   "src/views/NotFound.jsx": {

@@ -13,6 +13,10 @@ function About(props) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    document.title = `About - Jamel C. Lyons`;
+  }, []);
+
+  useEffect(() => {
     dispatch(getContent('about'));
   }, [dispatch]);
 
