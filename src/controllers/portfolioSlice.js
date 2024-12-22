@@ -11,76 +11,37 @@ import {
 
 import { db } from '../services/firebase/config';
 
+import Project from '../model/Project.ts';
+
 const portfolioCollection = collection(db, 'portfolio');
 
 const initialState = {
   portfolioLoading: false,
   portfolioError: '',
   portfolioErrorMessage: '',
-  portfolioStatusCode: '',
   portfolio: '',
   projects: '',
-  title: '',
-  description: '',
-  features: '',
-  currency: '',
-  price: '',
-  solution_gallery: '',
-  project_urls: '',
-  project_details: '',
-  the_solution: '',
-  the_problem: '',
-  project_team: '',
-  project_types: '',
-  languages: '',
-  frameworks: '',
-  technologies: ''
+  project: ''
 };
-
-export const addProject = createAsyncThunk('portfolio/addProject', async () => {
-  try {
-    const querySnapshot = await getDocs(portfolioCollection);
-
-    let portfolio = [];
-
-    querySnapshot.forEach((doc) => {
-      portfolio.push(doc.data());
-    });
-
-    return portfolio;
-  } catch (error) {
-    console.error(error);
-    throw new Error(error.message);
-  }
-});
 
 export const getPortfolio = createAsyncThunk('portfolio/getPortfolio', async () => {
   try {
     const querySnapshot = await getDocs(portfolioCollection);
 
+    if (querySnapshot.length === 0) {
+      throw new Error('No projects found.');
+    }
+
     let portfolio = [];
 
     querySnapshot.forEach((doc) => {
-      portfolio.push(doc.data());
+      let data = doc.data();
+      const project = new Project(data);
+      project.id = doc.id;
+      portfolio.push(project);
     });
 
     return portfolio;
-  } catch (error) {
-    console.error(error);
-    throw new Error(error.message);
-  }
-});
-
-export const getProject = createAsyncThunk('portfolio/getProject', async (project) => {
-  try {
-    const docRef = doc(portfolioCollection, project);
-    const docSnap = await getDoc(docRef);
-
-    if (!docSnap.exists()) {
-      throw new Error("Could not be found.");
-    }
-
-    return docSnap.data();
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
@@ -101,13 +62,37 @@ export const getProjectsBy = createAsyncThunk('portfolio/getProjectsBy', async (
       throw new Error('No projects found.');
     }
 
-    const projects = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    let projects = [];
 
+    docs.forEach((doc) => {
+      let data = doc.data();
+      const project = new Project(data);
+      project.id = doc.id;
+
+      projects.push(project);
+    });
 
     return projects;
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.message);
+  }
+});
+
+export const getProject = createAsyncThunk('portfolio/getProject', async (projectID) => {
+  try {
+    const docRef = doc(portfolioCollection, projectID);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      throw new Error("Could not be found.");
+    }
+
+    let data = docSnap.data();
+    const project = new Project(data);
+    project.id = docSnap.id;
+
+    return project;
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
@@ -122,57 +107,38 @@ export const portfolioSlice = createSlice({
       .addCase(getPortfolio.fulfilled, (state, action) => {
         state.portfolioLoading = false;
         state.portfolioError = '';
-        state.portfolioErrorMessage = action.payload.errorMessage;
-        state.portfolioStatusCode = action.payload.statusCode;
+        state.portfolioErrorMessage = '';
         state.portfolio = action.payload;
-      })
-      .addCase(getProject.fulfilled, (state, action) => {
-        state.portfolioLoading = false;
-        state.portfolioError = '';
-        state.portfolioErrorMessage = action.payload.errorMessage;
-        state.portfolioStatusCode = action.payload.statusCode;
-        state.title = action.payload.title;
-        state.description = action.payload.description;
-        state.features = action.payload.features;
-        state.currency = action.payload.currency;
-        state.price = action.payload.price;
-        state.solution_gallery = action.payload.solution_gallery;
-        state.project_urls = action.payload.project_urls;
-        state.project_details = action.payload.project_details;
-        state.the_solution = action.payload.the_solution;
-        state.the_problem = action.payload.the_problem;
-        state.project_team = action.payload.project_team;
-        state.project_types = action.payload.project_types;
-        state.languages = action.payload.languages;
-        state.frameworks = action.payload.frameworks;
-        state.technologies = action.payload.technologies;
       })
       .addCase(getProjectsBy.fulfilled, (state, action) => {
         state.portfolioLoading = false;
         state.portfolioError = '';
-        state.portfolioErrorMessage = action.payload.errorMessage;
-        state.portfolioStatusCode = action.payload.statusCode;
+        state.portfolioErrorMessage = '';
         state.projects = action.payload;
+      })
+      .addCase(getProject.fulfilled, (state, action) => {
+        state.portfolioLoading = false;
+        state.portfolioError = '';
+        state.portfolioErrorMessage = '';
+        state.project = action.payload;
       })
       .addMatcher(isAnyOf(
         getPortfolio.pending,
-        getProject.pending,
         getProjectsBy.pending,
+        getProject.pending
       ), (state) => {
         state.portfolioLoading = true;
         state.portfolioError = '';
         state.portfolioErrorMessage = '';
-        state.portfolioStatusCode = '';
       })
       .addMatcher(isAnyOf(
         getPortfolio.rejected,
-        getProject.rejected,
         getProjectsBy.rejected,
+        getProject.rejected
       ), (state, action) => {
         state.portfolioLoading = false;
         state.portfolioError = action.error;
         state.portfolioErrorMessage = action.error.message;
-        state.portfolioStatusCode = action.error.code;
       })
   }
 })

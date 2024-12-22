@@ -16,37 +16,46 @@ import {
 
 import StatusBarComponent from '../components/StatusBarComponent';
 
+import Project from '../../model/Project.ts';
+
 function AddProject() {
   const dispatch = useDispatch();
 
-  const { addLoading, addStatusCode, addSuccessMessage, addErrorMessage } =
-    useSelector((state) => state.add);
-  const { languages, projectTypes, frameworks, technologies } =
-    useSelector((state) => state.taxonomies);
+  const { addLoading, addSuccessMessage, addErrorMessage } = useSelector(
+    (state) => state.add
+  );
+  const { languages, projectTypes, frameworks, technologies } = useSelector(
+    (state) => state.taxonomies
+  );
 
   const [id, setId] = useState('');
-  const [price, setPrice] = useState('');
-  const [project_id, setProjectId] = useState('');
-  const [project_title, setProjectTitle] = useState('');
-  const [project_slug, setProjectSlug] = useState('');
-  const [project_status, setProjectStatus] = useState('');
-  const [description, setDescription] = useState('');
-  const [gallery, setGallery] = useState('');
-  const [project_languages, setProjectLanguages] = useState('');
   const [title, setTitle] = useState('');
-  const [client_id, setClientId] = useState('');
-  const [project_urls_list, setProjectUrlsList] = useState('');
-  const [project_details_list, setProjectDetailsList] = useState('');
-  const [project_versions_list, setProjectVersionsList] = useState('');
-  const [design, setDesign] = useState('');
-  const [design_check_list, setDesignCheckList] = useState('');
-  const [colors_list, setColorsList] = useState('');
-  const [development, setDevelopment] = useState('');
-  const [development_check_list, setDevelopmentCheckList] = useState('');
-  const [git_repo, setGitRepo] = useState('');
-  const [delivery, setDelivery] = useState('');
-  const [delivery_check_list, setDeliveryCheckList] = useState('');
-  const [project_team_list, setProjectTeamList] = useState('');
+  const [status, setStatus] = useState('');
+  const [types, setTypes] = useState([]);
+  const [description, setDescription] = useState('');
+  const [slug, setSlug] = useState('');
+  const [design, setDesign] = useState([]);
+  const [designCheckList, setDesignCheckList] = useState([]);
+  const [designGallery, setDesignGallery] = useState([]);
+  const [colorsList, setColorsList] = useState([]);
+  const [development, setDevelopment] = useState([]);
+  const [developmentCheckList, setDevelopmentCheckList] = useState([]);
+  const [repoURL, setRepoURL] = useState('');
+  const [versionsList, setVersionsList] = useState([]);
+  const [projectLanguages, setLanguages] = useState([]);
+  const [projectFrameworks, setFrameworks] = useState([]);
+  const [projectTechnologies, setTechnologies] = useState([]);
+  const [delivery, setDelivery] = useState([]);
+  const [deliveryGallery, setDeliveryGallery] = useState([]);
+  const [deliveryCheckList, setDeliveryCheckList] = useState([]);
+  const [problem, setProblem] = useState([]);
+  const [problemGallery, setProblemGallery] = useState([]);
+  const [solution, setSolution] = useState([]);
+  const [solutionGallery, setSolutionGallery] = useState([]);
+  const [urlsList, setUrlsList] = useState([]);
+  const [detailsList, setDetailsList] = useState([]);
+  const [teamList, setTeamList] = useState([]);
+  const [clientID, setClientID] = useState('');
 
   const handleChange = (e) => {
     try {
@@ -54,50 +63,60 @@ function AddProject() {
 
       if (name === 'id') {
         setId(value);
-      } else if (name === 'price') {
-        setPrice(value);
-      } else if (name === 'project_id') {
-        setProjectId(value);
-      } else if (name === 'project_title') {
-        setProjectTitle(value);
-      } else if (name === 'project_slug') {
-        setProjectSlug(value);
-      } else if (name === 'project_status') {
-        setProjectStatus(value);
-      } else if (name === 'description') {
-        setDescription(value);
-      } else if (name === 'gallery') {
-        setGallery(value);
-      } else if (name === 'project_languages') {
-        setProjectLanguages(value);
       } else if (name === 'title') {
         setTitle(value);
-      } else if (name === 'client_id') {
-        setClientId(value);
-      } else if (name === 'project_urls_list') {
-        setProjectUrlsList(value);
-      } else if (name === 'project_details_list') {
-        setProjectDetailsList(value);
-      } else if (name === 'project_versions_list') {
-        setProjectVersionsList(value);
+      } else if (name === 'status') {
+        setStatus(value);
+      } else if (name === 'types') {
+        setTypes(value);
+      } else if (name === 'description') {
+        setDescription(value);
+      } else if (name === 'slug') {
+        setSlug(value);
       } else if (name === 'design') {
         setDesign(value);
       } else if (name === 'design_check_list') {
         setDesignCheckList(value);
+      } else if (name === 'design_gallery') {
+        setDesignGallery(value);
       } else if (name === 'colors_list') {
         setColorsList(value);
       } else if (name === 'development') {
         setDevelopment(value);
       } else if (name === 'development_check_list') {
         setDevelopmentCheckList(value);
-      } else if (name === 'git_repo') {
-        setGitRepo(value);
+      } else if (name === 'repo_url') {
+        setRepoURL(value);
+      } else if (name === 'versions_list') {
+        setVersionsList(value);
+      } else if (name === 'project_languages') {
+        setLanguages(value);
+      } else if (name === 'project_frameworks') {
+        setFrameworks(value);
+      } else if (name === 'project_technologies') {
+        setTechnologies(value);
       } else if (name === 'delivery') {
         setDelivery(value);
+      } else if (name === 'delivery_gallery') {
+        setDeliveryGallery(value);
       } else if (name === 'delivery_check_list') {
         setDeliveryCheckList(value);
-      } else if (name === 'project_team_list') {
-        setProjectTeamList(value);
+      } else if (name === 'problem') {
+        setProblem(value);
+      } else if (name === 'problem_gallery') {
+        setProblemGallery(value);
+      } else if (name === 'solution') {
+        setSolution(value);
+      } else if (name === 'solution_gallery') {
+        setSolutionGallery(value);
+      } else if (name === 'urls_list') {
+        setUrlsList(value);
+      } else if (name === 'details_list') {
+        setDetailsList(value);
+      } else if (name === 'team_list') {
+        setTeamList(value);
+      } else if (name === 'client_id') {
+        setClientID(value);
       }
     } catch (error) {
       dispatch(setMessage(error.message));
@@ -105,37 +124,43 @@ function AddProject() {
     }
   };
 
-  const project = {
+  const data = {
     id: id,
-    price: price,
-    project_id: project_id,
-    project_title: project_title,
-    project_slug: project_slug,
-    description: description,
-    gallery: gallery,
-    project_status: project_status,
-    project_languages: project_languages,
     title: title,
-    client_id: client_id,
-    project_urls_list: project_urls_list,
-    project_details_list: project_details_list,
-    project_status: project_status,
-    project_versions_list: project_versions_list,
+    status: status,
+    types: types,
+    description: description,
+    slug: slug,
     design: design,
-    design_check_list: design_check_list,
-    colors_list: colors_list,
+    design_check_list: designCheckList,
+    design_gallery: designGallery,
+    colors_list: colorsList,
     development: development,
-    development_check_list: development_check_list,
-    git_repo: git_repo,
+    development_check_list: developmentCheckList,
+    repo_url: repoURL,
+    versions_list: versionsList,
+    languages: projectLanguages,
+    frameworks: projectFrameworks,
+    technologies: projectTechnologies,
     delivery: delivery,
-    delivery_check_list: delivery_check_list,
-    project_team_list: project_team_list,
+    delivery_gallery: deliveryGallery,
+    delivery_check_list: deliveryCheckList,
+    problem: problem,
+    problem_gallery: problemGallery,
+    solution: solution,
+    solution_gallery: solutionGallery,
+    urls_list: urlsList,
+    details_list: detailsList,
+    team_list: teamList,
+    client_id: clientID,
   };
 
   const handleAddProject = async (e) => {
     e.preventDefault();
 
     try {
+      const project = new Project(data).toObject();
+
       dispatch(addProject(project));
 
       dispatch(setMessageType('info'));
@@ -201,35 +226,27 @@ function AddProject() {
 
           <input
             type="text"
-            name="price"
-            placeholder="Price"
-            value={price}
+            name="title"
+            placeholder="Title"
+            value={title}
             onChange={handleChange}
           />
 
           <input
             type="text"
-            name="project_id"
-            placeholder="Project ID"
-            value={project_id}
+            name="status"
+            placeholder="Status"
+            value={status}
             onChange={handleChange}
           />
 
-          <input
+          {/* <input
             type="text"
-            name="project_title"
-            placeholder="Project Title"
-            value={project_title}
+            name="types"
+            placeholder="Types"
+            value={types}
             onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="project_slug"
-            placeholder="Project Slug"
-            value={project_slug}
-            onChange={handleChange}
-          />
+          /> */}
 
           <input
             type="text"
@@ -241,19 +258,75 @@ function AddProject() {
 
           <input
             type="text"
-            name="gallery"
-            placeholder="Gallery"
-            value={gallery}
+            name="slug"
+            placeholder="Slug"
+            value={slug}
             onChange={handleChange}
           />
 
+          {/* <input
+            type="text"
+            name="design"
+            placeholder="Design"
+            value={design}
+            onChange={handleChange}
+          /> */}
+
+          {/* <input
+            type="text"
+            name="design_check_list"
+            placeholder="Design Check List"
+            value={designCheckList}
+            onChange={handleChange}
+          /> */}
+
+          {/* <input
+            type="text"
+            name="design_gallery"
+            placeholder="Design Gallery"
+            value={designGallery}
+            onChange={handleChange}
+          /> */}
+
+          {/* <input
+            type="text"
+            name="colors_list"
+            placeholder="Colors List"
+            value={colors_list}
+            onChange={handleChange}
+          /> */}
+
+          {/* <input
+            type="text"
+            name="development"
+            placeholder="Development"
+            value={development}
+            onChange={handleChange}
+          /> */}
+
+          {/* <input
+            type="text"
+            name="development_check_list"
+            placeholder="Development Check List"
+            value={developmentCheckList}
+            onChange={handleChange}
+          /> */}
+
           <input
             type="text"
-            name="project_status"
-            placeholder="Project Status"
-            value={project_status}
+            name="repo_url"
+            placeholder="Repo URL"
+            value={repoURL}
             onChange={handleChange}
           />
+
+          {/* <input
+            type="text"
+            name="versions_list"
+            placeholder="Versions List"
+            value={versionsList}
+            onChange={handleChange}
+          /> */}
 
           <label for="options">Choose Languages:</label>
           <select id="options">
@@ -265,115 +338,84 @@ function AddProject() {
               ))}
           </select>
 
-          <input
-            type="text"
-            name="title"
-            placeholder="Title"
-            value={title}
-            onChange={handleChange}
-          />
+          <label for="options">Choose Frameworks:</label>
+          <select id="options">
+            {Array.isArray(frameworks) &&
+              frameworks.map((framework, index) => (
+                <option key={index} value={framework.id}>
+                  {framework.title}
+                </option>
+              ))}
+          </select>
 
-          <input
-            type="text"
-            name="client_id"
-            placeholder="client_id"
-            value={client_id}
-            onChange={handleChange}
-          />
+          <label for="options">Choose Technologies:</label>
+          <select id="options">
+            {Array.isArray(technologies) &&
+              technologies.map((technologie, index) => (
+                <option key={index} value={technologie.id}>
+                  {technologie.title}
+                </option>
+              ))}
+          </select>
 
-          <input
-            type="text"
-            name="project_urls_list"
-            placeholder="Project URLs List"
-            value={project_urls_list}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="project_details_list"
-            placeholder="Project Details List"
-            value={project_details_list}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="project_versions_list"
-            placeholder="Project Versions List"
-            value={project_versions_list}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="design"
-            placeholder="Design"
-            value={design}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="design_check_list"
-            placeholder="Design Check List"
-            value={design_check_list}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="colors_list"
-            placeholder="Colors List"
-            value={colors_list}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="development"
-            placeholder="Development"
-            value={development}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="development_check_list"
-            placeholder="Development Check List"
-            value={development_check_list}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="git_repo"
-            placeholder="Git Repo"
-            value={git_repo}
-            onChange={handleChange}
-          />
-
-          <input
+          {/* <input
             type="text"
             name="delivery"
             placeholder="Delivery"
             value={delivery}
             onChange={handleChange}
-          />
+          /> */}
 
-          <input
+          {/* <input
+            type="text"
+            name="delivery_gallery"
+            placeholder="Delivery Gallery"
+            value={delivery}
+            onChange={handleChange}
+          /> */}
+
+          {/* <input
             type="text"
             name="delivery_check_list"
             placeholder="Delivery Check List"
-            value={delivery_check_list}
+            value={deliveryCheckList}
+            onChange={handleChange}
+          /> */}
+
+          {/* Problem */}
+          {/* Problem Gallery */}
+          {/* Solution */}
+          {/* Solution Gallery */}
+
+          {/* <input
+            type="text"
+            name="urls_list"
+            placeholder="URLs List"
+            value={urlsList}
             onChange={handleChange}
           />
 
           <input
             type="text"
-            name="project_team_list"
-            placeholder="Project Team List"
-            value={project_team_list}
+            name="details_list"
+            placeholder="Details List"
+            value={detailsList}
+            onChange={handleChange}
+          />
+
+          <input
+            type="text"
+            name="team_list"
+            placeholder="Team List"
+            value={teamList}
+            onChange={handleChange}
+          /> */}
+
+          <input
+            type="text"
+            name="client_id"
+            placeholder="client_id"
+            value={clientID}
             onChange={handleChange}
           />
 
