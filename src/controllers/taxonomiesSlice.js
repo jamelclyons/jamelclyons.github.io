@@ -8,6 +8,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js';
 
 import { db } from '../services/firebase/config';
+import Taxonomy from '../model/Taxonomy';
 
 const initialState = {
   taxonomiesLoading: false,
@@ -19,17 +20,10 @@ const initialState = {
   projectType: '',
   languages: '',
   language: '',
-  skills: '',
-  skill: '',
   frameworks: '',
   framework: '',
   technologies: '',
   technology: '',
-  description: '',
-  icon: '',
-  title: '',
-  url: '',
-  projects: ''
 };
 
 export const getProjectTypes = createAsyncThunk('taxonomies/getProjectTypes', async () => {
@@ -39,7 +33,9 @@ export const getProjectTypes = createAsyncThunk('taxonomies/getProjectTypes', as
     let projectTypes = [];
 
     querySnapshot.forEach((doc) => {
-      projectTypes.push(doc.data());
+      let data = doc.data();
+      let taxonomy = new Taxonomy(doc.id, 'project-types', data.title, data.icon_url, data.class_name).toObject();
+      projectTypes.push(taxonomy);
     });
 
     return projectTypes;
@@ -56,7 +52,9 @@ export const getLanguages = createAsyncThunk('taxonomies/getLanguages', async ()
     let languages = [];
 
     querySnapshot.forEach((doc) => {
-      languages.push(doc.data());
+      let data = doc.data();
+      let taxonomy = new Taxonomy(doc.id, 'languages', data.title, data.icon_url, data.class_name).toObject();
+      languages.push(taxonomy);
     });
 
     return languages;
@@ -73,7 +71,9 @@ export const getFrameworks = createAsyncThunk('taxonomies/getFrameworks', async 
     let frameworks = [];
 
     querySnapshot.forEach((doc) => {
-      frameworks.push(doc.data());
+      let data = doc.data();
+      let taxonomy = new Taxonomy(doc.id, 'frameworks', data.title, data.icon_url, data.class_name).toObject();
+      frameworks.push(taxonomy);
     });
 
     return frameworks;
@@ -90,7 +90,9 @@ export const getTechnologies = createAsyncThunk('taxonomies/getTechnologies', as
     let technologies = [];
 
     querySnapshot.forEach((doc) => {
-      technologies.push(doc.data());
+      let data = doc.data();
+      let taxonomy = new Taxonomy(doc.id, 'technologies', data.title, data.icon_url, data.class_name).toObject();
+      technologies.push(taxonomy);
     });
 
     return technologies;
@@ -102,34 +104,32 @@ export const getTechnologies = createAsyncThunk('taxonomies/getTechnologies', as
 
 export const getProjectType = createAsyncThunk('taxonomies/getProjectType', async (projectType) => {
   try {
-    const response = await fetch(`/wp-json/seven-tech/communications/v1/taxonomies/project-types/${projectType}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+    const projectTypeCollection = collection(db, 'projectTypes');
+    const docRef = doc(projectTypeCollection, projectType);
+    const docSnap = await getDoc(docRef);
 
-    const responseData = await response.json();
+    if (!docSnap.exists()) {
+      throw new Error("Could not be found.");
+    }
 
-    return responseData;
+    return docSnap.data();
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
   }
 });
 
-export const getSkill = createAsyncThunk('taxonomies/getSkill', async (skill) => {
+export const getLanguage = createAsyncThunk('taxonomies/getLanguage', async (language) => {
   try {
-    const response = await fetch(`/wp-json/seven-tech/communications/v1/taxonomies/skills/${skill}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+    const languageCollection = collection(db, 'languages');
+    const docRef = doc(languageCollection, language);
+    const docSnap = await getDoc(docRef);
 
-    const responseData = await response.json();
+    if (!docSnap.exists()) {
+      throw new Error("Could not be found.");
+    }
 
-    return responseData;
+    return docSnap.data();
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
@@ -139,16 +139,15 @@ export const getSkill = createAsyncThunk('taxonomies/getSkill', async (skill) =>
 
 export const getFramework = createAsyncThunk('taxonomies/getFramework', async (framework) => {
   try {
-    const response = await fetch(`/wp-json/seven-tech/communications/v1/taxonomies/frameworks/${framework}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+    const frameworkCollection = collection(db, 'frameworks');
+    const docRef = doc(frameworkCollection, framework);
+    const docSnap = await getDoc(docRef);
 
-    const responseData = await response.json();
+    if (!docSnap.exists()) {
+      throw new Error("Could not be found.");
+    }
 
-    return responseData;
+    return docSnap.data();
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
@@ -157,16 +156,15 @@ export const getFramework = createAsyncThunk('taxonomies/getFramework', async (f
 
 export const getTechnology = createAsyncThunk('taxonomies/getTechnology', async (technology) => {
   try {
-    const response = await fetch(`/wp-json/seven-tech/communications/v1/taxonomies/technologies/${technology}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+    const technologyCollection = collection(db, 'technologies');
+    const docRef = doc(technologyCollection, technology);
+    const docSnap = await getDoc(docRef);
 
-    const responseData = await response.json();
+    if (!docSnap.exists()) {
+      throw new Error("Could not be found.");
+    }
 
-    return responseData;
+    return docSnap.data();
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
@@ -181,53 +179,55 @@ export const taxonomiesSlice = createSlice({
       .addCase(getProjectTypes.fulfilled, (state, action) => {
         state.taxonomiesLoading = false;
         state.taxonomiesError = '';
-        state.taxonomiesErrorMessage = action.payload.errorMessage;
-        state.taxonomiesStatusCode = action.payload.statusCode;
+        state.taxonomiesErrorMessage = '';
         state.projectTypes = action.payload;
       })
       .addCase(getLanguages.fulfilled, (state, action) => {
         state.taxonomiesLoading = false;
         state.taxonomiesError = '';
-        state.taxonomiesErrorMessage = action.payload.errorMessage;
-        state.taxonomiesStatusCode = action.payload.statusCode;
+        state.taxonomiesErrorMessage = '';
         state.languages = action.payload;
       })
       .addCase(getFrameworks.fulfilled, (state, action) => {
         state.taxonomiesLoading = false;
         state.taxonomiesError = '';
-        state.taxonomiesErrorMessage = action.payload.errorMessage;
-        state.taxonomiesStatusCode = action.payload.statusCode;
+        state.taxonomiesErrorMessage = '';
         state.frameworks = action.payload;
       })
       .addCase(getTechnologies.fulfilled, (state, action) => {
         state.taxonomiesLoading = false;
         state.taxonomiesError = '';
-        state.taxonomiesErrorMessage = action.payload.errorMessage;
-        state.taxonomiesStatusCode = action.payload.statusCode;
+        state.taxonomiesErrorMessage = '';
         state.technologies = action.payload;
       })
-      .addMatcher(isAnyOf(
-        getProjectType.fulfilled,
-        getSkill.fulfilled,
-        getFramework.fulfilled,
-        getTechnology.fulfilled
-      ), (state, action) => {
+      .addCase(getProjectType.fulfilled, (state, action) => {
         state.taxonomiesLoading = false;
         state.taxonomiesError = '';
-        state.taxonomiesErrorMessage = action.payload.errorMessage;
-        state.taxonomiesStatusCode = action.payload.statusCode;
-        state.description = action.payload.description;
-        state.icon = action.payload.icon;
-        state.title = action.payload.title;
-        state.url = action.payload.url;
-        state.projects = action.payload.projects;
+        state.taxonomiesErrorMessage = '';
+        state.project_type = action.payload;
+      }).addCase(getLanguage.fulfilled, (state, action) => {
+        state.taxonomiesLoading = false;
+        state.taxonomiesError = '';
+        state.taxonomiesErrorMessage = '';
+        state.language = action.payload;
+      }).addCase(getFramework.fulfilled, (state, action) => {
+        state.taxonomiesLoading = false;
+        state.taxonomiesError = '';
+        state.taxonomiesErrorMessage = '';
+        state.framework = action.payload;
+      })
+      .addCase(getTechnology.fulfilled, (state, action) => {
+        state.taxonomiesLoading = false;
+        state.taxonomiesError = '';
+        state.taxonomiesErrorMessage = '';
+        state.technology = action.payload;
       })
       .addMatcher(isAnyOf(
         getProjectTypes.pending,
         getFrameworks.pending,
         getTechnologies.pending,
         getProjectType.pending,
-        getSkill.pending,
+        getLanguage.pending,
         getFramework.pending,
         getTechnology.pending
       ), (state) => {
@@ -241,7 +241,7 @@ export const taxonomiesSlice = createSlice({
         getFrameworks.rejected,
         getTechnologies.rejected,
         getProjectType.rejected,
-        getSkill.rejected,
+        getLanguage.rejected,
         getFramework.rejected,
         getTechnology.rejected
       ), (state, action) => {

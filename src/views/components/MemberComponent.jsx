@@ -20,7 +20,9 @@ function MemberIntroductionComponent(props) {
           <div class="author">
             <div class="author-card card">
               <div class="author-pic">
-                <img src={user.avatar_url} alt="" />
+                <a href="/#/about">
+                  <img src={user.avatar_url} alt="" />
+                </a>
               </div>
             </div>
             <h2 class="title">{user.title}</h2>

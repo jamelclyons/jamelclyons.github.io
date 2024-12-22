@@ -8,7 +8,7 @@ function PortfolioComponent(props) {
   const { portfolio, projectTypes, languages, frameworks, technologies } =
     props;
 
-  return (
+    return (
     <>
       {portfolio && (
         <main className="portfolio">

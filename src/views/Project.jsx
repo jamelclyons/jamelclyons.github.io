@@ -26,7 +26,7 @@ function Project() {
     the_problem,
     project_team,
     project_types,
-    skills,
+    languages,
     frameworks,
     technologies,
   } = useSelector((state) => state.portfolio);
@@ -64,10 +64,10 @@ function Project() {
             the_solution={the_solution}
             the_problem={the_problem}
             project_team={project_team}
-            project_types={project_types}
-            skills={skills}
-            frameworks={frameworks}
-            technologies={technologies}
+            projectTypesProp={project_types}
+            languagesProp={languages}
+            frameworksProp={frameworks}
+            technologiesProp={technologies}
           />
         )}
       </>

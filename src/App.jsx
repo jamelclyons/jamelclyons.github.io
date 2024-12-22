@@ -13,7 +13,9 @@ const Project = lazy(() => import('./views/Project.jsx'));
 const Search = lazy(() => import('./views/Search.jsx'));
 const Resume = lazy(() => import('./views/Resume.jsx'));
 const Contact = lazy(() => import('./views/Contact.jsx'));
-const Add = lazy(() => import('./views/Add.jsx'));
+const AddSkill = lazy(() => import('./views/AddSkill.jsx'));
+const AddProject = lazy(() => import('./views/Add.jsx'));
+const NotFound = lazy(() => import('./views/NotFound.jsx'));
 
 import { getUser } from './controllers/userSlice';
 import {
@@ -62,7 +64,9 @@ function App() {
             <Route path="/projects/technologies/:taxonomy" element={<Search />} />
             <Route path="/resume" element={<Resume />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/add" element={<Add />} />
+            <Route path="/project/add" element={<AddProject />} />
+            <Route path="/skill/add" element={<AddSkill />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </Router>

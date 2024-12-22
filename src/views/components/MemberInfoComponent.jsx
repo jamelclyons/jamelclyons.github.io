@@ -3,6 +3,10 @@ import React from 'react';
 function MemberInfoComponent(props) {
   const { user } = props;
 
+  const handleResume = () => {
+    window.location.href = '/#/resume';
+  };
+
   return (
     <div className="author-info">
       {user.bio && (
@@ -20,6 +24,10 @@ function MemberInfoComponent(props) {
           </div>
         </div>
         <h2 class="title">{user.title}</h2>
+
+        <button onClick={handleResume}>
+          <h3 class="title">resume</h3>
+        </button>
       </div>
     </div>
   );

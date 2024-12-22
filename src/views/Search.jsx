@@ -1,40 +1,56 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { getProjectsBy } from '../controllers/portfolioSlice';
+import {
+  setMessage,
+  setMessageType,
+  setShowStatusBar,
+} from '../controllers/messageSlice';
 
-import LoadingComponent from './components/LoadingComponent';
 import ProjectsComponent from './components/ProjectsComponent';
-import StatusBarComponent from './components/StatusBarComponent';
 
 function Search() {
-  const { taxonomy } = useParams();
-
   const { portfolioLoading, projects, portfolioErrorMessage } = useSelector(
     (state) => state.portfolio
   );
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(getProjectsBy(taxonomy));
-  }, [dispatch]);
+  const path = window.location.hash;
 
-  if (portfolioLoading) {
-    return <LoadingComponent />;
-  }
+  useEffect(() => {
+    if (path) {
+      const parts = path.split('/');
+      const taxonomy = parts[2].replace(/-/g, '_');
+      const term = parts[3];
+      const params = {
+        taxonomy: taxonomy,
+        term: term,
+      };
+
+      dispatch(getProjectsBy(params));
+    }
+  }, [path, dispatch]);
+
+  useEffect(() => {
+    if (portfolioLoading) {
+      dispatch(setShowStatusBar(Date.now()));
+    }
+  }, [portfolioLoading]);
+
+  useEffect(() => {
+    if (portfolioErrorMessage) {
+      dispatch(setMessage(portfolioErrorMessage));
+      dispatch(setMessageType('error'));
+      dispatch(setShowStatusBar(Date.now()));
+    }
+  }, [portfolioErrorMessage]);
 
   return (
-    <section className='search'>
+    <section className="search">
       <>
-        {projects ? (
-          <ProjectsComponent projects={projects} />
-        ) : (
-          <StatusBarComponent
-            messageType={'error'}
-            message={portfolioErrorMessage}
-          />
-        )}
+        <ProjectsComponent projects={projects} />
       </>
     </section>
   );

@@ -6,7 +6,7 @@ function StatusBarComponent() {
     (state) => state.message
   );
 
-  const [show, setShow] = useState('show');
+  const [show, setShow] = useState('hide');
 
   useEffect(() => {
     if (showStatusBar) {

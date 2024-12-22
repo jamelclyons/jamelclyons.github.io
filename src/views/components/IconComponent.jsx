@@ -3,9 +3,9 @@ function IconComponent({ icon }) {
 
   return (
     <div className="icon">
-      <a href={`#${icon.url}`}>
+      <a href={`#/projects/${icon.type}/${icon.id}`}>
         {icon.icon_url ? (
-          <img src={icon.icon_url} alt="icon" />
+          <img src={icon.icon_url} alt={icon.title} title={icon.title} />
         ) : (
           icon.class_name && <i className={icon.class_name}></i>
         )}

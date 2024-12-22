@@ -1,8 +1,8 @@
 function TaxList(props) {
   const { tax, title } = props;
 
-  const handleClick = (slug) => {
-    window.location.href = slug;
+  const handleClick = (taxonomy) => {
+    window.location.href = `/#/projects/${taxonomy.type}/${taxonomy.id}`;
   };
 
   return (
@@ -11,14 +11,16 @@ function TaxList(props) {
         <h4 className="title">{title}</h4>
 
         <div className="tax-row">
-          {tax.map((project_tag, index) => (
-            <button
-              key={index}
-              className="tag"
-              onClick={() => handleClick(project_tag.url)}>
-              <h3>{project_tag.title}</h3>
-            </button>
-          ))}
+          {tax.map((taxonomy, index) =>
+            taxonomy && taxonomy.title ? (
+              <button
+                key={index}
+                className="tag"
+                onClick={() => handleClick(taxonomy)}>
+                <h3>{taxonomy.title}</h3>
+              </button>
+            ) : null
+          )}
         </div>
       </div>
     )

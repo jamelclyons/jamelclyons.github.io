@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import PortfolioComponent from './components/PortfolioComponent';
 import MemberIntroductionComponent from './components/MemberComponent';
+import ContactComponent from './components/ContactComponent';
 
 import { getPortfolio } from '../controllers/portfolioSlice';
 import {
@@ -44,7 +45,7 @@ function Home(props) {
 
   return (
     <>
-      <section className='home'>
+      <section className="home">
         <MemberIntroductionComponent
           user={user}
           languages={languages}
@@ -59,6 +60,8 @@ function Home(props) {
           frameworks={frameworks}
           technologies={technologies}
         />
+
+        <ContactComponent />
       </section>
     </>
   );

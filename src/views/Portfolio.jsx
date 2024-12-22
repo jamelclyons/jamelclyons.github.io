@@ -17,7 +17,7 @@ function Portfolio() {
   const { portfolioLoading, portfolio, portfolioErrorMessage } = useSelector(
     (state) => state.portfolio
   );
-  const { projectTypes, skills, frameworks, technologies } = useSelector(
+  const { projectTypes, languages, frameworks, technologies } = useSelector(
     (state) => state.taxonomies
   );
 
@@ -54,7 +54,7 @@ function Portfolio() {
           <PortfolioComponent
             portfolio={portfolio}
             projectTypes={projectTypes}
-            skills={skills}
+            languages={languages}
             frameworks={frameworks}
             technologies={technologies}
           />

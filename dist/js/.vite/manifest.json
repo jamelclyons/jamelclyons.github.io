@@ -1,4 +1,19 @@
 {
+  "_ContactComponent.js": {
+    "file": "ContactComponent.js",
+    "name": "ContactComponent",
+    "imports": [
+      "src/index.jsx",
+      "_StatusBarComponent.js"
+    ]
+  },
+  "_ContentComponent.js": {
+    "file": "ContentComponent.js",
+    "name": "ContentComponent",
+    "imports": [
+      "src/index.jsx"
+    ]
+  },
   "_PortfolioComponent.js": {
     "file": "PortfolioComponent.js",
     "name": "PortfolioComponent",
@@ -15,38 +30,18 @@
       "src/index.jsx"
     ]
   },
-  "_ProjectSkillsBar.js": {
-    "file": "ProjectSkillsBar.js",
-    "name": "ProjectSkillsBar",
-    "imports": [
-      "src/index.jsx"
-    ]
-  },
-  "_ProjectStatus.js": {
-    "file": "ProjectStatus.js",
-    "name": "ProjectStatus",
-    "imports": [
-      "src/index.jsx"
-    ]
-  },
   "_ProjectsComponent.js": {
     "file": "ProjectsComponent.js",
     "name": "ProjectsComponent",
     "imports": [
       "src/index.jsx",
-      "_ProjectDescription.js"
+      "_ProjectDescription.js",
+      "_StatusBarComponent.js"
     ]
   },
   "_StatusBarComponent.js": {
     "file": "StatusBarComponent.js",
     "name": "StatusBarComponent",
-    "imports": [
-      "src/index.jsx"
-    ]
-  },
-  "_TaxList.js": {
-    "file": "TaxList.js",
-    "name": "TaxList",
     "imports": [
       "src/index.jsx"
     ]
@@ -72,7 +67,9 @@
       "src/views/Search.jsx",
       "src/views/Resume.jsx",
       "src/views/Contact.jsx",
-      "src/views/Add.jsx"
+      "src/views/AddSkill.jsx",
+      "src/views/Add.jsx",
+      "src/views/NotFound.jsx"
     ]
   },
   "src/views/About.jsx": {
@@ -94,6 +91,16 @@
       "_StatusBarComponent.js"
     ]
   },
+  "src/views/AddSkill.jsx": {
+    "file": "AddSkill.js",
+    "name": "AddSkill",
+    "src": "src/views/AddSkill.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/index.jsx",
+      "_StatusBarComponent.js"
+    ]
+  },
   "src/views/Contact.jsx": {
     "file": "Contact.js",
     "name": "Contact",
@@ -101,6 +108,7 @@
     "isDynamicEntry": true,
     "imports": [
       "src/index.jsx",
+      "_ContactComponent.js",
       "_StatusBarComponent.js"
     ]
   },
@@ -113,8 +121,19 @@
       "src/index.jsx",
       "_PortfolioComponent.js",
       "_ProjectDescription.js",
+      "_ContactComponent.js",
       "_ProjectsComponent.js",
+      "_StatusBarComponent.js",
       "_TaxListIcon.js"
+    ]
+  },
+  "src/views/NotFound.jsx": {
+    "file": "NotFound.js",
+    "name": "NotFound",
+    "src": "src/views/NotFound.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/index.jsx"
     ]
   },
   "src/views/Portfolio.jsx": {
@@ -160,8 +179,8 @@
     "imports": [
       "src/index.jsx",
       "_ProjectsComponent.js",
-      "_StatusBarComponent.js",
-      "_ProjectDescription.js"
+      "_ProjectDescription.js",
+      "_StatusBarComponent.js"
     ]
   }
 }

@@ -1,86 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
-import MessageCardComponent from './components/MessageCardComponent';
-import StatusBarComponent from './components/StatusBarComponent';
-import LoadingComponent from './components/LoadingComponent';
+import ContactComponent from './components/ContactComponent';
 
-import { getContent } from '../controllers/contentSlice';
+import { setShowStatusBar } from '../controllers/messageSlice';
 
-function ContactComponent() {
+function Contact() {
   const dispatch = useDispatch();
 
-  const {
-    contentLoading,
-    contentStatusCode,
-    contentErrorMessage,
-    title,
-    content,
-  } = useSelector((state) => state.content);
-  const {
-    contactLoading,
-    contactStatusCode,
-    contactErrorMessage,
-    contactSuccessMessage,
-  } = useSelector((state) => state.contact);
-
   useEffect(() => {
-    dispatch(getContent('contact'));
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (contentStatusCode && contentErrorMessage) {
-      setMessageType('error');
-      setMessage(contentErrorMessage);
-    }
-  }, [contentStatusCode, contentErrorMessage]);
-
-  useEffect(() => {
-    if (contactStatusCode && contactErrorMessage) {
-      setMessageType('error');
-      setMessage(contactErrorMessage);
-    }
-  }, [contactStatusCode, contactErrorMessage]);
-
-  useEffect(() => {
-    if (contactSuccessMessage) {
-      setMessageType('success');
-      setMessage(contactSuccessMessage);
-
-      setTimeout(() => {
-        window.location.href = `/`;
-      }, 3000);
-    }
-  }, [contactSuccessMessage]);
-
-  useEffect(() => {
-    if (content.message) {
-      setMessage(content.message);
-    }
-  }, [content]);
-
-  const [messageType, setMessageType] = useState('success');
-  const [message, setMessage] = useState('');
-
-  if (contentLoading) {
-    return <LoadingComponent />;
-  }
+    dispatch(setShowStatusBar('show'));
+  }, []);
 
   return (
     <>
       <section className="contact">
-        <main>
-          {content.title && <h2 className="title">{content.title}</h2>}
-
-          <div className="contact-card card">
-            <MessageCardComponent page={'/contact'} />
-          </div>
-
-          <StatusBarComponent messageType={messageType} message={message} />
-        </main>
+        <ContactComponent />
       </section>
     </>
   );
 }
 
-export default ContactComponent;
+export default Contact;

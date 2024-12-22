@@ -5,6 +5,8 @@ import {
   getDocs,
   doc,
   getDoc,
+  query,
+  where
 } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js';
 
 import { db } from '../services/firebase/config';
@@ -30,7 +32,7 @@ const initialState = {
   the_problem: '',
   project_team: '',
   project_types: '',
-  skills: '',
+  languages: '',
   frameworks: '',
   technologies: ''
 };
@@ -85,17 +87,27 @@ export const getProject = createAsyncThunk('portfolio/getProject', async (projec
   }
 });
 
-export const getProjectsBy = createAsyncThunk('portfolio/getProjectsBy', async (taxonomy) => {
+export const getProjectsBy = createAsyncThunk('portfolio/getProjectsBy', async (params) => {
   try {
     const contentCollection = collection(db, 'portfolio');
-    const docRef = doc(contentCollection, taxonomy);
-    const docSnap = await getDoc(docRef);
+    const projectQuery = query(
+      contentCollection,
+      where(params.taxonomy, 'array-contains', params.term)
+    );
+    const querySnapshot = await getDocs(projectQuery);
+    const docs = querySnapshot.docs;
 
-    if (!docSnap.exists()) {
-      throw new Error("Could not be found.");
+    if (docs.length === 0) {
+      throw new Error('No projects found.');
     }
 
-    return docSnap.data();
+    const projects = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+
+    return projects;
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
@@ -131,7 +143,7 @@ export const portfolioSlice = createSlice({
         state.the_problem = action.payload.the_problem;
         state.project_team = action.payload.project_team;
         state.project_types = action.payload.project_types;
-        state.skills = action.payload.skills;
+        state.languages = action.payload.languages;
         state.frameworks = action.payload.frameworks;
         state.technologies = action.payload.technologies;
       })
