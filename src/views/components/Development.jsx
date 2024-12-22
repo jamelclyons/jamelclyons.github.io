@@ -1,25 +1,26 @@
-import { useSelector } from 'react-redux';
+import CheckList from './CheckList';
+import ContentComponent from './ContentComponent';
+import ProjectURLs from './ProjectURLs';
+import Versions from './Versions';
 
-function Development() {
-  const { development, development_check_list, git_repo } = useSelector(
-    (state) => state.portfolio
-  );
+function Development(props) {
+  const { development } = props;
 
   return (
     <>
-      {development_check_list || development || git_repo ? (
-        <div
-          className="project-process-development"
-          id="project_process_development">
-          <h4 class="title">DEVELOPMENT</h4>
+      <div
+        className="project-process-development"
+        id="project_process_development">
+        <h4 class="title">development</h4>
 
-          <CheckList checklist={development_check_list} />
-          <Card text={development} />
-          <ProjectURLs project_urls={git_repo} />
-        </div>
-      ) : (
-        ''
-      )}
+        <CheckList checkList={development.checkList} />
+
+        <ContentComponent content={development.content} />
+
+        <ProjectURLs project_urls={development.repoURL} />
+
+        <Versions versions_list={development.versionsList} />
+      </div>
     </>
   );
 }

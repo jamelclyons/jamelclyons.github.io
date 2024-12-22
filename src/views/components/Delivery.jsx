@@ -1,22 +1,21 @@
-import { useSelector } from 'react-redux';
+import CheckList from './CheckList';
+import Gallery from './Gallery';
+import ContentComponent from './ContentComponent';
 
-function Delivery() {
-  const { delivery, delivery_check_list } = useSelector(
-    (state) => state.portfolio
-  );
+function Delivery(props) {
+  const { delivery } = props;
 
   return (
     <>
-      {delivery_check_list || delivery ? (
-        <div className="project-process-delivery" id="project_process_delivery">
-          <h4 class="title">DELIVERY</h4>
+      <div className="project-process-delivery" id="project_process_delivery">
+        <h4 class="title">delivery</h4>
 
-          <CheckList checklist={delivery_check_list} />
-          <Card text={delivery} />
-        </div>
-      ) : (
-        ''
-      )}
+        <CheckList checkList={delivery.checkList} />
+
+        <Gallery gallery={delivery.gallery}/>
+
+        <ContentComponent content={delivery.content} />
+      </div>
     </>
   );
 }

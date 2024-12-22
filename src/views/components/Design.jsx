@@ -1,49 +1,30 @@
-import { useSelector } from 'react-redux';
+import CheckList from './CheckList';
+import Colors from './Colors';
+import Gallery from './Gallery';
+import ContentComponent from './ContentComponent';
 
-function Design() {
-  const {
-    design,
-    design_gallery,
-    design_check_list,
-    colors,
-    logos_gallery,
-    icons_gallery,
-    animations_gallery,
-    uml_diagrams_gallery,
-  } = useSelector((state) => state.portfolio);
+function Design(props) {
+  const { design } = props;
 
   return (
     <>
-      {design_check_list ||
-      (design_gallery && design_gallery.length > 0) ||
-      colors ||
-      (logos_gallery && logos_gallery.length > 0) ||
-      (icons_gallery && icons_gallery.length > 0) ||
-      (animations_gallery && animations_gallery.length > 0) ||
-      (uml_diagrams_gallery && uml_diagrams_gallery.length > 0) ||
-      design ? (
-        <div className="project-process-design" id="project_process_design">
-          <h4 class="title">DESIGN</h4>
+      <div className="project-process-design" id="project_process_design">
+        <h4 class="title">design</h4>
 
-          <CheckList checklist={design_check_list} />
+        <CheckList checklist={design.checkList} />
 
-          <Gallery gallery={design_gallery} />
+        <Colors colors={design.colorsList} />
 
-          <Colors colors={colors} />
+        <Gallery title={'Logos'} gallery={design.gallery.logos} />
 
-          <Gallery title={'Logos'} gallery={logos_gallery} />
+        <Gallery title={'icons'} gallery={design.gallery.icons} />
 
-          <Gallery title={'icons'} gallery={icons_gallery} />
+        <Gallery title={'animations'} gallery={design.gallery.animations} />
 
-          <Gallery title={'animations'} gallery={animations_gallery} />
+        <Gallery title={'uml diagrams'} gallery={design.gallery.umlDiagrams} />
 
-          <Gallery title={'uml diagrams'} gallery={uml_diagrams_gallery} />
-
-          <Card text={design} />
-        </div>
-      ) : (
-        ''
-      )}
+        <ContentComponent content={design.content} />
+      </div>
     </>
   );
 }

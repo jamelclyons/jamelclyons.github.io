@@ -6,24 +6,22 @@ import Design from './Design';
 import Development from './Development';
 import Delivery from './Delivery';
 
-function TheProcess() {
-  const { project_status } = useSelector((state) => state.portfolio);
+function TheProcess(props) {
+  const { process } = props;
 
   return (
     <>
-      {project_status && (
+      {process && (
         <div className="project-process" id="project_process">
           <h3 class="title">THE PROCESS</h3>
 
-          <ProjectStatus project_status={project_status} />
+          <ProjectStatus project_status={process.status} />
 
-          <Versions />
+          <Design design={process.design} />
 
-          <Design />
+          <Development development={process.development} />
 
-          <Development />
-
-          <Delivery />
+          <Delivery delivery={process.delivery} />
         </div>
       )}
     </>

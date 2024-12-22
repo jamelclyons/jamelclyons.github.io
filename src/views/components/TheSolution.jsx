@@ -2,22 +2,23 @@ import FeaturesComponent from './FeaturesComponent';
 import PricingComponent from './PricingComponent';
 
 function TheSolution(props) {
-  const { features, currency, price, the_solution } = props;
+  const { solution } = props;
 
   return (
     <>
       <>
-        {the_solution && (
+        {solution && (
           <>
             <div className="project-solution" id="project_solution">
-              <FeaturesComponent features={features} />
+              <FeaturesComponent features={solution.features} />
 
-              <PricingComponent currency={currency} price={price} />
+              <PricingComponent currency={solution.currency} price={solution.price} />
+
               <h3>THE SOLUTION</h3>
 
               <div
                 className="card"
-                dangerouslySetInnerHTML={{ __html: the_solution }}></div>
+                dangerouslySetInnerHTML={{ __html: solution.content }}></div>
             </div>
           </>
         )}

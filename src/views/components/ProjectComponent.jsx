@@ -110,7 +110,7 @@ function ProjectComponent(props) {
 
         <TheProcess process={project.process} />
 
-        <TheProblem the_problem={project.problem} />
+        <TheProblem problem={project.problem} />
 
         <TaxList tax={types} title={'types'} />
 

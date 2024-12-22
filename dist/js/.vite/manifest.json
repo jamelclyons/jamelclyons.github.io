@@ -7,6 +7,13 @@
       "_StatusBarComponent.js"
     ]
   },
+  "_ContentComponent.js": {
+    "file": "ContentComponent.js",
+    "name": "ContentComponent",
+    "imports": [
+      "src/index.jsx"
+    ]
+  },
   "_PortfolioComponent.js": {
     "file": "PortfolioComponent.js",
     "name": "PortfolioComponent",
@@ -70,7 +77,8 @@
     "src": "src/views/About.jsx",
     "isDynamicEntry": true,
     "imports": [
-      "src/index.jsx"
+      "src/index.jsx",
+      "_ContentComponent.js"
     ]
   },
   "src/views/Add.jsx": {
@@ -150,6 +158,7 @@
     "imports": [
       "src/index.jsx",
       "_ProjectDescription.js",
+      "_ContentComponent.js",
       "_TaxListIcon.js",
       "_StatusBarComponent.js"
     ]

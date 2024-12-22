@@ -19,7 +19,10 @@ function ProjectsComponent(props) {
 
             <Gallery
               gallery={
-                project.solution?.gallery ?? project.process?.design?.gallery
+                Array.isArray(project.solution.gallery) &&
+                project.solution.gallery.length > 0
+                  ? project.solution.gallery
+                  : project.process?.design?.gallery
               }
             />
 

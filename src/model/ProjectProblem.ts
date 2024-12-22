@@ -1,16 +1,16 @@
 class ProjectProblem {
-  problem: Array<string> = [];
-  problemGallery: Array<string> = [];
+  content: Array<string> = [];
+  gallery: Array<string> = [];
 
   constructor(data: Record<string, any> = {}) {
-    this.problem = data?.problem || [];
-    this.problemGallery = data?.problem_gallery || [];
+    this.content = data?.content || [];
+    this.gallery = data?.gallery || [];
   }
 
   toObject(): Record<string, any> {
     return {
-      problem: this.problem,
-      problem_gallery: this.problemGallery,
+      content: this.content,
+      gallery: this.gallery,
     };
   }
 }

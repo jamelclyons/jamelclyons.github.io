@@ -1,19 +1,19 @@
 class ProjectDelivery {
-  delivery: Array<string> = [];
-  deliveryGallery: Array<string> = [];
-  deliveryCheckList: Array<string> = [];
+  content: Array<string> = [];
+  checkList: Array<string> = [];
+  gallery: Array<string> = [];
 
   constructor(data: Record<string, any> = {}) {
-    this.delivery = data?.delivery || [];
-    this.deliveryGallery = data?.delivery_gallery || [];
-    this.deliveryCheckList = data?.delivery_check_list || [];
+    this.content = data?.content || [];
+    this.checkList = data?.check_list || [];
+    this.gallery = data?.gallery || [];
   }
 
   toObject(): Record<string, any> {
     return {
-      delivery: this.delivery,
-      delivery_gallery: this.deliveryGallery,
-      delivery_check_list: this.deliveryCheckList,
+      content: this.content,
+      check_list: this.checkList,
+      gallery: this.gallery
     };
   }
 }
