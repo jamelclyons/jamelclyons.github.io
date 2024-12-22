@@ -2,10 +2,10 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import MessageCardComponent from './MessageCardComponent';
-import StatusBarComponent from './StatusBarComponent';
+import StatusBarComponent from '../StatusBarComponent';
 
-import { getContent } from '../../controllers/contentSlice';
-import { setMessage, setMessageType } from '../../controllers/messageSlice';
+import { getContent } from '../../../controllers/contentSlice';
+import { setMessage, setMessageType } from '../../../controllers/messageSlice';
 
 function ContactComponent() {
   const dispatch = useDispatch();

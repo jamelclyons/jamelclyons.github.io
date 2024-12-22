@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { sendEmail } from '../../controllers/contactSlice';
+import { sendEmail } from '../../../controllers/contactSlice';
 
 function MessageCardComponent(props) {
   const { page } = props;

@@ -1,33 +1,34 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { addTechnology } from '../../controllers/addSlice';
+import { addProjectType } from '../../../controllers/addSlice';
 import {
   setMessage,
   setMessageType,
   setShowStatusBar,
-} from '../../controllers/messageSlice';
+} from '../../../controllers/messageSlice';
 import {
   getProjectTypes,
   getLanguages,
   getFrameworks,
   getTechnologies,
-} from '../../controllers/taxonomiesSlice';
+} from '../../../controllers/taxonomiesSlice';
 
-import StatusBarComponent from '../components/StatusBarComponent';
+import StatusBarComponent from '../StatusBarComponent';
 
-function AddTechnologies() {
+import Taxonomy from '../../../model/Taxonomy';
+
+function AddProjectTypes() {
   const dispatch = useDispatch();
 
   const { addLoading, addStatusCode, addSuccessMessage, addErrorMessage } =
     useSelector((state) => state.add);
-  const { technologies } = useSelector(
-    (state) => state.taxonomies
-  );
+  const { projectTypes } = useSelector((state) => state.taxonomies);
 
   const [id, setId] = useState('');
   const [title, setTitle] = useState('');
   const [icon_url, setIconUrl] = useState('');
+  const [class_name, setClassName] = useState('');
 
   const handleChange = (e) => {
     try {
@@ -39,27 +40,33 @@ function AddTechnologies() {
         setTitle(value);
       } else if (name === 'icon_url') {
         setIconUrl(value);
-      } 
+      } else if (name === 'class_name') {
+        setClassName(value);
+      }
     } catch (error) {
       dispatch(setMessage(error.message));
       dispatch(setMessageType('error'));
     }
   };
 
-  const technology = {
-    id: id,
-    title: title,
-    icon_url: icon_url
-  };
+  const projectType = new Taxonomy(
+    id,
+    'project-type',
+    title,
+    icon_url,
+    class_name
+  );
 
-  const handleAddTechnology = async (e) => {
+  const handleAddProjectType = async (e) => {
     e.preventDefault();
 
     try {
-      dispatch(addTechnology(technology));
+      if (projectType.isValid()) {
+        dispatch(addProjectType(projectType));
 
-      dispatch(setMessageType('info'));
-      dispatch(setMessage('Standbye while an attempt to log you is made.'));
+        dispatch(setMessageType('info'));
+        dispatch(setMessage('Standbye while an attempt to log you is made.'));
+      }
     } catch (error) {
       dispatch(setMessageType('error'));
       dispatch(setMessage(error.message));
@@ -92,7 +99,7 @@ function AddTechnologies() {
   return (
     <>
       <main>
-        <h2>Add Technology</h2>
+        <h2>Add Project Types</h2>
 
         <form action="">
           <input
@@ -119,7 +126,15 @@ function AddTechnologies() {
             onChange={handleChange}
           />
 
-          <button onClick={handleAddTechnology}>
+          <input
+            type="text"
+            name="class_name"
+            placeholder="class_name"
+            value={class_name}
+            onChange={handleChange}
+          />
+
+          <button onClick={handleAddProjectType}>
             <h3>add</h3>
           </button>
         </form>
@@ -130,4 +145,4 @@ function AddTechnologies() {
   );
 }
 
-export default AddTechnologies;
+export default AddProjectTypes;

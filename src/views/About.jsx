@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import MemberInfoComponent from './components/MemberInfoComponent';
+import MemberInfoComponent from './components/member/MemberInfoComponent';
 import ContentComponent from './components/ContentComponent';
 import { getContent } from '../controllers/contentSlice';
 

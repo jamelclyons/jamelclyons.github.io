@@ -1,7 +1,4 @@
-import { useSelector } from 'react-redux';
-
-import ProjectStatus from './ProjectStatus';
-import Versions from './Versions';
+import ProjectStatus from '../ProjectStatus';
 import Design from './Design';
 import Development from './Development';
 import Delivery from './Delivery';
@@ -13,7 +10,7 @@ function TheProcess(props) {
     <>
       {process && (
         <div className="project-process" id="project_process">
-          <h3 class="title">THE PROCESS</h3>
+          <h3 class="title">the process</h3>
 
           <ProjectStatus project_status={process.status} />
 

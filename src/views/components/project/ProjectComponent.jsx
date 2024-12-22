@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import Gallery from './Gallery';
-import ProjectDescription from './ProjectDescription';
-import Details from './project/Details';
+import Gallery from '../Gallery';
+import ProjectDescription from '../portfolio/ProjectDescription';
+import Details from './Details';
 import TheSolution from './TheSolution';
 import ProjectURLs from './ProjectURLs';
 import TheProblem from './TheProblem';
-import TaxList from './TaxList';
-import TaxListIcon from './TaxListIcon';
+import TaxList from '../TaxList';
+import TaxListIcon from '../TaxListIcon';
 import ProjectTeam from './ProjectTeam';
 import TheProcess from './TheProcess';
 
@@ -17,7 +17,7 @@ import {
   getLanguage,
   getFramework,
   getTechnology,
-} from '../../controllers/taxonomiesSlice';
+} from '../../../controllers/taxonomiesSlice';
 
 function ProjectComponent(props) {
   const dispatch = useDispatch();

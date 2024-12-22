@@ -1,9 +1,9 @@
 import React from 'react';
 
-import AddFrameworks from './components/AddFrameworks';
-import AddLanguages from './components/AddLanguages';
-import AddProjectTypes from './components/AddProjectTypes';
-import AddTechnologies from './components/AddTechnologies';
+import AddFrameworks from './components/add/AddFrameworks';
+import AddLanguages from './components/add/AddLanguages';
+import AddProjectTypes from './components/add/AddProjectTypes';
+import AddTechnologies from './components/add/AddTechnologies';
 
 function AddSkill() {
   return (

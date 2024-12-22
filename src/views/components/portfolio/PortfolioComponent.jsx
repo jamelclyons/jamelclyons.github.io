@@ -1,8 +1,8 @@
 import React from 'react';
 
 import ProjectsComponent from './ProjectsComponent';
-import TaxList from './TaxList';
-import TaxListIcon from './TaxListIcon';
+import TaxList from '../TaxList';
+import TaxListIcon from '../TaxListIcon';
 
 function PortfolioComponent(props) {
   const { portfolio, projectTypes, languages, frameworks, technologies } =

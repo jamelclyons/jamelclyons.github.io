@@ -10,7 +10,7 @@ import {
 } from '../controllers/taxonomiesSlice';
 
 import LoadingComponent from './components/LoadingComponent';
-import PortfolioComponent from './components/PortfolioComponent';
+import PortfolioComponent from './components/portfolio/PortfolioComponent';
 import StatusBarComponent from './components/StatusBarComponent';
 
 function Portfolio() {

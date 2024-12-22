@@ -1,20 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { addLanguage } from '../../controllers/addSlice';
+import { addLanguage } from '../../../controllers/addSlice';
 import {
   setMessage,
   setMessageType,
   setShowStatusBar,
-} from '../../controllers/messageSlice';
+} from '../../../controllers/messageSlice';
 import {
   getProjectTypes,
   getLanguages,
   getFrameworks,
   getTechnologies,
-} from '../../controllers/taxonomiesSlice';
+} from '../../../controllers/taxonomiesSlice';
 
-import StatusBarComponent from '../components/StatusBarComponent';
+import StatusBarComponent from '../StatusBarComponent';
 
 function AddLanguages() {
   const dispatch = useDispatch();

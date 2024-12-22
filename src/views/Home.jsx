@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import PortfolioComponent from './components/PortfolioComponent';
-import MemberIntroductionComponent from './components/MemberComponent';
-import ContactComponent from './components/ContactComponent';
+import PortfolioComponent from './components/portfolio/PortfolioComponent';
+import MemberIntroductionComponent from './components/member/MemberComponent';
+import ContactComponent from './components/contact/ContactComponent';
 
 import { getPortfolio } from '../controllers/portfolioSlice';
 import {

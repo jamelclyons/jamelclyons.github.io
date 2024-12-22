@@ -8,7 +8,7 @@ import {
   setShowStatusBar,
 } from '../controllers/messageSlice';
 
-import ProjectsComponent from './components/ProjectsComponent';
+import ProjectsComponent from './components/portfolio/ProjectsComponent';
 
 function Search() {
   const { portfolioLoading, projects, portfolioErrorMessage } = useSelector(

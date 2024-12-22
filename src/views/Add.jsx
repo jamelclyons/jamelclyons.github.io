@@ -1,6 +1,6 @@
 import React from 'react';
 
-import AddProject from './components/AddProject';
+import AddProject from './components/add/AddProject';
 
 function Add() {
   return (

@@ -1,22 +1,22 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { addProject } from '../../controllers/addSlice';
+import { addProject } from '../../../controllers/addSlice.js';
 import {
   setMessage,
   setMessageType,
   setShowStatusBar,
-} from '../../controllers/messageSlice';
+} from '../../../controllers/messageSlice.js';
 import {
   getProjectTypes,
   getLanguages,
   getFrameworks,
   getTechnologies,
-} from '../../controllers/taxonomiesSlice';
+} from '../../../controllers/taxonomiesSlice.js';
 
-import StatusBarComponent from '../components/StatusBarComponent';
+import StatusBarComponent from '../StatusBarComponent.jsx';
 
-import Project from '../../model/Project.ts';
+import Project from '../../../model/Project.ts';
 
 function AddProject() {
   const dispatch = useDispatch();

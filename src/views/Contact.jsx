@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import ContactComponent from './components/ContactComponent';
+import ContactComponent from './components/contact/ContactComponent';
 
 import { setShowStatusBar } from '../controllers/messageSlice';
 

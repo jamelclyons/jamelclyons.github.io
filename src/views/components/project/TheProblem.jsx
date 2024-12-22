@@ -1,5 +1,5 @@
-import Gallery from './Gallery';
-import ContentComponent from './ContentComponent';
+import Gallery from '../Gallery';
+import ContentComponent from '../ContentComponent';
 
 function TheProblem(props) {
   const { problem } = props;

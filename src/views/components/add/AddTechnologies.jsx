@@ -1,27 +1,27 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { addFramework } from '../../controllers/addSlice';
+import { addTechnology } from '../../../controllers/addSlice';
 import {
   setMessage,
   setMessageType,
   setShowStatusBar,
-} from '../../controllers/messageSlice';
+} from '../../../controllers/messageSlice';
 import {
   getProjectTypes,
   getLanguages,
   getFrameworks,
   getTechnologies,
-} from '../../controllers/taxonomiesSlice';
+} from '../../../controllers/taxonomiesSlice';
 
-import StatusBarComponent from '../components/StatusBarComponent';
+import StatusBarComponent from '../StatusBarComponent';
 
-function AddFrameworks() {
+function AddTechnologies() {
   const dispatch = useDispatch();
 
   const { addLoading, addStatusCode, addSuccessMessage, addErrorMessage } =
     useSelector((state) => state.add);
-  const { frameworks } = useSelector(
+  const { technologies } = useSelector(
     (state) => state.taxonomies
   );
 
@@ -46,17 +46,17 @@ function AddFrameworks() {
     }
   };
 
-  const framework = {
+  const technology = {
     id: id,
     title: title,
     icon_url: icon_url
   };
 
-  const handleAddFramework = async (e) => {
+  const handleAddTechnology = async (e) => {
     e.preventDefault();
 
     try {
-      dispatch(addFramework(framework));
+      dispatch(addTechnology(technology));
 
       dispatch(setMessageType('info'));
       dispatch(setMessage('Standbye while an attempt to log you is made.'));
@@ -92,7 +92,7 @@ function AddFrameworks() {
   return (
     <>
       <main>
-        <h2>Add Framework</h2>
+        <h2>Add Technology</h2>
 
         <form action="">
           <input
@@ -119,7 +119,7 @@ function AddFrameworks() {
             onChange={handleChange}
           />
 
-          <button onClick={handleAddFramework}>
+          <button onClick={handleAddTechnology}>
             <h3>add</h3>
           </button>
         </form>
@@ -130,4 +130,4 @@ function AddFrameworks() {
   );
 }
 
-export default AddFrameworks;
+export default AddTechnologies;

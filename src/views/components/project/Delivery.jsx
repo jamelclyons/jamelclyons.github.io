@@ -1,6 +1,6 @@
 import CheckList from './CheckList';
-import Gallery from './Gallery';
-import ContentComponent from './ContentComponent';
+import Gallery from '../Gallery';
+import ContentComponent from '../ContentComponent';
 
 function Delivery(props) {
   const { delivery } = props;

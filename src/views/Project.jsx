@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import LoadingComponent from './components/LoadingComponent';
-import ProjectComponent from './components/ProjectComponent';
+import ProjectComponent from './components/project/ProjectComponent';
 import StatusBarComponent from './components/StatusBarComponent';
 
 import { getProject } from '../controllers/portfolioSlice';

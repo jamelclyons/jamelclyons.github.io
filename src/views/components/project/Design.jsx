@@ -1,7 +1,7 @@
 import CheckList from './CheckList';
 import Colors from './Colors';
-import Gallery from './Gallery';
-import ContentComponent from './ContentComponent';
+import Gallery from '../Gallery';
+import ContentComponent from '../ContentComponent';
 
 function Design(props) {
   const { design } = props;

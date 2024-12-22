@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import IconComponent from './IconComponent';
+import IconComponent from '../IconComponent';
 
 function MemberKnowledgeComponent(props) {
   const { languages, frameworks, technologies } = props;

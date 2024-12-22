@@ -1,4 +1,4 @@
-import Member from './Member';
+import Member from '../member/Member';
 
 function ProjectTeam(props) {
   const { project_team } = props;

@@ -1,5 +1,5 @@
 import CheckList from './CheckList';
-import ContentComponent from './ContentComponent';
+import ContentComponent from '../ContentComponent';
 import ProjectURLs from './ProjectURLs';
 import Versions from './Versions';
 
