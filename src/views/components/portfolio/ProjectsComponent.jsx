@@ -12,32 +12,28 @@ function ProjectsComponent(props) {
     <>
       {Array.isArray(projects) ? (
         projects.map((project, index) => (
-          <div key={index} className="project-card card">
-            <a href={`#/portfolio/${project.id}`}>
+          <a href={`#/portfolio/${project.id}`}>
+            <div key={index} className="project-card card">
               <h2 className="title">{project.title}</h2>
-            </a>
 
-            {Array.isArray(project.solution.gallery) &&
-            project.solution.gallery.length > 0 ? (
-              <div className="gallery">
-                <span className="gallery-photo">
-                  <img
-                    className="photo"
-                    src={project.solution.gallery[0]}
-                    alt=""
-                  />
-                </span>
-              </div>
-            ) : (
-              ''
-            )}
-            
-            <ProjectDescription description={project.description} />
+              {Array.isArray(project.solution.gallery) &&
+              project.solution.gallery.length > 0 ? (
+                <img
+                  className="photo"
+                  src={project.solution.gallery[0]}
+                  alt=""
+                />
+              ) : (
+                ''
+              )}
 
-            {project.process && (
-              <ProjectStatus project_status={project.process?.status} />
-            )}
-          </div>
+              <ProjectDescription description={project.description} />
+
+              {project.process && (
+                <ProjectStatus project_status={project.process?.status} />
+              )}
+            </div>
+          </a>
         ))
       ) : (
         <StatusBarComponent />

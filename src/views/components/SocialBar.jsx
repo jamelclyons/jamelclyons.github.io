@@ -1,34 +1,62 @@
 import React from 'react';
+import ImageComponent from './ImageComponent';
 
 function SocialBar(props) {
   const { socialAccounts, email } = props;
+console.log(email);
+  const mailURL = `mailto:${email}`;
 
-  var github = socialAccounts?.github;
-  var twitter = socialAccounts?.x;
-  var linkedin = socialAccounts?.linkedIn;
-  var instagram = socialAccounts?.instagram;
-  var mailto = `mailto:${email}`;
-  
+  if (Array.isArray(socialAccounts) && socialAccounts.length > 0) {
+    var github = {};
+    var x = {};
+    var mail = {};
+    var linkedin = {};
+    var instagram = {};
+
+    socialAccounts.forEach((account) => {
+      if (account.id == 'github') {
+        github = account;
+      }
+
+      if (account.id == 'x') {
+        x = account;
+      }
+
+      if (account.id == 'email') {
+        mail = account;
+        mail.url = mailURL;
+      }
+
+      if (account.id == 'linkedin') {
+        linkedin = account;
+      }
+
+      if (account.id == 'instagram') {
+        instagram = account;
+      }
+    });
+  }
+
   return (
     <div class="social-bar">
-      <a href={github} target="_blank">
-        <i class="fa fa-github fa-fw"></i>
+      <a href={github?.url} target="_blank">
+        <ImageComponent image={github} />
       </a>
 
-      <a href={linkedin} target="_blank">
-        <i class="fa fa-linkedin fa-fw"></i>
+      <a href={linkedin?.url} target="_blank">
+        <ImageComponent image={linkedin} />
       </a>
 
-      <a href={mailto} target="_blank">
-        <i class="fa fa-envelope fa-fw"></i>
+      <a href={mail?.url} rel="noopener noreferrer">
+        <ImageComponent image={mail} />
       </a>
 
-      <a href={twitter} target="_blank">
-        <i class="fa fa-twitter fa-fw"></i>
+      <a href={x?.url} target="_blank">
+        <ImageComponent image={x} />
       </a>
 
-      <a href={instagram} target="_blank">
-        <i class="fa fa-instagram fa-fw"></i>
+      <a href={instagram?.url} target="_blank">
+        <ImageComponent image={instagram} />
       </a>
     </div>
   );

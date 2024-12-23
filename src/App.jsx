@@ -71,7 +71,7 @@ function App() {
         </Suspense>
       </Router>
       <FooterComponent
-        socialAccounts={user.social_accounts}
+        socialAccounts={user.socialAccounts}
         email={user.email}
       />
     </>

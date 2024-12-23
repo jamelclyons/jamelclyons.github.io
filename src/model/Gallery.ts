@@ -1,8 +1,10 @@
+import Image from "./Image";
+
 class Gallery {
-  logos: Array<string>;
-  icons: Array<string>;
-  animations: Array<string>;
-  umlDiagrams: Array<string>;
+  logos: Array<Image>;
+  icons: Array<Image>;
+  animations: Array<Image>;
+  umlDiagrams: Array<Image>;
 
   constructor(data: Record<string, any> = {}) {
     this.logos = data?.logos || [];

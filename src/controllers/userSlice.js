@@ -9,6 +9,9 @@ import {
 
 import { db } from '../services/firebase/config';
 
+import User from '../model/User';
+import SocialAccount from '../model/SocialAccount';
+
 const initialState = {
     userLoading: false,
     userStatusCode: '',
@@ -37,13 +40,27 @@ export const getUser = createAsyncThunk('user/getUser', async () => {
         const userCollection = collection(db, 'user');
         const querySnapshot = await getDocs(userCollection);
 
-        let user = [];
+        let users = [];
 
         querySnapshot.forEach((doc) => {
-            user.push(doc.data());
+            let data = doc.data();
+            let user = new User(data);
+            user.id = doc.id;
+
+            let socialAccounts = [];
+
+            if (Array.isArray(data.social_accounts) && data.social_accounts.length > 0) {
+                data.social_accounts.forEach((account) => {
+                    socialAccounts.push(new SocialAccount(account));
+                });
+            }
+
+            user.socialAccounts = socialAccounts;
+
+            users.push(user);
         });
 
-        return user[0];
+        return users[0];
     } catch (error) {
         console.error(error);
         throw new Error(error.message);

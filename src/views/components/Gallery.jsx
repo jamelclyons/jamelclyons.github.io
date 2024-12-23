@@ -61,12 +61,13 @@ function Gallery(props) {
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
               ref={galleryRowRef}>
-              {Array.isArray(props.gallery) && (
+              {Array.isArray(gallery) && (
                 <span className="gallery-photo">
                   <img
                     className="photo"
-                    src={props.gallery[currentPhotoIndex]}
-                    alt=""
+                    src={gallery[currentPhotoIndex].url}
+                    alt={gallery[currentPhotoIndex].title}
+                    title={gallery[currentPhotoIndex].title}
                   />
                 </span>
               )}

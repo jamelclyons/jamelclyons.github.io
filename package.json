@@ -11,7 +11,7 @@
     "sync": "browser-sync start --config browsersync.config.js",
     "vite": "vite -c vite.config.js",
     "build": "vite build",
-    "serve": "vite preview",
+    "preview": "vite preview",
     "update-dev": "git push github-portfolio development",
     "update-prod": "git push github-portfolio",
     "gulp": "gulp"

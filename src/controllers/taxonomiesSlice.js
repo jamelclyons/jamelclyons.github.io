@@ -112,7 +112,10 @@ export const getProjectType = createAsyncThunk('taxonomies/getProjectType', asyn
       throw new Error("Could not be found.");
     }
 
-    return docSnap.data();
+    let data = docSnap.data();
+    const taxonomy = new Taxonomy(docSnap.id, 'projectTypes', data.title, data.icon_url, data.class_name).toObject();
+
+    return taxonomy;
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
@@ -129,7 +132,10 @@ export const getLanguage = createAsyncThunk('taxonomies/getLanguage', async (lan
       throw new Error("Could not be found.");
     }
 
-    return docSnap.data();
+    let data = docSnap.data();
+    const taxonomy = new Taxonomy(docSnap.id, 'languages', data.title, data.icon_url, data.class_name).toObject();
+
+    return taxonomy;
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
@@ -147,7 +153,10 @@ export const getFramework = createAsyncThunk('taxonomies/getFramework', async (f
       throw new Error("Could not be found.");
     }
 
-    return docSnap.data();
+    let data = docSnap.data();
+    const taxonomy = new Taxonomy(docSnap.id, 'frameworks', data.title, data.icon_url, data.class_name).toObject();
+
+    return taxonomy;
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
@@ -164,7 +173,10 @@ export const getTechnology = createAsyncThunk('taxonomies/getTechnology', async 
       throw new Error("Could not be found.");
     }
 
-    return docSnap.data();
+    let data = docSnap.data();
+    const taxonomy = new Taxonomy(docSnap.id, 'technologies', data.title, data.icon_url, data.class_name).toObject();
+
+    return taxonomy;
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
