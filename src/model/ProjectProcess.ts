@@ -8,11 +8,16 @@ class ProjectProcess {
   development: ProjectDevelopment;
   delivery: ProjectDelivery;
 
-  constructor(data: Record<string, any> = {}) {
-    this.status = data?.status;
-    this.design = data?.design || [];
-    this.development = data?.development || [];
-    this.delivery = data?.delivery || [];
+  constructor(
+    status: string,
+    design: ProjectDesign,
+    development: ProjectDevelopment,
+    delivery: ProjectDelivery
+  ) {
+    this.status = status;
+    this.design = design;
+    this.development = development;
+    this.delivery = delivery;
   }
 
   toObject(): Record<string, any> {

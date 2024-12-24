@@ -8,6 +8,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js';
 
 import { db } from '../services/firebase/config';
+
 import Taxonomy from '../model/Taxonomy';
 
 const initialState = {
@@ -28,13 +29,13 @@ const initialState = {
 
 export const getProjectTypes = createAsyncThunk('taxonomies/getProjectTypes', async () => {
   try {
-    const querySnapshot = await getDocs(collection(db, "projectTypes"));
+    const querySnapshot = await getDocs(collection(db, "project_types"));
 
     let projectTypes = [];
 
     querySnapshot.forEach((doc) => {
       let data = doc.data();
-      let taxonomy = new Taxonomy(doc.id, 'project-types', data.title, data.icon_url, data.class_name).toObject();
+      let taxonomy = new Taxonomy(doc.id, 'project_types', data.title, data.icon_url, data.class_name).toObject();
       projectTypes.push(taxonomy);
     });
 
@@ -104,7 +105,7 @@ export const getTechnologies = createAsyncThunk('taxonomies/getTechnologies', as
 
 export const getProjectType = createAsyncThunk('taxonomies/getProjectType', async (projectType) => {
   try {
-    const projectTypeCollection = collection(db, 'projectTypes');
+    const projectTypeCollection = collection(db, 'project_types');
     const docRef = doc(projectTypeCollection, projectType);
     const docSnap = await getDoc(docRef);
 
@@ -112,8 +113,8 @@ export const getProjectType = createAsyncThunk('taxonomies/getProjectType', asyn
       throw new Error("Could not be found.");
     }
 
-    let data = docSnap.data();
-    const taxonomy = new Taxonomy(docSnap.id, 'projectTypes', data.title, data.icon_url, data.class_name).toObject();
+    let data = docSnap.data(); console.log(data.path);
+    const taxonomy = new Taxonomy(docSnap.id, 'project_types', data.title, data.icon_url, data.class_name).toObject();
 
     return taxonomy;
   } catch (error) {

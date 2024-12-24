@@ -11,17 +11,17 @@ function Design(props) {
       <div className="project-process-design" id="project_process_design">
         <h4 class="title">design</h4>
 
-        <CheckList checklist={design.checkList} />
+        <CheckList checklist={design?.checkList} />
 
-        <Colors colors={design.colorsList} />
+        <Colors colors={design?.colorsList} />
 
-        <Gallery title={'Logos'} gallery={design.gallery.logos} />
+        <Gallery title={'Logos'} gallery={design?.gallery?.logos} />
 
-        <Gallery title={'icons'} gallery={design.gallery.icons} />
+        <Gallery title={'icons'} gallery={design?.gallery?.icons} />
 
-        <Gallery title={'animations'} gallery={design.gallery.animations} />
+        <Gallery title={'animations'} gallery={design?.gallery?.animations} />
 
-        <Gallery title={'uml diagrams'} gallery={design.gallery.umlDiagrams} />
+        <Gallery title={'uml diagrams'} gallery={design?.gallery?.umlDiagrams} />
 
         <ContentComponent content={design.content} />
       </div>

@@ -1,5 +1,3 @@
-import React, { useEffect, useRef } from 'react';
-
 import IconComponent from './IconComponent';
 
 function ProjectSkills(props) {

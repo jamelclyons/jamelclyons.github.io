@@ -1,5 +1,3 @@
-import React from 'react';
-
 import ProjectsComponent from './ProjectsComponent';
 import TaxList from '../TaxList';
 import TaxListIcon from '../TaxListIcon';

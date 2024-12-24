@@ -2,7 +2,7 @@ function TaxList(props) {
   const { tax, title } = props;
 
   const handleClick = (taxonomy) => {
-    window.location.href = `/#/projects/${taxonomy.type}/${taxonomy.id}`;
+    window.location.href = `/#/projects/${taxonomy.path}/${taxonomy.id}`;
   };
 
   return (

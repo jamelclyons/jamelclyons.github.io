@@ -35,6 +35,7 @@ function ProjectComponent(props) {
         const projectTypeData = await Promise.all(
           project.types.map(async (tax) => {
             const projectType = await dispatch(getProjectType(tax));
+            console.log(projectType.payload);
             return projectType.payload;
           })
         );

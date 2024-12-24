@@ -1,13 +1,10 @@
-import React from 'react';
-
-import Gallery from '../Gallery';
 import ProjectStatus from '../ProjectStatus';
 import ProjectDescription from './ProjectDescription';
 import StatusBarComponent from '../StatusBarComponent';
 
 function ProjectsComponent(props) {
   const { projects } = props;
-  console.log(projects);
+
   return (
     <>
       {Array.isArray(projects) ? (

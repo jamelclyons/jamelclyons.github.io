@@ -27,6 +27,7 @@ function AddProjectTypes() {
 
   const [id, setId] = useState('');
   const [title, setTitle] = useState('');
+  const [path, setPath] = useState('');
   const [icon_url, setIconUrl] = useState('');
   const [class_name, setClassName] = useState('');
 
@@ -38,6 +39,8 @@ function AddProjectTypes() {
         setId(value);
       } else if (name === 'title') {
         setTitle(value);
+      } else if (name === 'path') {
+        setPath(value);
       } else if (name === 'icon_url') {
         setIconUrl(value);
       } else if (name === 'class_name') {
@@ -51,7 +54,7 @@ function AddProjectTypes() {
 
   const projectType = new Taxonomy(
     id,
-    'project-type',
+    'project-types',
     title,
     icon_url,
     class_name

@@ -17,19 +17,32 @@ class Project {
   technologies: Array<string> = [];
   details: ProjectDetails;
 
-  constructor(data: Record<string, any> = {}) {
-    this.id = data?.id || '';
-    this.title = data?.title || '';
-    this.description = data?.description || '';
-    this.urlsList = data?.urls_list || [];
-    this.solution = new ProjectSolution(data?.solution);
-    this.process = new ProjectProcess(data?.process);
-    this.problem = new ProjectProblem(data?.problem);
-    this.types = data?.types || '';
-    this.languages = data?.languages || [];
-    this.frameworks = data?.frameworks || [];
-    this.technologies = data?.technologies || [];
-    this.details = new ProjectDetails(data?.details);
+  constructor(
+    id: string,
+    title: string,
+    description: string,
+    urlsList: Array<string>,
+    solution: ProjectSolution,
+    process: ProjectProcess,
+    problem: ProjectProblem,
+    types: Array<string>,
+    languages: Array<string>,
+    frameworks: Array<string>,
+    technologies: Array<string>,
+    details: ProjectDetails
+  ) {
+    this.id = id;
+    this.title = title;
+    this.description = description;
+    this.urlsList = urlsList;
+    this.solution = solution;
+    this.process = process;
+    this.problem = problem;
+    this.types = types;
+    this.languages = languages;
+    this.frameworks = frameworks;
+    this.technologies = technologies;
+    this.details = details;
   }
 
   toObject(): Record<string, any> {

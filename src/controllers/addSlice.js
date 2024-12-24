@@ -50,7 +50,7 @@ export const addProject = createAsyncThunk('add/addProject', async (project) => 
 
 export const addProjectType = createAsyncThunk('add/addProjectType', async (taxonomy) => {
   try {
-    const projectTypeCollection = collection(db, "projectTypes");
+    const projectTypeCollection = collection(db, "project_types");
     const projectType = taxonomy.toObject();
 
     await setDoc(doc(projectTypeCollection, projectType.id), projectType);
