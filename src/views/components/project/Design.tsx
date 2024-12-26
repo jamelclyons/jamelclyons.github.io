@@ -1,15 +1,21 @@
+import React from 'react';
+
 import CheckList from './CheckList';
 import Colors from './Colors';
 import Gallery from '../Gallery';
 import ContentComponent from '../ContentComponent';
+import ProjectDesign from '../../../model/ProjectDesign';
 
-function Design(props) {
-  const { design } = props;
+interface DesignProps {
+  design: ProjectDesign;
+}
+
+const Design: React.FC<DesignProps> = ({ design }) => {
 
   return (
     <>
       <div className="project-process-design" id="project_process_design">
-        <h4 class="title">design</h4>
+        <h4 className="title">design</h4>
 
         <CheckList checklist={design?.checkList} />
 
@@ -23,7 +29,7 @@ function Design(props) {
 
         <Gallery title={'uml diagrams'} gallery={design?.gallery?.umlDiagrams} />
 
-        <ContentComponent content={design.content} />
+        <ContentComponent content={design?.content} />
       </div>
     </>
   );

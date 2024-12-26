@@ -1,8 +1,15 @@
+import React from 'react';
+
+import ProjectSolution from '../../../model/ProjectSolution';
+
 import FeaturesComponent from './FeaturesComponent';
 import PricingComponent from './PricingComponent';
 
-function TheSolution(props) {
-  const { solution } = props;
+interface SolutionProps {
+  solution: ProjectSolution
+}
+
+const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
 
   return (
     <>

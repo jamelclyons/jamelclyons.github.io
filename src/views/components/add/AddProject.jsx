@@ -1,29 +1,29 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { addProject } from '../../../controllers/addSlice.js';
+import { addProject } from '../../../controllers/addSlice';
 import {
   setMessage,
   setMessageType,
   setShowStatusBar,
-} from '../../../controllers/messageSlice.js';
+} from '../../../controllers/messageSlice';
 import {
   getProjectTypes,
   getLanguages,
   getFrameworks,
   getTechnologies,
-} from '../../../controllers/taxonomiesSlice.js';
+} from '../../../controllers/taxonomiesSlice';
 
-import StatusBarComponent from '../StatusBarComponent.jsx';
+import StatusBarComponent from '../StatusBarComponent';
 
-import Project from '../../../model/Project.ts';
-import ProjectSolution from '../../../model/ProjectSolution.ts';
-import ProjectDesign from '../../../model/ProjectDesign.ts';
-import ProjectDevelopment from '../../../model/ProjectDevelopment.ts';
-import ProjectDelivery from '../../../model/ProjectDelivery.ts';
-import ProjectProcess from '../../../model/ProjectProcess.ts';
-import ProjectProblem from '../../../model/ProjectProblem.ts';
-import ProjectDetails from '../../../model/ProjectDetails.ts';
+import Project from '../../../model/Project';
+import ProjectSolution from '../../../model/ProjectSolution';
+import ProjectDesign from '../../../model/ProjectDesign';
+import ProjectDevelopment from '../../../model/ProjectDevelopment';
+import ProjectDelivery from '../../../model/ProjectDelivery';
+import ProjectProcess from '../../../model/ProjectProcess';
+import ProjectProblem from '../../../model/ProjectProblem';
+import ProjectDetails from '../../../model/ProjectDetails';
 
 function AddProject() {
   const dispatch = useDispatch();
@@ -311,14 +311,6 @@ function AddProject() {
 
           {/* <input
             type="text"
-            name="design"
-            placeholder="Design"
-            value={design}
-            onChange={handleChange}
-          /> */}
-
-          {/* <input
-            type="text"
             name="design_check_list"
             placeholder="Design Check List"
             value={designCheckList}
@@ -338,14 +330,6 @@ function AddProject() {
             name="colors_list"
             placeholder="Colors List"
             value={colors_list}
-            onChange={handleChange}
-          /> */}
-
-          {/* <input
-            type="text"
-            name="development"
-            placeholder="Development"
-            value={development}
             onChange={handleChange}
           /> */}
 
@@ -391,13 +375,10 @@ function AddProject() {
                   <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
                 </div>
               ))}
-
-            <h4>Selected IDs:</h4>
-            <pre>{JSON.stringify(selectedProjectTypes, null, 2)}</pre>
           </div>
 
           <div className="project-selection">
-          <label for="options">Choose Languages:</label>
+            <label for="options">Choose Languages:</label>
 
             {Array.isArray(languages) &&
               languages.map((item) => (
@@ -412,13 +393,10 @@ function AddProject() {
                   <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
                 </div>
               ))}
-
-            <h4>Selected IDs:</h4>
-            <pre>{JSON.stringify(selectedLanguages, null, 2)}</pre>
           </div>
 
           <div className="project-selection">
-          <label for="options">Choose Frameworks:</label>
+            <label for="options">Choose Frameworks:</label>
 
             {Array.isArray(frameworks) &&
               projectTypes.map((item) => (
@@ -433,13 +411,10 @@ function AddProject() {
                   <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
                 </div>
               ))}
-
-            <h4>Selected IDs:</h4>
-            <pre>{JSON.stringify(selectedFrameworks, null, 2)}</pre>
           </div>
 
           <div className="project-selection">
-          <label for="options">Choose Technologies:</label>
+            <label for="options">Choose Technologies:</label>
 
             {Array.isArray(technologies) &&
               technologies.map((item) => (
@@ -454,9 +429,6 @@ function AddProject() {
                   <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
                 </div>
               ))}
-
-            <h4>Selected IDs:</h4>
-            <pre>{JSON.stringify(selectedTechnologies, null, 2)}</pre>
           </div>
 
           <h2 className="title">delivery</h2>

@@ -13,18 +13,24 @@ import {
   getTechnologies,
 } from '../controllers/taxonomiesSlice';
 
-function Home(props) {
-  const dispatch = useDispatch();
+import type { AppDispatch, RootState } from '../model/store';
 
-  const { user } = props;
+import User from '../model/User';
 
-  const { portfolio } = useSelector((state) => state.portfolio);
+interface HomeProps {
+  user: User;
+}
+
+const Home: React.FC<HomeProps> = ({ user }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { portfolio } = useSelector((state: RootState) => state.portfolio);
   const { projectTypes, languages, frameworks, technologies } = useSelector(
-    (state) => state.taxonomies
+    (state: RootState) => state.taxonomies
   );
 
   useEffect(() => {
-    document.title = 'Jamel C. Lyons';
+    document.title = user.name;
   }, []);
 
   useEffect(() => {

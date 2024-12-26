@@ -26,7 +26,7 @@ export default defineConfig({
   },
   build: {
     watch: {
-      include: ['src/**/*.jsx', 'src/**/*.js', 'src/**/*.ts'],
+      include: ['src/**/*.jsx', 'src/**/*.js', 'src/**/*.tsx', 'src/**/*.ts'],
     },
     chunkSizeWarningLimit: 1000,
     manifest: true,

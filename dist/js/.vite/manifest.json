@@ -3,7 +3,7 @@
     "file": "ContactComponent.js",
     "name": "ContactComponent",
     "imports": [
-      "src/index.jsx",
+      "src/index.tsx",
       "_StatusBarComponent.js"
     ]
   },
@@ -11,14 +11,21 @@
     "file": "ContentComponent.js",
     "name": "ContentComponent",
     "imports": [
-      "src/index.jsx"
+      "src/index.tsx"
+    ]
+  },
+  "_MemberInfoComponent.js": {
+    "file": "MemberInfoComponent.js",
+    "name": "MemberInfoComponent",
+    "imports": [
+      "src/index.tsx"
     ]
   },
   "_PortfolioComponent.js": {
     "file": "PortfolioComponent.js",
     "name": "PortfolioComponent",
     "imports": [
-      "src/index.jsx",
+      "src/index.tsx",
       "_ProjectsComponent.js",
       "_TaxListIcon.js"
     ]
@@ -27,14 +34,14 @@
     "file": "ProjectDescription.js",
     "name": "ProjectDescription",
     "imports": [
-      "src/index.jsx"
+      "src/index.tsx"
     ]
   },
   "_ProjectsComponent.js": {
     "file": "ProjectsComponent.js",
     "name": "ProjectsComponent",
     "imports": [
-      "src/index.jsx",
+      "src/index.tsx",
       "_ProjectDescription.js",
       "_StatusBarComponent.js"
     ]
@@ -43,97 +50,99 @@
     "file": "StatusBarComponent.js",
     "name": "StatusBarComponent",
     "imports": [
-      "src/index.jsx"
+      "src/index.tsx"
     ]
   },
   "_TaxListIcon.js": {
     "file": "TaxListIcon.js",
     "name": "TaxListIcon",
     "imports": [
-      "src/index.jsx"
+      "src/index.tsx"
     ]
   },
-  "src/index.jsx": {
+  "src/index.tsx": {
     "file": "index.js",
     "name": "index",
-    "src": "src/index.jsx",
+    "src": "src/index.tsx",
     "isEntry": true,
     "dynamicImports": [
-      "src/views/Home.jsx",
-      "src/views/About.jsx",
+      "src/views/Home.tsx",
+      "src/views/About.tsx",
       "src/views/Portfolio.jsx",
-      "src/views/Project.jsx",
-      "src/views/Search.jsx",
-      "src/views/Resume.jsx",
-      "src/views/Contact.jsx",
-      "src/views/AddSkill.jsx",
-      "src/views/Add.jsx",
-      "src/views/NotFound.jsx"
+      "src/views/Project.tsx",
+      "src/views/Search.tsx",
+      "src/views/Resume.tsx",
+      "src/views/Contact.tsx",
+      "src/views/AddSkill.tsx",
+      "src/views/Add.tsx",
+      "src/views/NotFound.tsx"
     ]
   },
-  "src/views/About.jsx": {
+  "src/views/About.tsx": {
     "file": "About.js",
     "name": "About",
-    "src": "src/views/About.jsx",
+    "src": "src/views/About.tsx",
     "isDynamicEntry": true,
     "imports": [
-      "src/index.jsx",
+      "src/index.tsx",
+      "_MemberInfoComponent.js",
       "_ContentComponent.js"
     ]
   },
-  "src/views/Add.jsx": {
+  "src/views/Add.tsx": {
     "file": "Add.js",
     "name": "Add",
-    "src": "src/views/Add.jsx",
+    "src": "src/views/Add.tsx",
     "isDynamicEntry": true,
     "imports": [
-      "src/index.jsx",
+      "src/index.tsx",
       "_StatusBarComponent.js"
     ]
   },
-  "src/views/AddSkill.jsx": {
+  "src/views/AddSkill.tsx": {
     "file": "AddSkill.js",
     "name": "AddSkill",
-    "src": "src/views/AddSkill.jsx",
+    "src": "src/views/AddSkill.tsx",
     "isDynamicEntry": true,
     "imports": [
-      "src/index.jsx",
+      "src/index.tsx",
       "_StatusBarComponent.js"
     ]
   },
-  "src/views/Contact.jsx": {
+  "src/views/Contact.tsx": {
     "file": "Contact.js",
     "name": "Contact",
-    "src": "src/views/Contact.jsx",
+    "src": "src/views/Contact.tsx",
     "isDynamicEntry": true,
     "imports": [
-      "src/index.jsx",
+      "src/index.tsx",
       "_ContactComponent.js",
       "_StatusBarComponent.js"
     ]
   },
-  "src/views/Home.jsx": {
+  "src/views/Home.tsx": {
     "file": "Home.js",
     "name": "Home",
-    "src": "src/views/Home.jsx",
+    "src": "src/views/Home.tsx",
     "isDynamicEntry": true,
     "imports": [
-      "src/index.jsx",
+      "src/index.tsx",
       "_PortfolioComponent.js",
       "_TaxListIcon.js",
+      "_MemberInfoComponent.js",
       "_ContactComponent.js",
       "_ProjectsComponent.js",
       "_ProjectDescription.js",
       "_StatusBarComponent.js"
     ]
   },
-  "src/views/NotFound.jsx": {
+  "src/views/NotFound.tsx": {
     "file": "NotFound.js",
     "name": "NotFound",
-    "src": "src/views/NotFound.jsx",
+    "src": "src/views/NotFound.tsx",
     "isDynamicEntry": true,
     "imports": [
-      "src/index.jsx"
+      "src/index.tsx"
     ]
   },
   "src/views/Portfolio.jsx": {
@@ -142,7 +151,7 @@
     "src": "src/views/Portfolio.jsx",
     "isDynamicEntry": true,
     "imports": [
-      "src/index.jsx",
+      "src/index.tsx",
       "_PortfolioComponent.js",
       "_StatusBarComponent.js",
       "_ProjectsComponent.js",
@@ -150,35 +159,35 @@
       "_TaxListIcon.js"
     ]
   },
-  "src/views/Project.jsx": {
+  "src/views/Project.tsx": {
     "file": "Project.js",
     "name": "Project",
-    "src": "src/views/Project.jsx",
+    "src": "src/views/Project.tsx",
     "isDynamicEntry": true,
     "imports": [
-      "src/index.jsx",
+      "src/index.tsx",
       "_ProjectDescription.js",
       "_ContentComponent.js",
       "_TaxListIcon.js",
       "_StatusBarComponent.js"
     ]
   },
-  "src/views/Resume.jsx": {
+  "src/views/Resume.tsx": {
     "file": "Resume.js",
     "name": "Resume",
-    "src": "src/views/Resume.jsx",
+    "src": "src/views/Resume.tsx",
     "isDynamicEntry": true,
     "imports": [
-      "src/index.jsx"
+      "src/index.tsx"
     ]
   },
-  "src/views/Search.jsx": {
+  "src/views/Search.tsx": {
     "file": "Search.js",
     "name": "Search",
-    "src": "src/views/Search.jsx",
+    "src": "src/views/Search.tsx",
     "isDynamicEntry": true,
     "imports": [
-      "src/index.jsx",
+      "src/index.tsx",
       "_ProjectsComponent.js",
       "_ProjectDescription.js",
       "_StatusBarComponent.js"

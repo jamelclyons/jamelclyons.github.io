@@ -3,7 +3,7 @@ import ImageComponent from './ImageComponent';
 
 function SocialBar(props) {
   const { socialAccounts, email } = props;
-console.log(email);
+
   const mailURL = `mailto:${email}`;
 
   if (Array.isArray(socialAccounts) && socialAccounts.length > 0) {

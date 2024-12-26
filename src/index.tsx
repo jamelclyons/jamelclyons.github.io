@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 
-import App from './App.jsx';
-import store from './model/store.js';
+import App from './App';
+import store from './model/store';
 
 const root = document.getElementById('root');
 

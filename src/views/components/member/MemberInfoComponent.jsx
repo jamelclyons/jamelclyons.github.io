@@ -3,16 +3,12 @@ import React from 'react';
 function MemberInfoComponent(props) {
   const { user } = props;
 
-  const handleResume = () => {
-    window.location.href = '/#/resume';
-  };
-
   return (
     <div className="author-info">
-      {user.bio && (
+      {user?.bio && (
         <div className="author-bio-card card">
           <h3 className="author-bio">
-            <q>{user.bio}</q>
+            <q>{user?.bio}</q>
           </h3>
         </div>
       )}
@@ -20,14 +16,10 @@ function MemberInfoComponent(props) {
       <div class="author">
         <div class="author-card card">
           <div class="author-pic">
-            <img src={user.avatar_url} alt="" />
+            <img src={user?.avatarURL} alt="" />
           </div>
         </div>
-        <h2 class="title">{user.title}</h2>
-
-        <button onClick={handleResume}>
-          <h3 class="title">resume</h3>
-        </button>
+        <h2 class="title">{user?.title}</h2>
       </div>
     </div>
   );

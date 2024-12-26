@@ -5,10 +5,10 @@ class Image {
   className: string;
 
   constructor(data: Record<string, any> = {}) {
-    this.id = data?.id || [];
-    this.title = data?.title || [];
-    this.url = data?.url || [];
-    this.className = data?.class_name || [];
+    this.id = data?.id || '';
+    this.title = data?.title || '';
+    this.url = data?.url || '';
+    this.className = data?.class_name || '';
   }
 
   toObject(): Record<string, any> {

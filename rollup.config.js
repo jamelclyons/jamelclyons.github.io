@@ -1,7 +1,7 @@
 import babel from '@rollup/plugin-babel';
 
 const rollupConfig = {
-    input: './src/index.jsx',
+    input: './src/index.tsx',
     output: {
         dir: 'dist/js/',
         format: 'esm',

@@ -1,8 +1,14 @@
+import React from 'react';
+
 import Gallery from '../Gallery';
 import ContentComponent from '../ContentComponent';
+import ProjectProblem from '../../../model/ProjectProblem';
 
-function TheProblem(props) {
-  const { problem } = props;
+interface ProblemProps {
+  problem: ProjectProblem
+}
+
+const TheProblem: React.FC<ProblemProps> = ({ problem }) => {
 
   return (
     <>

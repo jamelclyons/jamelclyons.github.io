@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 
 function Gallery(props) {
   const { title, gallery } = props;
-  console.log(gallery);
+
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const galleryRowRef = useRef(null);
 
