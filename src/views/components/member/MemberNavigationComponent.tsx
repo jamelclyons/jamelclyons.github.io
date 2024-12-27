@@ -1,3 +1,5 @@
+import React from 'react';
+
 function MemberNavigationComponent(props) {
   const { resume, portfolioElement } = props;
   
@@ -29,7 +31,7 @@ function MemberNavigationComponent(props) {
   return (
     <>
       {resume != null || portfolioElement != null ? (
-        <nav class="author-nav">
+        <nav className="author-nav">
           {portfolioElement ? (
             <>
               <button onClick={() => scrollToSection('author_intro')} id="founder_button">

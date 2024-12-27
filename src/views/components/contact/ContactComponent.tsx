@@ -1,33 +1,29 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import MessageCardComponent from './MessageCardComponent';
 import StatusBarComponent from '../StatusBarComponent';
 
-import { getContent } from '../../../controllers/contentSlice';
+import { ContactPage, getContactPageContent } from '../../../controllers/contactSlice';
 import { setMessage, setMessageType } from '../../../controllers/messageSlice';
 
-function ContactComponent() {
-  const dispatch = useDispatch();
+import User from '../../../model/User';
 
-  const {
-    contentLoading,
-    contentErrorMessage,
-    content,
-  } = useSelector((state) => state.content);
-  const { contactErrorMessage, contactSuccessMessage } =
-    useSelector((state) => state.contact);
+import type { AppDispatch, RootState } from '../../../model/store';
+
+interface ContactProps {
+  user: User;
+}
+
+const ContactComponent: React.FC<ContactProps> = ({ user }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { contactErrorMessage, contactSuccessMessage, contactPage } =
+    useSelector((state: RootState) => state.contact);
 
   useEffect(() => {
-    dispatch(getContent('contact'));
+    dispatch(getContactPageContent());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (contentErrorMessage) {
-      dispatch(setMessageType('error'));
-      dispatch(setMessage(contentErrorMessage));
-    }
-  }, [contentErrorMessage]);
 
   useEffect(() => {
     if (contactSuccessMessage) {
@@ -48,14 +44,14 @@ function ContactComponent() {
   }, [contactErrorMessage]);
 
   useEffect(() => {
-    if (content.message) {
-      dispatch(setMessage(content.message));
+    if (contactPage?.message) {
+      dispatch(setMessage(contactPage.message));
     }
-  }, [content]);
+  }, [contactPage]);
 
   return (
     <main>
-      {content.title && <h2 className="title">{content.title}</h2>}
+      {contactPage?.title && <h2 className="title">{contactPage.title}</h2>}
 
       <div className="contact-card card">
         <MessageCardComponent page={'/contact'} />

@@ -1,10 +1,12 @@
 import { snakeCaseToPath } from '../utilities/String';
+import Image from './Image';
 
 class Taxonomy {
   id: string;
   type: string;
   title: string;
   path: string;
+  image: Image;
   iconURL: string;
   className: string;
 
@@ -21,6 +23,12 @@ class Taxonomy {
     this.path = snakeCaseToPath(type);
     this.iconURL = iconURL;
     this.className = className;
+    let img = new Image();
+    img.id = this.id;
+    img.title = this.title;
+    img.url = this.iconURL;
+    img.className = this.className;
+    this.image = img;
   }
 
   isValid(): boolean {

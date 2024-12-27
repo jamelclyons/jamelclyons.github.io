@@ -71,7 +71,7 @@ const Home: React.FC<HomeProps> = ({ user }) => {
           technologies={technologies}
         />
 
-        <ContactComponent />
+        <ContactComponent user={user} />
       </section>
     </>
   );

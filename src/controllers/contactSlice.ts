@@ -4,20 +4,34 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
+import { collection, doc, getDoc } from 'firebase/firestore';
+
+import db from '../services/firebase/config.ts';
+
+export class ContactPage {
+  title: string;
+  message: string;
+
+  constructor(data: Record<string, any> = {}) {
+    this.title = data?.title;
+    this.message = data?.message;
+  }
+}
+
 interface ContactState {
   contactLoading: boolean;
-  contactStatusCode: string;
   contactError: Error | null;
   contactErrorMessage: string;
   contactSuccessMessage: string;
+  contactPage: ContactPage | null;
 }
 
 const initialState: ContactState = {
   contactLoading: false,
-  contactStatusCode: '',
   contactError: null,
   contactErrorMessage: '',
   contactSuccessMessage: '',
+  contactPage: null
 };
 
 interface Email {
@@ -57,6 +71,26 @@ export const sendEmail = createAsyncThunk<string, Email>(
   }
 );
 
+export const getContactPageContent = createAsyncThunk<ContactPage>(
+  'about/getContactPageContent',
+  async () => {
+    try {
+      const contactCollection = collection(db, 'content');
+      const docRef = doc(contactCollection, 'contact');
+      const docSnap = await getDoc(docRef);
+
+      if (!docSnap.exists()) {
+        throw new Error('Contact page content could not be found.');
+      }
+
+      return new ContactPage(docSnap.data());
+    } catch (error) {
+      console.error(error);
+      throw new Error(error.message);
+    }
+  }
+);
+
 const contactSliceOptions: CreateSliceOptions<ContactState> = {
   name: 'contact',
   initialState,
@@ -65,20 +99,23 @@ const contactSliceOptions: CreateSliceOptions<ContactState> = {
     builder
       .addCase(sendEmail.pending, (state) => {
         state.contactLoading = true;
-        state.contactStatusCode = '';
         state.contactError = null;
         state.contactErrorMessage = '';
       })
+      .addCase(getContactPageContent.fulfilled, (state, action) => {
+        state.contactLoading = false;
+        state.contactError = null;
+        state.contactErrorMessage = '';
+        state.contactPage = action.payload;
+      })
       .addCase(sendEmail.fulfilled, (state, action) => {
         state.contactLoading = false;
-        state.contactStatusCode = '';
         state.contactError = null;
         state.contactErrorMessage = '';
         state.contactSuccessMessage = action.payload;
       })
       .addCase(sendEmail.rejected, (state, action) => {
         state.contactLoading = false;
-        state.contactStatusCode = action.error.code || '';
         state.contactError = (action.error as Error) || null;
         state.contactErrorMessage = action.error.message || '';
       });

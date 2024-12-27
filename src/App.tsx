@@ -79,7 +79,7 @@ function App() {
               element={<Search />}
             />
             <Route path="/resume" element={<Resume />} />
-            <Route path="/contact" element={<Contact />} />
+            <Route path="/contact" element={<Contact user={user} />} />
             <Route path="/project/add" element={<AddProject />} />
             <Route path="/skill/add" element={<AddSkill />} />
             <Route path="*" element={<NotFound />} />

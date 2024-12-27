@@ -25,7 +25,7 @@ import Project from '../../../model/Project.ts';
 import Taxonomy from '../../../model/Taxonomy.ts';
 
 interface ProjectProps {
-  project: Project
+  project: Project | null
 }
 
 const ProjectComponent: React.FC<ProjectProps> = ({ project }) => {
@@ -37,7 +37,7 @@ const ProjectComponent: React.FC<ProjectProps> = ({ project }) => {
   const [technologies, setTechnologies] = useState<Array<Taxonomy> | null>(null);
 
   useEffect(() => {
-    if (Array.isArray(project.types)) {
+    if (Array.isArray(project?.types)) {
       const fetchProjectTypes = async () => {
         try {
           const projectTypeData = await Promise.all(
@@ -60,10 +60,10 @@ const ProjectComponent: React.FC<ProjectProps> = ({ project }) => {
 
       fetchProjectTypes();
     }
-  }, [project.types, dispatch]);
+  }, [project?.types, dispatch]);
 
   useEffect(() => {
-    if (Array.isArray(project.languages)) {
+    if (Array.isArray(project?.languages)) {
       const fetchLanguages = async () => {
         try {
           const languageData = await Promise.all(
@@ -86,10 +86,10 @@ const ProjectComponent: React.FC<ProjectProps> = ({ project }) => {
 
       fetchLanguages();
     }
-  }, [project.languages, dispatch]);
+  }, [project?.languages, dispatch]);
 
   useEffect(() => {
-    if (Array.isArray(project.frameworks)) {
+    if (Array.isArray(project?.frameworks)) {
       const fetchFrameworks = async () => {
         try {
           const frameworkData = await Promise.all(
@@ -112,10 +112,10 @@ const ProjectComponent: React.FC<ProjectProps> = ({ project }) => {
 
       fetchFrameworks();
     }
-  }, [project.frameworks, dispatch]);
+  }, [project?.frameworks, dispatch]);
 
   useEffect(() => {
-    if (Array.isArray(project.technologies)) {
+    if (Array.isArray(project?.technologies)) {
       const fetchTechnologies = async () => {
         const techData = await Promise.all(
           project.technologies.map(async (tax) => {
@@ -135,22 +135,22 @@ const ProjectComponent: React.FC<ProjectProps> = ({ project }) => {
 
       fetchTechnologies();
     }
-  }, [project.technologies, dispatch]);
+  }, [project?.technologies, dispatch]);
 
   return (
     <>
       <main className="project">
-        {project.title && <h1 className="title">{project.title}</h1>}
+        {project?.title && <h1 className="title">{project.title}</h1>}
 
-        <ProjectDescription description={project.description} />
+        <ProjectDescription description={project?.description} />
 
-        <ProjectURLs project_urls={project.urlsList} />
+        <ProjectURLs project_urls={project?.urlsList} />
 
-        <TheSolution solution={project.solution} />
+        {project?.solution && <TheSolution solution={project.solution} />}
 
-        <TheProcess process={project.process} />
+        {project?.process && <TheProcess process={project.process} />}
 
-        <TheProblem problem={project.problem} />
+        {project?.problem && <TheProblem problem={project?.problem} />}
 
         <TaxList tax={types} title={'types'} />
 
@@ -161,7 +161,7 @@ const ProjectComponent: React.FC<ProjectProps> = ({ project }) => {
         <TaxListIcon tax={technologies} title={'technologies'} />
 
         {/* Project details is for clients only */}
-        <Details project_details={project.details} />
+        {project?.details && <Details project_details={project.details} />}
       </main>
     </>
   );

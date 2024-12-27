@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-function StatusBarComponent() {
+const StatusBarComponent = () => {
   const { message, messageType, showStatusBar } = useSelector(
     (state) => state.message
   );

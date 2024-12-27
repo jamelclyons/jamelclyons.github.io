@@ -42,7 +42,7 @@ const MemberKnowledgeComponent: React.FC<MemberKnowledgeProps> = ({
           {Array.isArray(knowledge) &&
             knowledge.length > 0 &&
             knowledge.map((knowledge: Taxonomy) => (
-              <IconComponent icon={knowledge} url={knowledge.iconURL} />
+              <IconComponent image={knowledge.image} />
             ))}
         </div>
       </div>

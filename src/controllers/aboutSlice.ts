@@ -4,12 +4,26 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
+import { collection, doc, getDoc } from 'firebase/firestore';
+
+import db from '../services/firebase/config.ts';
+
+class AboutPage {
+  missionStatement: string;
+  story: string;
+
+  constructor(data: Record<string, any> = {}) {
+    this.missionStatement = data?.mission_statement;
+    this.story = data?.story;
+  }
+}
+
 interface AboutState {
   aboutLoading: boolean;
   aboutStatusCode: string | null;
   aboutError: Error | null;
   aboutErrorMessage: string;
-  missionStatement: string;
+  aboutPage: AboutPage | null;
 }
 
 const initialState: AboutState = {
@@ -17,26 +31,22 @@ const initialState: AboutState = {
   aboutStatusCode: '',
   aboutError: null,
   aboutErrorMessage: '',
-  missionStatement: '',
+  aboutPage: null,
 };
 
-export const getMissionStatement = createAsyncThunk(
-  'about/getMissionStatement',
-  async (pageSlug) => {
+export const getAboutPageContent = createAsyncThunk<AboutPage>(
+  'about/getAboutPageContent',
+  async () => {
     try {
-      const response = await fetch(
-        `/wp-json/seven-tech/v1/about/mission-statement`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const contentCollection = collection(db, 'content');
+      const docRef = doc(contentCollection, 'about');
+      const docSnap = await getDoc(docRef);
 
-      const responseData = await response.json();
+      if (!docSnap.exists()) {
+        throw new Error('About page content could not be found.');
+      }
 
-      return responseData;
+      return new AboutPage(docSnap.data());
     } catch (error) {
       console.error(error);
       throw new Error(error.message);
@@ -50,23 +60,20 @@ const aboutSliceOptions: CreateSliceOptions<AboutState> = {
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getMissionStatement.pending, (state) => {
+      .addCase(getAboutPageContent.pending, (state) => {
         state.aboutLoading = true;
-        state.aboutStatusCode = '';
         state.aboutError = null;
         state.aboutErrorMessage = '';
       })
-      .addCase(getMissionStatement.fulfilled, (state, action) => {
+      .addCase(getAboutPageContent.fulfilled, (state, action) => {
         state.aboutLoading = false;
-        state.aboutStatusCode = action.payload.statusCode;
         state.aboutError = null;
         state.aboutErrorMessage = '';
-        state.missionStatement = action.payload.missionStatement;
+        state.aboutPage = action.payload;
       })
-      .addCase(getMissionStatement.rejected, (state, action) => {
+      .addCase(getAboutPageContent.rejected, (state, action) => {
         state.aboutLoading = false;
-        state.aboutStatusCode = action.error.code || '';
-        state.aboutError = action.error as Error || null;
+        state.aboutError = (action.error as Error) || null;
         state.aboutErrorMessage = action.error.message || '';
       });
   },

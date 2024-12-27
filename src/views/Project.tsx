@@ -8,14 +8,18 @@ import StatusBarComponent from './components/StatusBarComponent';
 
 import { getProject } from '../controllers/portfolioSlice';
 
-function Project() {
+import type { AppDispatch, RootState } from '../model/store';
+
+import User from '../model/User';
+
+const Project = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const { projectID } = useParams();
 
   const { portfolioLoading, portfolioErrorMessage, project } = useSelector(
-    (state) => state.portfolio
+    (state: RootState) => state.portfolio
   );
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (projectID) {
@@ -24,8 +28,10 @@ function Project() {
   }, [dispatch, projectID]);
 
   useEffect(() => {
-    document.title = project.title;
-  }, [project.title]);
+    if (project?.title) {
+      document.title = project?.title;
+    }
+  }, [project?.title]);
 
   if (portfolioLoading) {
     return <LoadingComponent />;
@@ -36,10 +42,7 @@ function Project() {
       <>
         {portfolioErrorMessage ? (
           <main className="error-page">
-            <StatusBarComponent
-              messageType={'error'}
-              message={portfolioErrorMessage}
-            />
+            <StatusBarComponent />
           </main>
         ) : (
           <ProjectComponent project={project} />

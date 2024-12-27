@@ -1,15 +1,21 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import ContactComponent from './components/contact/ContactComponent';
 
 import { setShowStatusBar } from '../controllers/messageSlice';
 
-function Contact() {
+import User from '../model/User';
+
+interface ContactProps {
+  user: User;
+}
+
+const Contact: React.FC<ContactProps> = ({ user }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    document.title = `Contact - Jamel C. Lyons`;
+    document.title = `Contact - ${user?.name}`;
   }, []);
 
   useEffect(() => {
@@ -19,7 +25,7 @@ function Contact() {
   return (
     <>
       <section className="contact">
-        <ContactComponent />
+        <ContactComponent user={user} />
       </section>
     </>
   );

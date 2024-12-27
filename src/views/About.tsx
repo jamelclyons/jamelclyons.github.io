@@ -5,7 +5,7 @@ import MemberInfoComponent from './components/member/MemberInfoComponent';
 import ContentComponent from './components/ContentComponent';
 import ImageComponent from './components/ImageComponent';
 
-import { getContent } from '../controllers/contentSlice';
+import { getAboutPageContent } from '../controllers/aboutSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
 
@@ -18,14 +18,14 @@ interface AboutProps {
 const About: React.FC<AboutProps> = ({ user }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { content } = useSelector((state: RootState) => state.content);
+  const { aboutPage } = useSelector((state: RootState) => state.about);
 
   useEffect(() => {
     document.title = `About - ${user.name}`;
   }, []);
 
   useEffect(() => {
-    dispatch(getContent('about'));
+    dispatch(getAboutPageContent());
   }, [dispatch]);
 
   const handleResume = () => {
@@ -54,9 +54,9 @@ const About: React.FC<AboutProps> = ({ user }) => {
           <h3 className="title">resume</h3>
         </button>
 
-        {Array.isArray(content.story) && (
+        {Array.isArray(aboutPage?.story) && (
           <div className="story">
-            <ContentComponent content={content.story} />
+            <ContentComponent content={aboutPage.story} />
           </div>
         )}
 
@@ -71,7 +71,7 @@ const About: React.FC<AboutProps> = ({ user }) => {
             {user.organizations.map((organization, index) => (
               <a href={organization.url} key={index}>
                 <img
-                  src={organization.avatar_url}
+                  src={organization.avatarURL}
                   alt={`${organization.name} avatar`}
                 />
               </a>
