@@ -1,6 +1,6 @@
 import React from 'react';
 
-import SocialBar from './SocialBar';
+import FooterBar from './FooterBar';
 
 import ContactMethods from '../../model/ContactMethods';
 
@@ -13,7 +13,7 @@ const FooterComponent: React.FC<FooterComponentProps> = ({ contactMethods }) => 
 
   return (
     <footer>
-      <SocialBar contactMethods={contactMethods} />
+      <FooterBar contactMethods={contactMethods} />
       <span className="legal">Copyright 2010 - {year}. All Rights Reserved.</span>
     </footer>
   );

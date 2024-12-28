@@ -1,8 +1,9 @@
 import React from 'react';
 
 import MemberBio from './MemberBio';
-import User from '../../../model/User';
 import Member from './Member';
+
+import User from '../../../model/User';
 
 interface MemberInfoProps {
   user: User;

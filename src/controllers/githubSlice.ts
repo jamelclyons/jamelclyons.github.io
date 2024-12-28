@@ -14,16 +14,21 @@ import {
 import Organization from '../model/Organization';
 import User from '../model/User';
 
-const octokit = new Octokit();
+let octokit = new Octokit();
 
-if (!import.meta.env.VITE_OCTOKIT_AUTH) {
-  throw new Error(
-    'VITE_OCTOKIT_AUTH is not defined in the environment variables.'
-  );
-} else {
-  const octokit = new Octokit({
-    auth: import.meta.env.VITE_OCTOKIT_AUTH,
-  });
+try {
+  if (import.meta.env.VITE_OCTOKIT_AUTH == null) {
+    throw new Error(
+      'VITE_OCTOKIT_AUTH is not defined in the environment variables.'
+    );
+  } else {
+    octokit = new Octokit({
+      auth: import.meta.env.VITE_OCTOKIT_AUTH,
+    });
+  }
+} catch (error) {
+  const err = error as Error;
+  console.error(err.message);
 }
 
 const baseURL = 'https://api.github.com';

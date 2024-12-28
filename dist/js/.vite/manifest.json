@@ -14,8 +14,8 @@
       "src/index.tsx"
     ]
   },
-  "_MemberInfoComponent.MeE_yqU5.js": {
-    "file": "chunks/MemberInfoComponent.MeE_yqU5.js",
+  "_MemberInfoComponent.CwVMp_uU.js": {
+    "file": "chunks/MemberInfoComponent.CwVMp_uU.js",
     "name": "MemberInfoComponent",
     "imports": [
       "src/index.tsx"
@@ -79,18 +79,18 @@
     ]
   },
   "src/views/About.tsx": {
-    "file": "chunks/About.LaWkAWv_.js",
+    "file": "chunks/About.BQ1M82OK.js",
     "name": "About",
     "src": "src/views/About.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/index.tsx",
-      "_MemberInfoComponent.MeE_yqU5.js",
+      "_MemberInfoComponent.CwVMp_uU.js",
       "_ContentComponent.CIrZAyeN.js"
     ]
   },
   "src/views/Add.tsx": {
-    "file": "chunks/Add.CCjygJd-.js",
+    "file": "chunks/Add.CpLR_Rld.js",
     "name": "Add",
     "src": "src/views/Add.tsx",
     "isDynamicEntry": true,
@@ -121,7 +121,7 @@
     ]
   },
   "src/views/Home.tsx": {
-    "file": "chunks/Home.Cl_rYXer.js",
+    "file": "chunks/Home.4MR6gtb-.js",
     "name": "Home",
     "src": "src/views/Home.tsx",
     "isDynamicEntry": true,
@@ -129,7 +129,7 @@
       "src/index.tsx",
       "_PortfolioComponent.DFhdy0K-.js",
       "_TaxListIcon.Cb8Mb9qg.js",
-      "_MemberInfoComponent.MeE_yqU5.js",
+      "_MemberInfoComponent.CwVMp_uU.js",
       "_ContactComponent.CmY2Xpo3.js",
       "_ProjectsComponent.DbEi92ij.js",
       "_ProjectDescription.CE1O-bQu.js",

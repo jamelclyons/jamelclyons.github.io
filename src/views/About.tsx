@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import MemberInfoComponent from './components/member/MemberInfoComponent';
 import ContentComponent from './components/ContentComponent';
-import ImageComponent from './components/ImageComponent';
 
 import { getAboutPageContent } from '../controllers/aboutSlice';
 
@@ -32,23 +31,10 @@ const About: React.FC<AboutProps> = ({ user }) => {
     window.location.href = '/#/resume';
   };
 
-  const mailTo = `mailto:${user?.contactMethods.email.value}`;
-  const callNow = `tel:+${user?.contactMethods.phone.value}`;
-
   return (
     <>
       <section className="about">
         <MemberInfoComponent user={user} />
-
-        <div className="user-contact">
-          <a href={mailTo} target="_blank">
-            <ImageComponent image={user?.contactMethods.email} />
-          </a>
-
-          <a href={callNow} target="_blank">
-            <ImageComponent image={user?.contactMethods.phone} />
-          </a>
-        </div>
 
         <button onClick={handleResume}>
           <h3 className="title">resume</h3>

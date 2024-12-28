@@ -1,3 +1,5 @@
+@use '_author-contact.scss';
+
 section.author {
   display: flex;
   align-items: center;
@@ -49,13 +51,14 @@ section.author {
 }
 
 .author-pic {
-  width: auto;
+  width: 100%;
+  height: 100%;
   padding: 0;
   font-size: 0;
 
   img {
-    width: auto;
-    height: 100%;
+    width: 100%;
+    height: auto;
   }
 }
 
@@ -81,18 +84,5 @@ section.author {
   p {
     text-align: left;
     height: 100%;
-  }
-
-  .author-contact {
-    button {
-      background-color: white;
-      width: fit-content;
-      padding: 0;
-      margin: 0;
-
-      i {
-        color: black;
-      }
-    }
   }
 }
