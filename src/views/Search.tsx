@@ -1,5 +1,7 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+
+import type { AppDispatch, RootState } from '../model/store';
 
 import { getProjectsBy } from '../controllers/portfolioSlice';
 import {
@@ -10,12 +12,12 @@ import {
 
 import ProjectsComponent from './components/portfolio/ProjectsComponent';
 
-function Search() {
-  const { portfolioLoading, projects, portfolioErrorMessage } = useSelector(
-    (state) => state.portfolio
-  );
+const Search = () => {
+  const dispatch = useDispatch<AppDispatch>();
 
-  const dispatch = useDispatch();
+  const { portfolioLoading, projects, portfolioErrorMessage } = useSelector(
+    (state: RootState) => state.portfolio
+  );
 
   const path = window.location.hash;
   const parts = path?.split('/');
@@ -35,8 +37,8 @@ function Search() {
   useEffect(() => {
     if (path) {
       const skillClass =
-        taxonomy?.charAt(0).toUpperCase() + taxonomy?.slice(1).toLowerCase() ?? '';
-      const skill = term?.charAt(0).toUpperCase() + term?.slice(1).toLowerCase() ?? '';
+        taxonomy?.charAt(0).toUpperCase() + taxonomy?.slice(1).toLowerCase();
+      const skill = term?.charAt(0).toUpperCase() + term?.slice(1).toLowerCase();
 
       document.title = `Projects > ${skillClass} > ${skill}`;
     }

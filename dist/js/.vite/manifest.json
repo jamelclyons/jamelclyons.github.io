@@ -1,60 +1,60 @@
 {
-  "_ContactComponent.js": {
-    "file": "ContactComponent.js",
+  "_ContactComponent.CmY2Xpo3.js": {
+    "file": "chunks/ContactComponent.CmY2Xpo3.js",
     "name": "ContactComponent",
     "imports": [
       "src/index.tsx",
-      "_StatusBarComponent.js"
+      "_StatusBarComponent.CUGhuodM.js"
     ]
   },
-  "_ContentComponent.js": {
-    "file": "ContentComponent.js",
+  "_ContentComponent.CIrZAyeN.js": {
+    "file": "chunks/ContentComponent.CIrZAyeN.js",
     "name": "ContentComponent",
     "imports": [
       "src/index.tsx"
     ]
   },
-  "_MemberInfoComponent.js": {
-    "file": "MemberInfoComponent.js",
+  "_MemberInfoComponent.MeE_yqU5.js": {
+    "file": "chunks/MemberInfoComponent.MeE_yqU5.js",
     "name": "MemberInfoComponent",
     "imports": [
       "src/index.tsx"
     ]
   },
-  "_PortfolioComponent.js": {
-    "file": "PortfolioComponent.js",
+  "_PortfolioComponent.DFhdy0K-.js": {
+    "file": "chunks/PortfolioComponent.DFhdy0K-.js",
     "name": "PortfolioComponent",
     "imports": [
       "src/index.tsx",
-      "_ProjectsComponent.js",
-      "_TaxListIcon.js"
+      "_ProjectsComponent.DbEi92ij.js",
+      "_TaxListIcon.Cb8Mb9qg.js"
     ]
   },
-  "_ProjectDescription.js": {
-    "file": "ProjectDescription.js",
+  "_ProjectDescription.CE1O-bQu.js": {
+    "file": "chunks/ProjectDescription.CE1O-bQu.js",
     "name": "ProjectDescription",
     "imports": [
       "src/index.tsx"
     ]
   },
-  "_ProjectsComponent.js": {
-    "file": "ProjectsComponent.js",
+  "_ProjectsComponent.DbEi92ij.js": {
+    "file": "chunks/ProjectsComponent.DbEi92ij.js",
     "name": "ProjectsComponent",
     "imports": [
       "src/index.tsx",
-      "_ProjectDescription.js",
-      "_StatusBarComponent.js"
+      "_ProjectDescription.CE1O-bQu.js",
+      "_StatusBarComponent.CUGhuodM.js"
     ]
   },
-  "_StatusBarComponent.js": {
-    "file": "StatusBarComponent.js",
+  "_StatusBarComponent.CUGhuodM.js": {
+    "file": "chunks/StatusBarComponent.CUGhuodM.js",
     "name": "StatusBarComponent",
     "imports": [
       "src/index.tsx"
     ]
   },
-  "_TaxListIcon.js": {
-    "file": "TaxListIcon.js",
+  "_TaxListIcon.Cb8Mb9qg.js": {
+    "file": "chunks/TaxListIcon.Cb8Mb9qg.js",
     "name": "TaxListIcon",
     "imports": [
       "src/index.tsx"
@@ -68,7 +68,7 @@
     "dynamicImports": [
       "src/views/Home.tsx",
       "src/views/About.tsx",
-      "src/views/Portfolio.jsx",
+      "src/views/Portfolio.tsx",
       "src/views/Project.tsx",
       "src/views/Search.tsx",
       "src/views/Resume.tsx",
@@ -79,65 +79,65 @@
     ]
   },
   "src/views/About.tsx": {
-    "file": "About.js",
+    "file": "chunks/About.LaWkAWv_.js",
     "name": "About",
     "src": "src/views/About.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/index.tsx",
-      "_MemberInfoComponent.js",
-      "_ContentComponent.js"
+      "_MemberInfoComponent.MeE_yqU5.js",
+      "_ContentComponent.CIrZAyeN.js"
     ]
   },
   "src/views/Add.tsx": {
-    "file": "Add.js",
+    "file": "chunks/Add.CCjygJd-.js",
     "name": "Add",
     "src": "src/views/Add.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/index.tsx",
-      "_StatusBarComponent.js"
+      "_StatusBarComponent.CUGhuodM.js"
     ]
   },
   "src/views/AddSkill.tsx": {
-    "file": "AddSkill.js",
+    "file": "chunks/AddSkill.BdvrybyS.js",
     "name": "AddSkill",
     "src": "src/views/AddSkill.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/index.tsx",
-      "_StatusBarComponent.js"
+      "_StatusBarComponent.CUGhuodM.js"
     ]
   },
   "src/views/Contact.tsx": {
-    "file": "Contact.js",
+    "file": "chunks/Contact.BSJoaGpI.js",
     "name": "Contact",
     "src": "src/views/Contact.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/index.tsx",
-      "_ContactComponent.js",
-      "_StatusBarComponent.js"
+      "_ContactComponent.CmY2Xpo3.js",
+      "_StatusBarComponent.CUGhuodM.js"
     ]
   },
   "src/views/Home.tsx": {
-    "file": "Home.js",
+    "file": "chunks/Home.Cl_rYXer.js",
     "name": "Home",
     "src": "src/views/Home.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/index.tsx",
-      "_PortfolioComponent.js",
-      "_TaxListIcon.js",
-      "_MemberInfoComponent.js",
-      "_ContactComponent.js",
-      "_ProjectsComponent.js",
-      "_ProjectDescription.js",
-      "_StatusBarComponent.js"
+      "_PortfolioComponent.DFhdy0K-.js",
+      "_TaxListIcon.Cb8Mb9qg.js",
+      "_MemberInfoComponent.MeE_yqU5.js",
+      "_ContactComponent.CmY2Xpo3.js",
+      "_ProjectsComponent.DbEi92ij.js",
+      "_ProjectDescription.CE1O-bQu.js",
+      "_StatusBarComponent.CUGhuodM.js"
     ]
   },
   "src/views/NotFound.tsx": {
-    "file": "NotFound.js",
+    "file": "chunks/NotFound.sccylK-J.js",
     "name": "NotFound",
     "src": "src/views/NotFound.tsx",
     "isDynamicEntry": true,
@@ -145,35 +145,35 @@
       "src/index.tsx"
     ]
   },
-  "src/views/Portfolio.jsx": {
-    "file": "Portfolio.js",
+  "src/views/Portfolio.tsx": {
+    "file": "chunks/Portfolio.ClKY-2Nt.js",
     "name": "Portfolio",
-    "src": "src/views/Portfolio.jsx",
+    "src": "src/views/Portfolio.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/index.tsx",
-      "_PortfolioComponent.js",
-      "_StatusBarComponent.js",
-      "_ProjectsComponent.js",
-      "_ProjectDescription.js",
-      "_TaxListIcon.js"
+      "_PortfolioComponent.DFhdy0K-.js",
+      "_StatusBarComponent.CUGhuodM.js",
+      "_ProjectsComponent.DbEi92ij.js",
+      "_ProjectDescription.CE1O-bQu.js",
+      "_TaxListIcon.Cb8Mb9qg.js"
     ]
   },
   "src/views/Project.tsx": {
-    "file": "Project.js",
+    "file": "chunks/Project.C0dIWqor.js",
     "name": "Project",
     "src": "src/views/Project.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/index.tsx",
-      "_ProjectDescription.js",
-      "_ContentComponent.js",
-      "_TaxListIcon.js",
-      "_StatusBarComponent.js"
+      "_ProjectDescription.CE1O-bQu.js",
+      "_ContentComponent.CIrZAyeN.js",
+      "_TaxListIcon.Cb8Mb9qg.js",
+      "_StatusBarComponent.CUGhuodM.js"
     ]
   },
   "src/views/Resume.tsx": {
-    "file": "Resume.js",
+    "file": "chunks/Resume.CeFaE-8Q.js",
     "name": "Resume",
     "src": "src/views/Resume.tsx",
     "isDynamicEntry": true,
@@ -182,15 +182,15 @@
     ]
   },
   "src/views/Search.tsx": {
-    "file": "Search.js",
+    "file": "chunks/Search.DR4VD8NV.js",
     "name": "Search",
     "src": "src/views/Search.tsx",
     "isDynamicEntry": true,
     "imports": [
       "src/index.tsx",
-      "_ProjectsComponent.js",
-      "_ProjectDescription.js",
-      "_StatusBarComponent.js"
+      "_ProjectsComponent.DbEi92ij.js",
+      "_ProjectDescription.CE1O-bQu.js",
+      "_StatusBarComponent.CUGhuodM.js"
     ]
   }
 }

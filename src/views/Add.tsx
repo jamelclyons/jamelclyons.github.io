@@ -2,7 +2,7 @@ import React from 'react';
 
 import AddProject from './components/add/AddProject';
 
-function Add() {
+const Add = () => {
   return (
     <section className="add">
       <>

@@ -32,8 +32,8 @@ const About: React.FC<AboutProps> = ({ user }) => {
     window.location.href = '/#/resume';
   };
 
-  const mailTo = `mailto:${user?.email}`;
-  const callNow = `tel:+${user?.phone}`;
+  const mailTo = `mailto:${user?.contactMethods.email.value}`;
+  const callNow = `tel:+${user?.contactMethods.phone.value}`;
 
   return (
     <>
@@ -42,11 +42,11 @@ const About: React.FC<AboutProps> = ({ user }) => {
 
         <div className="user-contact">
           <a href={mailTo} target="_blank">
-            <ImageComponent image={user?.images?.email} />
+            <ImageComponent image={user?.contactMethods.email} />
           </a>
 
           <a href={callNow} target="_blank">
-            <ImageComponent image={user?.images?.phone} />
+            <ImageComponent image={user?.contactMethods.phone} />
           </a>
         </div>
 

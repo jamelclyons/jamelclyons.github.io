@@ -1,8 +1,10 @@
-import SocialAccount from './SocialAccount';
+import SocialAccount from './Contact';
 import Image from './Image';
-import packageJson from '../../package.json';
+import ContactMethods from './ContactMethods';
 
 import Organization from '../model/Organization';
+
+import packageJson from '../../package.json';
 
 class User {
   id: string;
@@ -16,24 +18,24 @@ class User {
   website: string;
   organizations: Array<Organization>;
   repos: Array<string>;
-  socialAccounts: Array<SocialAccount>;
+  contactMethods: ContactMethods;
   images: Record<string, Image>;
 
   constructor(data: Record<string, any> = {}) {
-    const { homepage, author, title } = packageJson;
+    const { homepage, author } = packageJson;
 
     this.id = this.getGitHubUsername(homepage);
     this.avatarURL = data?.avatar_url || '';
-    this.name = data?.name || author;
-    this.title = data?.title || title;
+    this.name = data?.name || author.name;
+    this.title = data?.title || author.title;
     this.bio = data?.bio || '';
-    this.email = data?.email || '';
+    this.email = data?.email || author.contact.email;
     this.phone = data?.phone || '';
     this.resume = data?.resume || '';
     this.website = data?.website || homepage;
     this.organizations = this.setOrganizations(data?.organizations) || [];
     this.repos = data?.repos || '';
-    this.socialAccounts = this.getSocialAccounts(data?.social_accounts);
+    this.contactMethods = new ContactMethods(data?.contact_methods);
     this.images = data?.images || '';
   }
 
@@ -51,16 +53,6 @@ class User {
       );
       return '';
     }
-  }
-
-  getSocialAccounts(accounts: Array<Record<string, any>>) {
-    if (Array.isArray(accounts) && accounts.length > 0) {
-      return accounts.map(
-        (account: Record<string, any>) => new SocialAccount(account)
-      );
-    }
-
-    return [];
   }
 
   setOrganizations(organizations: Array<Record<string, any>>) {
@@ -86,7 +78,7 @@ class User {
       website: this.website,
       organizations: this.organizations,
       repos: this.repos,
-      social_accounts: this.socialAccounts,
+      contact_methods: this.contactMethods,
       images: this.images,
     };
   }

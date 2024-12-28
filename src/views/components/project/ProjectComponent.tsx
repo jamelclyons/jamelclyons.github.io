@@ -3,13 +3,13 @@ import { useDispatch } from 'react-redux';
 
 import type { AppDispatch } from '../../../model/store';
 
-import Gallery from '../Gallery.jsx';
-import ProjectDescription from '../portfolio/ProjectDescription.jsx';
+import Gallery from '../Gallery.js';
+import ProjectDescription from '../portfolio/ProjectDescription.js';
 import Details from './Details.jsx';
 import TheSolution from './TheSolution.tsx';
 import ProjectURLs from './ProjectURLs.jsx';
 import TheProblem from './TheProblem.tsx';
-import TaxList from '../TaxList.jsx';
+import TaxList from '../TaxList.js';
 import TaxListIcon from '../TaxListIcon.jsx';
 import ProjectTeam from './ProjectTeam.jsx';
 import TheProcess from './TheProcess.tsx';

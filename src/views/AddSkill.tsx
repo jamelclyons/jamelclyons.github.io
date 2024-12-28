@@ -5,7 +5,7 @@ import AddLanguages from './components/add/AddLanguages';
 import AddProjectTypes from './components/add/AddProjectTypes';
 import AddTechnologies from './components/add/AddTechnologies';
 
-function AddSkill() {
+const AddSkill: React.FC = () => {
   return (
     <section className="add">
       <>
@@ -14,7 +14,7 @@ function AddSkill() {
         <AddFrameworks />
 
         <AddProjectTypes />
-        
+
         <AddTechnologies />
       </>
     </section>

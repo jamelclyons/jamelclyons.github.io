@@ -23,7 +23,8 @@ const MemberKnowledgeComponent: React.FC<MemberKnowledgeProps> = ({
     if (skillsSlide) {
       const totalSkills = skillsSlide.children.length;
 
-      if (!skillsSlide.dataset.cloned) {
+      if (skillsSlide.dataset.cloned) {
+
         for (let i = 0; i < totalSkills; i++) {
           const clonedNode = skillsSlide.children[i].cloneNode(true);
           skillsSlide.appendChild(clonedNode);

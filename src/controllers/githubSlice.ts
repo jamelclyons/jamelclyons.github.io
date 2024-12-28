@@ -14,9 +14,17 @@ import {
 import Organization from '../model/Organization';
 import User from '../model/User';
 
-const octokit = new Octokit({
-  auth: import.meta.env.VITE_OCTOKIT_AUTH,
-});
+const octokit = new Octokit();
+
+if (!import.meta.env.VITE_OCTOKIT_AUTH) {
+  throw new Error(
+    'VITE_OCTOKIT_AUTH is not defined in the environment variables.'
+  );
+} else {
+  const octokit = new Octokit({
+    auth: import.meta.env.VITE_OCTOKIT_AUTH,
+  });
+}
 
 const baseURL = 'https://api.github.com';
 const getUserURL = `${baseURL}/users`;
@@ -81,8 +89,9 @@ export const getUser = createAsyncThunk<User, string>(
 
       return new User(data);
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -93,8 +102,9 @@ export const getRepos = createAsyncThunk('github/getRepos', async () => {
 
     return data;
   } catch (error) {
-    console.error(error);
-    throw new Error(error.message);
+    const err = error as Error;
+    console.error(err);
+    throw new Error(err.message);
   }
 });
 
@@ -106,8 +116,9 @@ export const getOrganizations = createAsyncThunk<Array<Organization>, string>(
 
       return data;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -120,8 +131,9 @@ export const getOrganizationsRepos = createAsyncThunk(
 
       return data;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -144,8 +156,9 @@ export const getRepo = createAsyncThunk<RepoResponse, RepoQuery>(
         repo: query.repo,
       });
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -166,8 +179,9 @@ export const getCommits = createAsyncThunk(
 
       return responseData;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -191,8 +205,9 @@ export const getSocialAccounts = createAsyncThunk(
 
       return responseData;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );

@@ -1,14 +1,20 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
-function Resume() {
+import User from '../model/User';
+
+interface ResumeProps {
+  user: User;
+}
+
+const Resume: React.FC<ResumeProps> = ({ user }) => {
   useEffect(() => {
-    document.title = `Resume - Jamel C. Lyons`;
+    document.title = `Resume - ${user?.name}`;
   }, []);
 
   return (
     <section className="resume">
       <main>
-        <iframe id="pdfViewer" src="../../Resume.pdf" frameborder="0"></iframe>
+        <iframe id="pdfViewer" src="../../Resume.pdf"></iframe>
       </main>
     </section>
   );

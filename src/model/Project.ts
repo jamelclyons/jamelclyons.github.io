@@ -11,10 +11,10 @@ class Project {
   solution: ProjectSolution;
   process: ProjectProcess;
   problem: ProjectProblem;
-  types: Array<string> = [];
-  languages: Array<string> = [];
-  frameworks: Array<string> = [];
-  technologies: Array<string> = [];
+  types: Set<string> = new Set();
+  languages: Set<string> = new Set();
+  frameworks: Set<string> = new Set();
+  technologies: Set<string> = new Set();
   details: ProjectDetails;
 
   constructor(
@@ -25,10 +25,10 @@ class Project {
     solution: ProjectSolution,
     process: ProjectProcess,
     problem: ProjectProblem,
-    types: Array<string>,
-    languages: Array<string>,
-    frameworks: Array<string>,
-    technologies: Array<string>,
+    types: Set<string>,
+    languages: Set<string>,
+    frameworks: Set<string>,
+    technologies: Set<string>,
     details: ProjectDetails
   ) {
     this.id = id;

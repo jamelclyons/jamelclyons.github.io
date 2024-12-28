@@ -48,8 +48,9 @@ export const getContent = createAsyncThunk(
       
       return content;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );

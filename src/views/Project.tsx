@@ -10,8 +10,6 @@ import { getProject } from '../controllers/portfolioSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
 
-import User from '../model/User';
-
 const Project = () => {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -36,7 +34,6 @@ const Project = () => {
   if (portfolioLoading) {
     return <LoadingComponent />;
   }
-  console.log(project);
   return (
     <section className="project">
       <>

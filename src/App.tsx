@@ -23,7 +23,7 @@ import {
   getRepos,
   getSocialAccounts,
   getRepo
-} from './controllers/githubSlice.ts';
+} from './controllers/githubSlice';
 
 import type { AppDispatch, RootState } from './model/store';
 
@@ -66,7 +66,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home user={user} />} />
             <Route path="/about" element={<About user={user} />} />
-            <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/portfolio" element={<Portfolio user={user} />} />
             <Route path="/portfolio/:projectID" element={<Project />} />
             <Route
               path="/projects/project-types/:taxonomy"
@@ -78,7 +78,7 @@ function App() {
               path="/projects/technologies/:taxonomy"
               element={<Search />}
             />
-            <Route path="/resume" element={<Resume />} />
+            <Route path="/resume" element={<Resume user={user} />} />
             <Route path="/contact" element={<Contact user={user} />} />
             <Route path="/project/add" element={<AddProject />} />
             <Route path="/skill/add" element={<AddSkill />} />
@@ -87,8 +87,7 @@ function App() {
         </Suspense>
       </Router>
       <FooterComponent
-        socialAccounts={user?.socialAccounts}
-        email={user?.email}
+        contactMethods={user?.contactMethods}
       />
     </>
   );

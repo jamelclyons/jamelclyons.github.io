@@ -1,2 +1,0 @@
-import{u as c,r as a,s as n,j as s}from"./index.js";import{C as e}from"./ContactComponent.js";import"./StatusBarComponent.js";const p=({user:t})=>{const o=c();return a.useEffect(()=>{document.title=`Contact - ${t==null?void 0:t.name}`},[]),a.useEffect(()=>{o(n("show"))},[]),s.jsx(s.Fragment,{children:s.jsx("section",{className:"contact",children:s.jsx(e,{user:t})})})};export{p as default};
-//# sourceMappingURL=Contact.js.map

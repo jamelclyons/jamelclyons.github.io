@@ -1,2 +1,0 @@
-import{j as s}from"./index.js";function n(r){const{project_status:e}=r;return s.jsx(s.Fragment,{children:e&&s.jsx(s.Fragment,{children:s.jsxs("div",{className:"project-status",children:[s.jsx("h4",{children:"STATUS"}),s.jsx("progress",{min:"0",value:e,max:"100"}),s.jsxs("p",{children:[e,"% Completed"]})]})})})}function c(r){const{description:e}=r;return s.jsx(s.Fragment,{children:e&&s.jsx("div",{className:"project-description",children:s.jsx("p",{children:e})})})}export{n as P,c as a};
-//# sourceMappingURL=ProjectDescription.js.map

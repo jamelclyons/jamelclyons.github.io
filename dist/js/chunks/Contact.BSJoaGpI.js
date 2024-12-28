@@ -1,0 +1,2 @@
+import{u as e,r as a,s as c,j as t}from"../index.js";import{C as n}from"./ContactComponent.CmY2Xpo3.js";import"./StatusBarComponent.CUGhuodM.js";const p=({user:s})=>{const o=e();return a.useEffect(()=>{document.title=`Contact - ${s?.name}`},[]),a.useEffect(()=>{o(c("show"))},[]),t.jsx(t.Fragment,{children:t.jsx("section",{className:"contact",children:t.jsx(n,{user:s})})})};export{p as default};
+//# sourceMappingURL=Contact.BSJoaGpI.js.map
