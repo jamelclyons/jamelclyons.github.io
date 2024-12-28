@@ -1,17 +1,25 @@
-function TaxList(props) {
-  const { tax, title } = props;
+import React from 'react';
 
-  const handleClick = (taxonomy) => {
+import Taxonomy from '../../model/Taxonomy';
+
+interface TaxListProps {
+  taxonomies: Set<Taxonomy>;
+  title: string;
+}
+
+const TaxList: React.FC<TaxListProps> = ({ taxonomies, title }) =>{
+
+  const handleClick = (taxonomy: Taxonomy) => {
     window.location.href = `/#/projects/${taxonomy.path}/${taxonomy.id}`;
   };
 
   return (
-    Array.isArray(tax) && (
+    taxonomies && taxonomies?.size > 0 && (
       <div className="tax-list">
         <h4 className="title">{title}</h4>
 
         <div className="tax-row">
-          {tax.map((taxonomy, index) =>
+          {Array.from(taxonomies).map((taxonomy, index) =>
             taxonomy && taxonomy.title ? (
               <button
                 key={index}

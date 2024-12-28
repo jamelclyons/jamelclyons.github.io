@@ -1,10 +1,13 @@
 module.exports = {
-    browser: "google chrome",     // Open Chrome browser
-    open: true,
+    browser: "google chrome",
+    proxy: "http://localhost:5173", // Vite's default development server URL
+    port: 3000, // Port for BrowserSync
+    open: true, // Automatically open the browser
+    notify: false, // Disable BrowserSync notification popups
+    files: [
+      "src/**/*.{html,js,css,vue,jsx,tsx}", // Watch all files for changes
+    ],     // Open Chrome browser
     watch: true,                   // Automatically open the browser
-    server: {
-        baseDir: ".",          // Serve files from the 'dist' folder (where Vite outputs)
-    },
     cors: true,
     reloadOnRestart: true,
     notify: false,                // Disable BrowserSync "Connected" notification
@@ -14,4 +17,6 @@ module.exports = {
             next();
         },
     ],
+    baseDir: "./", // Serve the main directory
+    directory: true
 };

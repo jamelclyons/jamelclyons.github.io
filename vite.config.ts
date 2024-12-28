@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import rollupConfig from './rollup.config.js';
 
 export default defineConfig({
   plugins: [react()],
@@ -14,11 +13,11 @@ export default defineConfig({
   },
   base: '/',
   root: '.',
-  server: {
-    port: 3000,
-    cors: true,
-    open: false,
-  },
+  // server: {
+  //   port: 3000,
+  //   cors: true,
+  //   open: false
+  // },
   build: {
     watch: {
       include: ['src/**/*.jsx', 'src/**/*.js', 'src/**/*.tsx', 'src/**/*.ts'],

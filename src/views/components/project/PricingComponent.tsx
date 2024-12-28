@@ -1,19 +1,23 @@
 import React from 'react';
 
-function PricingComponent(props) {
-  const { currency, price } = props;
+interface PricingComponentProps {
+  currency: string;
+  price: number;
+}
+
+const PricingComponent: React.FC<PricingComponentProps> = ({ currency, price }) => {
 
   return (
     <>
       {currency && (
         <div className="pricing">
           <h4>
-            {new Intl.NumberFormat('us', {
+            {/* {price && new Intl.NumberFormat("en-US", {
               style: 'currency',
-              currency: currency,
+              currency: currency || 'USD',
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
-            }).format(price)}
+            }).format(price)} */}
           </h4>
         </div>
       )}

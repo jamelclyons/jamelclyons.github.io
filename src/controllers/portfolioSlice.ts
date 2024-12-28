@@ -11,15 +11,15 @@ import {
   DocumentData,
 } from 'firebase/firestore';
 
-import db from '../services/firebase/config.ts';
+import db from '../services/firebase/config';
 
-import Project from '../model/Project.ts';
-import ProjectSolution from '../model/ProjectSolution.ts';
-import ProjectProcess from '../model/ProjectProcess.ts';
-import ProjectProblem from '../model/ProjectProblem.ts';
-import ProjectDesign from '../model/ProjectDesign.ts';
-import ProjectDevelopment from '../model/ProjectDevelopment.ts';
-import ProjectDelivery from '../model/ProjectDelivery.ts';
+import Project from '../model/Project';
+import ProjectSolution from '../model/ProjectSolution';
+import ProjectProcess from '../model/ProjectProcess';
+import ProjectProblem from '../model/ProjectProblem';
+import ProjectDesign from '../model/ProjectDesign';
+import ProjectDevelopment from '../model/ProjectDevelopment';
+import ProjectDelivery from '../model/ProjectDelivery';
 
 const portfolioCollection = collection(db, 'portfolio');
 
@@ -85,8 +85,9 @@ export const getPortfolio = createAsyncThunk(
 
       return portfolio;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -121,8 +122,9 @@ export const getProjectsBy = createAsyncThunk(
 
       return projects;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -140,8 +142,9 @@ export const getProject = createAsyncThunk(
 
       return getProjectFromObject(docSnap);
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
