@@ -1,22 +1,22 @@
 module.exports = {
     browser: "google chrome",
-    proxy: "http://localhost:5173", // Vite's default development server URL
-    port: 3000, // Port for BrowserSync
-    open: true, // Automatically open the browser
-    notify: false, // Disable BrowserSync notification popups
+    proxy: "http://localhost:5173",
+    port: 3000,
+    open: true,
+    notify: false,
     files: [
-      "src/**/*.{html,js,css,vue,jsx,tsx}", // Watch all files for changes
-    ],     // Open Chrome browser
-    watch: true,                   // Automatically open the browser
+      "src/**/*.{html,js,css,vue,jsx,tsx}",
+    ],
+    watch: true,
     cors: true,
     reloadOnRestart: true,
-    notify: false,                // Disable BrowserSync "Connected" notification
+    notify: false,
     middleware: [
         function (req, res, next) {
-            res.setHeader("Cache-Control", "no-store"); // Prevent caching issues
+            res.setHeader("Cache-Control", "no-store");
             next();
         },
     ],
-    baseDir: "./", // Serve the main directory
+    baseDir: "./",
     directory: true
 };
