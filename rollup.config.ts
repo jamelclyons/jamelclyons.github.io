@@ -1,12 +1,12 @@
 import { RollupOptions } from 'rollup';
 
 const rollupConfig: RollupOptions = {
-  input: 'src/index.tsx',  // Main entry file
+  input: './index.html',  // Main entry file
   output: {
-    dir: 'dist/js',
-    entryFileNames: 'index.js',
-    chunkFileNames: 'chunks/[name].[hash].js',
-    assetFileNames: 'assets/[name].[hash].[ext]',
+    dir: 'dist',
+    entryFileNames: 'js/index.js',
+    chunkFileNames: 'js/chunks/[name].[hash].js',
+    assetFileNames: 'js/assets/[name].[hash].[ext]',
     format: 'esm',  // ES Modules format
     sourcemap: true,  // Generate source maps for easier debugging
   },
