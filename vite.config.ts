@@ -8,8 +8,7 @@ export default defineConfig({
   define: {
     'import.meta.env': process.env,
   },
-  base: '/jamelclyons.github.io/',
-  root: '.',
+  base: '/',
   server: {
     cors: true,
     open: false,
