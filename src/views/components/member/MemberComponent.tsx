@@ -8,9 +8,9 @@ import User from '../../../model/User';
 
 interface MemberIntroductionProps {
   user: User,
-  languages: Array<Taxonomy>,
-  frameworks: Array<Taxonomy>,
-  technologies: Array<Taxonomy>
+  languages: Set<Taxonomy>,
+  frameworks: Set<Taxonomy>,
+  technologies: Set<Taxonomy>
 }
 
 const MemberIntroductionComponent: React.FC<MemberIntroductionProps> = ({ user, languages, frameworks, technologies }) => {

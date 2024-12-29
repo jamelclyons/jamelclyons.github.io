@@ -1,9 +1,16 @@
+import React from 'react';
+
 import ProjectStatus from '../ProjectStatus';
 import ProjectDescription from './ProjectDescription';
 import StatusBarComponent from '../StatusBarComponent';
 
-function ProjectsComponent(props) {
-  const { projects } = props;
+import Project from '../../../model/Project';
+
+interface ProjectsComponentProps {
+  projects: Array<Project>;
+}
+
+const ProjectsComponent: React.FC<ProjectsComponentProps> = ({projects}) => {
 
   return (
     <>

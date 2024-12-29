@@ -20,8 +20,8 @@
   "scripts": {
     "dev": "npm-run-all --parallel vite gulp sync",
     "sync": "browser-sync start --config browsersync.config.js",
-    "vite": "vite --config vite.config.ts",
-    "build": "npm-run-all --parallel vite:build gulp:build",
+    "vite": "vite -c vite.config.ts",
+    "build": "npm-run-all vite:build gulp:build",
     "vite:build": "vite build",
     "gulp:build": "gulp build",
     "preview": "vite preview",

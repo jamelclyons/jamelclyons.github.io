@@ -8,10 +8,10 @@ import Project from '../../../model/Project';
 
 interface PortfolioComponentProps {
   portfolio: Array<Project>,
-  projectTypes: Array<Taxonomy>,
-  languages: Array<Taxonomy>,
-  frameworks: Array<Taxonomy>,
-  technologies: Array<Taxonomy>
+  projectTypes: Set<Taxonomy>,
+  languages: Set<Taxonomy>,
+  frameworks: Set<Taxonomy>,
+  technologies: Set<Taxonomy>
 }
 
 const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ portfolio, projectTypes, languages, frameworks, technologies }) => {
@@ -24,7 +24,7 @@ const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ portfolio, proj
 
           <ProjectsComponent projects={portfolio} />
 
-          <TaxList tax={projectTypes} title={'Project Types'} />
+          <TaxList taxonomies={projectTypes} title={'Project Types'} />
 
           <TaxListIcon taxonomies={languages} title={'Languages'} />
 

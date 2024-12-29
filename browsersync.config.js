@@ -5,7 +5,7 @@ module.exports = {
     open: true,
     notify: false,
     files: [
-      "src/**/*.{html,js,css,vue,jsx,tsx}",
+      "dist/**/*.{html,js,css,vue,jsx,tsx}",
     ],
     watch: true,
     cors: true,

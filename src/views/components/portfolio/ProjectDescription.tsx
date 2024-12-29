@@ -1,5 +1,10 @@
-function ProjectDescription(props) {
-  const { description } = props;
+import React from 'react';
+
+interface ProjectDescriptionProps {
+  description: string;
+}
+
+const ProjectDescription: React.FC<ProjectDescriptionProps> = ({ description }) => {
 
   return (
     <>

@@ -13,6 +13,7 @@ import {
 
 import Organization from '../model/Organization';
 import User from '../model/User';
+import Repo from '../model/Repo';
 
 let octokit = new Octokit();
 
@@ -53,7 +54,7 @@ interface GithubState {
   content: string;
   user: User;
   organizations: Array<Organization>;
-  repos: [];
+  repos: Array<Repo>;
   socialAccounts: [];
   repo: RepoResponse | null;
 }
@@ -105,7 +106,15 @@ export const getRepos = createAsyncThunk('github/getRepos', async () => {
   try {
     const { data } = await octokit.request('/user/repos');
 
-    return data;
+    let repos: Array<Repo> = [];
+
+    if (Array.isArray(data)) {
+      data.forEach((repo) => {
+        repos.push(new Repo(repo));
+      });
+    }
+
+    return repos;
   } catch (error) {
     const err = error as Error;
     console.error(err);
@@ -265,6 +274,7 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
       });
   },
 };
+
 export const githubSlice = createSlice(githubSliceOptions);
 
 export default githubSlice;

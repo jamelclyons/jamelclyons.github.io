@@ -20,9 +20,7 @@ const NotFound = lazy(() => import('./views/NotFound'));
 import {
   getUser,
   getOrganizations,
-  getRepos,
-  getSocialAccounts,
-  getRepo
+  getRepos
 } from './controllers/githubSlice';
 
 import type { AppDispatch, RootState } from './model/store';
@@ -30,7 +28,7 @@ import type { AppDispatch, RootState } from './model/store';
 function App() {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { user, organizations } = useSelector((state: RootState) => state.github);
+  const { user, organizations, repos } = useSelector((state: RootState) => state.github);
 
   useEffect(() => {
     if (user?.id) {
@@ -53,10 +51,6 @@ function App() {
   useEffect(() => {
     dispatch(getRepos());
   }, [user?.id]);
-
-  // useEffect(() => {
-  //   dispatch(getSocialAccounts('jamelclyons'));
-  // }, [dispatch]);
 
   return (
     <>

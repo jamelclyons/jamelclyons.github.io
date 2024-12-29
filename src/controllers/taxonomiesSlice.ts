@@ -27,13 +27,13 @@ interface TaxonomiesState {
   taxonomiesErrorMessage: string;
   taxonomiesStatusCode: string;
   projects: Array<Project>;
-  projectTypes: Array<Taxonomy>;
+  projectTypes: Set<Taxonomy>;
   projectType: Taxonomy | null;
-  languages: Array<Taxonomy>;
+  languages: Set<Taxonomy>;
   language: Taxonomy | null;
-  frameworks: Array<Taxonomy>;
+  frameworks: Set<Taxonomy>;
   framework: Taxonomy | null;
-  technologies: Array<Taxonomy>;
+  technologies: Set<Taxonomy>;
   technology: Taxonomy | null;
 }
 
@@ -43,13 +43,13 @@ const initialState: TaxonomiesState = {
   taxonomiesErrorMessage: '',
   taxonomiesStatusCode: '',
   projects: [],
-  projectTypes: [],
+  projectTypes: new Set,
   projectType: null,
-  languages: [],
+  languages: new Set,
   language: null,
-  frameworks: [],
+  frameworks: new Set,
   framework: null,
-  technologies: [],
+  technologies: new Set,
   technology: null,
 };
 
@@ -61,7 +61,7 @@ export const getProjectTypes = createAsyncThunk(
         collection(db, 'project_types')
       );
 
-      let projectTypes: Array<Taxonomy> = [];
+      let projectTypes: Set<Taxonomy> = new Set();
 
       querySnapshot.forEach((doc: DocumentData) => {
         let data = doc.data();
@@ -72,13 +72,14 @@ export const getProjectTypes = createAsyncThunk(
           data.icon_url,
           data.class_name
         );
-        projectTypes.push(taxonomy);
+        projectTypes.add(taxonomy);
       });
 
       return projectTypes;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -91,7 +92,7 @@ export const getLanguages = createAsyncThunk(
         collection(db, 'languages')
       );
 
-      let languages: Array<Taxonomy> = [];
+      let languages: Set<Taxonomy> = new Set();
 
       querySnapshot.forEach((doc: DocumentData) => {
         let data = doc.data();
@@ -102,13 +103,14 @@ export const getLanguages = createAsyncThunk(
           data.icon_url,
           data.class_name
         );
-        languages.push(taxonomy);
+        languages.add(taxonomy);
       });
 
       return languages;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -121,7 +123,7 @@ export const getFrameworks = createAsyncThunk(
         collection(db, 'frameworks')
       );
 
-      let frameworks: Array<Taxonomy> = [];
+      let frameworks: Set<Taxonomy> = new Set();
 
       querySnapshot.forEach((doc: DocumentData) => {
         let data = doc.data();
@@ -132,13 +134,14 @@ export const getFrameworks = createAsyncThunk(
           data.icon_url,
           data.class_name
         );
-        frameworks.push(taxonomy);
+        frameworks.add(taxonomy);
       });
 
       return frameworks;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -151,7 +154,7 @@ export const getTechnologies = createAsyncThunk(
         collection(db, 'technologies')
       );
 
-      let technologies: Array<Taxonomy> = [];
+      let technologies: Set<Taxonomy> = new Set();
 
       querySnapshot.forEach((doc: DocumentData) => {
         let data = doc.data();
@@ -162,13 +165,14 @@ export const getTechnologies = createAsyncThunk(
           data.icon_url,
           data.class_name
         );
-        technologies.push(taxonomy);
+        technologies.add(taxonomy);
       });
 
       return technologies;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -197,8 +201,9 @@ export const getProjectType = createAsyncThunk<Taxonomy, string>(
 
       return taxonomy;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -226,8 +231,9 @@ export const getLanguage = createAsyncThunk<Taxonomy, string>(
 
       return taxonomy;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -255,8 +261,9 @@ export const getFramework = createAsyncThunk<Taxonomy, string>(
 
       return taxonomy;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -284,8 +291,9 @@ export const getTechnology = createAsyncThunk<Taxonomy, string>(
 
       return taxonomy;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );

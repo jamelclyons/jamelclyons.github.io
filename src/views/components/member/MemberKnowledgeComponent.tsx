@@ -3,9 +3,9 @@ import IconComponent from '../IconComponent';
 import Taxonomy from '../../../model/Taxonomy';
 
 interface MemberKnowledgeProps {
-  languages: Array<Taxonomy>;
-  frameworks: Array<Taxonomy>;
-  technologies: Array<Taxonomy>;
+  languages: Set<Taxonomy>;
+  frameworks: Set<Taxonomy>;
+  technologies: Set<Taxonomy>;
 }
 
 const MemberKnowledgeComponent: React.FC<MemberKnowledgeProps> = ({
@@ -13,7 +13,10 @@ const MemberKnowledgeComponent: React.FC<MemberKnowledgeProps> = ({
   frameworks,
   technologies
 }) => {
-  const knowledge = [...languages, ...frameworks, ...technologies];
+  const arrayLang = Array.from(languages);
+  const arrayFrame = Array.from(frameworks);
+  const arrayTech = Array.from(technologies);
+  const knowledge = [...arrayLang, ...arrayFrame, ...arrayTech];
 
   const skillsSlideRef = useRef<HTMLDivElement | null>(null);
 

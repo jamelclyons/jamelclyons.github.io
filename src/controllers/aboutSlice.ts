@@ -6,7 +6,7 @@ import {
 
 import { collection, doc, getDoc } from 'firebase/firestore';
 
-import db from '../services/firebase/config.ts';
+import db from '../services/firebase/config';
 
 class AboutPage {
   missionStatement: string;
@@ -48,8 +48,9 @@ export const getAboutPageContent = createAsyncThunk<AboutPage>(
 
       return new AboutPage(docSnap.data());
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );

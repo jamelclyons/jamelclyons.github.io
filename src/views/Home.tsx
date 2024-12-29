@@ -28,9 +28,10 @@ const Home: React.FC<HomeProps> = ({ user }) => {
   const { projectTypes, languages, frameworks, technologies } = useSelector(
     (state: RootState) => state.taxonomies
   );
+  const { organizations, repos } = useSelector((state: RootState) => state.github);
 
   useEffect(() => {
-    document.title = user.name;
+    document.title = user?.name;
   }, []);
 
   useEffect(() => {
