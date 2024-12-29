@@ -25,7 +25,7 @@ import Project from '../../../model/Project';
 import Taxonomy from '../../../model/Taxonomy';
 
 interface ProjectProps {
-  project: Project | null
+  project: Project
 }
 
 const ProjectComponent: React.FC<ProjectProps> = ({ project }) => {
@@ -139,7 +139,7 @@ const ProjectComponent: React.FC<ProjectProps> = ({ project }) => {
 
         <ProjectDescription description={project?.description} />
 
-        <ProjectURLs project_urls={project?.urlsList} />
+        <ProjectURLs projectUrls={project?.urlsList} />
 
         {project?.solution && <TheSolution solution={project.solution} />}
 

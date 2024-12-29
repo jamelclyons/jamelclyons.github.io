@@ -23,8 +23,6 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
   const { repo } = useAppSelector((state: RootState) => state.github);
 
-  console.log(development?.repoURL);
-
   useEffect(() => {
     if (development?.repoURL) {
       try {
@@ -43,7 +41,8 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
           console.error('Invalid repository URL');
         }
       } catch (error) {
-        console.error('Invalid URL format:', error.message);
+        const err = error as Error;
+        console.error('Invalid URL format:', err.message);
       }
     }
   }, [development, dispatch]);

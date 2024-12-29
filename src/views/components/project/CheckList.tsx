@@ -1,5 +1,12 @@
-function CheckList(props) {
-  const { checkList } = props;
+import React from 'react';
+
+import Task from '../../../model/Task';
+
+interface CheckListProps{
+  checkList: Array<Task>
+}
+
+const CheckList: React.FC<CheckListProps> = ({ checkList }) => {
 
   return (
     <>

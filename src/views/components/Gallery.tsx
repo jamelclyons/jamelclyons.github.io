@@ -1,10 +1,15 @@
 import React, { useState, useRef } from 'react';
 
-function Gallery(props) {
-  const { title, gallery } = props;
+import Image from '../../model/Image';
 
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
-  const galleryRowRef = useRef(null);
+interface GalleryProps {
+  title: string;
+  gallery: Array<Image>
+}
+
+const GalleryComponent: React.FC<GalleryProps> = ({ title, gallery }) => {
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState<number>(0);
+  const galleryRowRef = useRef<HTMLDivElement | null>(null);
 
   const previousPhoto = () => {
     if (currentPhotoIndex > 0) {
@@ -13,31 +18,35 @@ function Gallery(props) {
   };
 
   const nextPhoto = () => {
-    if (currentPhotoIndex < props.gallery.length - 1) {
+    if (currentPhotoIndex < gallery.length - 1) {
       setCurrentPhotoIndex(currentPhotoIndex + 1);
     }
   };
 
-  const handleTouchStart = (e) => {
-    // Capture the starting X coordinate when the user touches the gallery
-    const touchStartX = e.touches[0].clientX;
-    galleryRowRef.current.setAttribute('data-touch-start', touchStartX);
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (galleryRowRef?.current) {
+      const touchStartX = e.touches[0].clientX;
+      galleryRowRef.current.setAttribute('data-touch-start', touchStartX.toString());
+    }
   };
 
-  const handleTouchEnd = (e) => {
-    // Calculate the difference between the starting and ending X coordinates
-    const touchStartX = parseInt(
-      galleryRowRef.current.getAttribute('data-touch-start'),
-      10
-    );
-    const touchEndX = e.changedTouches[0].clientX;
-    const deltaX = touchEndX - touchStartX;
-
-    // Determine whether it's a left or right swipe based on deltaX
-    if (deltaX > 50) {
-      previousPhoto(); // Swipe right
-    } else if (deltaX < -50) {
-      nextPhoto(); // Swipe left
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (galleryRowRef.current) {
+      const touchStartValue = galleryRowRef.current.getAttribute('data-touch-start');
+  
+      if (touchStartValue) {
+        // Calculate the difference between the starting and ending X coordinates
+        const touchStartX = parseInt(touchStartValue, 10);
+        const touchEndX = e.changedTouches[0].clientX;
+        const deltaX = touchEndX - touchStartX;
+  
+        // Determine swipe direction based on deltaX
+        if (deltaX > 50) {
+          previousPhoto(); // Swipe right
+        } else if (deltaX < -50) {
+          nextPhoto(); // Swipe left
+        }
+      }
     }
   };
 
@@ -73,7 +82,7 @@ function Gallery(props) {
               )}
             </div>
 
-            {currentPhotoIndex !== props.gallery.length - 1 ? (
+            {currentPhotoIndex !== gallery.length - 1 ? (
               <button className="arrow-right" onClick={nextPhoto}>
                 <h2>V</h2>
               </button>
@@ -89,4 +98,4 @@ function Gallery(props) {
   );
 }
 
-export default Gallery;
+export default GalleryComponent;

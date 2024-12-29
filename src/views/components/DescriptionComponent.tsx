@@ -1,7 +1,10 @@
 import React from 'react';
 
-function DescriptionComponent(props) {
-  const { description } = props;
+interface DescriptionComponentProps {
+  description: string;
+}
+
+const DescriptionComponent: React.FC<DescriptionComponentProps> = ({ description }) => {
 
   return (
     description && (

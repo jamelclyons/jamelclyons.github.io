@@ -1,11 +1,15 @@
 import React from 'react';
 
-function ImageComponent(props) {
-  const { image } = props;
+import Image from '../../model/Image';
 
-  
-  return image?.src ? (
-    <img src={image?.src} alt={image?.title} title={image?.title} />
+interface ImageComponentProps {
+  image: Image
+}
+
+const ImageComponent: React.FC<ImageComponentProps> = ({ image }) =>{
+
+  return image?.url ? (
+    <img src={image?.url} alt={image?.title} title={image?.title} />
   ) : (
     image?.className && <i className={image?.className} title={image?.title}></i>
   );

@@ -17,7 +17,7 @@ const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
         {solution && (
           <>
             <div className="project-solution" id="project_solution">
-              <FeaturesComponent features={solution.features} />
+              {solution.features?.size > 0 && <FeaturesComponent features={solution.features} /> }
 
               <PricingComponent currency={solution.currency} price={solution.price} />
 

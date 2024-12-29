@@ -1,11 +1,11 @@
 import React from 'react';
 
 import ProjectStatus from '../ProjectStatus';
-import Design from './Design.tsx';
-import Development from './Development.tsx';
-import Delivery from './Delivery.tsx';
+import Design from './Design';
+import Development from './Development';
+import Delivery from './Delivery';
 
-import ProjectProcess from '../../../model/ProjectProcess.ts';
+import ProjectProcess from '../../../model/ProjectProcess';
 
 interface ProcessProps {
   process: ProjectProcess;
@@ -19,7 +19,7 @@ const TheProcess: React.FC<ProcessProps> = ({ process }) => {
         <div className="project-process" id="project_process">
           <h3 className="title">the process</h3>
 
-          <ProjectStatus project_status={process?.status} />
+          <ProjectStatus projectStatus={process?.status} />
 
           <Design design={process?.design} />
 

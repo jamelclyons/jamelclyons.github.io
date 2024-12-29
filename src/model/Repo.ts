@@ -14,6 +14,17 @@ class Repo {
     this.description = data?.description || '';
     this.repoURL = data?.html_url || '';
   }
+
+  toObject(): Record<string, any> {
+    return {
+      id: this.id,
+      created_at: this.createdAt,
+      updated_at: this.updatedAt,
+      homepage: this.homepage,
+      description: this.description,
+      repo_url: this.repoURL
+    };
+  }
 }
 
 export default Repo;

@@ -1,7 +1,10 @@
 import React from 'react';
 
-function ContentComponent(props) {
-  const { content } = props;
+interface ContentComponentProps {
+  content: Array<string>
+}
+
+const ContentComponent: React.FC<ContentComponentProps> = ({ content }) => {
 
   return (
     <>

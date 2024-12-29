@@ -1,18 +1,19 @@
 import ProjectDesign from './ProjectDesign';
 import ProjectDevelopment from './ProjectDevelopment';
 import ProjectDelivery from './ProjectDelivery';
+import ProjectStatus from './ProjectStatus';
 
 class ProjectProcess {
-  status: string = '';
+  status: ProjectStatus;
   design: ProjectDesign;
   development: ProjectDevelopment;
   delivery: ProjectDelivery;
 
   constructor(
-    status: string,
-    design: ProjectDesign,
-    development: ProjectDevelopment,
-    delivery: ProjectDelivery
+    status: ProjectStatus = new ProjectStatus,
+    design: ProjectDesign = new ProjectDesign,
+    development: ProjectDevelopment = new ProjectDevelopment,
+    delivery: ProjectDelivery = new ProjectDelivery
   ) {
     this.status = status;
     this.design = design;

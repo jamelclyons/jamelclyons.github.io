@@ -15,7 +15,7 @@ const TheProblem: React.FC<ProblemProps> = ({ problem }) => {
       <div className="project-problem" id="project_problem">
         <h3 className="title">the problem</h3>
 
-        <Gallery gallery={problem?.gallery} />
+        <Gallery title={'Problem'} gallery={problem?.gallery} />
 
         <ContentComponent content={problem?.content} />
       </div>

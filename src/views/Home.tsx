@@ -5,7 +5,6 @@ import PortfolioComponent from './components/portfolio/PortfolioComponent';
 import MemberIntroductionComponent from './components/member/MemberComponent';
 import ContactComponent from './components/contact/ContactComponent';
 
-import { getPortfolio } from '../controllers/portfolioSlice';
 import {
   getLanguages,
   getProjectTypes,
@@ -16,15 +15,16 @@ import {
 import type { AppDispatch, RootState } from '../model/store';
 
 import User from '../model/User';
+import Project from '../model/Project';
 
 interface HomeProps {
   user: User;
+  portfolio: Array<Project>;
 }
 
-const Home: React.FC<HomeProps> = ({ user }) => {
+const Home: React.FC<HomeProps> = ({ user, portfolio }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { portfolio } = useSelector((state: RootState) => state.portfolio);
   const { projectTypes, languages, frameworks, technologies } = useSelector(
     (state: RootState) => state.taxonomies
   );
@@ -32,10 +32,6 @@ const Home: React.FC<HomeProps> = ({ user }) => {
 
   useEffect(() => {
     document.title = user?.name;
-  }, []);
-
-  useEffect(() => {
-    dispatch(getPortfolio());
   }, []);
 
   useEffect(() => {

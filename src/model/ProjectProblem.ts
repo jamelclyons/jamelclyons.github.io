@@ -1,6 +1,8 @@
+import Image from "./Image";
+
 class ProjectProblem {
-  content: Array<string> = [];
-  gallery: Array<string> = [];
+  content: Array<string>;
+  gallery: Array<Image>;
 
   constructor(data: Record<string, any> = {}) {
     this.content = data?.content || [];

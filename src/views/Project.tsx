@@ -9,8 +9,9 @@ import StatusBarComponent from './components/StatusBarComponent';
 import { getProject } from '../controllers/portfolioSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
+import Repo from '../model/Repo';
 
-const Project = () => {
+const Project: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { projectID } = useParams();
@@ -21,7 +22,9 @@ const Project = () => {
 
   useEffect(() => {
     if (projectID) {
-      dispatch(getProject(projectID));
+      let repo = new Repo();
+      repo.id = projectID;
+      dispatch(getProject(repo));
     }
   }, [dispatch, projectID]);
 

@@ -1,18 +1,19 @@
 import Feature from './Feature';
+import Image from './Image';
 
 class ProjectSolution {
-  gallery: Array<string> = [];
+  gallery: Array<Image>;
   features: Set<Feature>;
-  content: Array<string> = [];
-  currency: string = '';
-  price: number = 0;
+  content: Array<string>;
+  currency: string;
+  price: number;
 
   constructor(data: Record<string, any> = {}) {
     this.gallery = data?.gallery || [];
     this.features = this.getFeatures(data?.features);
     this.content = data?.content || [];
-    this.currency = data?.currency || [];
-    this.price = data?.price || [];
+    this.currency = data?.currency || '';
+    this.price = data?.price || 0;
   }
 
   getFeatures(data?: Set<Feature>): Set<Feature> {

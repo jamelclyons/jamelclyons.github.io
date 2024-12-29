@@ -16,42 +16,43 @@ const ContactBar: React.FC<ContactBarProps> = ({ contactMethods }) => {
     const mail = contactMethods.email;
     const linkedin = contactMethods.linkedIn;
     const instagram = contactMethods.instagram;
-
+    const phone = contactMethods.phone;
+    
     return (
         <div className="contact-bar">
             {mailTo &&
                 <a href={mailTo} target="_blank">
-                    <ImageComponent image={contactMethods.email} />
+                    <ImageComponent image={mail.image} />
                 </a>
             }
 
             {github &&
                 <a href={github?.url} target="_blank">
-                    <ImageComponent image={github} />
+                    <ImageComponent image={github.image} />
                 </a>
             }
 
             {linkedin &&
                 <a href={linkedin?.url} target="_blank">
-                    <ImageComponent image={linkedin} />
+                    <ImageComponent image={linkedin.image} />
                 </a>
             }
 
             {x &&
                 <a href={x?.url} target="_blank">
-                    <ImageComponent image={x} />
+                    <ImageComponent image={x.image} />
                 </a>
             }
 
             {instagram &&
                 <a href={instagram?.url} target="_blank">
-                    <ImageComponent image={instagram} />
+                    <ImageComponent image={instagram.image} />
                 </a>
             }
 
             {callNow &&
                 <a href={callNow} target="_blank">
-                    <ImageComponent image={contactMethods.phone} />
+                    <ImageComponent image={phone.image} />
                 </a>
             }
         </div>)

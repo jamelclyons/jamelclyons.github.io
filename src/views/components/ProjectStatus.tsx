@@ -1,14 +1,23 @@
-function ProjectStatus(props) {
-  const { project_status } = props;
+import React from "react";
+
+import ProjectStatus from "../../model/ProjectStatus";
+
+interface ProjectStatusProps {
+  projectStatus: ProjectStatus;
+}
+
+const ProjectStatusComponent: React.FC<ProjectStatusProps> = ({ projectStatus }) => {
 
   return (
     <>
-      {project_status && (
+      {projectStatus && (
         <>
           <div className="project-status">
             <h4>STATUS</h4>
-            <progress min="0" value={project_status} max="100"></progress>
-            <p>{project_status}% Completed</p>
+            <h5>Started: {projectStatus.createdAt}</h5>
+            <h5>Updated: {projectStatus.updatedAt}</h5>
+            <progress value={projectStatus.progress} max="100"></progress>
+            <p>{projectStatus.progress}% Completed</p>
           </div>
         </>
       )}
@@ -16,4 +25,4 @@ function ProjectStatus(props) {
   );
 }
 
-export default ProjectStatus;
+export default ProjectStatusComponent;

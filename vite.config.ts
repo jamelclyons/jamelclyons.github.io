@@ -10,8 +10,9 @@ export default defineConfig({
   },
   base: '/',
   server: {
+    port: 3000,
     cors: true,
-    open: false,
+    open: true,
     watch: {
       ignored: ['**/node_modules/**', '**/dist/**'],
       usePolling: true,

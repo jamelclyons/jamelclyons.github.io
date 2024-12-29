@@ -16,15 +16,17 @@ import PortfolioComponent from './components/portfolio/PortfolioComponent';
 import StatusBarComponent from './components/StatusBarComponent';
 
 import User from '../model/User';
+import Project from '../model/Project';
 
 interface PortfolioProps {
   user: User;
+  portfolio: Array<Project>;
 }
 
-const Portfolio: React.FC<PortfolioProps> = ({ user }) => {
+const Portfolio: React.FC<PortfolioProps> = ({ user, portfolio }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { portfolioLoading, portfolio, portfolioErrorMessage } = useSelector(
+  const { portfolioLoading } = useSelector(
     (state: RootState) => state.portfolio
   );
   const { projectTypes, languages, frameworks, technologies } = useSelector(
@@ -34,10 +36,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ user }) => {
   useEffect(() => {
     document.title = `Portfolio - ${user?.name}`;
   }, []);
-
-  useEffect(() => {
-    dispatch(getPortfolio());
-  }, [dispatch]);
 
   useEffect(() => {
     dispatch(getProjectTypes());

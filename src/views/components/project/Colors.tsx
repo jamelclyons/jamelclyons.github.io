@@ -1,7 +1,12 @@
 import React from 'react';
 
-function Colors(props) {
-  const { colors } = props;
+import Color from '../../../model/Color';
+
+interface ColorsProps {
+  colors: Array<Color>;
+}
+
+const ColorsComponent: React.FC<ColorsProps> = ({ colors }) => {
 
   return (
     <>
@@ -27,4 +32,4 @@ function Colors(props) {
   );
 }
 
-export default Colors;
+export default ColorsComponent;

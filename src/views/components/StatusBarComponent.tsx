@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import type { AppDispatch, RootState } from '../../model/store';
+import type { RootState } from '../../model/store';
 
 const StatusBarComponent: React.FC = () => {
   const { message, messageType, showStatusBar } = useSelector(

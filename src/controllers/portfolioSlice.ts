@@ -20,6 +20,7 @@ import ProjectProblem from '../model/ProjectProblem';
 import ProjectDesign from '../model/ProjectDesign';
 import ProjectDevelopment from '../model/ProjectDevelopment';
 import ProjectDelivery from '../model/ProjectDelivery';
+import Repo from '../model/Repo';
 
 const portfolioCollection = collection(db, 'portfolio');
 
@@ -41,8 +42,8 @@ const initialState: PortfolioState = {
   project: null,
 };
 
-function getProjectFromObject(doc: DocumentData): Project {
-  const data = doc.data();
+function getProjectFromObject(doc: DocumentData, repo?: Repo): Project {
+  const data = doc.data() as Record<string, any>;
 
   const design = new ProjectDesign(data.process.design);
   const development = new ProjectDevelopment(data.process.development);
@@ -52,6 +53,7 @@ function getProjectFromObject(doc: DocumentData): Project {
     doc.id,
     data.title,
     data.description,
+    data.homepage,
     data.urlsList,
     new ProjectSolution(data.solution),
     new ProjectProcess(data.process.status, design, development, delivery),
@@ -62,6 +64,10 @@ function getProjectFromObject(doc: DocumentData): Project {
     data.technologies,
     data.details
   );
+
+  if (repo) {
+    project.fromRepo(repo);
+  }
 
   return project;
 }
@@ -131,16 +137,23 @@ export const getProjectsBy = createAsyncThunk(
 
 export const getProject = createAsyncThunk(
   'portfolio/getProject',
-  async (projectID: string) => {
+  async (repo: Repo) => {
     try {
-      const docRef = doc(portfolioCollection, projectID);
+      const docRef = doc(portfolioCollection, repo.id);
       const docSnap = await getDoc(docRef);
 
       if (!docSnap.exists()) {
-        throw new Error('Could not be found.');
+        const id = repo.id;
+        const description = repo.description;
+        const homepage = repo.homepage;
+
+        let project = new Project(id, '', description, homepage);
+        project.fromRepo(repo);
+
+        return project;
       }
 
-      return getProjectFromObject(docSnap);
+      return getProjectFromObject(docSnap, repo);
     } catch (error) {
       const err = error as Error;
       console.error(err);

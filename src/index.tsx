@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+
 import { Provider } from 'react-redux';
 
 import App from './App';
-import store from './model/store.ts';
+import store from './model/store';
 
-const root = document.getElementById('root');
+const root = document.getElementById('root') as HTMLElement;
 
 if (root) {
   ReactDOM.createRoot(root).render(

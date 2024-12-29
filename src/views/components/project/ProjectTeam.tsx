@@ -1,17 +1,24 @@
+import React from 'react';
+
 import Member from '../member/Member';
 
-function ProjectTeam(props) {
-  const { project_team } = props;
+import User from '../../../model/User';
+
+interface ProjectTeamComponentProps {
+  projectTeam: Array<User>
+}
+
+const ProjectTeamComponent: React.FC<ProjectTeamComponentProps> = ({ projectTeam }) => {
 
   return (
     <>
-      {Array.isArray(project_team) && (
+      {Array.isArray(projectTeam) && (
         <div className="project-team">
           <h4 className="title">Project Team</h4>
 
           <div className="project-team-list">
-            {project_team.map((team_member, index) => (
-              <Member key={team_member.id} member={team_member} />
+            {projectTeam.map((team_member, index) => (
+              <Member key={index} user={team_member} />
             ))}
           </div>
         </div>
@@ -20,4 +27,4 @@ function ProjectTeam(props) {
   );
 }
 
-export default ProjectTeam;
+export default ProjectTeamComponent;

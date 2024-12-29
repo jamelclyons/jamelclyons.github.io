@@ -1,6 +1,7 @@
 import Contact from './Contact';
 
 import packageJson from '../../package.json';
+import Image from './Image';
 
 class ContactMethods {
   gitHub: Contact;
@@ -26,16 +27,14 @@ class ContactMethods {
     id: string,
     title: string,
     url: string,
-    className: string,
-    src: string,
+    image: Record<string, any>,
     value: string
   ) {
     const contact = {
       id: id,
       title: title,
       url: url,
-      class_name: className,
-      src: src,
+      image: image,
       value: value,
     };
 
@@ -43,27 +42,33 @@ class ContactMethods {
   }
 
   getContactGitHub(url: string) {
-    return this.getContact('gitHub', 'GitHub', url, 'fa fa-github fa-fw', '', '');
+    const image = new Image({ class_name: 'fa fa-github fa-fw' }).toObject();
+    return this.getContact('gitHub', 'GitHub', url, image, '');
   }
 
   getContactInstagram(url: string) {
-    return this.getContact('instagram', 'Instagram', url, 'fa fa-instagram fa-fw', '', '');
+    const image = new Image({ class_name: 'fa fa-instagram fa-fw' }).toObject();
+    return this.getContact('instagram', 'Instagram', url, image, '');
   }
 
   getContactLinkedIn(url: string) {
-    return this.getContact('linkedIn', 'LinkedIn', url, 'fa fa-linkedin fa-fw', '', '');
+    const image = new Image({ class_name: 'fa fa-linkedin fa-fw' }).toObject();
+    return this.getContact('linkedIn', 'LinkedIn', url, image, '');
   }
 
   getContactX(url: string) {
-    return this.getContact('x', 'X', url, 'fa-brands fa-x-twitter', '', '');
+    const image = new Image({ class_name: 'fa-brands fa-x-twitter' }).toObject();
+    return this.getContact('x', 'X', url, image, '');
   }
 
   getContactEmail(value: string) {
-    return this.getContact('email', 'Email', '', 'fa fa-envelope fa-fw', '', value);
+    const image = new Image({ class_name: 'fa fa-envelope fa-fw' }).toObject();
+    return this.getContact('email', 'Email', '', image, value);
   }
 
   getContactPhone(value: string) {
-    return this.getContact('phone', 'Phone', '', 'fa-solid fa-phone', '', value);
+    const image = new Image({ class_name: 'fa-solid fa-phone' }).toObject();
+    return this.getContact('phone', 'Phone', '', image, value);
   }
 }
 

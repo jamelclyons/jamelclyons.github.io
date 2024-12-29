@@ -1,9 +1,12 @@
+import Task from './Task';
+import ProjectVersions from './ProjectVersions';
+
 class ProjectDevelopment {
-  content: Array<string> = [];
-  checkList: Array<string> = [];
+  content: Array<string>;
+  checkList: Array<Task>;
   owner: string;
-  repoURL: string = '';
-  versionsList: Array<string> = [];
+  repoURL: string;
+  versionsList: ProjectVersions;
 
   constructor(data: Record<string, any> = {}) {
     this.content = data?.content || [];

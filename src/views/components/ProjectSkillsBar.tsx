@@ -12,7 +12,7 @@ const ProjectSkills: React.FC<ProjectSkillsProp> = ({ skills }) => {
 
   return (
     <>
-      {skills.size > 0 && (
+      {skills?.size > 0 && (
         <div className="project-skills-bar">
           {Array.from(skills).map((skill, index) => (
             <div className="icon">

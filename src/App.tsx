@@ -9,7 +9,7 @@ import FooterComponent from './views/components/FooterComponent';
 const Home = lazy(() => import('./views/Home'));
 const About = lazy(() => import('./views/About'));
 const Portfolio = lazy(() => import('./views/Portfolio'));
-const Project = lazy(() => import('./views/Project'));
+const ProjectPage = lazy(() => import('./views/Project'));
 const Search = lazy(() => import('./views/Search'));
 const Resume = lazy(() => import('./views/Resume'));
 const Contact = lazy(() => import('./views/Contact'));
@@ -25,8 +25,13 @@ import {
 
 import type { AppDispatch, RootState } from './model/store';
 
+import Project from './model/Project';
+import { getProject } from './controllers/portfolioSlice';
+
 function App() {
   const dispatch = useDispatch<AppDispatch>();
+
+  const [portfolio, setPortfolio] = useState<Array<Project>>([]);
 
   const { user, organizations, repos } = useSelector((state: RootState) => state.github);
 
@@ -52,16 +57,34 @@ function App() {
     dispatch(getRepos());
   }, [user?.id]);
 
+  useEffect(() => {
+    if (Array.isArray(repos) && repos.length > 0) {
+
+      let projects: Array<Project> = [];
+
+      repos.forEach((repo) => {
+        dispatch(getProject(repo)).unwrap().then((project: Project) => {
+          if (project) {
+            projects.push(project);
+          }
+        });
+
+        setPortfolio(projects);
+      });
+      console.log(portfolio);
+    }
+  }, [dispatch, repos]);
+
   return (
     <>
       <HeaderComponent name={user?.name} />
       <Router>
         <Suspense fallback={<LoadingComponent />}>
           <Routes>
-            <Route path="/" element={<Home user={user} />} />
+            <Route path="/" element={<Home user={user} portfolio={portfolio} />} />
             <Route path="/about" element={<About user={user} />} />
-            <Route path="/portfolio" element={<Portfolio user={user} />} />
-            <Route path="/portfolio/:projectID" element={<Project />} />
+            <Route path="/portfolio" element={<Portfolio user={user} portfolio={portfolio} />} />
+            <Route path="/portfolio/:projectID" element={<ProjectPage />} />
             <Route
               path="/projects/project-types/:taxonomy"
               element={<Search />}

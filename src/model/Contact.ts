@@ -1,17 +1,21 @@
+import Image from './Image';
+
 class Contact {
   id: string;
   title: string;
   url: string;
-  className: string;
-  src: string;
+  image: Image;
   value: string;
 
   constructor(data: Record<string, any> = {}) {
     this.id = data?.id || '';
     this.title = data?.title || '';
     this.url = data?.url || '';
-    this.className = data?.class_name || '';
-    this.src = data?.src || '';
+    this.image = data?.image
+      ? new Image(data?.image)
+      : new Image({
+          url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/w8AAn8B9oOKlwAAAABJRU5ErkJggg==',
+        });
     this.value = data?.value || '';
   }
 
@@ -20,9 +24,8 @@ class Contact {
       id: this.id,
       title: this.title,
       url: this.url,
-      class_name: this.className,
-      src: this.src,
-      value: this.value
+      image: this.image,
+      value: this.value,
     };
   }
 }
