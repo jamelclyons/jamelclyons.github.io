@@ -100,6 +100,8 @@ const UpdateDevelopment: React.FC = () => {
 
   return (
     <>
+      <h2 className="title">development</h2>
+
       <div className="project-selection">
         <label htmlFor="options">Choose Project Types:</label>
 

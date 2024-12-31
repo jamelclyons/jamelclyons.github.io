@@ -5,7 +5,7 @@ import type { AppDispatch, RootState } from '../../../model/store';
 
 import ProjectDelivery from '../../../model/ProjectDelivery';
 
-function UpdateDelivery() {
+const UpdateDelivery: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const [deliveryGallery, setDeliveryGallery] = useState([]);
@@ -19,7 +19,7 @@ function UpdateDelivery() {
   const delivery = new ProjectDelivery(deliveryData);
 
   return (
-    <div>UpdateDelivery</div>
+    <h2 className="title">delivery</h2>
   )
 }
 

@@ -16,8 +16,7 @@ const UpdateSolution: React.FC = () => {
   const solution = new ProjectSolution(solutionData);
 
   return (
-    <div>UpdateSolution</div>
-  )
+    <h1 className="title">solution</h1>)
 }
 
 export default UpdateSolution

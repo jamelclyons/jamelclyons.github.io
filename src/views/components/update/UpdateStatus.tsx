@@ -5,13 +5,13 @@ import type { AppDispatch, RootState } from '../../../model/store';
 
 import ProjectStatus from '../../../model/ProjectStatus';
 
-function UpdateStatus() {
+const UpdateStatus: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
 
     const status = new ProjectStatus();
 
     return (
-        <div>UpdateStatus</div>
+        <h2 className="title">status</h2>
     )
 }
 

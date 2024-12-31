@@ -72,9 +72,10 @@ const AddProject: React.FC = () => {
     formData.forEach((value, key) => {
       project[key] = value;
     });
-
+    
+console.log(project);
     try {
-      dispatch(addProject(new Project(project)));
+      // dispatch(addProject(new Project(project)));
 
       dispatch(setMessageType('info'));
       dispatch(setMessage('Standbye while an attempt to log you is made.'));

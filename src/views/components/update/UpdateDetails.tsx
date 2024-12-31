@@ -5,7 +5,7 @@ import type { AppDispatch, RootState } from '../../../model/store';
 
 import ProjectDetails from '../../../model/ProjectDetails';
 
-function UpdateDetails() {
+const UpdateDetails: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const [detailsList, setDetailsList] = useState([]);
@@ -17,7 +17,7 @@ function UpdateDetails() {
   const details = new ProjectDetails(detailsData);
 
   return (
-    <div>UpdateDetails</div>
+    <h2 className='title'>Details</h2>
   )
 }
 

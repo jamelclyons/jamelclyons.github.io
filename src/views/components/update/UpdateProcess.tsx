@@ -1,22 +1,22 @@
 import React from 'react'
 
 import ProjectProcess from '../../../model/ProjectProcess';
+import UpdateStatus from './UpdateStatus';
 import UpdateDesign from '../update/UpdateDesign';
 import UpdateDevelopment from '../update/UpdateDevelopment';
 import UpdateDelivery from '../update/UpdateDelivery';
 
-function UpdateProcess() {
+const UpdateProcess: React.FC = () => {
     return (
         <>
             <h1 className='title'>process</h1>
 
-            <h2 className="title">design</h2>
+            <UpdateStatus />
+            
             <UpdateDesign />
 
-            <h2 className="title">development</h2>
             <UpdateDevelopment />
 
-            <h2 className="title">delivery</h2>
             <UpdateDelivery />
         </>)
 }

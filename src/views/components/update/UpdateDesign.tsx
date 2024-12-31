@@ -5,7 +5,7 @@ import type { AppDispatch, RootState } from '../../../model/store';
 
 import ProjectDesign from '../../../model/ProjectDesign';
 
-function UpdateDesign() {
+const UpdateDesign: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const [designCheckList, setDesignCheckList] = useState([]);
@@ -21,7 +21,7 @@ function UpdateDesign() {
   const design = new ProjectDesign(designData);
 
   return (
-    <div>UpdateDesign</div>
+    <h2 className="title">design</h2>
   )
 }
 

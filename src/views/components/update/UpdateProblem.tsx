@@ -5,7 +5,7 @@ import type { AppDispatch, RootState } from '../../../model/store';
 
 import ProjectProblem from '../../../model/ProjectProblem';
 
-function UpdateProblem() {
+const UpdateProblem: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const [problemGallery, setProblemGallery] = useState([]);
