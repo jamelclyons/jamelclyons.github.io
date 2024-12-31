@@ -1,7 +1,9 @@
+import Model from './Model';
+
 import Task from './Task';
 import ProjectVersions from './ProjectVersions';
 
-class ProjectDevelopment {
+class ProjectDevelopment extends Model {
   content: Array<string>;
   checkList: Array<Task>;
   owner: string;
@@ -9,6 +11,8 @@ class ProjectDevelopment {
   versionsList: ProjectVersions;
 
   constructor(data: Record<string, any> = {}) {
+    super();
+    
     this.content = data?.content || [];
     this.checkList = data?.check_list || [];
     this.owner = data?.owner || '';

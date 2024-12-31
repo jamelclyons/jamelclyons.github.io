@@ -30,7 +30,7 @@ const initialState: AddState = {
 
 export const addProject = createAsyncThunk(
   'add/addProject',
-  async (project: Project) => {
+  async (project: Record<string, any>) => {
     try {
       const projectCollection = collection(db, 'portfolio');
 
@@ -38,8 +38,10 @@ export const addProject = createAsyncThunk(
 
       return `${project.id} was added to portfolio`;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -55,8 +57,10 @@ export const addProjectType = createAsyncThunk(
 
       return `${projectType.id} was added to projectTypes`;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -71,8 +75,10 @@ export const addLanguage = createAsyncThunk(
 
       return `${language.id} was added to languages`;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -87,8 +93,10 @@ export const addFramework = createAsyncThunk(
 
       return `${framework.id} was added to frameworks`;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -103,8 +111,10 @@ export const addTechnology = createAsyncThunk<string, Taxonomy>(
 
       return `${technology.id} was added to technologies`;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -152,7 +162,7 @@ const addSliceOptions: CreateSliceOptions<AddState> = {
         ),
         (state, action) => {
           state.addLoading = false;
-          state.addError = action.error as Error || null;
+          state.addError = (action.error as Error) || null;
           state.addErrorMessage = action.error.message || '';
         }
       );

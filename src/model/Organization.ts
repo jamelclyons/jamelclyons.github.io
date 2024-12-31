@@ -1,4 +1,6 @@
-class Organization {
+import Model from './Model';
+
+class Organization extends Model {
   id: string;
   createdAt: string;
   updatedAt: string;
@@ -12,6 +14,8 @@ class Organization {
   url: string;
 
   constructor(data: Record<string, any> = {}) {
+    super();
+
     this.id = data?.id;
     this.createdAt = data?.created_at;
     this.updatedAt = data?.updated_at;

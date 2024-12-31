@@ -1,9 +1,10 @@
+import Model from './Model';
 import Contact from './Contact';
 
 import packageJson from '../../package.json';
 import Image from './Image';
 
-class ContactMethods {
+class ContactMethods extends Model {
   gitHub: Contact;
   instagram: Contact;
   linkedIn: Contact;
@@ -12,6 +13,8 @@ class ContactMethods {
   phone: Contact;
 
   constructor(data: Record<string, any> = {}) {
+    super();
+    
     const { gitHub, instagram, linkedIn, x, email, phone } =
       packageJson.author.contact;
 

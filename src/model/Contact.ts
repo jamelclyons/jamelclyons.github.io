@@ -1,6 +1,7 @@
+import Model from './Model';
 import Image from './Image';
 
-class Contact {
+class Contact extends Model {
   id: string;
   title: string;
   url: string;
@@ -8,6 +9,8 @@ class Contact {
   value: string;
 
   constructor(data: Record<string, any> = {}) {
+    super();
+
     this.id = data?.id || '';
     this.title = data?.title || '';
     this.url = data?.url || '';
@@ -17,16 +20,6 @@ class Contact {
           url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/w8AAn8B9oOKlwAAAABJRU5ErkJggg==',
         });
     this.value = data?.value || '';
-  }
-
-  toObject(): Record<string, any> {
-    return {
-      id: this.id,
-      title: this.title,
-      url: this.url,
-      image: this.image,
-      value: this.value,
-    };
   }
 }
 

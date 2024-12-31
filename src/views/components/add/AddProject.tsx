@@ -27,6 +27,7 @@ import ProjectProcess from '../../../model/ProjectProcess';
 import ProjectProblem from '../../../model/ProjectProblem';
 import ProjectDetails from '../../../model/ProjectDetails';
 import Taxonomy from '../../../model/Taxonomy';
+import ProjectStatus from '../../../model/ProjectStatus';
 
 const AddProject: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -40,7 +41,6 @@ const AddProject: React.FC = () => {
 
   const [id, setId] = useState('');
   const [title, setTitle] = useState('');
-  const [status, setStatus] = useState('');
   const [types, setTypes] = useState([]);
   const [description, setDescription] = useState('');
   const [slug, setSlug] = useState('');
@@ -124,18 +124,12 @@ const AddProject: React.FC = () => {
 
       const { name, value } = target;
 
-      if (name === 'id') {
-        setId(value);
+      if (name === 'repo_url') {
+        setRepoURL(value);
       } else if (name === 'title') {
         setTitle(value);
-      } else if (name === 'status') {
-        setStatus(value);
-      } else if (name === 'description') {
-        setDescription(value);
       } else if (name === 'slug') {
         setSlug(value);
-      } else if (name === 'repo_url') {
-        setRepoURL(value);
       } else if (name === 'client_id') {
         setClientID(value);
       }
@@ -173,6 +167,7 @@ const AddProject: React.FC = () => {
 
   const solution = new ProjectSolution(solutionData);
 
+  const status = new ProjectStatus();
   const design = new ProjectDesign(designData);
   const development = new ProjectDevelopment(developmentData);
   const delivery = new ProjectDelivery(deliveryData);
@@ -183,24 +178,34 @@ const AddProject: React.FC = () => {
 
   const handleAddProject = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    const form = document.getElementById('add_project') as HTMLFormElement;
+    const formData = new FormData(form);
 
+    if (repoURL) {
+      const parsedUrl = new URL(repoURL);
+      const pathname = parsedUrl.pathname;
+      const parts = pathname.split('/');
+      const filteredArray = parts.filter(item => item !== "");
+
+      formData.append('id', filteredArray[1]);
+    } else {
+      throw new Error('A valid repo url is required.');
+    }
+
+    if (!title) {
+      throw new Error('A valid project title is required.');
+    }
+
+    let project: Record<string, any> = {};
+
+    formData.forEach((value, key) => {
+      project[key] = value;
+    });
+
+    console.log(project);
     try {
-      const project = new Project(
-        id,
-        title,
-        description,
-        urlsList,
-        solution,
-        process,
-        problem,
-        selectedProjectTypes,
-        selectedLanguages,
-        selectedFrameworks,
-        selectedTechnologies,
-        details
-      );
 
-      dispatch(addProject(project));
+      // dispatch(addProject(project));
 
       dispatch(setMessageType('info'));
       dispatch(setMessage('Standbye while an attempt to log you is made.'));
@@ -255,12 +260,12 @@ const AddProject: React.FC = () => {
       <main>
         <h2>Add Project</h2>
 
-        <form action="">
+        <form action="" id="add_project">
           <input
             type="text"
-            name="id"
-            placeholder="ID"
-            value={id}
+            name="repo_url"
+            placeholder="Repo URL"
+            value={repoURL}
             onChange={handleChange}
           />
 
@@ -272,21 +277,13 @@ const AddProject: React.FC = () => {
             onChange={handleChange}
           />
 
-          <input
+          {/* <input
             type="text"
             name="status"
             placeholder="Status"
             value={status}
             onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="description"
-            placeholder="Description"
-            value={description}
-            onChange={handleChange}
-          />
+          /> */}
 
           <h2 className="title">design</h2>
 
@@ -323,14 +320,6 @@ const AddProject: React.FC = () => {
             value={developmentCheckList}
             onChange={handleChange}
           /> */}
-
-          <input
-            type="text"
-            name="repo_url"
-            placeholder="Repo URL"
-            value={repoURL}
-            onChange={handleChange}
-          />
 
           {/* <input
             type="text"
@@ -380,7 +369,7 @@ const AddProject: React.FC = () => {
             <label htmlFor="options">Choose Frameworks:</label>
 
             {Array.isArray(frameworks) &&
-              projectTypes.map((item) => (
+              frameworks.map((item) => (
                 <div className="project-checkbox" key={item.id}>
                   <input
                     type="checkbox"

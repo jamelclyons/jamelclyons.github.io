@@ -1,9 +1,10 @@
+import Model from './Model';
 import ProjectDesign from './ProjectDesign';
 import ProjectDevelopment from './ProjectDevelopment';
 import ProjectDelivery from './ProjectDelivery';
 import ProjectStatus from './ProjectStatus';
 
-class ProjectProcess {
+class ProjectProcess extends Model {
   status: ProjectStatus;
   design: ProjectDesign;
   development: ProjectDevelopment;
@@ -15,6 +16,8 @@ class ProjectProcess {
     development: ProjectDevelopment = new ProjectDevelopment,
     delivery: ProjectDelivery = new ProjectDelivery
   ) {
+    super();
+    
     this.status = status;
     this.design = design;
     this.development = development;

@@ -1,7 +1,9 @@
+import Model from './Model';
+
 import { snakeCaseToPath } from '../utilities/String';
 import Image from './Image';
 
-class Taxonomy {
+class Taxonomy extends Model {
   id: string;
   type: string;
   title: string;
@@ -17,6 +19,8 @@ class Taxonomy {
     iconURL: string,
     className: string
   ) {
+    super();
+    
     this.id = id;
     this.type = type;
     this.title = title;

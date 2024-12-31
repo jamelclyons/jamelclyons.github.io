@@ -1,3 +1,4 @@
+import Model from './Model';
 import ProjectDetails from './ProjectDetails';
 import ProjectDevelopment from './ProjectDevelopment';
 import ProjectProblem from './ProjectProblem';
@@ -7,7 +8,7 @@ import ProjectStatus from './ProjectStatus';
 import ProjectUrl from './ProjectUrl';
 import Repo from './Repo';
 
-class Project {
+class Project extends Model {
   id: string;
   title: string;
   description: string;
@@ -22,35 +23,24 @@ class Project {
   technologies: Set<string>;
   details: ProjectDetails;
 
-  constructor(
-    id: string,
-    title: string,
-    description: string,
-    homepage: string,
-    urlsList: Array<ProjectUrl> = [],
-    solution: ProjectSolution = new ProjectSolution(),
-    process: ProjectProcess = new ProjectProcess(),
-    problem: ProjectProblem = new ProjectProblem(),
-    types: Set<string> = new Set(),
-    languages: Set<string> = new Set(),
-    frameworks: Set<string> = new Set(),
-    technologies: Set<string> = new Set(),
-    details: ProjectDetails = new ProjectDetails()
-  ) {
-    this.id = id || '';
-    this.title = title ?? this.getTitle(id);
-    this.description = description ?? 'No Description Provided.';
-    this.homepage = homepage ?? '';
-    this.urlsList = urlsList;
-    this.solution = solution;
-    this.process = process;
-    this.problem = problem;
-    this.types = types;
-    this.languages = languages;
-    this.frameworks = frameworks;
-    this.technologies = technologies;
-    this.details = details;
+  constructor(data: Record<string, any> = {}) {
+    super();
+
+    this.id = data?.id || '';
+    this.title = data?.title ?? this.getTitle(data?.id);
+    this.description = data?.description ?? 'No Description Provided.';
+    this.homepage = data?.homepage ?? '';
+    this.urlsList = data?.urlsList;
+    this.solution = data?.solution;
+    this.process = data?.process;
+    this.problem = data?.problem;
+    this.types = data?.types;
+    this.languages = data?.languages;
+    this.frameworks = data?.frameworks;
+    this.technologies = data?.technologies;
+    this.details = data?.details;
   }
+  
   getTitle(id: string): string {
     let title = id;
 
@@ -75,23 +65,6 @@ class Project {
     this.process = new ProjectProcess();
     this.process.status = new ProjectStatus(data);
     this.process.development = new ProjectDevelopment(data);
-  }
-
-  toObject(): Record<string, any> {
-    return {
-      id: this.id,
-      title: this.title,
-      description: this.description,
-      urls_list: this.urlsList,
-      solution: this.solution.toObject(),
-      process: this.process.toObject(),
-      problem: this.problem.toObject(),
-      types: this.types,
-      languages: this.languages,
-      frameworks: this.frameworks,
-      technologies: this.technologies,
-      details: this.details.toObject(),
-    };
   }
 }
 

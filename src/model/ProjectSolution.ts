@@ -1,7 +1,8 @@
+import Model from './Model';
 import Feature from './Feature';
 import Image from './Image';
 
-class ProjectSolution {
+class ProjectSolution extends Model {
   gallery: Array<Image>;
   features: Set<Feature>;
   content: Array<string>;
@@ -9,6 +10,8 @@ class ProjectSolution {
   price: number;
 
   constructor(data: Record<string, any> = {}) {
+    super();
+    
     this.gallery = data?.gallery || [];
     this.features = this.getFeatures(data?.features);
     this.content = data?.content || [];

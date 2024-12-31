@@ -49,20 +49,20 @@ function getProjectFromObject(doc: DocumentData, repo?: Repo): Project {
   const development = new ProjectDevelopment(data.process.development);
   const delivery = new ProjectDelivery(data.process.delivery);
 
-  const project = new Project(
-    doc.id,
-    data.title,
-    data.description,
-    data.homepage,
-    data.urlsList,
-    new ProjectSolution(data.solution),
-    new ProjectProcess(data.process.status, design, development, delivery),
-    new ProjectProblem(data.problem),
-    data.types,
-    data.languages,
-    data.frameworks,
-    data.technologies,
-    data.details
+  const project = new Project({
+    'id': doc.id,
+    'title': data.title,
+    'description': data.description,
+    'homepage': data.homepage,
+    'urlsList': data.urlsList,
+    'solution': new ProjectSolution(data.solution),
+    'process': new ProjectProcess(data.process.status, design, development, delivery),
+    'problem': new ProjectProblem(data.problem),
+    'types': data.types,
+    'languages': data.languages,
+    'frameworks': data.frameworks,
+    'technologies': data.technologies,
+    'details': data.details}
   );
 
   if (repo) {
@@ -143,11 +143,7 @@ export const getProject = createAsyncThunk(
       const docSnap = await getDoc(docRef);
 
       if (!docSnap.exists()) {
-        const id = repo.id;
-        const description = repo.description;
-        const homepage = repo.homepage;
-
-        let project = new Project(id, '', description, homepage);
+        let project = new Project();
         project.fromRepo(repo);
 
         return project;

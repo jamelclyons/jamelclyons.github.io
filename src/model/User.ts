@@ -1,4 +1,4 @@
-import SocialAccount from './Contact';
+import Model from './Model';
 import Image from './Image';
 import ContactMethods from './ContactMethods';
 
@@ -6,7 +6,7 @@ import Organization from '../model/Organization';
 
 import packageJson from '../../package.json';
 
-class User {
+class User extends Model {
   id: string;
   avatarURL: string;
   name: string;
@@ -22,6 +22,8 @@ class User {
   images: Record<string, Image>;
 
   constructor(data: Record<string, any> = {}) {
+    super();
+
     const { homepage, author } = packageJson;
 
     this.id = this.getGitHubUsername(homepage);
@@ -63,24 +65,6 @@ class User {
     }
 
     return [];
-  }
-
-  toObject(): Record<string, any> {
-    return {
-      id: this.id,
-      avatar_url: this.avatarURL,
-      name: this.name,
-      title: this.title,
-      bio: this.bio,
-      email: this.email,
-      phone: this.phone,
-      resume: this.resume,
-      website: this.website,
-      organizations: this.organizations,
-      repos: this.repos,
-      contact_methods: this.contactMethods,
-      images: this.images,
-    };
   }
 }
 
