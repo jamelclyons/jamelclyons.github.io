@@ -7,7 +7,7 @@ import Gallery from '../Gallery';
 import ProjectDescription from '../portfolio/ProjectDescription';
 import Details from './Details';
 import TheSolution from './TheSolution';
-import ProjectURLs from './ProjectURLs';
+import ProjectURLs from './ProjectURLsComponent';
 import TheProblem from './TheProblem';
 import TaxList from '../TaxList';
 import TaxListIcon from '../TaxListIcon';

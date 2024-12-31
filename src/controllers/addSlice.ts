@@ -30,11 +30,11 @@ const initialState: AddState = {
 
 export const addProject = createAsyncThunk(
   'add/addProject',
-  async (project: Record<string, any>) => {
+  async (project: Project) => {
     try {
       const projectCollection = collection(db, 'portfolio');
 
-      await setDoc(doc(projectCollection, project.id), project);
+      await setDoc(doc(projectCollection, project.id), project.toObject);
 
       return `${project.id} was added to portfolio`;
     } catch (error) {
@@ -51,11 +51,10 @@ export const addProjectType = createAsyncThunk(
   async (taxonomy: Taxonomy) => {
     try {
       const projectTypeCollection = collection(db, 'project_types');
-      const projectType = taxonomy.toObject();
 
-      await setDoc(doc(projectTypeCollection, projectType.id), projectType);
+      await setDoc(doc(projectTypeCollection, taxonomy.id), taxonomy.toObject());
 
-      return `${projectType.id} was added to projectTypes`;
+      return `${taxonomy.id} was added to projectTypes`;
     } catch (error) {
       const err = error as Error;
 
@@ -67,13 +66,13 @@ export const addProjectType = createAsyncThunk(
 
 export const addLanguage = createAsyncThunk(
   'add/addLanguage',
-  async (language: Taxonomy) => {
+  async (taxonomy: Taxonomy) => {
     try {
       const languageCollection = collection(db, 'languages');
 
-      await setDoc(doc(languageCollection, language.id), language);
+      await setDoc(doc(languageCollection, taxonomy.id), taxonomy.toObject());
 
-      return `${language.id} was added to languages`;
+      return `${taxonomy.id} was added to languages`;
     } catch (error) {
       const err = error as Error;
 
@@ -85,13 +84,13 @@ export const addLanguage = createAsyncThunk(
 
 export const addFramework = createAsyncThunk(
   'add/addFramework',
-  async (framework: Taxonomy) => {
+  async (taxonomy: Taxonomy) => {
     try {
       const frameworkCollection = collection(db, 'frameworks');
 
-      await setDoc(doc(frameworkCollection, framework.id), framework);
+      await setDoc(doc(frameworkCollection, taxonomy.id), taxonomy.toObject());
 
-      return `${framework.id} was added to frameworks`;
+      return `${taxonomy.id} was added to frameworks`;
     } catch (error) {
       const err = error as Error;
 
@@ -103,13 +102,13 @@ export const addFramework = createAsyncThunk(
 
 export const addTechnology = createAsyncThunk<string, Taxonomy>(
   'add/addTechnology',
-  async (technology: Taxonomy) => {
+  async (taxonomy: Taxonomy) => {
     try {
       const technologyCollection = collection(db, 'technologies');
 
-      await setDoc(doc(technologyCollection, technology.id), technology);
+      await setDoc(doc(technologyCollection, taxonomy.id), taxonomy.toObject());
 
-      return `${technology.id} was added to technologies`;
+      return `${taxonomy.id} was added to technologies`;
     } catch (error) {
       const err = error as Error;
 

@@ -85,7 +85,7 @@ const initialState: GithubState = {
 
 export const getUser = createAsyncThunk<User, string>(
   'github/getUser',
-  async (username) => {
+  async (username: string) => {
     try {
       const { data } = await octokit.request(`GET /users/${username}`, {
         headers: {
@@ -124,7 +124,7 @@ export const getRepos = createAsyncThunk('github/getRepos', async () => {
 
 export const getOrganizations = createAsyncThunk<Array<Organization>, string>(
   'github/getOrganizations',
-  async (username) => {
+  async () => {
     try {
       const { data } = await octokit.request('/user/orgs');
 

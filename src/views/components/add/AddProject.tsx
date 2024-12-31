@@ -9,25 +9,15 @@ import {
   setMessageType,
   setShowStatusBar,
 } from '../../../controllers/messageSlice';
-import {
-  getProjectTypes,
-  getLanguages,
-  getFrameworks,
-  getTechnologies,
-} from '../../../controllers/taxonomiesSlice';
 
 import StatusBarComponent from '../StatusBarComponent';
 
 import Project from '../../../model/Project';
-import ProjectSolution from '../../../model/ProjectSolution';
-import ProjectDesign from '../../../model/ProjectDesign';
-import ProjectDevelopment from '../../../model/ProjectDevelopment';
-import ProjectDelivery from '../../../model/ProjectDelivery';
-import ProjectProcess from '../../../model/ProjectProcess';
-import ProjectProblem from '../../../model/ProjectProblem';
-import ProjectDetails from '../../../model/ProjectDetails';
-import Taxonomy from '../../../model/Taxonomy';
-import ProjectStatus from '../../../model/ProjectStatus';
+
+import UpdateDetails from '../update/UpdateDetails';
+import UpdateProcess from '../update/UpdateProcess';
+import UpdateSolution from '../update/UpdateSolution';
+import UpdateProblem from '../update/UpdateProblem';
 
 const AddProject: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -35,88 +25,9 @@ const AddProject: React.FC = () => {
   const { addLoading, addSuccessMessage, addErrorMessage } = useSelector(
     (state: RootState) => state.add
   );
-  const { projectTypes, languages, frameworks, technologies } = useSelector(
-    (state: RootState) => state.taxonomies
-  );
 
-  const [id, setId] = useState('');
-  const [title, setTitle] = useState('');
-  const [types, setTypes] = useState([]);
-  const [description, setDescription] = useState('');
-  const [slug, setSlug] = useState('');
-  // const [design, setDesign] = useState([]);
-  const [designCheckList, setDesignCheckList] = useState([]);
-  const [designGallery, setDesignGallery] = useState([]);
-  const [colorsList, setColorsList] = useState([]);
-  // const [development, setDevelopment] = useState([]);
-  const [developmentCheckList, setDevelopmentCheckList] = useState([]);
   const [repoURL, setRepoURL] = useState('');
-  const [versionsList, setVersionsList] = useState([]);
-
-  // const [delivery, setDelivery] = useState([]);
-  const [deliveryGallery, setDeliveryGallery] = useState([]);
-  const [deliveryCheckList, setDeliveryCheckList] = useState([]);
-  // const [problem, setProblem] = useState([]);
-  const [problemGallery, setProblemGallery] = useState([]);
-  // const [solution, setSolution] = useState([]);
-  const [solutionGallery, setSolutionGallery] = useState([]);
-  const [urlsList, setUrlsList] = useState([]);
-  const [detailsList, setDetailsList] = useState([]);
-  const [teamList, setTeamList] = useState([]);
-  const [clientID, setClientID] = useState('');
-
-  const [selectedProjectTypes, setSelectedProjectTypes] = useState<Set<string>>(new Set());
-  const [selectedLanguages, setSelectedLanguages] = useState<Set<string>>(new Set());
-  const [selectedFrameworks, setSelectedFrameworks] = useState<Set<string>>(new Set());
-  const [selectedTechnologies, setSelectedTechnologies] = useState<Set<string>>(new Set());
-
-  const handleProjectTypesCheckboxChange = (id: string) => {
-    setSelectedProjectTypes((prevSelectedIds) => {
-      const updatedSelection = new Set(prevSelectedIds);
-      if (updatedSelection.has(id)) {
-        updatedSelection.delete(id);
-      } else {
-        updatedSelection.add(id);
-      }
-      return updatedSelection;
-    });
-  };
-
-  const handleLanguagesCheckboxChange = (id: string) => {
-    setSelectedLanguages((prevSelectedIds) => {
-      const updatedSelection = new Set(prevSelectedIds);
-      if (updatedSelection.has(id)) {
-        updatedSelection.delete(id);
-      } else {
-        updatedSelection.add(id);
-      }
-      return updatedSelection;
-    });
-  };
-
-  const handleFrameworksCheckboxChange = (id: string) => {
-    setSelectedFrameworks((prevSelectedIds) => {
-      const updatedSelection = new Set(prevSelectedIds);
-      if (updatedSelection.has(id)) {
-        updatedSelection.delete(id);
-      } else {
-        updatedSelection.add(id);
-      }
-      return updatedSelection;
-    });
-  };
-
-  const handleTechnologiesCheckboxChange = (id: string) => {
-    setSelectedTechnologies((prevSelectedIds) => {
-      const updatedSelection = new Set(prevSelectedIds);
-      if (updatedSelection.has(id)) {
-        updatedSelection.delete(id);
-      } else {
-        updatedSelection.add(id);
-      }
-      return updatedSelection;
-    });
-  };
+  const [title, setTitle] = useState('');
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     try {
@@ -128,10 +39,6 @@ const AddProject: React.FC = () => {
         setRepoURL(value);
       } else if (name === 'title') {
         setTitle(value);
-      } else if (name === 'slug') {
-        setSlug(value);
-      } else if (name === 'client_id') {
-        setClientID(value);
       }
     } catch (error) {
       const err = error as Error;
@@ -139,42 +46,6 @@ const AddProject: React.FC = () => {
       dispatch(setMessageType('error'));
     }
   };
-
-  const solutionData = {
-    solution_gallery: solutionGallery,
-  };
-
-  const designData = {
-    design_check_list: designCheckList,
-    design_gallery: designGallery,
-    colors_list: colorsList,
-  };
-
-  const developmentData = {
-    development_check_list: developmentCheckList,
-    repo_url: repoURL,
-    versions_list: versionsList,
-  };
-
-  const deliveryData = {
-    delivery_gallery: deliveryGallery,
-    delivery_check_list: deliveryCheckList,
-  };
-
-  const problemData = {};
-
-  const detailsData = {};
-
-  const solution = new ProjectSolution(solutionData);
-
-  const status = new ProjectStatus();
-  const design = new ProjectDesign(designData);
-  const development = new ProjectDevelopment(developmentData);
-  const delivery = new ProjectDelivery(deliveryData);
-  const process = new ProjectProcess(status, design, development, delivery);
-
-  const problem = new ProjectProblem(problemData);
-  const details = new ProjectDetails(detailsData);
 
   const handleAddProject = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -202,10 +73,8 @@ const AddProject: React.FC = () => {
       project[key] = value;
     });
 
-    console.log(project);
     try {
-
-      // dispatch(addProject(project));
+      dispatch(addProject(new Project(project)));
 
       dispatch(setMessageType('info'));
       dispatch(setMessage('Standbye while an attempt to log you is made.'));
@@ -239,22 +108,6 @@ const AddProject: React.FC = () => {
     }
   }, [addErrorMessage]);
 
-  useEffect(() => {
-    dispatch(getProjectTypes());
-  }, []);
-
-  useEffect(() => {
-    dispatch(getLanguages());
-  }, []);
-
-  useEffect(() => {
-    dispatch(getFrameworks());
-  }, []);
-
-  useEffect(() => {
-    dispatch(getTechnologies());
-  }, []);
-
   return (
     <>
       <main>
@@ -277,184 +130,13 @@ const AddProject: React.FC = () => {
             onChange={handleChange}
           />
 
-          {/* <input
-            type="text"
-            name="status"
-            placeholder="Status"
-            value={status}
-            onChange={handleChange}
-          /> */}
+          <UpdateSolution />
 
-          <h2 className="title">design</h2>
+          <UpdateProcess />
 
-          {/* <input
-            type="text"
-            name="design_check_list"
-            placeholder="Design Check List"
-            value={designCheckList}
-            onChange={handleChange}
-          /> */}
+          <UpdateProblem />
 
-          {/* <input
-            type="text"
-            name="design_gallery"
-            placeholder="Design Gallery"
-            value={designGallery}
-            onChange={handleChange}
-          /> */}
-
-          {/* <input
-            type="text"
-            name="colors_list"
-            placeholder="Colors List"
-            value={colors_list}
-            onChange={handleChange}
-          /> */}
-
-          <h2 className="title">development</h2>
-
-          {/* <input
-            type="text"
-            name="development_check_list"
-            placeholder="Development Check List"
-            value={developmentCheckList}
-            onChange={handleChange}
-          /> */}
-
-          {/* <input
-            type="text"
-            name="versions_list"
-            placeholder="Versions List"
-            value={versionsList}
-            onChange={handleChange}
-          /> */}
-
-          <div className="project-selection">
-            <label htmlFor="options">Choose Project Types:</label>
-
-            {Array.isArray(projectTypes) &&
-              projectTypes.map((item) => (
-                <div className="project-checkbox" key={item.id}>
-                  <input
-                    type="checkbox"
-                    id={`checkbox-${item.id}`}
-                    value={item.id}
-                    checked={selectedProjectTypes.has(item.id)}
-                    onChange={() => handleProjectTypesCheckboxChange(item.id)}
-                  />
-                  <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
-                </div>
-              ))}
-          </div>
-
-          <div className="project-selection">
-            <label htmlFor="options">Choose Languages:</label>
-
-            {Array.isArray(languages) &&
-              languages.map((item) => (
-                <div className="project-checkbox" key={item.id}>
-                  <input
-                    type="checkbox"
-                    id={`checkbox-${item.id}`}
-                    value={item.id}
-                    checked={selectedLanguages.has(item.id)}
-                    onChange={() => handleLanguagesCheckboxChange(item.id)}
-                  />
-                  <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
-                </div>
-              ))}
-          </div>
-
-          <div className="project-selection">
-            <label htmlFor="options">Choose Frameworks:</label>
-
-            {Array.isArray(frameworks) &&
-              frameworks.map((item) => (
-                <div className="project-checkbox" key={item.id}>
-                  <input
-                    type="checkbox"
-                    id={`checkbox-${item.id}`}
-                    value={item.id}
-                    checked={selectedFrameworks.has(item.id)}
-                    onChange={() => handleFrameworksCheckboxChange(item.id)}
-                  />
-                  <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
-                </div>
-              ))}
-          </div>
-
-          <div className="project-selection">
-            <label htmlFor="options">Choose Technologies:</label>
-
-            {Array.isArray(technologies) &&
-              technologies.map((item) => (
-                <div className="project-checkbox" key={item.id}>
-                  <input
-                    type="checkbox"
-                    id={`checkbox-${item.id}`}
-                    value={item.id}
-                    checked={selectedTechnologies.has(item.id)}
-                    onChange={() => handleTechnologiesCheckboxChange(item.id)}
-                  />
-                  <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
-                </div>
-              ))}
-          </div>
-
-          <h2 className="title">delivery</h2>
-
-          {/* <input
-            type="text"
-            name="delivery_gallery"
-            placeholder="Delivery Gallery"
-            value={delivery}
-            onChange={handleChange}
-          /> */}
-
-          {/* <input
-            type="text"
-            name="delivery_check_list"
-            placeholder="Delivery Check List"
-            value={deliveryCheckList}
-            onChange={handleChange}
-          /> */}
-
-          {/* Problem */}
-          {/* Problem Gallery */}
-          {/* Solution */}
-          {/* Solution Gallery */}
-
-          {/* <input
-            type="text"
-            name="urls_list"
-            placeholder="URLs List"
-            value={urlsList}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="details_list"
-            placeholder="Details List"
-            value={detailsList}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="team_list"
-            placeholder="Team List"
-            value={teamList}
-            onChange={handleChange}
-          /> */}
-
-          <input
-            type="text"
-            name="client_id"
-            placeholder="client_id"
-            value={clientID}
-            onChange={handleChange}
-          />
+          <UpdateDetails />
 
           <button onClick={handleAddProject}>
             <h3>add</h3>

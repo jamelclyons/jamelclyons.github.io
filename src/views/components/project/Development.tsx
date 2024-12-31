@@ -6,7 +6,7 @@ import { useAppSelector } from '../../../model/hooks';
 
 import CheckList from './CheckList';
 import ContentComponent from '../ContentComponent';
-import ProjectURLs from './ProjectURLs';
+import ProjectURLs from './ProjectURLsComponent';
 import Versions from './Versions';
 
 import type { RepoQuery } from '../../../controllers/githubSlice';

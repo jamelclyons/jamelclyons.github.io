@@ -1,6 +1,7 @@
 import Model from './Model';
 import Feature from './Feature';
 import Image from './Image';
+import ProjectURLs from './ProjectURLs';
 
 class ProjectSolution extends Model {
   gallery: Array<Image>;
@@ -8,6 +9,7 @@ class ProjectSolution extends Model {
   content: Array<string>;
   currency: string;
   price: number;
+  urlsList: ProjectURLs;
 
   constructor(data: Record<string, any> = {}) {
     super();
@@ -17,6 +19,7 @@ class ProjectSolution extends Model {
     this.content = data?.content || [];
     this.currency = data?.currency || '';
     this.price = data?.price || 0;
+    this.urlsList = data?.urlsList;
   }
 
   getFeatures(data?: Set<Feature>): Set<Feature> {
@@ -29,16 +32,6 @@ class ProjectSolution extends Model {
     }
 
     return features;
-  }
-
-  toObject(): Record<string, any> {
-    return {
-      gallery: this.gallery,
-      features: this.features,
-      content: this.content,
-      currency: this.currency,
-      price: this.price,
-    };
   }
 }
 

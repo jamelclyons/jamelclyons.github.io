@@ -54,17 +54,6 @@ class Taxonomy extends Model {
 
     return true;
   }
-
-  toObject() {
-    return {
-      id: this.id,
-      type: this.type,
-      title: this.title,
-      path: this.path,
-      icon_url: this.iconURL,
-      class_name: this.className,
-    };
-  }
 }
 
 export default Taxonomy;

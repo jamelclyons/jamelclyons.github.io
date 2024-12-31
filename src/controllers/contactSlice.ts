@@ -6,7 +6,7 @@ import {
 
 import { collection, doc, getDoc } from 'firebase/firestore';
 
-import db from '../services/firebase/config.ts';
+import db from '../services/firebase/config';
 
 export class ContactPage {
   title: string;
@@ -65,8 +65,9 @@ export const sendEmail = createAsyncThunk<string, Email>(
 
       return responseData;
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );
@@ -85,8 +86,9 @@ export const getContactPageContent = createAsyncThunk<ContactPage>(
 
       return new ContactPage(docSnap.data());
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );

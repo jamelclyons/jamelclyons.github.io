@@ -1,13 +1,13 @@
 import React from "react";
 
-import ProjectUrl from "../../../model/ProjectUrl";
+import ProjectURLs from "../../../model/ProjectURLs";
 import IconComponent from "../IconComponent";
 
 interface ProjectURLsProps {
-  projectUrls: Array<ProjectUrl>;
+  projectUrls: ProjectURLs;
 }
 
-const ProjectURLs: React.FC<ProjectURLsProps> = ({ projectUrls }) => {
+const ProjectURLsComponent: React.FC<ProjectURLsProps> = ({ projectUrls }) => {
 
   return (
     <>
@@ -29,4 +29,4 @@ const ProjectURLs: React.FC<ProjectURLsProps> = ({ projectUrls }) => {
   );
 }
 
-export default ProjectURLs;
+export default ProjectURLsComponent;

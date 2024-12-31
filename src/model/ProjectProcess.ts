@@ -23,15 +23,6 @@ class ProjectProcess extends Model {
     this.development = development;
     this.delivery = delivery;
   }
-
-  toObject(): Record<string, any> {
-    return {
-      status: this.status,
-      design: this.design.toObject(),
-      development: this.development.toObject(),
-      delivery: this.delivery.toObject(),
-    };
-  }
 }
 
 export default ProjectProcess;

@@ -1,6 +1,6 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
-import { Provider, useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import LoadingComponent from './views/components/LoadingComponent';
 import HeaderComponent from './views/components/HeaderComponent';
@@ -13,8 +13,8 @@ const ProjectPage = lazy(() => import('./views/Project'));
 const Search = lazy(() => import('./views/Search'));
 const Resume = lazy(() => import('./views/Resume'));
 const Contact = lazy(() => import('./views/Contact'));
-const AddSkill = lazy(() => import('./views/AddSkill'));
-const AddProject = lazy(() => import('./views/Add'));
+const AddSkill = lazy(() => import('./views/SkillAdd'));
+const AddProject = lazy(() => import('./views/ProjectAdd'));
 const NotFound = lazy(() => import('./views/NotFound'));
 
 import {
@@ -24,11 +24,11 @@ import {
 } from './controllers/githubSlice';
 
 import type { AppDispatch, RootState } from './model/store';
-
 import Project from './model/Project';
+
 import { getProject } from './controllers/portfolioSlice';
 
-function App() {
+const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const [portfolio, setPortfolio] = useState<Array<Project>>([]);
@@ -97,8 +97,8 @@ function App() {
             />
             <Route path="/resume" element={<Resume user={user} />} />
             <Route path="/contact" element={<Contact user={user} />} />
-            <Route path="/project/add" element={<AddProject />} />
-            <Route path="/skill/add" element={<AddSkill />} />
+            <Route path="/add/project" element={<AddProject />} />
+            <Route path="/add/skill" element={<AddSkill />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
