@@ -19,7 +19,16 @@ const UpdateDelivery: React.FC = () => {
   const delivery = new ProjectDelivery(deliveryData);
 
   return (
-    <h2 className="title">delivery</h2>
+    <>
+      <h2 className="title">delivery</h2>
+
+      <form action="">
+
+        <button onClick={handleUpdateSolution}>
+          <h3>update</h3>
+        </button>
+      </form>
+    </>
   )
 }
 

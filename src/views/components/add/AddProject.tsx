@@ -12,8 +12,6 @@ import {
 
 import StatusBarComponent from '../StatusBarComponent';
 
-import Project from '../../../model/Project';
-
 import UpdateDetails from '../update/UpdateDetails';
 import UpdateProcess from '../update/UpdateProcess';
 import UpdateSolution from '../update/UpdateSolution';
@@ -49,33 +47,33 @@ const AddProject: React.FC = () => {
 
   const handleAddProject = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const form = document.getElementById('add_project') as HTMLFormElement;
-    const formData = new FormData(form);
 
-    if (repoURL) {
-      const parsedUrl = new URL(repoURL);
-      const pathname = parsedUrl.pathname;
-      const parts = pathname.split('/');
-      const filteredArray = parts.filter(item => item !== "");
-
-      formData.append('id', filteredArray[1]);
-    } else {
-      throw new Error('A valid repo url is required.');
-    }
-
-    if (!title) {
-      throw new Error('A valid project title is required.');
-    }
-
-    let project: Record<string, any> = {};
-
-    formData.forEach((value, key) => {
-      project[key] = value;
-    });
-    
-console.log(project);
     try {
-      // dispatch(addProject(new Project(project)));
+      const form = document.getElementById('add_project') as HTMLFormElement;
+      const formData = new FormData(form);
+
+      if (repoURL) {
+        const parsedUrl = new URL(repoURL);
+        const pathname = parsedUrl.pathname;
+        const parts = pathname.split('/');
+        const filteredArray = parts.filter(item => item !== "");
+
+        formData.append('id', filteredArray[1]);
+      } else {
+        throw new Error('A valid repo url is required.');
+      }
+
+      if (!title) {
+        throw new Error('A valid project title is required.');
+      }
+
+      let project: Record<string, any> = {};
+
+      formData.forEach((value, key) => {
+        project[key] = value;
+      });
+
+      dispatch(addProject(project));
 
       dispatch(setMessageType('info'));
       dispatch(setMessage('Standbye while an attempt to log you is made.'));
@@ -131,18 +129,18 @@ console.log(project);
             onChange={handleChange}
           />
 
-          <UpdateSolution />
-
-          <UpdateProcess />
-
-          <UpdateProblem />
-
-          <UpdateDetails />
-
           <button onClick={handleAddProject}>
             <h3>add</h3>
           </button>
         </form>
+
+        <UpdateSolution />
+
+        <UpdateProcess />
+
+        <UpdateProblem />
+
+        <UpdateDetails />
 
         <StatusBarComponent />
       </main>

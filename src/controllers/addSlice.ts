@@ -30,11 +30,11 @@ const initialState: AddState = {
 
 export const addProject = createAsyncThunk(
   'add/addProject',
-  async (project: Project) => {
+  async (project: Record<string, any>) => {
     try {
       const projectCollection = collection(db, 'portfolio');
 
-      await setDoc(doc(projectCollection, project.id), project.toObject);
+      await setDoc(doc(projectCollection, project.id), project);
 
       return `${project.id} was added to portfolio`;
     } catch (error) {
