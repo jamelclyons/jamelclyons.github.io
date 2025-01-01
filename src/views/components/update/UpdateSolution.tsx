@@ -14,6 +14,31 @@ import ProjectSolution from '../../../model/ProjectSolution';
 const UpdateSolution: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
+  const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
+    (state: RootState) => state.update
+  );
+
+  useEffect(() => {
+    if (updateLoading) {
+      dispatch(setMessage('Standbye while an attempt to update the solution section of your project is made.'));
+      dispatch(setMessageType('info'));
+    }
+  }, [updateLoading, dispatch]);
+
+  useEffect(() => {
+    if (updateErrorMessage) {
+      dispatch(setMessage(updateErrorMessage));
+      dispatch(setMessageType('error'));
+    }
+  }, [updateErrorMessage, dispatch]);
+
+  useEffect(() => {
+    if (updateSuccessMessage) {
+      dispatch(setMessage(updateSuccessMessage));
+      dispatch(setMessageType('success'));
+    }
+  }, [updateSuccessMessage, dispatch]);
+
   const [gallery, setGallery] = useState<Record<string, any>>([]);
   const [features, setFeatures] = useState([]);
   const [content, setContent] = useState([]);

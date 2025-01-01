@@ -3,28 +3,117 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../model/store';
 
-import ProjectDelivery from '../../../model/ProjectDelivery';
+import {
+  setMessage,
+  setMessageType,
+  setShowStatusBar,
+} from '../../../controllers/messageSlice';
 
-const UpdateDelivery: React.FC = () => {
+import { updateDelivery } from '../../../controllers/updateSlice';
+
+interface UpdateDeliveryProps {
+  projectID: string
+}
+
+const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectID }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const [deliveryGallery, setDeliveryGallery] = useState([]);
-  const [deliveryCheckList, setDeliveryCheckList] = useState([]);
+  const { delivery } = useSelector(
+    (state: RootState) => state.project
+  );
+  const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
+    (state: RootState) => state.update
+  );
 
-  const deliveryData = {
-    delivery_gallery: deliveryGallery,
-    delivery_check_list: deliveryCheckList,
+  useEffect(() => {
+    if (updateLoading) {
+      dispatch(setMessage('Standbye while an attempt to update the delivery section of your project is made.'));
+      dispatch(setMessageType('info'));
+    }
+  }, [updateLoading, dispatch]);
+
+  useEffect(() => {
+    if (updateErrorMessage) {
+      dispatch(setMessage(updateErrorMessage));
+      dispatch(setMessageType('error'));
+    }
+  }, [updateErrorMessage, dispatch]);
+
+  useEffect(() => {
+    if (updateSuccessMessage) {
+      dispatch(setMessage(updateSuccessMessage));
+      dispatch(setMessageType('success'));
+    }
+  }, [updateSuccessMessage, dispatch]);
+
+  const [gallery, setGallery] = useState(delivery?.gallery);
+  const [checkList, setCheckList] = useState(delivery?.checkList);
+  const [content, setContent] = useState(delivery?.checkList);
+
+  const handleChangeGallery = (e: ChangeEvent<HTMLInputElement>) => {
+    try {
+      setGallery([]);
+    } catch (error) {
+      const err = error as Error;
+      dispatch(setMessage(err.message));
+      dispatch(setMessageType('error'));
+    }
   };
 
-  const delivery = new ProjectDelivery(deliveryData);
+  const handleChangeCheckList = (e: ChangeEvent<HTMLInputElement>) => {
+    try {
+      setCheckList([]);
+    } catch (error) {
+      const err = error as Error;
+      dispatch(setMessage(err.message));
+      dispatch(setMessageType('error'));
+    }
+  };
+
+  const handleChangeContent = (e: ChangeEvent<HTMLInputElement>) => {
+    try {
+      setContent([]);
+    } catch (error) {
+      const err = error as Error;
+      dispatch(setMessage(err.message));
+      dispatch(setMessageType('error'));
+    }
+  };
+
+  const handleUpdateDelivery = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    try {
+      const form = document.getElementById('update_delivery') as HTMLFormElement;
+      const formData = new FormData(form);
+
+      let deliveryData: Record<string, any> = {};
+
+      formData.forEach((value, key) => {
+        deliveryData[key] = value;
+      });
+
+      let data: Record<string, any> = {
+        id: projectID,
+        delivery: deliveryData
+      };
+
+      dispatch(updateDelivery(data));
+    } catch (error) {
+      const err = error as Error;
+      dispatch(setMessageType('error'));
+      dispatch(setMessage(err.message));
+      dispatch(setShowStatusBar(Date.now()));
+    }
+  };
 
   return (
     <>
       <h2 className="title">delivery</h2>
 
-      <form action="">
+      <form action="" id='update_delivery'>
 
-        <button onClick={handleUpdateSolution}>
+        <button onClick={handleUpdateDelivery}>
           <h3>update</h3>
         </button>
       </form>

@@ -4,16 +4,52 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../model/store';
 
 import {
+  setMessage,
+  setMessageType,
+  setShowStatusBar,
+} from '../../../controllers/messageSlice';
+import {
   getProjectTypes,
   getLanguages,
   getFrameworks,
   getTechnologies,
 } from '../../../controllers/taxonomiesSlice';
+import { updateDevelopment } from '../../../controllers/updateSlice';
 
-import ProjectDevelopment from '../../../model/ProjectDevelopment';
+interface UpdateDevelopmentProps {
+  projectID: string
+}
 
-const UpdateDevelopment: React.FC = () => {
+const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID }) => {
   const dispatch = useDispatch<AppDispatch>();
+
+  const { development } = useSelector(
+    (state: RootState) => state.project
+  );
+  const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
+    (state: RootState) => state.update
+  );
+
+  useEffect(() => {
+    if (updateLoading) {
+      dispatch(setMessage('Standbye while an attempt to update the development section of your project is made.'));
+      dispatch(setMessageType('info'));
+    }
+  }, [updateLoading, dispatch]);
+
+  useEffect(() => {
+    if (updateErrorMessage) {
+      dispatch(setMessage(updateErrorMessage));
+      dispatch(setMessageType('error'));
+    }
+  }, [updateErrorMessage, dispatch]);
+
+  useEffect(() => {
+    if (updateSuccessMessage) {
+      dispatch(setMessage(updateSuccessMessage));
+      dispatch(setMessageType('success'));
+    }
+  }, [updateSuccessMessage, dispatch]);
 
   const { projectTypes, languages, frameworks, technologies } = useSelector(
     (state: RootState) => state.taxonomies
@@ -35,7 +71,7 @@ const UpdateDevelopment: React.FC = () => {
     dispatch(getTechnologies());
   }, []);
 
-  const [developmentCheckList, setDevelopmentCheckList] = useState([]);
+  const [checkList, setCheckList] = useState(development);
   const [versionsList, setVersionsList] = useState([]);
   const [selectedProjectTypes, setSelectedProjectTypes] = useState<Set<string>>(new Set());
   const [selectedLanguages, setSelectedLanguages] = useState<Set<string>>(new Set());
@@ -90,13 +126,33 @@ const UpdateDevelopment: React.FC = () => {
     });
   };
 
-  const developmentData = {
-    development_check_list: developmentCheckList,
-    repo_url: "repo url",
-    versions_list: versionsList,
-  };
+  
+const handleUpdateDelivery = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
 
-  const development = new ProjectDevelopment(developmentData);
+    try {
+      const form = document.getElementById('update_delivery') as HTMLFormElement;
+      const formData = new FormData(form);
+
+      let developmentData: Record<string, any> = {};
+
+      formData.forEach((value, key) => {
+        developmentData[key] = value;
+      });
+
+      let data: Record<string, any> = {
+        id: projectID,
+        delivery: developmentData
+      };
+
+      dispatch(updateDevelopment(data));
+    } catch (error) {
+      const err = error as Error;
+      dispatch(setMessageType('error'));
+      dispatch(setMessage(err.message));
+      dispatch(setShowStatusBar(Date.now()));
+    }
+  };
 
   return (
     <>

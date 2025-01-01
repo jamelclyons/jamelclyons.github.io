@@ -10,20 +10,22 @@ import { taxonomiesSlice } from '../controllers/taxonomiesSlice.js';
 import { userSlice } from '../controllers/userSlice.js';
 import { addSlice } from '../controllers/addSlice.js';
 import { messageSlice } from '../controllers/messageSlice.js';
+import { updateSlice } from '../controllers/updateSlice.js';
 
 const store = configureStore({
-    reducer: {
-        about: aboutSlice.reducer,
-        add: addSlice.reducer,
-        contact: contactSlice.reducer,
-        content: contentSlice.reducer,
-        message: messageSlice.reducer,
-        portfolio: portfolioSlice.reducer,
-        project: projectSlice.reducer,
-        github: githubSlice.reducer,
-        taxonomies: taxonomiesSlice.reducer,
-        user: userSlice.reducer
-    }
+  reducer: {
+    about: aboutSlice.reducer,
+    add: addSlice.reducer,
+    contact: contactSlice.reducer,
+    content: contentSlice.reducer,
+    message: messageSlice.reducer,
+    portfolio: portfolioSlice.reducer,
+    project: projectSlice.reducer,
+    github: githubSlice.reducer,
+    taxonomies: taxonomiesSlice.reducer,
+    update: updateSlice.reducer,
+    user: userSlice.reducer,
+  },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

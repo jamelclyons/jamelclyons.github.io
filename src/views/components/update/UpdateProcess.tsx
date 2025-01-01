@@ -6,18 +6,22 @@ import UpdateDesign from '../update/UpdateDesign';
 import UpdateDevelopment from '../update/UpdateDevelopment';
 import UpdateDelivery from '../update/UpdateDelivery';
 
-const UpdateProcess: React.FC = () => {
+interface UpdateProcessProps {
+    projectID: string;
+}
+
+const UpdateProcess: React.FC<UpdateProcessProps> = ({ projectID }) => {
     return (
         <>
             <h1 className='title'>process</h1>
 
-            <UpdateStatus />
-            
-            <UpdateDesign />
+            <UpdateStatus projectID={projectID} />
 
-            <UpdateDevelopment />
+            <UpdateDesign projectID={projectID} />
 
-            <UpdateDelivery />
+            <UpdateDevelopment projectID={projectID} />
+
+            <UpdateDelivery projectID={projectID} />
         </>)
 }
 
