@@ -10,18 +10,13 @@ class ProjectProcess extends Model {
   development: ProjectDevelopment;
   delivery: ProjectDelivery;
 
-  constructor(
-    status: ProjectStatus = new ProjectStatus,
-    design: ProjectDesign = new ProjectDesign,
-    development: ProjectDevelopment = new ProjectDevelopment,
-    delivery: ProjectDelivery = new ProjectDelivery
-  ) {
+  constructor(data: Record<string, any> = {}) {
     super();
-    
-    this.status = status;
-    this.design = design;
-    this.development = development;
-    this.delivery = delivery;
+
+    this.status = new ProjectStatus(data?.status);
+    this.design = new ProjectDesign(data?.design);
+    this.development = new ProjectDevelopment(data?.development);
+    this.delivery = new ProjectDelivery(data?.delivery);
   }
 }
 

@@ -25,7 +25,7 @@ import Project from '../../../model/Project';
 import Taxonomy from '../../../model/Taxonomy';
 
 interface ProjectProps {
-  project: Project
+  project: Project | null
 }
 
 const ProjectComponent: React.FC<ProjectProps> = ({ project }) => {
@@ -37,11 +37,11 @@ const ProjectComponent: React.FC<ProjectProps> = ({ project }) => {
   let technologies: Set<Taxonomy> = new Set();
 
   useEffect(() => {
-    if (project?.types && project.types.size > 0) {
+    if (project?.process?.development?.types && project.process.development.types.size > 0) {
       const fetchProjectTypes = async () => {
         try {
           await Promise.all(
-            Array.from(project.types).map(async (tax: string) => {
+            Array.from(project.process.development.types).map(async (tax: string) => {
               const result = await dispatch(getProjectType(tax));
               if (getProjectType.fulfilled.match(result)) {
                 const taxonomy = result.payload as Taxonomy;
@@ -59,14 +59,14 @@ const ProjectComponent: React.FC<ProjectProps> = ({ project }) => {
 
       fetchProjectTypes();
     }
-  }, [project?.types, dispatch]);
+  }, [project?.process?.development?.types, dispatch]);
 
   useEffect(() => {
-    if (project?.languages && project.languages.size > 0) {
+    if (project?.process?.development?.languages && project.process.development.languages.size > 0) {
       const fetchLanguages = async () => {
         try {
           await Promise.all(
-            Array.from(project.languages).map(async (tax) => {
+            Array.from(project.process.development.languages).map(async (tax) => {
               const result = await dispatch(getLanguage(tax));
               if (getLanguage.fulfilled.match(result)) {
                 const taxonomy = result.payload as Taxonomy;
@@ -84,14 +84,14 @@ const ProjectComponent: React.FC<ProjectProps> = ({ project }) => {
 
       fetchLanguages();
     }
-  }, [project?.languages, dispatch]);
+  }, [project?.process?.development?.languages, dispatch]);
 
   useEffect(() => {
-    if (Array.isArray(project?.frameworks)) {
+    if (Array.isArray(project?.process?.development?.frameworks) && project.process.development.frameworks.size > 0) {
       const fetchFrameworks = async () => {
         try {
           await Promise.all(
-            Array.from(project?.frameworks).map(async (tax) => {
+            Array.from(project.process.development.frameworks).map(async (tax) => {
               const result = await dispatch(getFramework(tax));
               if (getFramework.fulfilled.match(result)) {
                 const taxonomy = result.payload as Taxonomy;
@@ -109,13 +109,13 @@ const ProjectComponent: React.FC<ProjectProps> = ({ project }) => {
 
       fetchFrameworks();
     }
-  }, [project?.frameworks, dispatch]);
+  }, [project?.process?.development?.frameworks, dispatch]);
 
   useEffect(() => {
-    if (Array.isArray(project?.technologies)) {
+    if (Array.isArray(project?.process?.development?.technologies) && project.process.development.technologies.size > 0) {
       const fetchTechnologies = async () => {
         const techData = await Promise.all(
-          Array.from(project.technologies).map(async (tax) => {
+          Array.from(project.process.development.technologies).map(async (tax) => {
             const result = await dispatch(getTechnology(tax));
             if (getTechnology.fulfilled.match(result)) {
               const taxonomy = result.payload as Taxonomy;
@@ -130,16 +130,16 @@ const ProjectComponent: React.FC<ProjectProps> = ({ project }) => {
 
       fetchTechnologies();
     }
-  }, [project?.technologies, dispatch]);
+  }, [project?.process?.development?.technologies, dispatch]);
 
   return (
     <>
       <main className="project">
         {project?.title && <h1 className="title">{project.title}</h1>}
 
-        <ProjectDescription description={project?.description} />
+        <ProjectDescription description={project?.description ?? 'No desription provided.'} />
 
-        <ProjectURLs projectUrls={project?.urlsList} />
+        {/* <ProjectURLs projectUrls={project?.solution?.urlsList} /> */}
 
         {project?.solution && <TheSolution solution={project.solution} />}
 

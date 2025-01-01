@@ -19,7 +19,7 @@ import Project from '../model/Project';
 
 interface HomeProps {
   user: User;
-  portfolio: Array<Project>;
+  portfolio: Set<Project>;
 }
 
 const Home: React.FC<HomeProps> = ({ user, portfolio }) => {

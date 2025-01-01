@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect } from 'react';
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -24,16 +24,14 @@ import {
 } from './controllers/githubSlice';
 
 import type { AppDispatch, RootState } from './model/store';
-import Project from './model/Project';
 
-import { getProject } from './controllers/portfolioSlice';
+import { getPortfolio } from './controllers/portfolioSlice';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const [portfolio, setPortfolio] = useState<Array<Project>>([]);
-
-  const { user, organizations, repos } = useSelector((state: RootState) => state.github);
+  const { user, organizations } = useSelector((state: RootState) => state.github);
+  const { portfolio } = useSelector((state: RootState) => state.portfolio);
 
   useEffect(() => {
     if (user?.id) {
@@ -54,26 +52,16 @@ const App: React.FC = () => {
   }, [organizations]);
 
   useEffect(() => {
-    dispatch(getRepos());
-  }, [user?.id]);
+    const fetchPortfolio = async () => {
+      const repos = await dispatch(getRepos()).unwrap();
 
-  useEffect(() => {
-    if (Array.isArray(repos) && repos.length > 0) {
-
-      let projects: Array<Project> = [];
-
-      repos.forEach((repo) => {
-        dispatch(getProject(repo)).unwrap().then((project: Project) => {
-          if (project) {
-            projects.push(project);
-          }
-        });
-
-        setPortfolio(projects);
-      });
-      console.log(portfolio);
+      dispatch(getPortfolio(repos)).unwrap();
     }
-  }, [dispatch, repos]);
+
+    if (user?.id) {
+      fetchPortfolio();
+    }
+  }, [dispatch, user?.id]);
 
   return (
     <>

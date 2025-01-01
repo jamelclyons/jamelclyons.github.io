@@ -7,15 +7,15 @@ import StatusBarComponent from '../StatusBarComponent';
 import Project from '../../../model/Project';
 
 interface ProjectsComponentProps {
-  projects: Array<Project>;
+  projects: Set<Project>;
 }
 
 const ProjectsComponent: React.FC<ProjectsComponentProps> = ({ projects }) => {
   return (
     <>
-      {Array.isArray(projects) ? (
-        projects.map((project, index) => (
-          <a href={`#/portfolio/${project.homepage ? project.homepage : project.id}`}>
+      {projects.size > 0 && (
+        Array.from(projects).map((project, index) => (
+          <a href={`#/portfolio/${project.id}`}>
             <div key={index} className="project-card card">
               <h2 className="title">{project.title}</h2>
 
@@ -38,8 +38,6 @@ const ProjectsComponent: React.FC<ProjectsComponentProps> = ({ projects }) => {
             </div>
           </a>
         ))
-      ) : (
-        <StatusBarComponent />
       )}
     </>
   );

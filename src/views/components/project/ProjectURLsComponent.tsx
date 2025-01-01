@@ -4,7 +4,7 @@ import ProjectURLs from "../../../model/ProjectURLs";
 import IconComponent from "../IconComponent";
 
 interface ProjectURLsProps {
-  projectUrls: ProjectURLs;
+  projectUrls: ProjectURLs | null;
 }
 
 const ProjectURLsComponent: React.FC<ProjectURLsProps> = ({ projectUrls }) => {

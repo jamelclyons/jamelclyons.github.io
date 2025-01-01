@@ -7,7 +7,7 @@ import Taxonomy from '../../../model/Taxonomy';
 import Project from '../../../model/Project';
 
 interface PortfolioComponentProps {
-  portfolio: Array<Project>,
+  portfolio: Set<Project>,
   projectTypes: Set<Taxonomy>,
   languages: Set<Taxonomy>,
   frameworks: Set<Taxonomy>,

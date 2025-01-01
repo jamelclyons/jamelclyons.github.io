@@ -6,7 +6,7 @@ import LoadingComponent from './components/LoadingComponent';
 import ProjectComponent from './components/project/ProjectComponent';
 import StatusBarComponent from './components/StatusBarComponent';
 
-import { getProject } from '../controllers/portfolioSlice';
+import { getProject } from '../controllers/projectSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
 import Repo from '../model/Repo';
@@ -16,10 +16,9 @@ const Project: React.FC = () => {
 
   const { projectID } = useParams();
 
-  const { portfolioLoading, portfolioErrorMessage, project } = useSelector(
-    (state: RootState) => state.portfolio
+  const { projectLoading, projectErrorMessage, project } = useSelector(
+    (state: RootState) => state.project
   );
-
   useEffect(() => {
     if (projectID) {
       let repo = new Repo();
@@ -34,13 +33,13 @@ const Project: React.FC = () => {
     }
   }, [project?.title]);
 
-  if (portfolioLoading) {
+  if (projectLoading) {
     return <LoadingComponent />;
   }
   return (
     <section className="project">
       <>
-        {portfolioErrorMessage ? (
+        {projectErrorMessage ? (
           <main className="error-page">
             <StatusBarComponent />
           </main>

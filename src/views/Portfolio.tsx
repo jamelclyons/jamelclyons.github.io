@@ -20,7 +20,7 @@ import Project from '../model/Project';
 
 interface PortfolioProps {
   user: User;
-  portfolio: Array<Project>;
+  portfolio: Set<Project>;
 }
 
 const Portfolio: React.FC<PortfolioProps> = ({ user, portfolio }) => {

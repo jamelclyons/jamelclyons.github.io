@@ -9,9 +9,9 @@ class ProjectURLs extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    this.homepage = data?.homepage ?? null;
-    this.ios = data?.ios ?? null;
-    this.android = data?.android ?? null;
+    this.homepage = new ProjectURL(data?.homepage) ?? null;
+    this.ios = new ProjectURL(data?.ios) ?? null;
+    this.android = new ProjectURL(data?.android) ?? null;
   }
 }
 

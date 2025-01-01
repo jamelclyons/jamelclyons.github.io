@@ -19,7 +19,7 @@ class ProjectSolution extends Model {
     this.content = data?.content || [];
     this.currency = data?.currency || '';
     this.price = data?.price || 0;
-    this.urlsList = data?.urlsList;
+    this.urlsList = new ProjectURLs(data?.urlsList);
   }
 
   getFeatures(data?: Set<Feature>): Set<Feature> {
