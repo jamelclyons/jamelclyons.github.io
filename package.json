@@ -18,8 +18,8 @@
   },
   "license": "ISC",
   "scripts": {
-    "refactor": "./refactor.sh && push",
-    "push": "update-prod",
+    "refactor": "./refactor.sh && npm run push",
+    "push": "npm run update-prod",
     "dev": "npm-run-all --parallel vite gulp",
     "sync": "browser-sync start --config browsersync.config.js",
     "vite": "vite -c vite.config.ts",
