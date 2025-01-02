@@ -95,7 +95,7 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectID }) => {
         <h2 className="title">status</h2>
 
         <form action="" id='update_status'>
-            <input type="number" value={progress ? parseFloat(progress) : 0} placeholder="Progress # 0-100" onChange={handleChange} />
+            <input type="number" value={progress} placeholder="Progress # 0-100" onChange={handleChange} id='progress' />
 
             <button onClick={handleUpdateStatus}>
                 <h3>update</h3>

@@ -181,7 +181,8 @@ export const getProjectType = createAsyncThunk<Taxonomy, string>(
   'taxonomies/getProjectType',
   async (projectType: string) => {
     try {
-      const projectTypeCollection = collection(db, 'project_types');
+      const type = 'project_types';             
+      const projectTypeCollection = collection(db, type);
       const docRef: DocumentReference<unknown, DocumentData> = doc(projectTypeCollection, projectType);
       const docSnap = await getDoc(docRef);
 
@@ -193,7 +194,7 @@ export const getProjectType = createAsyncThunk<Taxonomy, string>(
 
       const taxonomy = new Taxonomy(
         docSnap.id,
-        'project_types',
+        type,
         data?.title,
         data?.icon_url,
         data?.class_name

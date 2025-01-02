@@ -1,11 +1,13 @@
 import Model from './Model';
 import Gallery from './Gallery';
+import Task from './Task';
+import Color from './Color';
 
 class ProjectDesign extends Model {
   content: Array<string> = [];
-  checkList: Array<string> = [];
+  checkList: Array<Task> = [];
   gallery: Gallery;
-  colorsList: Array<string> = [];
+  colorsList: Array<Color> = [];
 
   constructor(data: Record<string, any> = {}) {
     super();

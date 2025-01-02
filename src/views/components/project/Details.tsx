@@ -2,15 +2,14 @@ import React, { useEffect, useState } from 'react';
 
 import ProjectDetails from '../../../model/ProjectDetails';
 
-interface ProjectDetailsProps{
+interface ProjectDetailsProps {
   project_details: ProjectDetails;
 }
 
 const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ project_details }) => {
-
   return (
     <>
-      {project_details ? (
+      {!project_details.isEmpty ? (
         <div className="project-details">
           <table>
             <tbody>

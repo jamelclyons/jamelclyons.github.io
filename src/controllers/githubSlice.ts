@@ -56,7 +56,7 @@ interface GithubState {
   organizations: Array<Organization>;
   repos: Array<Repo>;
   socialAccounts: [];
-  repo: RepoResponse | null;
+  repo: Repo;
 }
 
 const initialState: GithubState = {
@@ -80,7 +80,7 @@ const initialState: GithubState = {
   organizations: [],
   repos: [],
   socialAccounts: [],
-  repo: null,
+  repo: new Repo,
 };
 
 export const getUser = createAsyncThunk<User, string>(
@@ -161,14 +161,16 @@ type RepoResponse = GetResponseTypeFromEndpointMethod<
   typeof octokit.rest.repos.get
 >;
 
-export const getRepo = createAsyncThunk<RepoResponse, RepoQuery>(
+export const getRepo = createAsyncThunk(
   'github/getRepo',
-  async (query: RepoQuery) => {
+  async (query: Record<string, any>) => {
     try {
-      return await octokit.rest.repos.get({
-        owner: query.owner,
-        repo: query.repo,
+      const repo: RepoResponse = await octokit.rest.repos.get({
+        owner: query.owner as string,
+        repo: query.repo as string,
       });
+
+      return new Repo(repo.data);
     } catch (error) {
       const err = error as Error;
       console.error(err);

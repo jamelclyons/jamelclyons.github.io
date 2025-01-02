@@ -11,25 +11,26 @@ interface DesignProps {
 }
 
 const Design: React.FC<DesignProps> = ({ design }) => {
+  const { checkList, colorsList, gallery, content} = design;
 
   return (
     <>
       <div className="project-process-design" id="project_process_design">
         <h4 className="title">design</h4>
 
-        <CheckList checklist={design?.checkList} />
+        <CheckList checkList={checkList} />
 
-        <Colors colors={design?.colorsList} />
+        <Colors colors={colorsList} />
 
-        <Gallery title={'Logos'} gallery={design?.gallery?.logos} />
+        <Gallery title={'Logos'} gallery={gallery.logos} />
 
-        <Gallery title={'icons'} gallery={design?.gallery?.icons} />
+        <Gallery title={'icons'} gallery={gallery.icons} />
 
-        <Gallery title={'animations'} gallery={design?.gallery?.animations} />
+        <Gallery title={'animations'} gallery={gallery.animations} />
 
-        <Gallery title={'uml diagrams'} gallery={design?.gallery?.umlDiagrams} />
+        <Gallery title={'uml diagrams'} gallery={gallery.umlDiagrams} />
 
-        <ContentComponent content={design?.content} />
+        <ContentComponent content={content} />
       </div>
     </>
   );

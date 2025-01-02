@@ -9,7 +9,7 @@ import FooterComponent from './views/components/FooterComponent';
 const Home = lazy(() => import('./views/Home'));
 const About = lazy(() => import('./views/About'));
 const Portfolio = lazy(() => import('./views/Portfolio'));
-const ProjectPage = lazy(() => import('./views/Project'));
+const ProjectPage = lazy(() => import('./views/ProjectPage'));
 const Search = lazy(() => import('./views/Search'));
 const Resume = lazy(() => import('./views/Resume'));
 const Contact = lazy(() => import('./views/Contact'));

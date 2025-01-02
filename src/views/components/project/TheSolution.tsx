@@ -4,6 +4,7 @@ import ProjectSolution from '../../../model/ProjectSolution';
 
 import FeaturesComponent from './FeaturesComponent';
 import PricingComponent from './PricingComponent';
+import ProjectURLsComponent from './ProjectURLsComponent';
 
 interface SolutionProps {
   solution: ProjectSolution
@@ -17,9 +18,11 @@ const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
         {solution && (
           <>
             <div className="project-solution" id="project_solution">
-              {solution.features?.size > 0 && <FeaturesComponent features={solution.features} /> }
+              {solution.features?.size > 0 && <FeaturesComponent features={solution.features} />}
 
-              <PricingComponent currency={solution.currency} price={solution.price} />
+              {solution.currency && solution.price && <PricingComponent currency={solution.currency} price={solution.price} />}
+
+              {solution.urlsList && <ProjectURLsComponent projectUrls={solution.urlsList} />}
 
               <h3>THE SOLUTION</h3>
 

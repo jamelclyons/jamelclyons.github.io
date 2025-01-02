@@ -33,14 +33,14 @@ interface ProjectState {
   id: string;
   title: string;
   description: string;
-  solution: ProjectSolution | null;
-  process: ProjectProcess | null;
-  status: ProjectStatus | null;
-  design: ProjectDesign | null;
-  development: ProjectDevelopment | null;
-  delivery: ProjectDelivery | null;
-  problem: ProjectProblem | null;
-  details: ProjectDetails | null;
+  solution: ProjectSolution;
+  process: ProjectProcess;
+  status: ProjectStatus;
+  design: ProjectDesign;
+  development: ProjectDevelopment;
+  delivery: ProjectDelivery;
+  problem: ProjectProblem;
+  details: ProjectDetails;
 }
 
 const initialState: ProjectState = {
@@ -50,14 +50,14 @@ const initialState: ProjectState = {
   id: '',
   title: '',
   description: '',
-  solution: null,
-  process: null,
-  status: null,
-  design: null,
-  development: null,
-  delivery: null,
-  problem: null,
-  details: null,
+  solution: new ProjectSolution,
+  process: new ProjectProcess,
+  status: new ProjectStatus,
+  design: new ProjectDesign,
+  development: new ProjectDevelopment,
+  delivery: new ProjectDelivery,
+  problem: new ProjectProblem,
+  details: new ProjectDetails,
 };
 
 export const getProject = createAsyncThunk(
@@ -69,13 +69,11 @@ export const getProject = createAsyncThunk(
 
       let project = new Project();
 
-      if (!docSnap.exists()) {
-        project.fromRepo(repo);
-
-        return project;
+      if (docSnap.exists()) {
+        project.fromDocumentData(docSnap);
       }
 
-      project.fromDocumentData(docSnap);
+      project.fromRepo(repo);
 
       return project;
     } catch (error) {
@@ -100,6 +98,7 @@ export const projectSlice = createSlice({
         state.title = action.payload.title;
         state.description = action.payload.description;
         state.solution = action.payload.solution;
+        state.process = action.payload.process;
         state.status = action.payload.process.status;
         state.design = action.payload.process.design;
         state.development = action.payload.process.development;

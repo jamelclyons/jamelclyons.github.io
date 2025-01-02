@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ProjectStatus from '../ProjectStatus';
+import ProjectStatus from '../ProjectStatusComponent';
 import ProjectDescription from './ProjectDescription';
 import StatusBarComponent from '../StatusBarComponent';
 

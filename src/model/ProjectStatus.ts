@@ -7,7 +7,7 @@ class ProjectStatus extends Model {
 
   constructor(data: Record<string, any> = {}) {
     super();
-    
+
     this.createdAt = data?.created_at || '';
     this.updatedAt = data?.updated_at || '';
     this.progress = data?.progress || '25';

@@ -1,33 +1,37 @@
 import React from 'react';
 
-import ProjectStatus from '../ProjectStatus';
+import ProjectStatusComponent from '../ProjectStatusComponent';
 import Design from './Design';
 import Development from './Development';
 import Delivery from './Delivery';
 
-import ProjectProcess from '../../../model/ProjectProcess';
+import ProjectStatus from '../../../model/ProjectStatus';
+import ProjectDesign from '../../../model/ProjectDesign';
+import ProjectDevelopment from '../../../model/ProjectDevelopment';
+import ProjectDelivery from '../../../model/ProjectDelivery';
 
 interface ProcessProps {
-  process: ProjectProcess;
+  status: ProjectStatus;
+  design: ProjectDesign;
+  development: ProjectDevelopment;
+  delivery: ProjectDelivery;
 }
 
-const TheProcess: React.FC<ProcessProps> = ({ process }) => {
+const TheProcess: React.FC<ProcessProps> = ({ status, design, development, delivery }) => {
 
   return (
     <>
-      {process && (
-        <div className="project-process" id="project_process">
-          <h3 className="title">the process</h3>
+      <div className="project-process" id="project_process">
+        <h3 className="title">the process</h3>
 
-          <ProjectStatus projectStatus={process?.status} />
+        {status && <ProjectStatusComponent projectStatus={status} />}
 
-          <Design design={process?.design} />
+        {design && <Design design={design} />}
 
-          <Development development={process?.development} />
+        {development && <Development development={development} />}
 
-          <Delivery delivery={process?.delivery} />
-        </div>
-      )}
+        {delivery && <Delivery delivery={delivery} />}
+      </div>
     </>
   );
 }
