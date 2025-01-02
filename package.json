@@ -18,7 +18,7 @@
   },
   "license": "ISC",
   "scripts": {
-    "refactor": "npm-run-all ./refactor.sh push",
+    "refactor": "./refactor.sh && push",
     "push": "update-prod",
     "dev": "npm-run-all --parallel vite gulp",
     "sync": "browser-sync start --config browsersync.config.js",
