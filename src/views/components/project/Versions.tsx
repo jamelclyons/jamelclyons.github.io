@@ -10,7 +10,7 @@ const Versions: React.FC<VersionsProps> = ({ projectVersions }) => {
 
   return (
     <>
-      {projectVersions ? (
+      {!projectVersions.isEmpty ? (
         <div className="versions">
           <span className="current-version">
             <h4>Current Version</h4>

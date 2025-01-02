@@ -24,13 +24,13 @@ const TheProcess: React.FC<ProcessProps> = ({ status, design, development, deliv
       <div className="project-process" id="project_process">
         <h3 className="title">the process</h3>
 
-        {status && <ProjectStatusComponent projectStatus={status} />}
+        {!status.isEmpty() && <ProjectStatusComponent projectStatus={status} />}
 
-        {design && <Design design={design} />}
+        {!design.isEmpty() && <Design design={design} />}
 
-        {development && <Development development={development} />}
+        {!development.isEmpty() && <Development development={development} />}
 
-        {delivery && <Delivery delivery={delivery} />}
+        {!delivery.isEmpty() && <Delivery delivery={delivery} />}
       </div>
     </>
   );

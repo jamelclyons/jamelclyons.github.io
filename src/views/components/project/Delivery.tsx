@@ -11,18 +11,21 @@ interface DeliveryProps {
 }
 
 const Delivery: React.FC<DeliveryProps> = ({ delivery }) => {
+  const { checkList, gallery, content } = delivery;
 
   return (
     <>
-      <div className="project-process-delivery" id="project_process_delivery">
-        <h4 className="title">delivery</h4>
+      {!delivery.isEmpty() &&
+        <div className="project-process-delivery" id="project_process_delivery">
+          <h4 className="title">delivery</h4>
 
-        <CheckList checkList={delivery?.checkList} />
+          <CheckList checkList={checkList} />
 
-        <Gallery gallery={delivery?.gallery} />
+          <Gallery gallery={gallery} title='' />
 
-        <ContentComponent content={delivery?.content} />
-      </div>
+          <ContentComponent content={content} />
+        </div>
+      }
     </>
   );
 }

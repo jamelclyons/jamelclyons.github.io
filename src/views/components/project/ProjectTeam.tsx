@@ -12,7 +12,7 @@ const ProjectTeamComponent: React.FC<ProjectTeamComponentProps> = ({ projectTeam
 
   return (
     <>
-      {Array.isArray(projectTeam) && (
+      {Array.isArray(projectTeam) && projectTeam.length > 0 && (
         <div className="project-team">
           <h4 className="title">Project Team</h4>
 

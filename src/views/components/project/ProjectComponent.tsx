@@ -36,13 +36,13 @@ const ProjectComponent: React.FC<ProjectProps> = ({
   return (
     <>
       <main className="project">
-        {title && <h1 className="title">{title}</h1>}
+        {title !== '' && <h1 className="title">{title}</h1>}
 
         <ProjectDescription description={description} />
 
-        {solution && <TheSolution solution={solution} />}
+        {!solution.isEmpty() && <TheSolution solution={solution} />}
 
-        {process &&
+        {!process.isEmpty() &&
           <TheProcess
             status={status}
             design={design}
@@ -50,10 +50,10 @@ const ProjectComponent: React.FC<ProjectProps> = ({
             delivery={delivery}
           />}
 
-        {problem && <TheProblem problem={problem} />}
+        {!problem.isEmpty() && <TheProblem problem={problem} />}
 
         {/* Project details is for clients only */}
-        {details && <Details project_details={details} />}
+        {!details.isEmpty() && <Details project_details={details} />}
       </main>
     </>
   );

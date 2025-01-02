@@ -21,11 +21,12 @@ class ProjectDevelopment extends Model {
     this.checkList = data?.check_list || [];
     this.owner = data?.owner || '';
     this.repoURL = data?.repo_url || '';
-    this.versionsList = data?.versions_list || [];
+    this.versionsList = data?.versions_list || null;
     this.types = data.types ? new Set(data.types) : new Set;
     this.languages = data.languages ? new Set(data.languages) : new Set;
     this.frameworks = data.frameworks ? new Set(data.frameworks) : new Set;
     this.technologies = data.technologies ? new Set(data.technologies) : new Set;
+    console.log(this)
   }
 }
 

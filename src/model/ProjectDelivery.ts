@@ -1,9 +1,11 @@
+import Image from './Image';
 import Model from './Model';
+import Task from './Task';
 
 class ProjectDelivery extends Model {
   content: Array<string> = [];
-  checkList: Array<string> = [];
-  gallery: Array<string> = [];
+  checkList: Array<Task> = [];
+  gallery: Array<Image> = [];
 
   constructor(data: Record<string, any> = {}) {
     super();

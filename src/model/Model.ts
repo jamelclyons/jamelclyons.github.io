@@ -1,6 +1,23 @@
 import { camelCaseToSnakeCase } from '../utilities/String';
 
 class Model {
+  isEmpty(): boolean {
+    const properties = Object.entries(this);
+  
+    for (const [key, value] of properties) {
+      if (
+        value !== null &&
+        value !== undefined &&
+        ((typeof value === 'string' && value.trim() !== '') ||
+          (Array.isArray(value) && value.length > 0) ||        
+          (typeof value === 'object' && Object.keys(value).length > 0))
+      ) {
+        return false;}
+    }
+  
+    return true;
+  }
+
   toObject(): Record<string, any> {
     const properties = Object.entries(this);
     let object: Record<string, any> = {};

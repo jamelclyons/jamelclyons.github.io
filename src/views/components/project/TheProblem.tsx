@@ -12,6 +12,7 @@ const TheProblem: React.FC<ProblemProps> = ({ problem }) => {
 
   return (
     <>
+    {!problem.isEmpty() }
       <div className="project-problem" id="project_problem">
         <h3 className="title">the problem</h3>
 

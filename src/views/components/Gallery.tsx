@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react';
 
 import Image from '../../model/Image';
+import Gallery from '../../model/Gallery';
 
 interface GalleryProps {
   title: string;
-  gallery: Array<Image>
+  gallery: Array<Image>;
 }
 
 const GalleryComponent: React.FC<GalleryProps> = ({ title, gallery }) => {

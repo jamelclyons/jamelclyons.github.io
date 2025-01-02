@@ -11,27 +11,30 @@ interface DesignProps {
 }
 
 const Design: React.FC<DesignProps> = ({ design }) => {
-  const { checkList, colorsList, gallery, content} = design;
+  const { checkList, colorsList, gallery, content } = design;
+  const { logos, icons, animations, umlDiagrams } = gallery;
 
   return (
     <>
-      <div className="project-process-design" id="project_process_design">
-        <h4 className="title">design</h4>
+      {!design.isEmpty() &&
+        <div className="project-process-design" id="project_process_design">
+          <h4 className="title">design</h4>
 
-        <CheckList checkList={checkList} />
+          {checkList.length > 0 && <CheckList checkList={checkList} />}
 
-        <Colors colors={colorsList} />
+          {colorsList.length > 0 && <Colors colors={colorsList} />}
 
-        <Gallery title={'Logos'} gallery={gallery.logos} />
+          {logos.length > 0 && <Gallery title={'Logos'} gallery={logos} />}
 
-        <Gallery title={'icons'} gallery={gallery.icons} />
+          {logos.length > 0 && <Gallery title={'icons'} gallery={icons} />}
 
-        <Gallery title={'animations'} gallery={gallery.animations} />
+          {logos.length > 0 && <Gallery title={'animations'} gallery={animations} />}
 
-        <Gallery title={'uml diagrams'} gallery={gallery.umlDiagrams} />
+          {logos.length > 0 && <Gallery title={'uml diagrams'} gallery={umlDiagrams} />}
 
-        <ContentComponent content={content} />
-      </div>
+          {content.length > 0 && <ContentComponent content={content} />}
+        </div>
+      }
     </>
   );
 }

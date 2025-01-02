@@ -159,28 +159,38 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
     }
   }, [technologies, dispatch]);
 
+  const handleSeeCode = () => {
+    window.open(repoURL, '_blank');
+  };
+
   return (
     <>
-      <div
-        className="project-process-development"
-        id="project_process_development">
+      {!development.isEmpty() &&
+        <div
+          className="project-process-development"
+          id="project_process_development">
 
-        <h4 className="title">development</h4>
+          <h4 className="title">development</h4>
 
-        <CheckList checkList={checkList} />
+          {taxTypes.size > 0 && <TaxList taxonomies={taxTypes} title={'types'} />}
 
-        <ContentComponent content={content} />
+          {taxLanguages.size > 0 && <TaxListIcon taxonomies={taxLanguages} title={'languages'} />}
 
-        {/* <Versions versions_list={development?.versionsList} /> */}
+          {taxFrameworks.size > 0 && <TaxListIcon taxonomies={taxFrameworks} title={'frameworks'} />}
 
-        {taxTypes.size > 0 && <TaxList taxonomies={taxTypes} title={'types'} />}
+          {taxTechnologies.size > 0 && <TaxListIcon taxonomies={taxTechnologies} title={'technologies'} />}
 
-        {taxLanguages && taxLanguages.size > 0 && <TaxListIcon taxonomies={taxLanguages} title={'languages'} />}
+          {checkList.length > 0 && <CheckList checkList={checkList} />}
 
-        {taxFrameworks && taxFrameworks.size > 0 && <TaxListIcon taxonomies={taxFrameworks} title={'frameworks'} />}
+          {content.length > 0 && <ContentComponent content={content} />}
 
-        {taxTechnologies && taxTechnologies.size > 0 && <TaxListIcon taxonomies={taxTechnologies} title={'technologies'} />}
-      </div>
+          {/* <Versions versions_list={development?.versionsList} /> */}
+
+          {repoURL !== '' && 
+          <button onClick={handleSeeCode}>
+            <h3 className='title'>See Code</h3>
+          </button>}
+        </div>}
     </>
   );
 }
