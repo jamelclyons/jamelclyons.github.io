@@ -1,59 +1,40 @@
 import React from 'react';
 
-import ProjectDescription from '../portfolio/ProjectDescription';
+import DescriptionComponent from '../DescriptionComponent';
 
 import Details from './Details';
 import TheSolution from './TheSolution';
 import TheProblem from './TheProblem';
 import TheProcess from './TheProcess';
 
-import ProjectSolution from '../../../model/ProjectSolution';
-import ProjectProcess from '../../../model/ProjectProcess';
-import ProjectStatus from '../../../model/ProjectStatus';
-import ProjectDesign from '../../../model/ProjectDesign';
-import ProjectDevelopment from '../../../model/ProjectDevelopment';
-import ProjectDelivery from '../../../model/ProjectDelivery';
-import ProjectProblem from '../../../model/ProjectProblem';
-import ProjectDetails from '../../../model/ProjectDetails';
+import Project from '../../../model/Project';
 
-interface ProjectProps {
-  title: string;
-  description: string;
-  solution: ProjectSolution;
-  process: ProjectProcess;
-  status: ProjectStatus;
-  design: ProjectDesign;
-  development: ProjectDevelopment;
-  delivery: ProjectDelivery;
-  problem: ProjectProblem;
-  details: ProjectDetails;
-}
+import { useLocation } from 'react-router';
 
-const ProjectComponent: React.FC<ProjectProps> = ({
-  title, description, solution, process, status, design, development, delivery, problem, details
-}) => {
+
+const ProjectComponent: React.FC = () => {
+  const location = useLocation();
+
+  const project = location.state as Project;
+  const {
+    title, description, solution, process, problem, details
+  } = project;
 
   return (
     <>
       <main className="project">
         {title !== '' && <h1 className="title">{title}</h1>}
 
-        <ProjectDescription description={description} />
+        <DescriptionComponent description={description} />
 
-        {!solution.isEmpty() && <TheSolution solution={solution} />}
+        <TheSolution solution={solution} />
 
-        {!process.isEmpty() &&
-          <TheProcess
-            status={status}
-            design={design}
-            development={development}
-            delivery={delivery}
-          />}
+        <TheProcess process={process} />
 
-        {!problem.isEmpty() && <TheProblem problem={problem} />}
+        <TheProblem problem={problem} />
 
         {/* Project details is for clients only */}
-        {!details.isEmpty() && <Details project_details={details} />}
+        <Details project_details={details} />
       </main>
     </>
   );

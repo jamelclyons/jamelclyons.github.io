@@ -10,6 +10,7 @@ import { DocumentData } from 'firebase/firestore';
 
 class Project extends Model {
   id: string;
+  owner: string;
   title: string;
   description: string;
   solution: ProjectSolution;
@@ -17,16 +18,25 @@ class Project extends Model {
   problem: ProjectProblem;
   details: ProjectDetails;
 
-  constructor(data: Record<string, any> = {}) {
+  constructor(id?: string, data: Record<string, any> = {}) {
     super();
 
-    this.id = data?.id || '';
+    this.id = id || '';
+    this.owner = data?.owner;
     this.title = data?.title ? this.getTitle(data?.id) : '';
     this.description = data?.description ?? 'No Description Provided.';
-    this.solution = data?.solution ? new ProjectSolution(data?.solution) : new ProjectSolution;
-    this.process = data?.process ? new ProjectProcess(data?.process) : new ProjectProcess;
-    this.problem = data?.problem ? new ProjectProblem(data?.problem) : new ProjectProblem;
-    this.details = data?.details ? new ProjectDetails(data?.details) : new ProjectDetails;
+    this.solution = data?.solution
+      ? new ProjectSolution(data.solution)
+      : new ProjectSolution();
+    this.process = data?.process
+      ? new ProjectProcess(data.process)
+      : new ProjectProcess();
+    this.problem = data?.problem
+      ? new ProjectProblem(data.problem)
+      : new ProjectProblem();
+    this.details = data?.details
+      ? new ProjectDetails(data.details)
+      : new ProjectDetails();
   }
 
   getTitle(id?: string): string {
@@ -38,28 +48,33 @@ class Project extends Model {
       : '';
   }
 
-  fromDocumentData(doc: DocumentData) {
-    const data = doc.data() as Record<string, any>;
-console.log(data.solution)
-    this.id = doc.id;
-    this.title = data.title;
-    this.description = data.description;
-    this.solution = new ProjectSolution(data.solution);
-    this.process = new ProjectProcess(data.process);
-    this.problem = new ProjectProblem(data.problem);
-    this.details = new ProjectDetails(data.details);
-  }
-
   fromRepo(repo: Repo) {
     this.id = repo.id;
+    this.owner = repo.owner;
     this.title = this.title ? this.title : this.getTitle(this.id);
     this.description = repo.description ?? 'No Description Provided.';
-    this.solution = new ProjectSolution();
     this.solution.urlsList.homepage.url = repo.homepage;
-    this.process = new ProjectProcess();
     this.process.status.createdAt = repo.createdAt;
     this.process.status.updatedAt = repo.updatedAt;
     this.process.development.repoURL = repo.repoURL;
+  }
+
+  fromDocumentData(id: string, data: DocumentData) {
+    this.id = id;
+    this.owner = data?.owner;
+    this.title = data?.title;
+    this.solution = data?.solution
+      ? new ProjectSolution(data.solution)
+      : new ProjectSolution();
+    this.process = data?.process
+      ? new ProjectProcess(data.process)
+      : new ProjectProcess();
+    this.problem = data?.problem
+      ? new ProjectProblem(data.problem)
+      : new ProjectProblem();
+    this.details = data?.details
+      ? new ProjectDetails(data.details)
+      : new ProjectDetails();
   }
 }
 

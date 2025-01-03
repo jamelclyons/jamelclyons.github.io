@@ -1,5 +1,5 @@
 import React, { Component, lazy, Suspense, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import type { RootState, AppDispatch } from '../../../model/store';
 import { useAppSelector } from '../../../model/hooks';
@@ -11,7 +11,6 @@ import Versions from './Versions';
 import TaxList from '../TaxList';
 import TaxListIcon from '../TaxListIcon';
 
-import type { RepoQuery } from '../../../controllers/githubSlice';
 import { getRepo } from '../../../controllers/githubSlice';
 import {
   getProjectType,
@@ -30,31 +29,35 @@ interface DevelopmentProps {
 const Development: React.FC<DevelopmentProps> = ({ development }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { checkList, content, repoURL, types, languages, frameworks, technologies } = development;
+  const { checkList, content, repoURL, types, frameworks, technologies } = development;
 
-  useEffect(() => {
-    if (repoURL) {
-      try {
-        const repoUrl = new URL(repoURL);
-        const pathname = repoUrl.pathname;
-        const parts = pathname.split('/').filter(Boolean);
+  const { languages } = useSelector(
+    (state: RootState) => state.github
+  );
 
-        if (parts.length >= 2) {
-          const query: RepoQuery = {
-            owner: parts[0],
-            repo: parts[1]
-          };
+  // useEffect(() => {
+  //   if (repoURL) {
+  //     try {
+  //       const repoUrl = new URL(repoURL);
+  //       const pathname = repoUrl.pathname;
+  //       const parts = pathname.split('/').filter(Boolean);
 
-          dispatch(getRepo(query));
-        } else {
-          console.error('Invalid repository URL');
-        }
-      } catch (error) {
-        const err = error as Error;
-        console.error('Invalid URL format:', err.message);
-      }
-    }
-  }, [development, dispatch]);
+  //       if (parts.length >= 2) {
+  //         const query: RepoQuery = {
+  //           owner: parts[0],
+  //           repo: parts[1]
+  //         };
+
+  //         dispatch(getRepo(query));
+  //       } else {
+  //         console.error('Invalid repository URL');
+  //       }
+  //     } catch (error) {
+  //       const err = error as Error;
+  //       console.error('Invalid URL format:', err.message);
+  //     }
+  //   }
+  // }, [development, dispatch]);
 
   let taxTypes: Set<Taxonomy> = new Set();
   let taxLanguages: Set<Taxonomy> = new Set();
@@ -88,16 +91,17 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
   }, [types, dispatch]);
 
   useEffect(() => {
-    if (languages && languages.size > 0) {
+    if (languages && languages.length > 0) {
       const fetchLanguages = async () => {
         try {
           await Promise.all(
             Array.from(languages).map(async (tax) => {
-              const result = await dispatch(getLanguage(tax));
+              const result = await dispatch(getLanguage(tax.id));
 
               if (getLanguage.fulfilled.match(result)) {
                 const taxonomy = result.payload as Taxonomy;
                 taxLanguages.add(taxonomy);
+                console.log(taxLanguages)
               } else {
                 console.error("Failed to fetch language:", result.error);
                 return null;
@@ -165,7 +169,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
   return (
     <>
-      {!development.isEmpty() &&
+      {!development.isEmpty &&
         <div
           className="project-process-development"
           id="project_process_development">
@@ -186,10 +190,10 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
           {/* <Versions versions_list={development?.versionsList} /> */}
 
-          {repoURL !== '' && 
-          <button onClick={handleSeeCode}>
-            <h3 className='title'>See Code</h3>
-          </button>}
+          {repoURL !== '' &&
+            <button onClick={handleSeeCode}>
+              <h3 className='title'>See Code</h3>
+            </button>}
         </div>}
     </>
   );

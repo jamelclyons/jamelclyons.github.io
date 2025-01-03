@@ -26,7 +26,6 @@ class ProjectDevelopment extends Model {
     this.languages = data.languages ? new Set(data.languages) : new Set;
     this.frameworks = data.frameworks ? new Set(data.frameworks) : new Set;
     this.technologies = data.technologies ? new Set(data.technologies) : new Set;
-    console.log(this)
   }
 }
 

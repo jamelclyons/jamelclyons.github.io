@@ -46,7 +46,7 @@ export const getPortfolio = createAsyncThunk(
       if (querySnapshot.size > 0) {
         querySnapshot.forEach((doc: DocumentData) => {
           let project = new Project();
-          project.fromDocumentData(doc);
+          project.fromDocumentData(doc.id, doc.data());
 
           projects.add(project);
         });
@@ -100,7 +100,7 @@ export const getProjectsBy = createAsyncThunk(
 
       docs.forEach((doc) => {
         let project = new Project();
-        project.fromDocumentData(doc);
+        project.fromDocumentData(doc.id, doc.data());
         projects.push(project);
       });
 

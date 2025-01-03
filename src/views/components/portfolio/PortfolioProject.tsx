@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 
 import Project from '../../../model/Project'
 
@@ -11,11 +12,15 @@ interface PortfolioProjectProps {
 
 const PortfolioProject: React.FC<PortfolioProjectProps> = ({ project }) => {
     const { id, title, description, solution, process } = project;
-    
-    console.log(solution);
 
+    const navigate = useNavigate();
+
+    const handleClick = (path: string) => {
+        navigate(path, { state: project })
+    }
+    
     return (
-        <a href={`#/portfolio/${id}`}>
+        <button onClick={() => handleClick(`/portfolio/${id}`)}>
             <div className="project-card card">
                 <h2 className="title">{title}</h2>
 
@@ -36,7 +41,7 @@ const PortfolioProject: React.FC<PortfolioProjectProps> = ({ project }) => {
                     <ProjectStatus projectStatus={process.status} />
                 )}
             </div>
-        </a>)
+        </button>)
 }
 
 export default PortfolioProject

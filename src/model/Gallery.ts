@@ -11,10 +11,10 @@ class Gallery extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    this.logos = data?.logos || [];
-    this.icons = data?.icons || [];
-    this.animations = data?.animations || [];
-    this.umlDiagrams = data?.umlDiagrams || [];
+    this.logos = Array.isArray(data?.logos) ? data.logos : [];
+    this.icons = Array.isArray(data?.icons) ? data.icons : [];
+    this.animations = Array.isArray(data?.animations) ? data.animations : [];
+    this.umlDiagrams = Array.isArray(data?.umlDiagrams) ? data.umlDiagrams : [];
     this.images = [
       ...this.logos,
       ...this.icons,

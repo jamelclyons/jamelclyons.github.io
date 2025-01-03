@@ -16,7 +16,7 @@ const Design: React.FC<DesignProps> = ({ design }) => {
 
   return (
     <>
-      {!design.isEmpty() &&
+      {!design.isEmpty &&
         <div className="project-process-design" id="project_process_design">
           <h4 className="title">design</h4>
 

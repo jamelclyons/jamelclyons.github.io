@@ -14,13 +14,14 @@ class ProjectSolution extends Model {
 
   constructor(data: Record<string, any> = {}) {
     super();
-    
-    this.gallery = data?.gallery || [];
+
+    this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery;
     this.features = this.getFeatures(data?.features);
     this.content = data?.content || [];
     this.currency = data?.currency || '';
     this.price = data?.price || 0;
-    this.urlsList = new ProjectURLs(data?.urlsList);
+    this.urlsList = data?.urlsList ? new ProjectURLs(data?.urlsList) : new ProjectURLs;
+    console.log(data)
   }
 
   getFeatures(data?: Set<Feature>): Set<Feature> {

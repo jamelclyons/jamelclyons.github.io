@@ -8,7 +8,11 @@ import {
   query,
   where,
   QuerySnapshot,
+  CollectionReference,
+  DocumentReference,
+  DocumentSnapshot,
   DocumentData,
+  QueryDocumentSnapshot,
 } from 'firebase/firestore';
 
 import db from '../services/firebase/config';
@@ -24,56 +28,38 @@ import ProjectDesign from '../model/ProjectDesign';
 import ProjectDevelopment from '../model/ProjectDevelopment';
 import ProjectDelivery from '../model/ProjectDelivery';
 
-const portfolioCollection = collection(db, 'portfolio');
+const portfolioCollection: CollectionReference<DocumentData, DocumentData> =
+  collection(db, 'portfolio');
 
 interface ProjectState {
   projectLoading: boolean;
   projectError: Error | null;
   projectErrorMessage: string;
-  id: string;
-  title: string;
-  description: string;
-  solution: ProjectSolution;
-  process: ProjectProcess;
-  status: ProjectStatus;
-  design: ProjectDesign;
-  development: ProjectDevelopment;
-  delivery: ProjectDelivery;
-  problem: ProjectProblem;
-  details: ProjectDetails;
+  project: Project;
 }
 
 const initialState: ProjectState = {
   projectLoading: false,
   projectError: null,
   projectErrorMessage: '',
-  id: '',
-  title: '',
-  description: '',
-  solution: new ProjectSolution,
-  process: new ProjectProcess,
-  status: new ProjectStatus,
-  design: new ProjectDesign,
-  development: new ProjectDevelopment,
-  delivery: new ProjectDelivery,
-  problem: new ProjectProblem,
-  details: new ProjectDetails,
+  project: new Project(),
 };
 
 export const getProject = createAsyncThunk(
   'project/getProject',
   async (repo: Repo) => {
     try {
-      const docRef = doc(portfolioCollection, repo.id);
-      const docSnap = await getDoc(docRef);
+      const docRef: DocumentReference = doc(portfolioCollection, repo.id);
+      const docSnap: DocumentSnapshot<DocumentData, DocumentData> =
+        await getDoc(docRef);
 
       let project = new Project();
 
-      if (docSnap.exists()) {
-        project.fromDocumentData(docSnap);
-      }
-
       project.fromRepo(repo);
+
+      if (docSnap.exists()) {
+        project.fromDocumentData(docSnap.id, docSnap.data());
+      }
 
       return project;
     } catch (error) {
@@ -94,17 +80,7 @@ export const projectSlice = createSlice({
         state.projectLoading = false;
         state.projectError = null;
         state.projectErrorMessage = '';
-        state.id = action.payload.id;
-        state.title = action.payload.title;
-        state.description = action.payload.description;
-        state.solution = action.payload.solution;
-        state.process = action.payload.process;
-        state.status = action.payload.process.status;
-        state.design = action.payload.process.design;
-        state.development = action.payload.process.development;
-        state.delivery = action.payload.process.delivery;
-        state.problem = action.payload.problem;
-        state.details = action.payload.details;
+        state.project = action.payload;
       })
       .addMatcher(isAnyOf(getProject.pending), (state) => {
         state.projectLoading = true;

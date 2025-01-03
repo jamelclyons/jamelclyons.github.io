@@ -15,7 +15,7 @@ const Delivery: React.FC<DeliveryProps> = ({ delivery }) => {
 
   return (
     <>
-      {!delivery.isEmpty() &&
+      {!delivery.isEmpty &&
         <div className="project-process-delivery" id="project_process_delivery">
           <h4 className="title">delivery</h4>
 

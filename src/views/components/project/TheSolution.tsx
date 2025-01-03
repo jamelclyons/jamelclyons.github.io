@@ -12,7 +12,7 @@ interface SolutionProps {
 }
 
 const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
-  const { features, currency, urlsList, gallery, content } = solution;
+  const { features, currency, price, urlsList, gallery, content } = solution;
 
   return (
     <>
@@ -20,13 +20,13 @@ const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
         {!solution.isEmpty && (
           <>
             <div className="project-solution" id="project_solution">
-              {gallery.images.length > 0 && <GalleryComponent gallery={gallery.images} title='' />}
+              {gallery.images?.length > 0 && <GalleryComponent gallery={gallery.images} title='' />}
               
-              {solution.features?.size > 0 && <FeaturesComponent features={solution.features} />}
+              {features?.size > 0 && <FeaturesComponent features={features} />}
 
-              {solution.currency && solution.price && <PricingComponent currency={solution.currency} price={solution.price} />}
+              {currency && price && <PricingComponent currency={currency} price={price} />}
 
-              {solution.urlsList && <ProjectURLsComponent projectUrls={solution.urlsList} />}
+              {urlsList && <ProjectURLsComponent projectUrls={urlsList} />}
 
               <h3>THE SOLUTION</h3>
 

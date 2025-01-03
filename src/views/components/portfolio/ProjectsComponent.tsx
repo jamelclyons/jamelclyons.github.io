@@ -10,6 +10,8 @@ interface ProjectsComponentProps {
 }
 
 const ProjectsComponent: React.FC<ProjectsComponentProps> = ({ projects }) => {
+  
+
   return (
     <>
       {projects.size > 0 && (

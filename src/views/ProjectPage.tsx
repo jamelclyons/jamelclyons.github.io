@@ -7,44 +7,60 @@ import ProjectComponent from './components/project/ProjectComponent';
 import StatusBarComponent from './components/StatusBarComponent';
 
 import { getProject } from '../controllers/projectSlice';
-import { getRepo } from '../controllers/githubSlice';
+import { getRepo, getRepoContents, getRepoLanguages } from '../controllers/githubSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
+import Repo from '../model/Repo';
 
 import { setMessage, setMessageType } from '../controllers/messageSlice';
 
-const ProjectPage: React.FC = () => {
+interface ProjectPageProps {
+  repo: Repo
+}
+
+const ProjectPage: React.FC<ProjectPageProps> = ({ repo }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { projectID } = useParams();
 
-  const { projectLoading, projectErrorMessage, title, description, solution, process, status, design, development, delivery, problem, details } = useSelector(
+  const { projectLoading, projectErrorMessage, project } = useSelector(
     (state: RootState) => state.project
   );
 
   useEffect(() => {
     if (projectID) {
-      dispatch(getRepo({ owner: 'the7ofdiamonds', repo: projectID }))
-        .unwrap()
-        .then((repo) => {
-          if (repo) {
-            dispatch(getProject(repo));
-          }
-        })
-        .catch((error) => {
-          const err = error as Error;
-          console.error('Failed to fetch repo:', err);
-          setMessage(err.message);
-          setMessageType('error');
-        });
+      const repo = new Repo({ name: projectID });
+
+      dispatch(getProject(repo))
     }
   }, [dispatch, projectID]);
 
   useEffect(() => {
-    if (title) {
-      document.title = title;
+    if (project.title) {
+      document.title = project.title;
     }
-  }, [title]);
+  }, [project.title]);
+
+  useEffect(() => {
+    if (project.owner && projectID) {
+      dispatch(getRepoContents({
+        owner: project.owner,
+        repo: projectID,
+        path: ''
+      }))
+    }
+  }, [dispatch, project.owner, projectID]);
+
+  useEffect(() => {
+    if (project.owner && projectID) {
+
+      dispatch(getRepoLanguages({
+        owner: project.owner,
+        repo: projectID,
+        path: ''
+      }))
+    }
+  }, [dispatch, project.owner, projectID]);
 
   if (projectLoading) {
     return <LoadingComponent />;
@@ -58,18 +74,7 @@ const ProjectPage: React.FC = () => {
             <StatusBarComponent />
           </main>
         ) : (
-          <ProjectComponent
-            title={title}
-            description={description}
-            solution={solution}
-            process={process}
-            status={status}
-            design={design}
-            development={development}
-            delivery={delivery}
-            problem={problem}
-            details={details}
-          />
+          <ProjectComponent />
         )}
       </>
     </section>

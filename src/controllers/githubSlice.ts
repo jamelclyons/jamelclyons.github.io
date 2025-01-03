@@ -11,9 +11,11 @@ import {
   GetResponseDataTypeFromEndpointMethod,
 } from '@octokit/types';
 
+import RepoContent from '../model/RepoContent';
 import Organization from '../model/Organization';
 import User from '../model/User';
 import Repo from '../model/Repo';
+import Taxonomy from '../model/Taxonomy';
 
 let octokit = new Octokit();
 
@@ -40,23 +42,13 @@ interface GithubState {
   githubStatusCode: number;
   githubError: Error | null;
   githubErrorMessage: string;
-  founders: string;
-  title: string;
-  avatarURL: string;
-  authorURL: string;
-  fullName: string;
-  bio: string;
-  frameworks: string;
-  skills: string;
-  technologies: string;
-  socialNetworks: string;
-  resume: string;
-  content: string;
   user: User;
   organizations: Array<Organization>;
   repos: Array<Repo>;
   socialAccounts: [];
   repo: Repo;
+  contents: Array<RepoContent>;
+  languages: Array<Taxonomy>;
 }
 
 const initialState: GithubState = {
@@ -64,23 +56,13 @@ const initialState: GithubState = {
   githubStatusCode: 0,
   githubError: null,
   githubErrorMessage: '',
-  founders: '',
-  title: '',
-  avatarURL: '',
-  authorURL: '',
-  fullName: '',
-  bio: '',
-  frameworks: '',
-  skills: '',
-  technologies: '',
-  socialNetworks: '',
-  resume: '',
-  content: '',
   user: new User(),
   organizations: [],
   repos: [],
   socialAccounts: [],
-  repo: new Repo,
+  repo: new Repo(),
+  contents: [],
+  languages: [],
 };
 
 export const getUser = createAsyncThunk<User, string>(
@@ -152,11 +134,6 @@ export const getOrganizationsRepos = createAsyncThunk(
   }
 );
 
-export interface RepoQuery {
-  owner: string;
-  repo: string;
-}
-
 type RepoResponse = GetResponseTypeFromEndpointMethod<
   typeof octokit.rest.repos.get
 >;
@@ -171,6 +148,58 @@ export const getRepo = createAsyncThunk(
       });
 
       return new Repo(repo.data);
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const getRepoContents = createAsyncThunk<
+  Array<RepoContent>,
+  Record<string, any>
+>('github/getRepoContents', async (query: Record<string, any>) => {
+  try {
+    const repoContents = await octokit.rest.repos.getContent({
+      owner: query.owner as string,
+      repo: query.repo as string,
+      path: query.path as string,
+    });
+
+    let contents: Array<RepoContent> = [];
+
+    if (Array.isArray(repoContents.data) && repoContents.data.length > 0) {
+      repoContents.data.forEach((content) => {
+        contents.push(new RepoContent(content));
+      });
+    }
+
+    return contents;
+  } catch (error) {
+    const err = error as Error;
+    console.error(err);
+    throw new Error(err.message);
+  }
+});
+
+export const getRepoLanguages = createAsyncThunk(
+  'github/getRepoLanguages',
+  async (query: Record<string, any>) => {
+    try {
+      const repoLanguages = await octokit.rest.repos.listLanguages({
+        owner: query.owner as string,
+        repo: query.repo as string,
+      });
+
+      let languages: Array<Taxonomy> = [];
+
+      Object.entries(repoLanguages.data).forEach(([language, usage]) => {
+        console.log(`Language: ${language}, Usage: ${usage}`);
+        languages.push(new Taxonomy(language, 'language', language, '', ''));
+      });
+
+      return languages;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -258,22 +287,56 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubError = null;
         state.repo = action.payload;
       })
+      .addCase(getRepoContents.fulfilled, (state, action) => {
+        state.githubLoading = false;
+        state.githubErrorMessage = '';
+        state.githubError = null;
+        state.contents = action.payload;
+      })
+      .addCase(getRepoLanguages.fulfilled, (state, action) => {
+        state.githubLoading = false;
+        state.githubErrorMessage = '';
+        state.githubError = null;
+        state.languages = action.payload;
+      })
       .addCase(getSocialAccounts.fulfilled, (state, action) => {
         state.githubLoading = false;
         state.githubErrorMessage = '';
         state.githubError = null;
         state.socialAccounts = action.payload;
       })
-      .addMatcher(isAnyOf(getUser.pending), (state) => {
-        state.githubLoading = true;
-        state.githubErrorMessage = '';
-        state.githubError = null;
-      })
-      .addMatcher(isAnyOf(getUser.rejected), (state, action) => {
-        state.githubLoading = false;
-        state.githubErrorMessage = action.error.message || '';
-        state.githubError = action.error as Error;
-      });
+      .addMatcher(
+        isAnyOf(
+          getUser.pending,
+          getOrganizations.pending,
+          getRepos.pending,
+          getRepo.pending,
+          getRepoContents.pending,
+          getRepoLanguages.pending,
+          getSocialAccounts.pending
+        ),
+        (state) => {
+          state.githubLoading = true;
+          state.githubErrorMessage = '';
+          state.githubError = null;
+        }
+      )
+      .addMatcher(
+        isAnyOf(
+          getUser.rejected,
+          getOrganizations.rejected,
+          getRepos.rejected,
+          getRepo.rejected,
+          getRepoContents.rejected,
+          getRepoLanguages.rejected,
+          getSocialAccounts.rejected
+        ),
+        (state, action) => {
+          state.githubLoading = false;
+          state.githubErrorMessage = action.error.message || '';
+          state.githubError = action.error as Error;
+        }
+      );
   },
 };
 

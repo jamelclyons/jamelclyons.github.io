@@ -59,6 +59,7 @@ const AddProject: React.FC = () => {
         const filteredArray = parts.filter(item => item !== "");
 
         formData.append('id', filteredArray[1]);
+        formData.append('owner', filteredArray[0]);
       } else {
         throw new Error('A valid repo url is required.');
       }
