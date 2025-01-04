@@ -14,11 +14,7 @@ import Repo from '../model/Repo';
 
 import { setMessage, setMessageType } from '../controllers/messageSlice';
 
-interface ProjectPageProps {
-  repo: Repo
-}
-
-const ProjectPage: React.FC<ProjectPageProps> = ({ repo }) => {
+const ProjectPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { projectID } = useParams();

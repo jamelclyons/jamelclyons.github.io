@@ -22,16 +22,21 @@ import {
   getOrganizations,
   getRepos
 } from './controllers/githubSlice';
+import { getPortfolio } from './controllers/portfolioSlice';
 
 import type { AppDispatch, RootState } from './model/store';
-
-import { getPortfolio } from './controllers/portfolioSlice';
+import Repo from './model/Repo';
+import User from './model/User';
+import Project from './model/Project';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { user, organizations } = useSelector((state: RootState) => state.github);
   const { portfolio } = useSelector((state: RootState) => state.portfolio);
+
+  const userType = user as User;
+  const portfolioType = portfolio as Set<Project>;
 
   useEffect(() => {
     if (user?.id) {
@@ -41,19 +46,19 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (user?.id) {
-      dispatch(getOrganizations(user?.id));
+      dispatch(getOrganizations());
     }
   }, [user?.id]);
 
-  useEffect(() => {
-    if (organizations) {
-      user?.setOrganizations(organizations);
-    }
-  }, [organizations]);
+  // useEffect(() => {
+  //   if (organizations) {
+  //     userType?.setOrganizations(organizations);
+  //   }
+  // }, [organizations]);
 
   useEffect(() => {
     const fetchPortfolio = async () => {
-      const repos = await dispatch(getRepos()).unwrap();
+      const repos = await dispatch(getRepos()).unwrap() as Array<Repo>;
 
       dispatch(getPortfolio(repos)).unwrap();
     }
@@ -69,9 +74,9 @@ const App: React.FC = () => {
       <Router>
         <Suspense fallback={<LoadingComponent />}>
           <Routes>
-            <Route path="/" element={<Home user={user} portfolio={portfolio} />} />
-            <Route path="/about" element={<About user={user} />} />
-            <Route path="/portfolio" element={<Portfolio user={user} portfolio={portfolio} />} />
+            <Route path="/" element={<Home user={userType} portfolio={portfolioType} />} />
+            <Route path="/about" element={<About user={userType} />} />
+            <Route path="/portfolio" element={<Portfolio user={userType} portfolio={portfolioType} />} />
             <Route path="/portfolio/:projectID" element={<ProjectPage />} />
             <Route
               path="/projects/project-types/:taxonomy"
@@ -83,8 +88,8 @@ const App: React.FC = () => {
               path="/projects/technologies/:taxonomy"
               element={<Search />}
             />
-            <Route path="/resume" element={<Resume user={user} />} />
-            <Route path="/contact" element={<Contact user={user} />} />
+            <Route path="/resume" element={<Resume user={userType} />} />
+            <Route path="/contact" element={<Contact user={userType} />} />
             <Route path="/add/project" element={<AddProject />} />
             <Route path="/add/skill" element={<AddSkill />} />
             <Route path="*" element={<NotFound />} />
@@ -92,7 +97,7 @@ const App: React.FC = () => {
         </Suspense>
       </Router>
       <FooterComponent
-        contactMethods={user?.contactMethods}
+        contactMethods={userType.contactMethods}
       />
     </>
   );

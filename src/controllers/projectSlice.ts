@@ -1,4 +1,9 @@
-import { createSlice, createAsyncThunk, isAnyOf } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  isAnyOf,
+  PayloadAction,
+} from '@reduxjs/toolkit';
 
 import {
   collection,
@@ -35,14 +40,14 @@ interface ProjectState {
   projectLoading: boolean;
   projectError: Error | null;
   projectErrorMessage: string;
-  project: Project;
+  project: Record<string, any>;
 }
 
 const initialState: ProjectState = {
   projectLoading: false,
   projectError: null,
   projectErrorMessage: '',
-  project: new Project(),
+  project: {},
 };
 
 export const getProject = createAsyncThunk(
@@ -61,7 +66,18 @@ export const getProject = createAsyncThunk(
         project.fromDocumentData(docSnap.id, docSnap.data());
       }
 
-      return project;
+      project.solution.gallery.toObject();
+      project.solution.urlsList.toObject();
+      project.solution.toObject();
+
+      project.process.status.toObject();
+      project.process.design.toObject();
+      project.process.development.toObject();
+      project.process.delivery.toObject();
+
+      project.problem.gallery.toObject();
+
+      return project.toObject();
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -76,18 +92,19 @@ export const projectSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getProject.fulfilled, (state, action) => {
+      .addCase(getProject.fulfilled, (state, action: PayloadAction<any>) => {
         state.projectLoading = false;
         state.projectError = null;
         state.projectErrorMessage = '';
         state.project = action.payload;
       })
-      .addMatcher(isAnyOf(getProject.pending), (state) => {
+      .addCase(getProject.pending, (state) => {
         state.projectLoading = true;
         state.projectError = null;
         state.projectErrorMessage = '';
+        state.project = {};
       })
-      .addMatcher(isAnyOf(getProject.rejected), (state, action) => {
+      .addCase(getProject.rejected, (state, action) => {
         state.projectLoading = false;
         state.projectError = (action.error as Error) || null;
         state.projectErrorMessage = action.error.message || '';

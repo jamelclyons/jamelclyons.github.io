@@ -5,7 +5,7 @@ import FooterBar from './FooterBar';
 import ContactMethods from '../../model/ContactMethods';
 
 interface FooterComponentProps {
-  contactMethods: ContactMethods;
+  contactMethods: Record<string,any>;
 }
 
 const FooterComponent: React.FC<FooterComponentProps> = ({ contactMethods }) => {

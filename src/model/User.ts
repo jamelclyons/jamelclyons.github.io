@@ -18,7 +18,7 @@ class User extends Model {
   website: string;
   organizations: Array<Organization>;
   repos: Array<string>;
-  contactMethods: ContactMethods;
+  contactMethods: Record<string, any>;
   images: Record<string, Image>;
 
   constructor(data: Record<string, any> = {}) {
@@ -37,7 +37,7 @@ class User extends Model {
     this.website = data?.website || homepage;
     this.organizations = this.setOrganizations(data?.organizations) || [];
     this.repos = data?.repos || '';
-    this.contactMethods = new ContactMethods(data?.contact_methods);
+    this.contactMethods = new ContactMethods(data?.contact_methods).toObject();
     this.images = data?.images || '';
   }
 

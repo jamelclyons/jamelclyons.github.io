@@ -16,7 +16,7 @@ const TheProcess: React.FC<ProcessProps> = ({ process }) => {
 
   return (
     <>
-      {process.isEmpty &&
+      
         <div className="project-process" id="project_process">
           <h3 className="title">the process</h3>
 
@@ -27,7 +27,7 @@ const TheProcess: React.FC<ProcessProps> = ({ process }) => {
           {!development.isEmpty && <Development development={development} />}
 
           {!delivery.isEmpty && <Delivery delivery={delivery} />}
-        </div>}
+        </div>
     </>
   );
 }

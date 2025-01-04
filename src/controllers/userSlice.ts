@@ -32,7 +32,7 @@ interface UserState {
   bio: string;
   resume: string;
   content: Array<string> | null;
-  user: User | null;
+  user: Record<string,any> | null;
   organizations: [];
   repos: [];
   socialAccounts: [];
@@ -56,12 +56,12 @@ const initialState: UserState = {
   socialAccounts: [],
 };
 
-export const getUser = createAsyncThunk<User, string>(
+export const getUser = createAsyncThunk(
   'user/getUser',
   async (username) => {
     try {
       const userCollection = collection(db, 'user');
-      const docRef: DocumentReference<unknown, DocumentData> = doc(userCollection, username);
+      const docRef = doc(db, `user/${username}`);
       const docSnap = await getDoc(docRef);
 
       if (!docSnap.exists()) {
@@ -69,12 +69,12 @@ export const getUser = createAsyncThunk<User, string>(
       }
 
       let data = docSnap.data() as User;
-      let user = new User(data);
 
-      return user;
+      return new User(data).toObject();
     } catch (error) {
-      console.error(error);
-      throw new Error(error.message);
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
   }
 );

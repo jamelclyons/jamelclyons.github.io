@@ -8,31 +8,27 @@ class Taxonomy extends Model {
   type: string;
   title: string;
   path: string;
-  image: Image;
+  image: Record<string, any>;
   iconURL: string;
   className: string;
+  usage: number;
 
-  constructor(
-    id: string,
-    type: string,
-    title: string,
-    iconURL: string,
-    className: string
-  ) {
+  constructor(data?: Record<string, any>) {
     super();
-    
-    this.id = id;
-    this.type = type;
-    this.title = title;
-    this.path = snakeCaseToPath(type);
-    this.iconURL = iconURL;
-    this.className = className;
-    let img = new Image();
-    img.id = this.id;
-    img.title = this.title;
-    img.url = this.iconURL;
-    img.className = this.className;
-    this.image = img;
+
+    this.id = data?.id ? data.id : '';
+    this.type = data?.type ? data.type : '';
+    this.title = data?.title ? data.title : '';
+    this.path = this.type ? snakeCaseToPath(this.type) : '';
+    this.iconURL = data?.icon_url ? data.icon_url : '';
+    this.className = data?.class_name ? data.class_name : '';
+    this.usage = data?.usage ? data.usage : '';
+    this.image = new Image({
+      id: data?.id,
+      title: data?.title,
+      url: this.iconURL,
+      class_name: this.className,
+    }).toObject();
   }
 
   isValid(): boolean {

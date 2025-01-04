@@ -6,10 +6,7 @@ import {
 } from '@reduxjs/toolkit';
 
 import { Octokit } from '@octokit/rest';
-import {
-  GetResponseTypeFromEndpointMethod,
-  GetResponseDataTypeFromEndpointMethod,
-} from '@octokit/types';
+import { GetResponseTypeFromEndpointMethod } from '@octokit/types';
 
 import RepoContent from '../model/RepoContent';
 import Organization from '../model/Organization';
@@ -42,13 +39,13 @@ interface GithubState {
   githubStatusCode: number;
   githubError: Error | null;
   githubErrorMessage: string;
-  user: User;
-  organizations: Array<Organization>;
-  repos: Array<Repo>;
+  user: Record<string,any>;
+  organizations: Array<Record<string,any>>;
+  repos: Array<Record<string,any>>;
   socialAccounts: [];
-  repo: Repo;
-  contents: Array<RepoContent>;
-  languages: Array<Taxonomy>;
+  repo: Record<string,any>;
+  contents: Array<Record<string,any>>;
+  languages: Array<Record<string,any>>;
 }
 
 const initialState: GithubState = {
@@ -56,16 +53,16 @@ const initialState: GithubState = {
   githubStatusCode: 0,
   githubError: null,
   githubErrorMessage: '',
-  user: new User(),
+  user: {},
   organizations: [],
   repos: [],
   socialAccounts: [],
-  repo: new Repo(),
+  repo: {},
   contents: [],
   languages: [],
 };
 
-export const getUser = createAsyncThunk<User, string>(
+export const getUser = createAsyncThunk(
   'github/getUser',
   async (username: string) => {
     try {
@@ -75,7 +72,7 @@ export const getUser = createAsyncThunk<User, string>(
         },
       });
 
-      return new User(data);
+      return new User(data).toObject();
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -88,11 +85,11 @@ export const getRepos = createAsyncThunk('github/getRepos', async () => {
   try {
     const { data } = await octokit.request('/user/repos');
 
-    let repos: Array<Repo> = [];
+    let repos: Array<Record<string,any>> = [];
 
     if (Array.isArray(data)) {
       data.forEach((repo) => {
-        repos.push(new Repo(repo));
+        repos.push(new Repo(repo).toObject());
       });
     }
 
@@ -104,7 +101,7 @@ export const getRepos = createAsyncThunk('github/getRepos', async () => {
   }
 });
 
-export const getOrganizations = createAsyncThunk<Array<Organization>, string>(
+export const getOrganizations = createAsyncThunk(
   'github/getOrganizations',
   async () => {
     try {
@@ -147,7 +144,7 @@ export const getRepo = createAsyncThunk(
         repo: query.repo as string,
       });
 
-      return new Repo(repo.data);
+      return new Repo(repo.data).toObject();
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -156,10 +153,7 @@ export const getRepo = createAsyncThunk(
   }
 );
 
-export const getRepoContents = createAsyncThunk<
-  Array<RepoContent>,
-  Record<string, any>
->('github/getRepoContents', async (query: Record<string, any>) => {
+export const getRepoContents = createAsyncThunk('github/getRepoContents', async (query: Record<string, any>) => {
   try {
     const repoContents = await octokit.rest.repos.getContent({
       owner: query.owner as string,
@@ -167,11 +161,11 @@ export const getRepoContents = createAsyncThunk<
       path: query.path as string,
     });
 
-    let contents: Array<RepoContent> = [];
+    let contents: Array<Record<string,any>> = [];
 
     if (Array.isArray(repoContents.data) && repoContents.data.length > 0) {
       repoContents.data.forEach((content) => {
-        contents.push(new RepoContent(content));
+        contents.push(new RepoContent(content).toObject());
       });
     }
 
@@ -192,11 +186,19 @@ export const getRepoLanguages = createAsyncThunk(
         repo: query.repo as string,
       });
 
-      let languages: Array<Taxonomy> = [];
+      let languages: Array<Record<string,any>> = [];
 
       Object.entries(repoLanguages.data).forEach(([language, usage]) => {
-        console.log(`Language: ${language}, Usage: ${usage}`);
-        languages.push(new Taxonomy(language, 'language', language, '', ''));
+        languages.push(
+          new Taxonomy({
+            id: language.toLowerCase(),
+            type: 'language',
+            title: language.toUpperCase(),
+            icon_url: '',
+            class_name: '',
+            usage: usage,
+          }).toObject()
+        );
       });
 
       return languages;

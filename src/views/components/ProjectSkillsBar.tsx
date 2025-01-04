@@ -5,16 +5,16 @@ import Taxonomy from '../../model/Taxonomy';
 import IconComponent from './IconComponent';
 
 interface ProjectSkillsProp {
-  skills: Set<Taxonomy>
+  skills: Array<Record<string,any>>;
 }
 
 const ProjectSkills: React.FC<ProjectSkillsProp> = ({ skills }) => {
-
+  console.log(skills)
   return (
     <>
-      {skills?.size > 0 && (
+      {skills?.length > 0 && (
         <div className="project-skills-bar">
-          {Array.from(skills).map((skill, index) => (
+          {skills.map((skill, index) => (
             <div className="icon">
               <a href={`#/projects/${skill.path}/${skill.id}`}>
                 <IconComponent key={index} image={skill.image} />

@@ -5,14 +5,14 @@ import ContactBar from './ContactBar';
 import ContactMethods from '../../model/ContactMethods';
 
 interface SocialBarProps {
-  contactMethods: ContactMethods;
+  contactMethods: Record<string, any>;
 }
 
 const SocialBar: React.FC<SocialBarProps> = ({ contactMethods }) => {
 
   return (
     <div className="footer-bar">
-      <ContactBar contactMethods={contactMethods}/>
+      <ContactBar contactMethods={contactMethods} />
     </div>
   );
 }

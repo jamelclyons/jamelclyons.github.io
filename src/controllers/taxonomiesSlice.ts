@@ -2,7 +2,7 @@ import {
   createSlice,
   createAsyncThunk,
   isAnyOf,
-  CreateSliceOptions
+  CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
 import {
@@ -13,7 +13,7 @@ import {
   QuerySnapshot,
   DocumentData,
   DocumentReference,
-  DocumentSnapshot
+  DocumentSnapshot,
 } from 'firebase/firestore';
 
 import db from '../services/firebase/config';
@@ -26,15 +26,14 @@ interface TaxonomiesState {
   taxonomiesError: Error | null;
   taxonomiesErrorMessage: string;
   taxonomiesStatusCode: string;
-  projects: Array<Project>;
-  projectTypes: Set<Taxonomy>;
-  projectType: Taxonomy | null;
-  languages: Set<Taxonomy>;
-  language: Taxonomy | null;
-  frameworks: Set<Taxonomy>;
-  framework: Taxonomy | null;
-  technologies: Set<Taxonomy>;
-  technology: Taxonomy | null;
+  projectTypes: Set<Record<string, any>>;
+  projectType: Record<string, any> | null;
+  languages: Set<Record<string, any>>;
+  language: Record<string, any> | null;
+  frameworks: Set<Record<string, any>>;
+  framework: Record<string, any> | null;
+  technologies: Set<Record<string, any>>;
+  technology: Record<string, any> | null;
 }
 
 const initialState: TaxonomiesState = {
@@ -42,36 +41,43 @@ const initialState: TaxonomiesState = {
   taxonomiesError: null,
   taxonomiesErrorMessage: '',
   taxonomiesStatusCode: '',
-  projects: [],
-  projectTypes: new Set,
+  projectTypes: new Set(),
   projectType: null,
-  languages: new Set,
+  languages: new Set(),
   language: null,
-  frameworks: new Set,
+  frameworks: new Set(),
   framework: null,
-  technologies: new Set,
+  technologies: new Set(),
   technology: null,
+};
+
+const getTaxonomy = (type: string, doc: DocumentData) => {
+  let data = doc.data();
+  let taxonomy = new Taxonomy({
+    id: doc.id,
+    type: type,
+    title: data.title,
+    iconURL: data.icon_url,
+    className: data.class_name,
+  });
+
+  return taxonomy.toObject();
 };
 
 export const getProjectTypes = createAsyncThunk(
   'taxonomies/getProjectTypes',
   async () => {
     try {
+      const type = 'project_types';
       const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(
-        collection(db, 'project_types')
+        collection(db, type)
       );
 
-      let projectTypes: Set<Taxonomy> = new Set();
+      let projectTypes: Set<Record<string, any>> = new Set();
 
       querySnapshot.forEach((doc: DocumentData) => {
-        let data = doc.data();
-        let taxonomy = new Taxonomy(
-          doc.id,
-          'project_types',
-          data.title,
-          data.icon_url,
-          data.class_name
-        );
+        let taxonomy = getTaxonomy(type, doc);
+
         projectTypes.add(taxonomy);
       });
 
@@ -88,21 +94,16 @@ export const getLanguages = createAsyncThunk(
   'taxonomies/getLanguages',
   async () => {
     try {
+      const type = 'languages';
       const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(
-        collection(db, 'languages')
+        collection(db, type)
       );
 
-      let languages: Set<Taxonomy> = new Set();
+      let languages: Set<Record<string, any>> = new Set();
 
       querySnapshot.forEach((doc: DocumentData) => {
-        let data = doc.data();
-        let taxonomy = new Taxonomy(
-          doc.id,
-          'languages',
-          data.title,
-          data.icon_url,
-          data.class_name
-        );
+        let taxonomy = getTaxonomy(type, doc);
+
         languages.add(taxonomy);
       });
 
@@ -119,21 +120,16 @@ export const getFrameworks = createAsyncThunk(
   'taxonomies/getFrameworks',
   async () => {
     try {
+      const type = 'frameworks';
       const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(
-        collection(db, 'frameworks')
+        collection(db, type)
       );
 
-      let frameworks: Set<Taxonomy> = new Set();
+      let frameworks: Set<Record<string, any>> = new Set();
 
       querySnapshot.forEach((doc: DocumentData) => {
-        let data = doc.data();
-        let taxonomy = new Taxonomy(
-          doc.id,
-          'frameworks',
-          data.title,
-          data.icon_url,
-          data.class_name
-        );
+        let taxonomy = getTaxonomy(type, doc);
+
         frameworks.add(taxonomy);
       });
 
@@ -150,21 +146,16 @@ export const getTechnologies = createAsyncThunk(
   'taxonomies/getTechnologies',
   async () => {
     try {
+      const type = 'technologies';
       const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(
-        collection(db, 'technologies')
+        collection(db, type)
       );
 
-      let technologies: Set<Taxonomy> = new Set();
+      let technologies: Set<Record<string, any>> = new Set();
 
       querySnapshot.forEach((doc: DocumentData) => {
-        let data = doc.data();
-        let taxonomy = new Taxonomy(
-          doc.id,
-          'technologies',
-          data.title,
-          data.icon_url,
-          data.class_name
-        );
+        let taxonomy = getTaxonomy(type, doc);
+
         technologies.add(taxonomy);
       });
 
@@ -177,28 +168,23 @@ export const getTechnologies = createAsyncThunk(
   }
 );
 
-export const getProjectType = createAsyncThunk<Taxonomy, string>(
+export const getProjectType = createAsyncThunk(
   'taxonomies/getProjectType',
   async (projectType: string) => {
     try {
-      const type = 'project_types';             
+      const type = 'project_types';
       const projectTypeCollection = collection(db, type);
-      const docRef: DocumentReference<unknown, DocumentData> = doc(projectTypeCollection, projectType);
+      const docRef: DocumentReference<unknown, DocumentData> = doc(
+        projectTypeCollection,
+        projectType
+      );
       const docSnap = await getDoc(docRef);
 
-      if (!docSnap.exists()) {
-        throw new Error('Could not be found.');
+      let taxonomy: Record<string, any> = {};
+
+      if (docSnap.exists()) {
+        taxonomy = getTaxonomy(type, docSnap);
       }
-
-      const data = docSnap.data() as { title: string; icon_url: string; class_name: string };
-
-      const taxonomy = new Taxonomy(
-        docSnap.id,
-        type,
-        data?.title,
-        data?.icon_url,
-        data?.class_name
-      );
 
       return taxonomy;
     } catch (error) {
@@ -209,26 +195,23 @@ export const getProjectType = createAsyncThunk<Taxonomy, string>(
   }
 );
 
-export const getLanguage = createAsyncThunk<Taxonomy, string>(
+export const getLanguage = createAsyncThunk(
   'taxonomies/getLanguage',
   async (language: string) => {
     try {
-      const languageCollection = collection(db, 'languages');
-      const docRef: DocumentReference<unknown, DocumentData> = doc(languageCollection, language);
+      const type = 'languages';
+      const languageCollection = collection(db, type);
+      const docRef: DocumentReference<unknown, DocumentData> = doc(
+        languageCollection,
+        language
+      );
       const docSnap = await getDoc(docRef);
 
-      if (!docSnap.exists()) {
-        throw new Error('Could not be found.');
-      }
+      let taxonomy: Record<string, any> = {};
 
-      const data = docSnap.data() as { title: string; icon_url: string; class_name: string };
-      const taxonomy = new Taxonomy(
-        docSnap.id,
-        'languages',
-        data.title,
-        data.icon_url,
-        data.class_name
-      );
+      if (docSnap.exists()) {
+        taxonomy = getTaxonomy(type, docSnap);
+      }
 
       return taxonomy;
     } catch (error) {
@@ -239,26 +222,23 @@ export const getLanguage = createAsyncThunk<Taxonomy, string>(
   }
 );
 
-export const getFramework = createAsyncThunk<Taxonomy, string>(
+export const getFramework = createAsyncThunk(
   'taxonomies/getFramework',
   async (framework: string) => {
     try {
+      const type = 'project_types';
       const frameworkCollection = collection(db, 'frameworks');
-      const docRef: DocumentReference<unknown, DocumentData> = doc(frameworkCollection, framework);
+      const docRef: DocumentReference<unknown, DocumentData> = doc(
+        frameworkCollection,
+        framework
+      );
       const docSnap = await getDoc(docRef);
 
-      if (!docSnap.exists()) {
-        throw new Error('Could not be found.');
-      }
+      let taxonomy: Record<string, any> = {};
 
-      const data = docSnap.data() as { title: string; icon_url: string; class_name: string };
-      const taxonomy = new Taxonomy(
-        docSnap.id,
-        'frameworks',
-        data.title,
-        data.icon_url,
-        data.class_name
-      );
+      if (docSnap.exists()) {
+        taxonomy = getTaxonomy(type, docSnap);
+      }
 
       return taxonomy;
     } catch (error) {
@@ -269,26 +249,23 @@ export const getFramework = createAsyncThunk<Taxonomy, string>(
   }
 );
 
-export const getTechnology = createAsyncThunk<Taxonomy, string>(
+export const getTechnology = createAsyncThunk(
   'taxonomies/getTechnology',
   async (technology: string) => {
     try {
+      const type = 'project_types';
       const technologyCollection = collection(db, 'technologies');
-      const docRef: DocumentReference<unknown, DocumentData> = doc(technologyCollection, technology);
+      const docRef: DocumentReference<unknown, DocumentData> = doc(
+        technologyCollection,
+        technology
+      );
       const docSnap = await getDoc(docRef);
 
-      if (!docSnap.exists()) {
-        throw new Error('Could not be found.');
-      }
+      let taxonomy: Record<string, any> = {};
 
-      const data = docSnap.data() as { title: string; icon_url: string; class_name: string };
-      const taxonomy = new Taxonomy(
-        docSnap.id,
-        'technologies',
-        data.title,
-        data.icon_url,
-        data.class_name
-      );
+      if (docSnap.exists()) {
+        taxonomy = getTaxonomy(type, docSnap);
+      }
 
       return taxonomy;
     } catch (error) {

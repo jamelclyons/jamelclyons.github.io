@@ -15,18 +15,21 @@ class ProjectSolution extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery;
-    this.features = this.getFeatures(data?.features);
+    this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
+    this.features = data?.features
+      ? this.getFeatures(data.features)
+      : new Set();
     this.content = data?.content || [];
     this.currency = data?.currency || '';
     this.price = data?.price || 0;
-    this.urlsList = data?.urlsList ? new ProjectURLs(data?.urlsList) : new ProjectURLs;
-    console.log(data)
+    this.urlsList = data?.urlsList
+      ? new ProjectURLs(data?.urlsList)
+      : new ProjectURLs();
   }
 
   getFeatures(data?: Set<Feature>): Set<Feature> {
     let features = new Set<Feature>();
-    
+
     if (data && data?.size > 0) {
       data.forEach((feature) => {
         features.add(feature);

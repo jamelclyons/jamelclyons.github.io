@@ -60,7 +60,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
   // }, [development, dispatch]);
 
   let taxTypes: Set<Taxonomy> = new Set();
-  let taxLanguages: Set<Taxonomy> = new Set();
+  let taxLanguages: Array<Record<string,any>> = [];
   let taxFrameworks: Set<Taxonomy> = new Set();
   let taxTechnologies: Set<Taxonomy> = new Set();
 
@@ -94,14 +94,12 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
     if (languages && languages.length > 0) {
       const fetchLanguages = async () => {
         try {
-          await Promise.all(
+          return await Promise.all(
             Array.from(languages).map(async (tax) => {
               const result = await dispatch(getLanguage(tax.id));
-
               if (getLanguage.fulfilled.match(result)) {
-                const taxonomy = result.payload as Taxonomy;
-                taxLanguages.add(taxonomy);
-                console.log(taxLanguages)
+                const taxonomy = new Taxonomy(result.payload);
+                taxLanguages.push(taxonomy);
               } else {
                 console.error("Failed to fetch language:", result.error);
                 return null;
@@ -169,7 +167,6 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
   return (
     <>
-      {!development.isEmpty &&
         <div
           className="project-process-development"
           id="project_process_development">
@@ -178,11 +175,11 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
           {taxTypes.size > 0 && <TaxList taxonomies={taxTypes} title={'types'} />}
 
-          {taxLanguages.size > 0 && <TaxListIcon taxonomies={taxLanguages} title={'languages'} />}
+         <TaxListIcon taxonomies={taxLanguages} title={'languages'} />
 
-          {taxFrameworks.size > 0 && <TaxListIcon taxonomies={taxFrameworks} title={'frameworks'} />}
+          {/* {taxFrameworks.size > 0 && <TaxListIcon taxonomies={taxFrameworks} title={'frameworks'} />}
 
-          {taxTechnologies.size > 0 && <TaxListIcon taxonomies={taxTechnologies} title={'technologies'} />}
+          {taxTechnologies.size > 0 && <TaxListIcon taxonomies={taxTechnologies} title={'technologies'} />} */}
 
           {checkList.length > 0 && <CheckList checkList={checkList} />}
 
@@ -194,7 +191,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
             <button onClick={handleSeeCode}>
               <h3 className='title'>See Code</h3>
             </button>}
-        </div>}
+        </div>
     </>
   );
 }
