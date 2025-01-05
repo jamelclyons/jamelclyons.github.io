@@ -2,7 +2,15 @@
 @use '_project_status.scss';
 @use '_project_skills_bar.scss';
 
-.project-card {
-  height: 100%;
-  padding: 1rem;
+button {
+  background-color: white;
+
+  .project-card {
+    height: 100%;
+    padding: 1rem;
+
+    .title {
+      color: var(--color-text);
+    }
+  }
 }

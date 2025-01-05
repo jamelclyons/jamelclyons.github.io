@@ -8,7 +8,7 @@ class Image extends Model {
 
   constructor(data: Record<string, any> = {}) {
     super();
-    
+
     this.id = data?.id || '';
     this.title = data?.title || '';
     this.url = data?.url || '';

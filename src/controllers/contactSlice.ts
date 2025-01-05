@@ -8,11 +8,15 @@ import { collection, doc, getDoc } from 'firebase/firestore';
 
 import db from '../services/firebase/config';
 
-export class ContactPage {
+import Model from '../model/Model';
+
+export class ContactPage extends Model {
   title: string;
   message: string;
 
   constructor(data: Record<string, any> = {}) {
+    super();
+
     this.title = data?.title;
     this.message = data?.message;
   }
@@ -23,7 +27,7 @@ interface ContactState {
   contactError: Error | null;
   contactErrorMessage: string;
   contactSuccessMessage: string;
-  contactPage: ContactPage | null;
+  contactPage: Record<string, any> | null;
 }
 
 const initialState: ContactState = {
@@ -31,7 +35,7 @@ const initialState: ContactState = {
   contactError: null,
   contactErrorMessage: '',
   contactSuccessMessage: '',
-  contactPage: null
+  contactPage: null,
 };
 
 interface Email {
@@ -72,7 +76,7 @@ export const sendEmail = createAsyncThunk<string, Email>(
   }
 );
 
-export const getContactPageContent = createAsyncThunk<ContactPage>(
+export const getContactPageContent = createAsyncThunk(
   'about/getContactPageContent',
   async () => {
     try {
@@ -84,7 +88,7 @@ export const getContactPageContent = createAsyncThunk<ContactPage>(
         throw new Error('Contact page content could not be found.');
       }
 
-      return new ContactPage(docSnap.data());
+      return new ContactPage(docSnap.data()).toObject();
     } catch (error) {
       const err = error as Error;
       console.error(err);

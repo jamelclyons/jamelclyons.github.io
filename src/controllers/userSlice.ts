@@ -12,7 +12,7 @@ import {
   getDoc,
   QuerySnapshot,
   DocumentData,
-  DocumentReference
+  DocumentReference,
 } from 'firebase/firestore';
 
 import db from '../services/firebase/config';
@@ -32,7 +32,7 @@ interface UserState {
   bio: string;
   resume: string;
   content: Array<string> | null;
-  userObject: Record<string,any> | null;
+  userObject: Record<string, any> | null;
   organizations: [];
   repos: [];
   socialAccounts: [];
@@ -56,28 +56,25 @@ const initialState: UserState = {
   socialAccounts: [],
 };
 
-export const getUser = createAsyncThunk(
-  'user/getUser',
-  async (username) => {
-    try {
-      const userCollection = collection(db, 'user');
-      const docRef = doc(db, `user/${username}`);
-      const docSnap = await getDoc(docRef);
+export const getUser = createAsyncThunk('user/getUser', async (username) => {
+  try {
+    const userCollection = collection(db, 'user');
+    const docRef = doc(db, `user/${username}`);
+    const docSnap = await getDoc(docRef);
 
-      if (!docSnap.exists()) {
-        throw new Error('Could not be found.');
-      }
-
-      let data = docSnap.data() as User;
-
-      return new User(data).toObject();
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
+    if (!docSnap.exists()) {
+      throw new Error('Could not be found.');
     }
+
+    let data = docSnap.data() as Record<string, any>;
+
+    return new User(data).toObject();
+  } catch (error) {
+    const err = error as Error;
+    console.error(err);
+    throw new Error(err.message);
   }
-);
+});
 
 const userSliceOptions: CreateSliceOptions<UserState> = {
   name: 'user',

@@ -14,64 +14,108 @@ class ContactMethods extends Model {
 
   constructor(data: Record<string, any> = {}) {
     super();
-    
+
     const { gitHub, instagram, linkedIn, x, email, phone } =
       packageJson.author.contact;
 
-    this.gitHub = data?.gitHub || this.getContactGitHub(gitHub);
-    this.instagram = data?.instagram || this.getContactInstagram(instagram);
-    this.linkedIn = data?.linkedIn || this.getContactLinkedIn(linkedIn);
-    this.x = data?.x || this.getContactX(x);
-    this.email = data?.email || this.getContactEmail(email);
-    this.phone = data?.phone || this.getContactPhone(phone);
+    this.gitHub = this.getContactGitHub(gitHub);
+    this.instagram = this.getContactInstagram(instagram);
+    this.linkedIn = this.getContactLinkedIn(linkedIn);
+    this.x = this.getContactX(x);
+    this.email = this.getContactEmail(email);
+    this.phone = this.getContactPhone(phone);
   }
 
-  getContact(
-    id: string,
-    title: string,
-    url: string,
-    image: Record<string, any>,
-    value: string
-  ) {
-    const contact = {
-      id: id,
-      title: title,
-      url: url,
-      image: image,
-      value: value,
-    };
+  getContact(data: Record<string, any>) {
+    const id = data?.id ?? '';
+    const title = data?.title ?? '';
+    const url = data?.url ?? '';
+    const image = data?.image
+      ? new Image(data.image)
+      : new Image({
+          url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/w8AAn8B9oOKlwAAAABJRU5ErkJggg==',
+        });
+    const value = data?.value ?? '';
 
-    return new Contact(contact);
+    return new Contact(id, title, url, image, value);
   }
 
   getContactGitHub(url: string) {
-    const image = new Image({ class_name: 'fa fa-github fa-fw' }).toObject();
-    return this.getContact('gitHub', 'GitHub', url, image, '');
+    const id = 'gitHub';
+    const title = 'GitHub';
+    const className = 'fa fa-github fa-fw';
+    const image = new Image({
+      id: id,
+      title: title,
+      class_name: className,
+    });
+
+    return new Contact(id, title, url, image, '');
   }
 
   getContactInstagram(url: string) {
-    const image = new Image({ class_name: 'fa fa-instagram fa-fw' }).toObject();
-    return this.getContact('instagram', 'Instagram', url, image, '');
+    const id = 'instagram';
+    const title = 'Instagram';
+    const className = 'fa fa-instagram fa-fw';
+    const image = new Image({
+      id: id,
+      title: title,
+      class_name: className,
+    });
+
+    return new Contact(id, title, url, image, '');
   }
 
   getContactLinkedIn(url: string) {
-    const image = new Image({ class_name: 'fa fa-linkedin fa-fw' }).toObject();
-    return this.getContact('linkedIn', 'LinkedIn', url, image, '');
+    const id = 'linkedIn';
+    const title = 'LinkedIn';
+    const className = 'fa fa-linkedin fa-fw';
+    const image = new Image({
+      id: id,
+      title: title,
+      class_name: className,
+    });
+
+    return new Contact(id, title, url, image, '');
   }
 
   getContactX(url: string) {
-    const image = new Image({ class_name: 'fa-brands fa-x-twitter' }).toObject();
-    return this.getContact('x', 'X', url, image, '');
+    const id = 'x';
+    const title = 'X';
+    const className = 'fa-brands fa-x-twitter';
+    const image = new Image({
+      id: id,
+      title: title,
+      class_name: className,
+    });
+
+    return new Contact(id, title, url, image, '');
   }
 
   getContactEmail(value: string) {
-    const image = new Image({ class_name: 'fa fa-envelope fa-fw' }).toObject();
-    return this.getContact('email', 'Email', '', image, value);
+    const id = 'email';
+    const title = 'Email';
+    const className = 'fa fa-envelope fa-fw';
+    const image = new Image({
+      id: id,
+      title: title,
+      class_name: className,
+    });
+
+    return new Contact(id, title, '', image, value);
   }
 
   getContactPhone(value: string) {
-    const image = new Image({ class_name: 'fa-solid fa-phone' }).toObject();
-    return this.getContact('phone', 'Phone', '', image, value);
+    const id = 'phone';
+    const title = 'Phone';
+    const className = 'fa-solid fa-phone';
+    const image = new Image({
+      id: id,
+      title: title,
+      class_name: className,
+    });
+    
+    return new Contact(id, title, '', image, value);
   }
 }
 

@@ -15,9 +15,9 @@ const ProjectSkills: React.FC<ProjectSkillsProp> = ({ skills }) => {
       {skills?.size > 0 && (
         <div className="project-skills-bar">
           {Array.from(skills).map((skill, index) => (
-            <div className="icon">
+            <div className="icon" key={index}>
               <a href={`#/projects/${skill.path}/${skill.id}`}>
-                <IconComponent key={index} image={skill.image} />
+                <IconComponent image={skill.image} />
               </a>
             </div>
           ))}

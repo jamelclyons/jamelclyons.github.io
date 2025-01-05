@@ -49,9 +49,8 @@ const App: React.FC = () => {
 
   const user = new User(userObject);
 
-
   useEffect(() => {
-    document.title = user?.name;
+    document.title = user.name;
   }, []);
 
   useEffect(() => {
@@ -72,7 +71,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (user.id) {
-      dispatch(getUser(user?.id));
+      dispatch(getUser(user.id));
     }
   }, [user.id]);
 

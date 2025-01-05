@@ -39,28 +39,32 @@ export const getPortfolio = createAsyncThunk(
   async (repos: Array<Repo>) => {
     try {
       let projects: Set<Record<string, any>> = new Set();
-      let repoProjects: Set<Record<string, any>> = new Set();
+      let repoProjects: Set<Project> = new Set();
 
       if (Array.isArray(repos) && repos.length > 0) {
         repos.forEach((repo) => {
           let project = new Project();
+
           project.fromRepo(repo);
-          projects.add(project);
+          repoProjects.add(project);
         });
       }
 
-      // const querySnapshot: QuerySnapshot = await getDocs(portfolioCollection);
+      const querySnapshot: QuerySnapshot = await getDocs(portfolioCollection);
 
-      // if (querySnapshot.size > 0) {
-      //   querySnapshot.forEach((doc: DocumentData) => {
-      //     let project = new Project();
-      //     project.fromDocumentData(doc.id, doc.data());
+      if (querySnapshot.size > 0) {
+        repoProjects.forEach((project: Project) => {
+          const matchingDoc = querySnapshot.docs.find(
+            (doc) => doc.id === project.id
+          );
 
-      //     projects.add(project.toObject());
-      //   });
-      // }
+          if (matchingDoc) {
+            project.fromDocumentData(matchingDoc.id, matchingDoc.data());
+          }
 
-      // const portfolio = Array<Record<string,any>>([...projects, ...repoProjects]);
+          projects.add(project.toObject());
+        });
+      }
 
       return Array.from(projects);
     } catch (error) {

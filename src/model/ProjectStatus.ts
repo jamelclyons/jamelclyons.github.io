@@ -10,7 +10,7 @@ class ProjectStatus extends Model {
 
     this.createdAt = data?.created_at || '';
     this.updatedAt = data?.updated_at || '';
-    this.progress = data?.progress || '25';
+    this.progress = data?.progress || '0';
   }
 }
 

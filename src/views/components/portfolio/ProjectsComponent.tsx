@@ -15,8 +15,8 @@ const ProjectsComponent: React.FC<ProjectsComponentProps> = ({ projects }) => {
   return (
     <>
       {projects.size > 0 && (
-        Array.from(projects).map((project) => (
-          <PortfolioProject project={project} />
+        Array.from(projects).map((project, index) => (
+          <PortfolioProject key={index} project={project} />
         ))
       )}
     </>

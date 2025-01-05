@@ -18,10 +18,10 @@ class Project extends Model {
   problem: ProjectProblem;
   details: ProjectDetails;
 
-  constructor(id?: string, data: Record<string, any> = {}) {
+  constructor(id: string = '', data: Record<string, any> = {}) {
     super();
 
-    this.id = id || '';
+    this.id = id;
     this.owner = data?.owner;
     this.title = data?.title ? this.getTitle(data?.id) : '';
     this.description = data?.description ?? 'No Description Provided.';
@@ -61,14 +61,14 @@ class Project extends Model {
 
   fromDocumentData(id: string, data: DocumentData) {
     this.id = id;
-    this.owner = data?.owner;
-    this.title = data?.title;
-    this.solution = data?.solution
-      ? new ProjectSolution(data.solution)
-      : new ProjectSolution();
-    this.process = data?.process
-      ? new ProjectProcess(data.process)
-      : new ProjectProcess();
+    this.title = data?.title ? data.title : this.getTitle(this.id);
+    this.solution.content = data?.solution?.content;
+    this.solution.currency = data?.solution?.content;
+    this.solution.features = data?.solution?.features;
+    this.solution.gallery = data?.solution?.gallery;
+    this.solution.price = data?.solution?.price;
+    this.solution.urlsList = data?.solution?.urlsList;
+    this.process.status.progress = data?.process?.status?.progress ?? '0';
     this.problem = data?.problem
       ? new ProjectProblem(data.problem)
       : new ProjectProblem();

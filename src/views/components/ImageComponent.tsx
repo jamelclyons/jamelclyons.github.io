@@ -6,12 +6,13 @@ interface ImageComponentProps {
   image: Image
 }
 
-const ImageComponent: React.FC<ImageComponentProps> = ({ image }) =>{
+const ImageComponent: React.FC<ImageComponentProps> = ({ image }) => {
+  const { title, className, url } = image;
 
-  return image?.url ? (
-    <img src={image?.url} alt={image?.title} title={image?.title} />
+  return url ? (
+    <img src={url} alt={title} title={title} />
   ) : (
-    image?.className && <i className={image?.className} title={image?.title}></i>
+    className && <i className={className} title={title}></i>
   );
 }
 

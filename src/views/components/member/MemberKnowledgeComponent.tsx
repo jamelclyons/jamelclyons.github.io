@@ -45,8 +45,10 @@ const MemberKnowledgeComponent: React.FC<MemberKnowledgeProps> = ({
         <div className="author-knowledge-slide" ref={skillsSlideRef}>
           {Array.isArray(knowledge) &&
             knowledge.length > 0 &&
-            knowledge.map((knowledge: Taxonomy) => (
-              <IconComponent image={knowledge.image} />
+            knowledge.map((knowledge: Taxonomy, index) => (
+              <IconComponent
+                key={index}
+                image={knowledge.image} />
             ))}
         </div>
       </div>
