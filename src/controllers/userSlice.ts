@@ -32,7 +32,7 @@ interface UserState {
   bio: string;
   resume: string;
   content: Array<string> | null;
-  user: Record<string,any> | null;
+  userObject: Record<string,any> | null;
   organizations: [];
   repos: [];
   socialAccounts: [];
@@ -50,7 +50,7 @@ const initialState: UserState = {
   bio: '',
   resume: '',
   content: null,
-  user: null,
+  userObject: null,
   organizations: [],
   repos: [],
   socialAccounts: [],
@@ -89,7 +89,7 @@ const userSliceOptions: CreateSliceOptions<UserState> = {
         state.userLoading = false;
         state.userErrorMessage = '';
         state.userError = null;
-        state.user = action.payload;
+        state.userObject = action.payload;
       })
       .addMatcher(isAnyOf(getUser.pending), (state) => {
         state.userLoading = true;

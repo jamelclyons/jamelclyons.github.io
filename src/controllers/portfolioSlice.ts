@@ -22,15 +22,15 @@ interface PortfolioState {
   portfolioLoading: boolean;
   portfolioError: Error | null;
   portfolioErrorMessage: string;
-  portfolio: Set<Record<string,any>>;
-  projects: Array<Record<string,any>>;
+  portfolioObject: Array<Record<string, any>>;
+  projects: Array<Record<string, any>>;
 }
 
 const initialState: PortfolioState = {
   portfolioLoading: false,
   portfolioError: null,
   portfolioErrorMessage: '',
-  portfolio: new Set(),
+  portfolioObject: [],
   projects: [],
 };
 
@@ -38,35 +38,31 @@ export const getPortfolio = createAsyncThunk(
   'portfolio/getPortfolio',
   async (repos: Array<Repo>) => {
     try {
-      let projects: Set<Record<string,any>> = new Set();
-      let repoProjects: Set<Record<string,any>> = new Set();
-
-      const querySnapshot: QuerySnapshot = await getDocs(portfolioCollection);
-
-      if (querySnapshot.size > 0) {
-        querySnapshot.forEach((doc: DocumentData) => {
-          let project = new Project();
-          project.fromDocumentData(doc.id, doc.data());
-
-          projects.add(project.toObject());
-        });
-      }
+      let projects: Set<Record<string, any>> = new Set();
+      let repoProjects: Set<Record<string, any>> = new Set();
 
       if (Array.isArray(repos) && repos.length > 0) {
         repos.forEach((repo) => {
-          projects.forEach((project: Record<string,any>) => {
-            if (repo.id === project.id) {
-              project.fromRepo(repo);
-            }
-
-            repoProjects.add(project.toObject());
-          });
+          let project = new Project();
+          project.fromRepo(repo);
+          projects.add(project);
         });
       }
 
-      const portfolio = new Set<Record<string,any>>([...projects, ...repoProjects]);
+      // const querySnapshot: QuerySnapshot = await getDocs(portfolioCollection);
 
-      return portfolio;
+      // if (querySnapshot.size > 0) {
+      //   querySnapshot.forEach((doc: DocumentData) => {
+      //     let project = new Project();
+      //     project.fromDocumentData(doc.id, doc.data());
+
+      //     projects.add(project.toObject());
+      //   });
+      // }
+
+      // const portfolio = Array<Record<string,any>>([...projects, ...repoProjects]);
+
+      return Array.from(projects);
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -96,7 +92,7 @@ export const getProjectsBy = createAsyncThunk(
         throw new Error('No projects found.');
       }
 
-      let projects: Array<Record<string,any>> = [];
+      let projects: Array<Record<string, any>> = [];
 
       docs.forEach((doc) => {
         let project = new Project();
@@ -123,7 +119,7 @@ export const portfolioSlice = createSlice({
         state.portfolioLoading = false;
         state.portfolioError = null;
         state.portfolioErrorMessage = '';
-        state.portfolio = action.payload;
+        state.portfolioObject = action.payload;
       })
       .addCase(getProjectsBy.fulfilled, (state, action) => {
         state.portfolioLoading = false;

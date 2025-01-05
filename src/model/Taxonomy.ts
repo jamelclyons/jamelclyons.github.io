@@ -8,7 +8,7 @@ class Taxonomy extends Model {
   type: string;
   title: string;
   path: string;
-  image: Record<string, any>;
+  image: Image;
   iconURL: string;
   className: string;
   usage: number;
@@ -28,7 +28,7 @@ class Taxonomy extends Model {
       title: data?.title,
       url: this.iconURL,
       class_name: this.className,
-    }).toObject();
+    });
   }
 
   isValid(): boolean {

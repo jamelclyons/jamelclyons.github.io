@@ -39,7 +39,7 @@ interface GithubState {
   githubStatusCode: number;
   githubError: Error | null;
   githubErrorMessage: string;
-  user: Record<string,any>;
+  userObject: Record<string,any>;
   organizations: Array<Record<string,any>>;
   repos: Array<Record<string,any>>;
   socialAccounts: [];
@@ -53,7 +53,7 @@ const initialState: GithubState = {
   githubStatusCode: 0,
   githubError: null,
   githubErrorMessage: '',
-  user: {},
+  userObject: {},
   organizations: [],
   repos: [],
   socialAccounts: [],
@@ -269,7 +269,7 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubLoading = false;
         state.githubErrorMessage = '';
         state.githubError = null;
-        state.user = action.payload;
+        state.userObject = action.payload;
       })
       .addCase(getOrganizations.fulfilled, (state, action) => {
         state.githubLoading = false;

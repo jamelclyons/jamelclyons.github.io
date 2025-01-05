@@ -3,26 +3,25 @@ import React from 'react';
 import ProjectsComponent from './ProjectsComponent';
 import TaxList from '../TaxList';
 import TaxListIcon from '../TaxListIcon';
+
 import Taxonomy from '../../../model/Taxonomy';
 import Project from '../../../model/Project';
+import Portfolio from '../../../model/Portfolio';
 
 interface PortfolioComponentProps {
-  portfolio: Set<Project>,
-  projectTypes: Set<Taxonomy>,
-  languages: Set<Taxonomy>,
-  frameworks: Set<Taxonomy>,
-  technologies: Set<Taxonomy>
+  portfolio: Portfolio;
 }
 
-const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ portfolio, projectTypes, languages, frameworks, technologies }) => {
+const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ portfolio }) => {
+  const { projects, projectTypes, languages, frameworks, technologies } = portfolio;
 
   return (
     <>
-      {portfolio && (
+      {projects && (
         <main className="portfolio">
           <h1 className="title">portfolio</h1>
 
-          <ProjectsComponent projects={portfolio} />
+          <ProjectsComponent projects={projects} />
 
           <TaxList taxonomies={projectTypes} title={'Project Types'} />
 

@@ -10,7 +10,7 @@ interface ProjectsComponentProps {
 }
 
 const ProjectsComponent: React.FC<ProjectsComponentProps> = ({ projects }) => {
-  
+
 
   return (
     <>

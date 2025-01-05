@@ -8,7 +8,6 @@ interface TaxListProps {
 }
 
 const TaxList: React.FC<TaxListProps> = ({ taxonomies, title }) =>{
-console.log(taxonomies)
   const handleClick = (taxonomy: Taxonomy) => {
     window.location.href = `/#/projects/${taxonomy.path}/${taxonomy.id}`;
   };

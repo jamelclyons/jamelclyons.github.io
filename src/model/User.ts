@@ -3,6 +3,7 @@ import Image from './Image';
 import ContactMethods from './ContactMethods';
 
 import Organization from '../model/Organization';
+import Repo from '../model/Repo';
 
 import packageJson from '../../package.json';
 
@@ -17,8 +18,8 @@ class User extends Model {
   resume: string;
   website: string;
   organizations: Array<Organization>;
-  repos: Array<string>;
-  contactMethods: Record<string, any>;
+  repos: Array<Repo>;
+  contactMethods: ContactMethods;
   images: Record<string, Image>;
 
   constructor(data: Record<string, any> = {}) {
@@ -37,7 +38,7 @@ class User extends Model {
     this.website = data?.website || homepage;
     this.organizations = this.setOrganizations(data?.organizations) || [];
     this.repos = data?.repos || '';
-    this.contactMethods = new ContactMethods(data?.contact_methods).toObject();
+    this.contactMethods = new ContactMethods(data?.contact_methods);
     this.images = data?.images || '';
   }
 

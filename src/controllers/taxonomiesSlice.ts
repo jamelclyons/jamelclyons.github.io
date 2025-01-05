@@ -26,14 +26,14 @@ interface TaxonomiesState {
   taxonomiesError: Error | null;
   taxonomiesErrorMessage: string;
   taxonomiesStatusCode: string;
-  projectTypes: Set<Record<string, any>>;
-  projectType: Record<string, any> | null;
-  languages: Set<Record<string, any>>;
-  language: Record<string, any> | null;
-  frameworks: Set<Record<string, any>>;
-  framework: Record<string, any> | null;
-  technologies: Set<Record<string, any>>;
-  technology: Record<string, any> | null;
+  projectTypesObject: Array<Record<string, any>>;
+  projectTypeObject: Record<string, any> | null;
+  languagesObject: Array<Record<string, any>>;
+  languageObject: Record<string, any> | null;
+  frameworksObject: Array<Record<string, any>>;
+  frameworkObject: Record<string, any> | null;
+  technologiesObject: Array<Record<string, any>>;
+  technologyObject: Record<string, any> | null;
 }
 
 const initialState: TaxonomiesState = {
@@ -41,14 +41,14 @@ const initialState: TaxonomiesState = {
   taxonomiesError: null,
   taxonomiesErrorMessage: '',
   taxonomiesStatusCode: '',
-  projectTypes: new Set(),
-  projectType: null,
-  languages: new Set(),
-  language: null,
-  frameworks: new Set(),
-  framework: null,
-  technologies: new Set(),
-  technology: null,
+  projectTypesObject: [],
+  projectTypeObject: null,
+  languagesObject: [],
+  languageObject: null,
+  frameworksObject: [],
+  frameworkObject: null,
+  technologiesObject: [],
+  technologyObject: null,
 };
 
 const getTaxonomy = (type: string, doc: DocumentData) => {
@@ -73,12 +73,12 @@ export const getProjectTypes = createAsyncThunk(
         collection(db, type)
       );
 
-      let projectTypes: Set<Record<string, any>> = new Set();
+      let projectTypes: Array<Record<string, any>> = [];
 
       querySnapshot.forEach((doc: DocumentData) => {
         let taxonomy = getTaxonomy(type, doc);
 
-        projectTypes.add(taxonomy);
+        projectTypes.push(taxonomy);
       });
 
       return projectTypes;
@@ -99,12 +99,12 @@ export const getLanguages = createAsyncThunk(
         collection(db, type)
       );
 
-      let languages: Set<Record<string, any>> = new Set();
+      let languages: Array<Record<string, any>> = [];
 
       querySnapshot.forEach((doc: DocumentData) => {
         let taxonomy = getTaxonomy(type, doc);
 
-        languages.add(taxonomy);
+        languages.push(taxonomy);
       });
 
       return languages;
@@ -125,12 +125,12 @@ export const getFrameworks = createAsyncThunk(
         collection(db, type)
       );
 
-      let frameworks: Set<Record<string, any>> = new Set();
+      let frameworks: Array<Record<string, any>> = [];
 
       querySnapshot.forEach((doc: DocumentData) => {
         let taxonomy = getTaxonomy(type, doc);
 
-        frameworks.add(taxonomy);
+        frameworks.push(taxonomy);
       });
 
       return frameworks;
@@ -151,12 +151,12 @@ export const getTechnologies = createAsyncThunk(
         collection(db, type)
       );
 
-      let technologies: Set<Record<string, any>> = new Set();
+      let technologies: Array<Record<string, any>> = [];
 
       querySnapshot.forEach((doc: DocumentData) => {
         let taxonomy = getTaxonomy(type, doc);
 
-        technologies.add(taxonomy);
+        technologies.push(taxonomy);
       });
 
       return technologies;
@@ -286,49 +286,49 @@ const taxonomiesSliceOptions: CreateSliceOptions<TaxonomiesState> = {
         state.taxonomiesLoading = false;
         state.taxonomiesError = null;
         state.taxonomiesErrorMessage = '';
-        state.projectTypes = action.payload;
+        state.projectTypesObject = action.payload;
       })
       .addCase(getLanguages.fulfilled, (state, action) => {
         state.taxonomiesLoading = false;
         state.taxonomiesError = null;
         state.taxonomiesErrorMessage = '';
-        state.languages = action.payload;
+        state.languagesObject = action.payload;
       })
       .addCase(getFrameworks.fulfilled, (state, action) => {
         state.taxonomiesLoading = false;
         state.taxonomiesError = null;
         state.taxonomiesErrorMessage = '';
-        state.frameworks = action.payload;
+        state.frameworksObject = action.payload;
       })
       .addCase(getTechnologies.fulfilled, (state, action) => {
         state.taxonomiesLoading = false;
         state.taxonomiesError = null;
         state.taxonomiesErrorMessage = '';
-        state.technologies = action.payload;
+        state.technologiesObject = action.payload;
       })
       .addCase(getProjectType.fulfilled, (state, action) => {
         state.taxonomiesLoading = false;
         state.taxonomiesError = null;
         state.taxonomiesErrorMessage = '';
-        state.projectType = action.payload;
+        state.projectTypeObject = action.payload;
       })
       .addCase(getLanguage.fulfilled, (state, action) => {
         state.taxonomiesLoading = false;
         state.taxonomiesError = null;
         state.taxonomiesErrorMessage = '';
-        state.language = action.payload;
+        state.languageObject = action.payload;
       })
       .addCase(getFramework.fulfilled, (state, action) => {
         state.taxonomiesLoading = false;
         state.taxonomiesError = null;
         state.taxonomiesErrorMessage = '';
-        state.framework = action.payload;
+        state.frameworkObject = action.payload;
       })
       .addCase(getTechnology.fulfilled, (state, action) => {
         state.taxonomiesLoading = false;
         state.taxonomiesError = null;
         state.taxonomiesErrorMessage = '';
-        state.technology = action.payload;
+        state.technologyObject = action.payload;
       })
       .addMatcher(
         isAnyOf(

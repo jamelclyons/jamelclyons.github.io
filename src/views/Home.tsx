@@ -1,52 +1,22 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 
 import PortfolioComponent from './components/portfolio/PortfolioComponent';
 import MemberIntroductionComponent from './components/member/MemberComponent';
 import ContactComponent from './components/contact/ContactComponent';
 
-import {
-  getLanguages,
-  getProjectTypes,
-  getFrameworks,
-  getTechnologies,
-} from '../controllers/taxonomiesSlice';
-
-import type { AppDispatch, RootState } from '../model/store';
-
 import User from '../model/User';
-import Project from '../model/Project';
+import Portfolio from '../model/Portfolio';
 
 interface HomeProps {
   user: User;
-  portfolio: Set<Project>;
+  portfolio: Portfolio;
 }
 
 const Home: React.FC<HomeProps> = ({ user, portfolio }) => {
-  const dispatch = useDispatch<AppDispatch>();
-
-  const { projectTypes, languages, frameworks, technologies } = useSelector(
-    (state: RootState) => state.taxonomies
-  );
+  const { languages, frameworks, technologies } = portfolio;
 
   useEffect(() => {
-    document.title = user?.name;
-  }, []);
-
-  useEffect(() => {
-    dispatch(getProjectTypes());
-  }, []);
-
-  useEffect(() => {
-    dispatch(getLanguages());
-  }, []);
-
-  useEffect(() => {
-    dispatch(getFrameworks());
-  }, []);
-
-  useEffect(() => {
-    dispatch(getTechnologies());
+    document.title = user.name;
   }, []);
 
   return (
@@ -59,13 +29,7 @@ const Home: React.FC<HomeProps> = ({ user, portfolio }) => {
           technologies={technologies}
         />
 
-        <PortfolioComponent
-          portfolio={portfolio}
-          projectTypes={projectTypes}
-          languages={languages}
-          frameworks={frameworks}
-          technologies={technologies}
-        />
+        <PortfolioComponent portfolio={portfolio} />
 
         <ContactComponent user={user} />
       </section>

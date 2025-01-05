@@ -5,6 +5,7 @@ import MemberInfoComponent from './components/member/MemberInfoComponent';
 import ContentComponent from './components/ContentComponent';
 
 import { getAboutPageContent } from '../controllers/aboutSlice';
+import { getRepoContents } from '../controllers/githubSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
 
@@ -30,6 +31,17 @@ const About: React.FC<AboutProps> = ({ user }) => {
   const handleResume = () => {
     window.location.href = '/#/resume';
   };
+
+  useEffect(() => {
+    if (user) {
+      dispatch(getRepoContents({
+        owner: user.id,
+        repo: user.id,
+        path: ''
+      }))
+    }
+
+  }, [dispatch, user]);
 
   return (
     <>

@@ -5,13 +5,13 @@ import Taxonomy from '../../model/Taxonomy';
 
 interface TaxListIconProps {
   title: string;
-  taxonomies: Array<Record<string, any>>;
+  taxonomies: Set<Taxonomy>;
 }
 
 const TaxListIcon: React.FC<TaxListIconProps> = ({ title, taxonomies }) => {
 
   return (
-    taxonomies.length > 0 && (
+    taxonomies.size > 0 && (
       <div className="tax-list">
         <h4 className="title">{title}</h4>
 
