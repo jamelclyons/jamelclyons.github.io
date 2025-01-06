@@ -4,7 +4,7 @@ import Task from './Task';
 import Color from './Color';
 
 class ProjectDesign extends Model {
-  content: Array<string>;
+  content: string | object;
   checkList: Array<Task>;
   gallery: Gallery;
   colorsList: Array<Color>;
@@ -12,7 +12,7 @@ class ProjectDesign extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    this.content = data?.content || [];
+    this.content = data?.content || '';
     this.checkList = data?.check_list || [];
     this.gallery = data?.gallery ? new Gallery(data?.gallery) : new Gallery;
     this.colorsList = data?.colors_list || [];

@@ -4,8 +4,6 @@ import ProjectsComponent from './ProjectsComponent';
 import TaxList from '../TaxList';
 import TaxListIcon from '../TaxListIcon';
 
-import Taxonomy from '../../../model/Taxonomy';
-import Project from '../../../model/Project';
 import Portfolio from '../../../model/Portfolio';
 
 interface PortfolioComponentProps {

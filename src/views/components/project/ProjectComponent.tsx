@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation } from 'react-router';
 
@@ -12,18 +11,17 @@ import TheSolution from './TheSolution';
 import TheProblem from './TheProblem';
 import TheProcess from './TheProcess';
 
-import type { AppDispatch, RootState } from '../../../model/store';
+import type { RootState } from '../../../model/store';
 import Project from '../../../model/Project';
 import RepoContent from '../../../model/RepoContent';
 
-import { getRepo, getRepoContents, getRepoLanguages } from '../../../controllers/githubSlice';
+import { fetchContent } from '../../../controllers/contentSlice';
 
 interface ProjectComponentProps {
   project_id: string
 }
 
-const ProjectComponent: React.FC<ProjectComponentProps> = ({ project_id }) => {
-  const dispatch = useDispatch<AppDispatch>();
+const ProjectComponent: React.FC<ProjectComponentProps> = () => {
   const location = useLocation();
 
   const project = location.state as Project;
@@ -35,49 +33,103 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ project_id }) => {
     (state: RootState) => state.github
   );
 
-  const [problemContent, setProblemContent] = useState<RepoContent>(new RepoContent);
-  const [content, setContent] = useState<string>('');
-  const [htmlContent, setHtmlContent] = useState<string>('');
-
-  useEffect(() => {
-
-    const contents = dispatch(getRepoContents({
-      // owner: project.owner,
-      owner: 'the7ofdiamonds',
-      repo: project_id,
-      path: ''
-    })).unwrap();
-  }, [dispatch, project_id]);
+  const [solutionContent, setSolutionContent] = useState<RepoContent | null>(null);
+  const [designContent, setDesignContent] = useState<RepoContent | null>(null);
+  const [developmentContent, setDevelopmentContent] = useState<RepoContent | null>(null);
+  const [deliveryContent, setDeliveryContent] = useState<RepoContent | null>(null);
+  const [problemContent, setProblemContent] = useState<RepoContent | null>(null);
 
   useEffect(() => {
     if (Array.isArray(contents) && contents.length > 0) {
-      contents.forEach((content) => {
-        if (content.name === 'TheProblem.md') {
-          setProblemContent(new RepoContent(content));
+      contents.map((content) => {
+        if (content.type === 'file') {
+          if (content.name === 'TheSolution.md') {
+            setSolutionContent(new RepoContent(content));
+          }
+
+          if (content.name === 'Design.md') {
+            setDesignContent(new RepoContent(content));
+          }
+
+          if (content.name === 'Development.md') {
+            setDevelopmentContent(new RepoContent(content));
+          }
+
+          if (content.name === 'Delivery.md') {
+            setDeliveryContent(new RepoContent(content));
+          }
+
+          if (content.name === 'TheProblem.md') {
+            setProblemContent(new RepoContent(content));
+          }
         }
       });
     }
   }, [contents]);
-  
+
+  const loadMarkdown = async (url: string) => {
+    try {
+      return await fetchContent(url);
+    } catch (error) {
+      console.error("Error fetching markdown:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchMarkdown = async () => {
-      try {
-        const response = await fetch(problemContent.downloadURL);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch markdown file: ${response.statusText}`);
-        }
-        const markdown = await response.text();
+    if (solutionContent) {
+      loadMarkdown(solutionContent.downloadURL)
+        .then((markdown) => {
+          if (typeof markdown === 'string') {
+            solution.content = marked(markdown).valueOf();
+          }
+        });
+    }
+  }, [contents, solutionContent]);
 
-        problem.content = marked(markdown).valueOf();
-      } catch (error) {
-        console.error('Error fetching markdown file:', error);
-      }
-    };
+  useEffect(() => {
+    if (designContent) {
+      loadMarkdown(designContent.downloadURL)
+        .then((markdown) => {
+          if (typeof markdown === 'string') {
+            process.design.content = marked(markdown).valueOf();
+          }
+        });
+    }
+  }, [contents, designContent]);
 
-    fetchMarkdown();
-  }, [problemContent.downloadURL]);
+  useEffect(() => {
+    if (developmentContent) {
+      loadMarkdown(developmentContent.downloadURL)
+        .then((markdown) => {
+          if (typeof markdown === 'string') {
+            process.development.content = marked(markdown).valueOf();
+          }
+        });
+    }
+  }, [contents, developmentContent]);
 
-  console.log(problem)
+  useEffect(() => {
+    if (deliveryContent) {
+      loadMarkdown(deliveryContent.downloadURL)
+        .then((markdown) => {
+          if (typeof markdown === 'string') {
+            process.delivery.content = marked(markdown).valueOf();
+          }
+        });
+    }
+  }, [contents, deliveryContent]);
+
+  useEffect(() => {
+    if (problemContent) {
+      loadMarkdown(problemContent.downloadURL)
+        .then((markdown) => {
+          if (typeof markdown === 'string') {
+            problem.content = marked(markdown).valueOf();
+          }
+        });
+    }
+  }, [contents, problemContent]);
+
   return (
     <>
       <main className="project">

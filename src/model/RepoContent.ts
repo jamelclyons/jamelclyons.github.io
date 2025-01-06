@@ -11,12 +11,12 @@ class RepoContent extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    this.id = data?.sha ?? data.id;
-    this.name = data?.name;
-    this.path = data?.path;
-    this.type = data?.type;
-    this.size = data?.size;
-    this.downloadURL = data?.download_url;
+    this.id = data?.sha ?? data.id ?? '';
+    this.name = data?.name ?? '';
+    this.path = data?.path ?? '';
+    this.type = data?.type ?? '';
+    this.size = data?.size ?? '';
+    this.downloadURL = data?.download_url ?? '';
   }
 }
 

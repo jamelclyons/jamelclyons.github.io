@@ -18,7 +18,7 @@ const PortfolioProject: React.FC<PortfolioProjectProps> = ({ project }) => {
     const handleClick = (path: string) => {
         navigate(path, { state: project })
     }
-    
+
     return (
         <button onClick={() => handleClick(`/portfolio/${id}`)}>
             <div className="project-card card">

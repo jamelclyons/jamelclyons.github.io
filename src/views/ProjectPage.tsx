@@ -1,57 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import LoadingComponent from './components/LoadingComponent';
 import ProjectComponent from './components/project/ProjectComponent';
 import StatusBarComponent from './components/StatusBarComponent';
 
-import { getProject } from '../controllers/projectSlice';
-import { getRepo, getRepoContents, getRepoLanguages } from '../controllers/githubSlice';
-import { setMessage, setMessageType } from '../controllers/messageSlice';
+import { getRepoContents, getRepoLanguages } from '../controllers/githubSlice';
+import { setMessage, setMessageType, setShowStatusBar } from '../controllers/messageSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
-import Repo from '../model/Repo';
-import RepoContent from '../model/RepoContent';
+import Project from '../model/Project';
 
 const ProjectPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const location = useLocation();
 
-  const { projectID } = useParams();
-
-  const { projectLoading, projectErrorMessage, project } = useSelector(
+  const { projectLoading, projectErrorMessage } = useSelector(
     (state: RootState) => state.project
   );
-  const { contents } = useSelector(
-    (state: RootState) => state.github
-  );
 
-  const [problem, setProblem] = useState<RepoContent>(new RepoContent);
-
-  useEffect(() => {
-    if (projectID) {
-      const repo = new Repo({ name: projectID });
-
-      dispatch(getProject(repo))
-    }
-  }, [dispatch, projectID]);
+  const project: Project = location.state;
 
   useEffect(() => {
     if (project.title) {
-      document.title = project.title;
+      document.title = project.title.toUpperCase();
     }
-  }, [project.title]);
+  }, [project]);
 
   useEffect(() => {
-    if (project.owner && projectID) {
-
+    if (project.owner && project.id) {
       dispatch(getRepoLanguages({
         owner: project.owner,
-        repo: projectID,
+        repo: project.id,
         path: ''
       }))
     }
-  }, [dispatch, project.owner, projectID]);
+  }, [dispatch, project]);
+
+  useEffect(() => {
+    if (project.owner && project.id) {
+      dispatch(getRepoContents({
+        owner: project.owner,
+        repo: project.id,
+        path: ''
+      }));
+    }
+  }, [dispatch, project]);
+
+  useEffect(() => {
+    if (projectErrorMessage) {
+      dispatch(setMessageType('error'));
+      dispatch(setMessage(projectErrorMessage));
+      dispatch(setShowStatusBar(true));
+    }
+  }, [dispatch, projectErrorMessage]);
 
   if (projectLoading) {
     return <LoadingComponent />;
@@ -65,7 +68,7 @@ const ProjectPage: React.FC = () => {
             <StatusBarComponent />
           </main>
         ) : (
-          <ProjectComponent project_id={projectID ?? 'jamelclyons'} />
+          <ProjectComponent project_id={project.id} />
         )}
       </>
     </section>

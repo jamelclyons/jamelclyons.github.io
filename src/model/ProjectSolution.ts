@@ -7,7 +7,7 @@ import Gallery from './Gallery';
 class ProjectSolution extends Model {
   gallery: Gallery;
   features: Set<Feature>;
-  content: Array<string>;
+  content: string | object;
   currency: string;
   price: number;
   urlsList: ProjectURLs;

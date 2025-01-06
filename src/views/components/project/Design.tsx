@@ -32,7 +32,7 @@ const Design: React.FC<DesignProps> = ({ design }) => {
 
           {logos.length > 0 && <Gallery title={'uml diagrams'} gallery={umlDiagrams} />}
 
-          {content.length > 0 && <ContentComponent content={content} />}
+          {typeof content === 'string' && <ContentComponent html={content} />}
         </div>
       }
     </>

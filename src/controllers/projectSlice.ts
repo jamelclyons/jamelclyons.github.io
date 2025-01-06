@@ -40,14 +40,14 @@ interface ProjectState {
   projectLoading: boolean;
   projectError: Error | null;
   projectErrorMessage: string;
-  project: Record<string, any>;
+  projectObject: Record<string, any>;
 }
 
 const initialState: ProjectState = {
   projectLoading: false,
   projectError: null,
   projectErrorMessage: '',
-  project: {},
+  projectObject: {},
 };
 
 export const getProject = createAsyncThunk(
@@ -85,13 +85,13 @@ export const projectSlice = createSlice({
         state.projectLoading = false;
         state.projectError = null;
         state.projectErrorMessage = '';
-        state.project = action.payload;
+        state.projectObject = action.payload;
       })
       .addCase(getProject.pending, (state) => {
         state.projectLoading = true;
         state.projectError = null;
         state.projectErrorMessage = '';
-        state.project = {};
+        state.projectObject = {};
       })
       .addCase(getProject.rejected, (state, action) => {
         state.projectLoading = false;

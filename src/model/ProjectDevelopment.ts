@@ -4,7 +4,7 @@ import ProjectVersions from './ProjectVersions';
 import Taxonomy from './Taxonomy';
 
 class ProjectDevelopment extends Model {
-  content: Array<string>;
+  content: string | object;
   checkList: Array<Task>;
   owner: string;
   repoURL: string;
@@ -17,7 +17,7 @@ class ProjectDevelopment extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
     
-    this.content = data?.content || [];
+    this.content = data?.content || '';
     this.checkList = data?.check_list || [];
     this.owner = data?.owner || '';
     this.repoURL = data?.repo_url || '';
