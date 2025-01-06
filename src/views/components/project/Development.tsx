@@ -5,7 +5,7 @@ import type { RootState, AppDispatch } from '../../../model/store';
 import { useAppSelector } from '../../../model/hooks';
 
 import CheckList from './CheckList';
-import ContentComponent from '../ContentComponent';
+import ContentComponent from '../content/ContentComponent';
 import ProjectURLs from './ProjectURLsComponent';
 import Versions from './Versions';
 import TaxList from '../TaxList';

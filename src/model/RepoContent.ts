@@ -11,7 +11,7 @@ class RepoContent extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    this.id = data?.sha;
+    this.id = data?.sha ?? data.id;
     this.name = data?.name;
     this.path = data?.path;
     this.type = data?.type;

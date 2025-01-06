@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import MemberInfoComponent from './components/member/MemberInfoComponent';
-import ContentComponent from './components/ContentComponent';
+import ContentComponent from './components/content/ContentComponent';
 
 import { getAboutPageContent } from '../controllers/aboutSlice';
 import { getRepoContents } from '../controllers/githubSlice';

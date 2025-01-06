@@ -3,7 +3,7 @@ import React from 'react';
 import CheckList from './CheckList';
 import Colors from './Colors';
 import Gallery from '../Gallery';
-import ContentComponent from '../ContentComponent';
+import ContentComponent from '../content/ContentComponent';
 import ProjectDesign from '../../../model/ProjectDesign';
 
 interface DesignProps {

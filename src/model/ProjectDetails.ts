@@ -11,9 +11,9 @@ class ProjectDetails extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    this.clientName = data?.clientName || '';
-    this.startDate = data?.startDate || '';
-    this.endDate = data?.endDate || '';
+    this.clientName = data?.client_name || '';
+    this.startDate = data?.start_date || '';
+    this.endDate = data?.end_date || '';
     this.detailsList = data?.details_list || [];
     this.teamList = data?.team_list || [];
     this.clientID = data?.client_id || [];

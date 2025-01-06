@@ -3,13 +3,13 @@ import React, { useEffect, useState } from 'react';
 import ProjectDetails from '../../../model/ProjectDetails';
 
 interface ProjectDetailsProps {
-  project_details: ProjectDetails;
+  details: ProjectDetails
 }
 
-const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ project_details }) => {
+const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ details }) => {
   return (
     <>
-      {!project_details.isEmpty ? (
+      {details ? (
         <div className="project-details">
           <table>
             <tbody>
@@ -19,7 +19,7 @@ const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ project_detail
                 </td>
                 <td>
                   <h4 className="company-name">
-                    {project_details.clientName}
+                    {details.clientName}
                   </h4>
                 </td>
               </tr>
@@ -27,13 +27,13 @@ const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ project_detail
                 <td>
                   <label htmlFor="start_date">Start Date:</label>
                 </td>
-                <td>{project_details.startDate}</td>
+                <td>{details.startDate}</td>
               </tr>
               <tr>
                 <td>
                   <label htmlFor="end_date">End Date:</label>
                 </td>
-                <td>{project_details.endDate}</td>
+                <td>{details.endDate}</td>
               </tr>
             </tbody>
           </table>

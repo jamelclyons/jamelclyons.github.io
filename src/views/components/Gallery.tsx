@@ -5,7 +5,7 @@ import Gallery from '../../model/Gallery';
 
 interface GalleryProps {
   title: string;
-  gallery: Array<Image>;
+  gallery: Gallery;
 }
 
 const GalleryComponent: React.FC<GalleryProps> = ({ title, gallery }) => {
@@ -19,7 +19,7 @@ const GalleryComponent: React.FC<GalleryProps> = ({ title, gallery }) => {
   };
 
   const nextPhoto = () => {
-    if (currentPhotoIndex < gallery.length - 1) {
+    if (currentPhotoIndex < gallery.images.length - 1) {
       setCurrentPhotoIndex(currentPhotoIndex + 1);
     }
   };
@@ -53,7 +53,7 @@ const GalleryComponent: React.FC<GalleryProps> = ({ title, gallery }) => {
 
   return (
     <>
-      {gallery && gallery.length > 0 ? (
+      {gallery && gallery?.images?.length > 0 ? (
         <>
           {title && <h5 className="title">{title}</h5>}
 
@@ -83,7 +83,7 @@ const GalleryComponent: React.FC<GalleryProps> = ({ title, gallery }) => {
               )}
             </div>
 
-            {currentPhotoIndex !== gallery.length - 1 ? (
+            {currentPhotoIndex !== gallery.images.length - 1 ? (
               <button className="arrow-right" onClick={nextPhoto}>
                 <h2>V</h2>
               </button>

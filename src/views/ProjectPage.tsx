@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -8,11 +8,11 @@ import StatusBarComponent from './components/StatusBarComponent';
 
 import { getProject } from '../controllers/projectSlice';
 import { getRepo, getRepoContents, getRepoLanguages } from '../controllers/githubSlice';
+import { setMessage, setMessageType } from '../controllers/messageSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
 import Repo from '../model/Repo';
-
-import { setMessage, setMessageType } from '../controllers/messageSlice';
+import RepoContent from '../model/RepoContent';
 
 const ProjectPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,6 +22,11 @@ const ProjectPage: React.FC = () => {
   const { projectLoading, projectErrorMessage, project } = useSelector(
     (state: RootState) => state.project
   );
+  const { contents } = useSelector(
+    (state: RootState) => state.github
+  );
+
+  const [problem, setProblem] = useState<RepoContent>(new RepoContent);
 
   useEffect(() => {
     if (projectID) {
@@ -36,16 +41,6 @@ const ProjectPage: React.FC = () => {
       document.title = project.title;
     }
   }, [project.title]);
-
-  useEffect(() => {
-    if (project.owner && projectID) {
-      dispatch(getRepoContents({
-        owner: project.owner,
-        repo: projectID,
-        path: ''
-      }))
-    }
-  }, [dispatch, project.owner, projectID]);
 
   useEffect(() => {
     if (project.owner && projectID) {
@@ -70,7 +65,7 @@ const ProjectPage: React.FC = () => {
             <StatusBarComponent />
           </main>
         ) : (
-          <ProjectComponent />
+          <ProjectComponent project_id={projectID ?? 'jamelclyons'} />
         )}
       </>
     </section>

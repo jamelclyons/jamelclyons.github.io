@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Gallery from '../Gallery';
-import ContentComponent from '../ContentComponent';
+import ContentComponent from '../content/ContentComponent';
 import ProjectProblem from '../../../model/ProjectProblem';
 
 interface ProblemProps {
@@ -18,7 +18,7 @@ const TheProblem: React.FC<ProblemProps> = ({ problem }) => {
 
           <Gallery title={'Problem'} gallery={problem?.gallery} />
 
-          <ContentComponent content={problem?.content} />
+          <ContentComponent html={problem?.content} />
         </div>
       }
     </>

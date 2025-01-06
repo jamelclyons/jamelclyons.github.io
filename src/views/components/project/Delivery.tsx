@@ -2,7 +2,7 @@ import React from 'react';
 
 import CheckList from './CheckList';
 import Gallery from '../Gallery';
-import ContentComponent from '../ContentComponent';
+import ContentComponent from '../content/ContentComponent';
 
 import ProjectDelivery from '../../../model/ProjectDelivery';
 

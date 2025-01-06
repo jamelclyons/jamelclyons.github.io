@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
+import type { AppDispatch, RootState } from '../../../model/store';
 import ProjectSolution from '../../../model/ProjectSolution';
 
 import FeaturesComponent from './FeaturesComponent';
@@ -12,7 +14,11 @@ interface SolutionProps {
 }
 
 const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
+    const dispatch = useDispatch<AppDispatch>();
+  
   const { features, currency, price, urlsList, gallery, content } = solution;
+
+  useEffect(()=>{}, [dispatch]);
 
   return (
     <>
@@ -20,7 +26,7 @@ const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
         {!solution.isEmpty && (
           <>
             <div className="project-solution" id="project_solution">
-              {gallery.images?.length > 0 && <GalleryComponent gallery={gallery.images} title='' />}
+              {gallery.images?.length > 0 && <GalleryComponent gallery={gallery} title='' />}
               
               {features?.size > 0 && <FeaturesComponent features={features} />}
 

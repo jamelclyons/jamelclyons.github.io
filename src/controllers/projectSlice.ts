@@ -66,17 +66,6 @@ export const getProject = createAsyncThunk(
         project.fromDocumentData(docSnap.id, docSnap.data());
       }
 
-      project.solution.gallery.toObject();
-      project.solution.urlsList.toObject();
-      project.solution.toObject();
-
-      project.process.status.toObject();
-      project.process.design.toObject();
-      project.process.development.toObject();
-      project.process.delivery.toObject();
-
-      project.problem.gallery.toObject();
-
       return project.toObject();
     } catch (error) {
       const err = error as Error;
