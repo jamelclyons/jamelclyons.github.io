@@ -1,48 +1,42 @@
-import React, {useEffect} from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
 
-import type { AppDispatch, RootState } from '../../../model/store';
 import ProjectSolution from '../../../model/ProjectSolution';
 
 import FeaturesComponent from './FeaturesComponent';
 import PricingComponent from './PricingComponent';
 import ProjectURLsComponent from './ProjectURLsComponent';
 import GalleryComponent from '../Gallery';
+import ContentComponent from '../content/ContentComponent';
 
 interface SolutionProps {
   solution: ProjectSolution
 }
 
 const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
-    const dispatch = useDispatch<AppDispatch>();
-  
   const { features, currency, price, urlsList, gallery, content } = solution;
-
-  useEffect(()=>{}, [dispatch]);
 
   return (
     <>
-      <>
-        {!solution.isEmpty && (
-          <>
-            <div className="project-solution" id="project_solution">
-              {gallery.images?.length > 0 && <GalleryComponent gallery={gallery} title='' />}
-              
-              {features?.size > 0 && <FeaturesComponent features={features} />}
+      {(features.size > 0 ||
+        currency ||
+        price > 0 ||
+        urlsList?.homepage?.url === '' || urlsList?.ios?.url === '' || urlsList?.android?.url === '' ||
+        gallery.images.length > 0 ||
+        typeof content === 'string') &&
+        <div className="project-solution" id="project_solution">
+          {gallery.images.length > 0 && <GalleryComponent gallery={gallery.images} title='' />}
 
-              {currency && price && <PricingComponent currency={currency} price={price} />}
+          {features.size > 0 && <FeaturesComponent features={features} />}
 
-              {urlsList && <ProjectURLsComponent projectUrls={urlsList} />}
+          {currency && price > 0 && <PricingComponent currency={currency} price={price} />}
 
-              <h3>THE SOLUTION</h3>
+          {urlsList && <ProjectURLsComponent projectUrls={urlsList} />}
 
-              <div
-                className="card"
-                dangerouslySetInnerHTML={{ __html: solution.content }}></div>
-            </div>
-          </>
-        )}
-      </>
+          <h3>THE SOLUTION</h3>
+
+          {typeof content === 'string' && <ContentComponent html={content} />}
+        </div>
+      }
     </>
   );
 }

@@ -11,7 +11,6 @@ import Versions from './Versions';
 import TaxList from '../TaxList';
 import TaxListIcon from '../TaxListIcon';
 
-import { getRepo } from '../../../controllers/githubSlice';
 import {
   getProjectType,
   getLanguage,
@@ -29,7 +28,7 @@ interface DevelopmentProps {
 const Development: React.FC<DevelopmentProps> = ({ development }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { checkList, content, repoURL, types, frameworks, technologies } = development;
+  const { checkList, content, repoURL, types, frameworks, technologies, versionsList } = development;
 
   const { languages } = useSelector(
     (state: RootState) => state.github
@@ -60,7 +59,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
   // }, [development, dispatch]);
 
   let taxTypes: Set<Taxonomy> = new Set();
-  let taxLanguages: Array<Record<string,any>> = [];
+  let taxLanguages: Set<Taxonomy> = new Set();
   let taxFrameworks: Set<Taxonomy> = new Set();
   let taxTechnologies: Set<Taxonomy> = new Set();
 
@@ -99,7 +98,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
               const result = await dispatch(getLanguage(tax.id));
               if (getLanguage.fulfilled.match(result)) {
                 const taxonomy = new Taxonomy(result.payload);
-                taxLanguages.push(taxonomy);
+                taxLanguages.add(taxonomy);
               } else {
                 console.error("Failed to fetch language:", result.error);
                 return null;
@@ -166,33 +165,36 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
   };
 
   return (
-    <>
-        <div
-          className="project-process-development"
-          id="project_process_development">
+    <>{(
+      taxTypes.size > 0 || taxLanguages.size > 0 || taxFrameworks.size > 0 || taxTechnologies.size > 0 ||
+      checkList.length > 0 ||
+      (typeof content === 'string' && content !== '') ||
+      (versionsList?.current !== '' && versionsList?.previous.length > 0) ||
+      repoURL !== '') &&
+      <div className="project-process-development" id="project_process_development">
 
-          <h4 className="title">development</h4>
+        <h4 className="title">development</h4>
 
-          {taxTypes.size > 0 && <TaxList taxonomies={taxTypes} title={'types'} />}
+        {taxTypes.size > 0 && <TaxList taxonomies={taxTypes} title={'types'} />}
 
-         <TaxListIcon taxonomies={taxLanguages} title={'languages'} />
+        {taxLanguages.size > 0 && <TaxListIcon taxonomies={taxLanguages} title={'languages'} />}
 
-          {/* {taxFrameworks.size > 0 && <TaxListIcon taxonomies={taxFrameworks} title={'frameworks'} />}
+        {taxFrameworks.size > 0 && <TaxListIcon taxonomies={taxFrameworks} title={'frameworks'} />}
 
-          {taxTechnologies.size > 0 && <TaxListIcon taxonomies={taxTechnologies} title={'technologies'} />} */}
+        {taxTechnologies.size > 0 && <TaxListIcon taxonomies={taxTechnologies} title={'technologies'} />}
 
-          {checkList.length > 0 && <CheckList checkList={checkList} />}
+        {checkList.length > 0 && <CheckList checkList={checkList} />}
 
-          {content.length > 0 && <ContentComponent content={content} />}
+        {typeof content === 'string' && <ContentComponent html={content} />}
 
-          {/* <Versions versions_list={development?.versionsList} /> */}
+        {/* <Versions versions_list={development?.versionsList} /> */}
 
-          {repoURL !== '' &&
-            <button onClick={handleSeeCode}>
-              <h3 className='title'>See Code</h3>
-            </button>}
-        </div>
-    </>
+        {repoURL !== '' &&
+          <button onClick={handleSeeCode}>
+            <h3 className='title'>See Code</h3>
+          </button>}
+      </div>
+    }</>
   );
 }
 

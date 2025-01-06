@@ -16,18 +16,18 @@ const TheProcess: React.FC<ProcessProps> = ({ process }) => {
 
   return (
     <>
-      
+      {(status || design || development || delivery) &&
         <div className="project-process" id="project_process">
           <h3 className="title">the process</h3>
 
-          {!status.isEmpty && <ProjectStatusComponent projectStatus={status} />}
+          <ProjectStatusComponent projectStatus={status} />
 
-          {!design.isEmpty && <Design design={design} />}
+          <Design design={design} />
 
-          {!development.isEmpty && <Development development={development} />}
+          <Development development={development} />
 
-          {!delivery.isEmpty && <Delivery delivery={delivery} />}
-        </div>
+          <Delivery delivery={delivery} />
+        </div>}
     </>
   );
 }

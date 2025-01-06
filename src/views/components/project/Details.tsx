@@ -7,9 +7,11 @@ interface ProjectDetailsProps {
 }
 
 const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ details }) => {
+  const { clientID, clientName, startDate, endDate } = details;
+
   return (
     <>
-      {details ? (
+      {clientID && clientName && startDate && endDate && (
         <div className="project-details">
           <table>
             <tbody>
@@ -19,7 +21,7 @@ const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ details }) => 
                 </td>
                 <td>
                   <h4 className="company-name">
-                    {details.clientName}
+                    {clientName}
                   </h4>
                 </td>
               </tr>
@@ -27,19 +29,17 @@ const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ details }) => 
                 <td>
                   <label htmlFor="start_date">Start Date:</label>
                 </td>
-                <td>{details.startDate}</td>
+                <td>{startDate}</td>
               </tr>
               <tr>
                 <td>
                   <label htmlFor="end_date">End Date:</label>
                 </td>
-                <td>{details.endDate}</td>
+                <td>{endDate}</td>
               </tr>
             </tbody>
           </table>
         </div>
-      ) : (
-        ''
       )}
     </>
   );

@@ -4,11 +4,11 @@ class ProjectDetails extends Model {
   clientName: string;
   startDate: string;
   endDate: string;
-  detailsList: Array<string> = [];
-  teamList: Array<string> = [];
-  clientID: Array<string> = [];
+  detailsList: Array<string>;
+  teamList: Array<string>;
+  clientID: string
 
-  constructor(data: Record<string, any> = {}) {
+  constructor(data?: Record<string, any>) {
     super();
 
     this.clientName = data?.client_name || '';
@@ -16,7 +16,7 @@ class ProjectDetails extends Model {
     this.endDate = data?.end_date || '';
     this.detailsList = data?.details_list || [];
     this.teamList = data?.team_list || [];
-    this.clientID = data?.client_id || [];
+    this.clientID = data?.client_id || '';
   }
 }
 

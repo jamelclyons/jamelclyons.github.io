@@ -47,7 +47,7 @@ class Portfolio extends Model {
 
   getLanguages(data: Array<Record<string, any>> = []) {
     let languages: Set<Taxonomy> = new Set();
-
+    
     data.forEach((language) => {
       languages.add(new Taxonomy(language));
     });

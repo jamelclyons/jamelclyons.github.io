@@ -10,7 +10,10 @@ class Model {
         value !== undefined &&
         ((typeof value === 'string' && value.trim() !== '') ||
           (Array.isArray(value) && value.length > 0) ||
-          (typeof value === 'object' && Object.keys(value).length > 0))
+          (typeof value === 'object' && value !== null && Object.keys(value).length > 0) ||
+          value instanceof Set || // Check for Set instances
+          value instanceof Map || // Check for Map instances
+          value instanceof Model) // Check if value is an instance of Model or its subclasses
       ) {
         return false;
       }

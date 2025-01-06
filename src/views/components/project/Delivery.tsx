@@ -15,15 +15,17 @@ const Delivery: React.FC<DeliveryProps> = ({ delivery }) => {
 
   return (
     <>
-      {!delivery.isEmpty &&
+      {checkList.length > 0 ||
+        (typeof content === 'string' && content !== '') ||
+        gallery.length > 0 &&
         <div className="project-process-delivery" id="project_process_delivery">
           <h4 className="title">delivery</h4>
 
-          <CheckList checkList={checkList} />
+          {checkList.length > 0 && <CheckList checkList={checkList} />}
 
-          <Gallery gallery={gallery} title='' />
+          {gallery.length > 0 && <Gallery gallery={gallery} title='' />}
 
-          <ContentComponent content={content} />
+          {typeof content === 'string' && content !== '' && <ContentComponent html={content} />}
         </div>
       }
     </>

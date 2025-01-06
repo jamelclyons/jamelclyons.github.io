@@ -19,7 +19,6 @@ import {
 import db from '../services/firebase/config';
 
 import Taxonomy from '../model/Taxonomy';
-import Project from '../model/Project';
 
 interface TaxonomiesState {
   taxonomiesLoading: boolean;
@@ -56,13 +55,45 @@ const getTaxonomy = (type: string, doc: DocumentData) => {
   let taxonomy = new Taxonomy({
     id: doc.id,
     type: type,
-    title: data.title,
-    iconURL: data.icon_url,
-    className: data.class_name,
+    title: data?.title,
+    icon_url: data?.icon_url,
+    class_name: data?.class_name,
   });
 
   return taxonomy.toObject();
 };
+
+export const getTaxImages = createAsyncThunk<
+  Array<Record<string, any>>,
+  { type: string; taxonomies: Array<Record<string, any>> }
+>('taxonomies/getTaxImage', async ({ type, taxonomies }) => {
+  try {
+    const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(
+      collection(db, type)
+    );
+
+    let updatedTaxonomies: Array<Record<string, any>> = [];
+
+    querySnapshot.forEach((doc: DocumentData) => {
+      let data = doc.data();
+
+      taxonomies.forEach((taxonomy) => {
+        if (taxonomy.id === doc.id) {
+          let tax = new Taxonomy(taxonomy);
+          tax.className = data?.class_name;
+          tax.iconURL = data?.icon_url;
+          updatedTaxonomies.push(tax.toObject());
+        }
+      });
+    });
+
+    return updatedTaxonomies;
+  } catch (error) {
+    const err = error as Error;
+    console.error(err);
+    throw new Error(err.message);
+  }
+});
 
 export const getProjectTypes = createAsyncThunk(
   'taxonomies/getProjectTypes',

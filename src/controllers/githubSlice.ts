@@ -45,7 +45,7 @@ interface GithubState {
   socialAccounts: [];
   repo: Record<string,any>;
   contents: Array<Record<string,any>>;
-  languages: Array<Record<string,any>>;
+  languagesObject: Array<Record<string,any>>;
 }
 
 const initialState: GithubState = {
@@ -59,7 +59,7 @@ const initialState: GithubState = {
   socialAccounts: [],
   repo: {},
   contents: [],
-  languages: [],
+  languagesObject: [],
 };
 
 export const getUser = createAsyncThunk(
@@ -299,7 +299,7 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubLoading = false;
         state.githubErrorMessage = '';
         state.githubError = null;
-        state.languages = action.payload;
+        state.languagesObject = action.payload;
       })
       .addCase(getSocialAccounts.fulfilled, (state, action) => {
         state.githubLoading = false;

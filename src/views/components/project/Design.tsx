@@ -16,7 +16,10 @@ const Design: React.FC<DesignProps> = ({ design }) => {
 
   return (
     <>
-      {!design.isEmpty &&
+      {(checkList.length > 0 ||
+        colorsList.length > 0 ||
+        logos.length > 0 || icons.length > 0 || animations.length > 0 || umlDiagrams.length > 0 ||
+        (typeof content === 'string' && content !== '')) &&
         <div className="project-process-design" id="project_process_design">
           <h4 className="title">design</h4>
 
@@ -26,11 +29,11 @@ const Design: React.FC<DesignProps> = ({ design }) => {
 
           {logos.length > 0 && <Gallery title={'Logos'} gallery={logos} />}
 
-          {logos.length > 0 && <Gallery title={'icons'} gallery={icons} />}
+          {icons.length > 0 && <Gallery title={'icons'} gallery={icons} />}
 
-          {logos.length > 0 && <Gallery title={'animations'} gallery={animations} />}
+          {animations.length > 0 && <Gallery title={'animations'} gallery={animations} />}
 
-          {logos.length > 0 && <Gallery title={'uml diagrams'} gallery={umlDiagrams} />}
+          {umlDiagrams.length > 0 && <Gallery title={'uml diagrams'} gallery={umlDiagrams} />}
 
           {typeof content === 'string' && <ContentComponent html={content} />}
         </div>

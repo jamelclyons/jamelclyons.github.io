@@ -68,7 +68,7 @@ const ProjectPage: React.FC = () => {
             <StatusBarComponent />
           </main>
         ) : (
-          <ProjectComponent project_id={project.id} />
+          <ProjectComponent />
         )}
       </>
     </section>

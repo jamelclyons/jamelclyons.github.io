@@ -9,7 +9,6 @@ interface TaxListIconProps {
 }
 
 const TaxListIcon: React.FC<TaxListIconProps> = ({ title, taxonomies }) => {
-
   return (
     taxonomies.size > 0 && (
       <div className="tax-list">

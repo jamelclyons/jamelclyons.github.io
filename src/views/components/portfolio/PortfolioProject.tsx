@@ -11,7 +11,7 @@ interface PortfolioProjectProps {
 }
 
 const PortfolioProject: React.FC<PortfolioProjectProps> = ({ project }) => {
-    const { id, title, description, solution, process } = project;
+    const { id, title, description, solution } = project;
 
     const navigate = useNavigate();
 
@@ -36,10 +36,6 @@ const PortfolioProject: React.FC<PortfolioProjectProps> = ({ project }) => {
                 )}
 
                 <ProjectDescription description={description} />
-
-                {project.process && (
-                    <ProjectStatus projectStatus={process.status} />
-                )}
             </div>
         </button>)
 }

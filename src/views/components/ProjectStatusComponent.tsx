@@ -7,17 +7,18 @@ interface ProjectStatusProps {
 }
 
 const ProjectStatusComponent: React.FC<ProjectStatusProps> = ({ projectStatus }) => {
+  const { createdAt, updatedAt, progress } = projectStatus;
 
   return (
     <>
-      {projectStatus && (
+      {createdAt && updatedAt && progress && (
         <>
           <div className="project-status">
             <h4>STATUS</h4>
-            <h5>Started: {projectStatus.createdAt}</h5>
-            <h5>Updated: {projectStatus.updatedAt}</h5>
-            <progress value={projectStatus.progress} max="100"></progress>
-            <p>{projectStatus.progress}% Completed</p>
+            <h5>Started: {createdAt}</h5>
+            <h5>Updated: {updatedAt}</h5>
+            <progress value={progress} max="100"></progress>
+            <p>{progress}% Completed</p>
           </div>
         </>
       )}

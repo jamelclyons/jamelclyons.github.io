@@ -15,19 +15,19 @@ const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ portfolio }) =>
 
   return (
     <>
-      {projects && (
+      {projects.size > 0 && (
         <main className="portfolio">
           <h1 className="title">portfolio</h1>
 
           <ProjectsComponent projects={projects} />
 
-          <TaxList taxonomies={projectTypes} title={'Project Types'} />
+          {projectTypes.size > 0 && <TaxList taxonomies={projectTypes} title={'Project Types'} />}
 
-          <TaxListIcon taxonomies={languages} title={'Languages'} />
+          {languages.size > 0 && <TaxListIcon taxonomies={languages} title={'Languages'} />}
 
-          <TaxListIcon taxonomies={frameworks} title={'Frameworks'} />
+          {frameworks.size > 0 && <TaxListIcon taxonomies={frameworks} title={'Frameworks'} />}
 
-          <TaxListIcon taxonomies={technologies} title={'Technologies'} />
+          {technologies.size > 0 && <TaxListIcon taxonomies={technologies} title={'Technologies'} />}
         </main>
       )}
     </>
