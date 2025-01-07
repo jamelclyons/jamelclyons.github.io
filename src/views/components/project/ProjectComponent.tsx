@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useLocation } from 'react-router';
+import { useSelector } from 'react-redux';
 
 import { marked } from 'marked';
 
@@ -10,29 +9,23 @@ import Details from './Details';
 import TheSolution from './TheSolution';
 import TheProblem from './TheProblem';
 import TheProcess from './TheProcess';
-import TaxList from '../TaxList';
-import TaxListIcon from '../TaxListIcon';
 
-import type { RootState, AppDispatch } from '../../../model/store';
+import type { RootState } from '../../../model/store';
 import Project from '../../../model/Project';
 import RepoContent from '../../../model/RepoContent';
 
-import { fetchContent } from '../../../controllers/contentSlice';
-import { dispatch } from '../../../model/hooks';
-import { getTaxImages } from '../../../controllers/taxonomiesSlice';
-import { lang } from 'moment';
-import Taxonomy from '../../../model/Taxonomy';
+import { loadMarkdown } from '../../../controllers/contentSlice';
 
-const ProjectComponent: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const location = useLocation();
+interface ProjectComponentProps {
+  project: Project;
+}
 
-  const project: Project = location.state;
+const ProjectComponent: React.FC<ProjectComponentProps> = ({ project }) => {
   const {
     title, description, solution, process, problem, details
   } = project;
 
-  const { contents, languagesObject } = useSelector(
+  const { contents } = useSelector(
     (state: RootState) => state.github
   );
 
@@ -41,8 +34,6 @@ const ProjectComponent: React.FC = () => {
   const [developmentContent, setDevelopmentContent] = useState<RepoContent | null>(null);
   const [deliveryContent, setDeliveryContent] = useState<RepoContent | null>(null);
   const [problemContent, setProblemContent] = useState<RepoContent | null>(null);
-
-  const [languages, setLanguages] = useState<Set<Taxonomy>>(new Set());
 
   useEffect(() => {
     if (Array.isArray(contents) && contents.length > 0) {
@@ -71,14 +62,6 @@ const ProjectComponent: React.FC = () => {
       });
     }
   }, [contents]);
-
-  const loadMarkdown = async (url: string) => {
-    try {
-      return await fetchContent(url);
-    } catch (error) {
-      console.error("Error fetching markdown:", error);
-    }
-  };
 
   useEffect(() => {
     if (solutionContent) {
@@ -135,21 +118,6 @@ const ProjectComponent: React.FC = () => {
     }
   }, [contents, problemContent]);
 
-  useEffect(() => {
-    if (languagesObject.length > 0) {
-      const updatedLanguages: Set<Taxonomy> = new Set();
-
-      dispatch(getTaxImages({ type: 'languages', taxonomies: languagesObject })).unwrap().then((langs) => {
-        langs.forEach((lang) => {
-          let language = new Taxonomy(lang);
-          updatedLanguages.add(language);
-        });
-      });
-
-      setLanguages(updatedLanguages);
-    }
-  }, [dispatch, languagesObject]);
-
   return (
     <>
       <main className="project">
@@ -165,14 +133,6 @@ const ProjectComponent: React.FC = () => {
 
         {/* Project details is for clients only */}
         <Details details={details} />
-
-        {/* {projectTypes.size > 0 && <TaxList taxonomies={projectTypes} title={'Project Types'} />} */}
-
-        {languages.size > 0 && <TaxListIcon taxonomies={languages} title={'Languages'} />}
-
-        {/* {frameworks.size > 0 && <TaxListIcon taxonomies={frameworks} title={'Frameworks'} />}
-
-          {technologies.size > 0 && <TaxListIcon taxonomies={technologies} title={'Technologies'} />} */}
       </main>
     </>
   );

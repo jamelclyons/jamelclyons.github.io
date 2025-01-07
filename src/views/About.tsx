@@ -1,14 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+
+import { marked } from 'marked';
 
 import MemberInfoComponent from './components/member/MemberInfoComponent';
 import ContentComponent from './components/content/ContentComponent';
 
-import { getAboutPageContent } from '../controllers/aboutSlice';
 import { getRepoContents } from '../controllers/githubSlice';
+import { loadMarkdown } from '../controllers/contentSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
-
+import RepoContent from '../model/RepoContent';
 import User from '../model/User';
 
 interface AboutProps {
@@ -18,19 +20,14 @@ interface AboutProps {
 const About: React.FC<AboutProps> = ({ user }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { aboutPage } = useSelector((state: RootState) => state.about);
+  const { contents } = useSelector((state: RootState) => state.github);
+
+  const [content, setContent] = useState<RepoContent>();
+  const [markdown, setMarkdown] = useState<string | object>();
 
   useEffect(() => {
     document.title = `About - ${user.name}`;
   }, []);
-
-  useEffect(() => {
-    dispatch(getAboutPageContent());
-  }, [dispatch]);
-
-  const handleResume = () => {
-    window.location.href = '/#/resume';
-  };
 
   useEffect(() => {
     if (user) {
@@ -40,8 +37,38 @@ const About: React.FC<AboutProps> = ({ user }) => {
         path: ''
       }))
     }
+  }, []);
 
-  }, [dispatch, user]);
+  useEffect(() => {
+    console.log(contents)
+  }, [contents]);
+
+  useEffect(() => {
+    if (Array.isArray(contents) && contents.length > 0) {
+      contents.map((content) => {
+        if (content.type === 'file') {
+          if (content.name === 'README.md') {
+            setContent(new RepoContent(content));
+          }
+        }
+      });
+    }
+  }, [contents]);
+
+  useEffect(() => {
+    if (content) {
+      loadMarkdown(content.downloadURL)
+        .then((markdown) => {
+          if (typeof markdown === 'string') {
+            setMarkdown(marked(markdown).valueOf());
+          }
+        });
+    }
+  }, [contents, content]);
+
+  const handleResume = () => {
+    window.location.href = '/#/resume';
+  };
 
   return (
     <>
@@ -52,11 +79,9 @@ const About: React.FC<AboutProps> = ({ user }) => {
           <h3 className="title">resume</h3>
         </button>
 
-        {Array.isArray(aboutPage?.story) && (
-          <div className="story">
-            <ContentComponent content={aboutPage.story} />
-          </div>
-        )}
+        <div className="story">
+          {typeof markdown === 'string' && markdown !== '' && <ContentComponent html={markdown} />}
+        </div>
 
         {Array.isArray(user.organizations) && user.organizations.length > 0 && (
           <div className="organizations">

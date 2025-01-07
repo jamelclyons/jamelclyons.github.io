@@ -55,6 +55,14 @@ export const getContent = createAsyncThunk(
   }
 );
 
+export const loadMarkdown = async (url: string) => {
+  try {
+    return await fetchContent(url);
+  } catch (error) {
+    console.error('Error fetching markdown:', error);
+  }
+};
+
 export const fetchContent = async (contentURL: string) => {
   try {
     const response = await fetch(contentURL);

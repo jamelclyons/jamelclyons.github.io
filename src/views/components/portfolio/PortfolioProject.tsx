@@ -20,7 +20,7 @@ const PortfolioProject: React.FC<PortfolioProjectProps> = ({ project }) => {
     }
 
     return (
-        <button onClick={() => handleClick(`/portfolio/${id}`)}>
+        <button className='project' onClick={() => handleClick(`/portfolio/${id}`)}>
             <div className="project-card card">
                 <h2 className="title">{title}</h2>
 

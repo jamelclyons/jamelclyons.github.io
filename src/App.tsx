@@ -139,16 +139,7 @@ const App: React.FC = () => {
             <Route path="/about" element={<About user={user} />} />
             <Route path="/portfolio" element={<PortfolioPage user={user} portfolio={portfolio} />} />
             <Route path="/portfolio/:projectID" element={<ProjectPage />} />
-            <Route
-              path="/projects/project-types/:taxonomy"
-              element={<Search />}
-            />
-            <Route path="/projects/languages/:taxonomy" element={<Search />} />
-            <Route path="/projects/frameworks/:taxonomy" element={<Search />} />
-            <Route
-              path="/projects/technologies/:taxonomy"
-              element={<Search />}
-            />
+            <Route path="/projects/:taxonomy/:term" element={<Search portfolio={portfolio} />} />
             <Route path="/resume" element={<Resume user={user} />} />
             <Route path="/contact" element={<Contact user={user} />} />
             <Route path="/add/project" element={<AddProject />} />

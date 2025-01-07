@@ -7,6 +7,7 @@ import ProjectDetails from './ProjectDetails';
 import Repo from './Repo';
 
 import { DocumentData } from 'firebase/firestore';
+import ProjectDevelopment from './ProjectDevelopment';
 
 class Project extends Model {
   id: string;
@@ -69,6 +70,7 @@ class Project extends Model {
     this.solution.price = data?.solution?.price;
     this.solution.urlsList = data?.solution?.urlsList;
     this.process.status.progress = data?.process?.status?.progress ?? '0';
+    this.process.development = data?.process?.development ? new ProjectDevelopment(data?.process?.development) : new ProjectDevelopment();
     this.problem = data?.problem
       ? new ProjectProblem(data.problem)
       : new ProjectProblem();

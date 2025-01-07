@@ -6,7 +6,7 @@ import LoadingComponent from './components/LoadingComponent';
 import ProjectComponent from './components/project/ProjectComponent';
 import StatusBarComponent from './components/StatusBarComponent';
 
-import { getRepoContents, getRepoLanguages } from '../controllers/githubSlice';
+import { getRepoContents } from '../controllers/githubSlice';
 import { setMessage, setMessageType, setShowStatusBar } from '../controllers/messageSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
@@ -27,16 +27,6 @@ const ProjectPage: React.FC = () => {
       document.title = project.title.toUpperCase();
     }
   }, [project]);
-
-  useEffect(() => {
-    if (project.owner && project.id) {
-      dispatch(getRepoLanguages({
-        owner: project.owner,
-        repo: project.id,
-        path: ''
-      }))
-    }
-  }, [dispatch, project]);
 
   useEffect(() => {
     if (project.owner && project.id) {
@@ -68,7 +58,7 @@ const ProjectPage: React.FC = () => {
             <StatusBarComponent />
           </main>
         ) : (
-          <ProjectComponent />
+          project && <ProjectComponent project={project} />
         )}
       </>
     </section>

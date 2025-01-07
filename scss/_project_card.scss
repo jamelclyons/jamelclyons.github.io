@@ -2,7 +2,7 @@
 @use '_project_status.scss';
 @use '_project_skills_bar.scss';
 
-button {
+button.project {
   background-color: white;
 
   .project-card {

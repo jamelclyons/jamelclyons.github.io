@@ -1,8 +1,9 @@
-import React, { Component, lazy, Suspense, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
-import type { RootState, AppDispatch } from '../../../model/store';
-import { useAppSelector } from '../../../model/hooks';
+import type { AppDispatch } from '../../../model/store';
+import ProjectDevelopment from '../../../model/ProjectDevelopment';
+import Taxonomy from '../../../model/Taxonomy';
 
 import CheckList from './CheckList';
 import ContentComponent from '../content/ContentComponent';
@@ -13,13 +14,11 @@ import TaxListIcon from '../TaxListIcon';
 
 import {
   getProjectType,
-  getLanguage,
   getFramework,
   getTechnology,
 } from '../../../controllers/taxonomiesSlice';
-
-import ProjectDevelopment from '../../../model/ProjectDevelopment';
-import Taxonomy from '../../../model/Taxonomy';
+import { getTaxImages } from '../../../controllers/taxonomiesSlice';
+import { getRepoLanguages } from '../../../controllers/githubSlice';
 
 interface DevelopmentProps {
   development: ProjectDevelopment;
@@ -28,58 +27,65 @@ interface DevelopmentProps {
 const Development: React.FC<DevelopmentProps> = ({ development }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { checkList, content, repoURL, types, frameworks, technologies, versionsList } = development;
+  const { checkList, content, repoURL, versionsList } = development;
 
-  const { languages } = useSelector(
-    (state: RootState) => state.github
-  );
-
-  // useEffect(() => {
-  //   if (repoURL) {
-  //     try {
-  //       const repoUrl = new URL(repoURL);
-  //       const pathname = repoUrl.pathname;
-  //       const parts = pathname.split('/').filter(Boolean);
-
-  //       if (parts.length >= 2) {
-  //         const query: RepoQuery = {
-  //           owner: parts[0],
-  //           repo: parts[1]
-  //         };
-
-  //         dispatch(getRepo(query));
-  //       } else {
-  //         console.error('Invalid repository URL');
-  //       }
-  //     } catch (error) {
-  //       const err = error as Error;
-  //       console.error('Invalid URL format:', err.message);
-  //     }
-  //   }
-  // }, [development, dispatch]);
-
-  let taxTypes: Set<Taxonomy> = new Set();
-  let taxLanguages: Set<Taxonomy> = new Set();
-  let taxFrameworks: Set<Taxonomy> = new Set();
-  let taxTechnologies: Set<Taxonomy> = new Set();
+  const [owner, setOwner] = useState<string>('');
+  const [repo, setRepo] = useState<string>('');
+  const [types, setTypes] = useState<Set<Taxonomy>>(new Set());
+  const [languagesObject, setLanguagesObject] = useState<Array<Record<string, any>>>();
+  const [languages, setLanguages] = useState<Set<Taxonomy>>(new Set());
+  const [frameworks, setFrameworks] = useState<Set<Taxonomy>>(new Set());
+  const [technologies, setTechnologies] = useState<Set<Taxonomy>>(new Set());
 
   useEffect(() => {
-    if (types) {
+    if (repoURL) {
+      try {
+        const repoUrl = new URL(repoURL);
+        const pathname = repoUrl.pathname;
+        const parts = pathname.split('/').filter(Boolean);
+
+        setOwner(parts[0]);
+        setRepo(parts[1]);
+      } catch (error) {
+        const err = error as Error;
+        console.error('Invalid URL format:', err.message);
+      }
+    }
+  }, [repoURL, dispatch]);
+
+  useEffect(() => {
+    if (owner && repo) {
+      dispatch(getRepoLanguages({
+        owner: owner,
+        repo: repo,
+        path: ''
+      })).unwrap().then((contents) => {
+        setLanguagesObject(contents)
+      });
+    }
+  }, [owner, repo, dispatch]);
+
+  useEffect(() => {
+    if (development.types.size > 0) {
+      let taxTypes: Set<Taxonomy> = new Set();
+
       const fetchProjectTypes = async () => {
         try {
           await Promise.all(
-            Array.from(types).map(async (tax) => {
-              const result = (await dispatch(getProjectType(tax)));
+            Array.from(development.types).map(async (tax) => {
+              const result = await dispatch(getProjectType(tax));
 
               if (getProjectType.fulfilled.match(result)) {
-                const taxonomy = result.payload as Taxonomy;
-                taxTypes.add(taxonomy);
+                const taxonomy = result.payload as Record<string, any>;
+                taxTypes.add(new Taxonomy(taxonomy));
               } else {
                 console.error("Failed to fetch project type:", result.error);
                 return null;
               }
             })
           );
+
+          setTypes(taxTypes);
         } catch (error) {
           console.error("Error fetching project types:", error);
         }
@@ -87,78 +93,118 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
       fetchProjectTypes();
     }
-  }, [types, dispatch]);
+  }, [development, dispatch, setTypes]);
 
   useEffect(() => {
-    if (languages && languages.length > 0) {
-      const fetchLanguages = async () => {
-        try {
-          return await Promise.all(
-            Array.from(languages).map(async (tax) => {
-              const result = await dispatch(getLanguage(tax.id));
-              if (getLanguage.fulfilled.match(result)) {
-                const taxonomy = new Taxonomy(result.payload);
-                taxLanguages.add(taxonomy);
-              } else {
-                console.error("Failed to fetch language:", result.error);
-                return null;
-              }
-            })
-          );
-        } catch (error) {
-          console.error("Error fetching project types:", error);
-        }
-      };
+    if (languagesObject && languagesObject.length > 0) {
+      const updatedLanguages: Set<Taxonomy> = new Set();
 
-      fetchLanguages();
+      dispatch(getTaxImages({ type: 'languages', taxonomies: languagesObject })).unwrap().then((langs) => {
+        langs.forEach((lang) => {
+          let language = new Taxonomy(lang);
+          updatedLanguages.add(language);
+        });
+      });
+
+      setLanguages(updatedLanguages);
     }
-  }, [languages, dispatch]);
+  }, [dispatch, languagesObject, setLanguages]);
 
   useEffect(() => {
-    if (Array.isArray(frameworks) && frameworks.size > 0) {
-      const fetchFrameworks = async () => {
+    if (development && development.frameworks.size > 0) {
+      const fetchFrameworks = async (): Promise<Array<Record<string, any>>> => {
         try {
+          const taxFrameworks: Array<Record<string, any>> = [];
+
           await Promise.all(
-            Array.from(frameworks).map(async (tax) => {
+            Array.from(development.frameworks).map(async (tax) => {
               const result = await dispatch(getFramework(tax));
               if (getFramework.fulfilled.match(result)) {
-                const taxonomy = result.payload as Taxonomy;
-                taxFrameworks.add(taxonomy);
+                const taxonomy = result.payload as Record<string, any>;
+                taxFrameworks.push(taxonomy);
               } else {
-                console.error("Failed to fetch language:", result.error);
-                return null;
+                console.error("Failed to fetch framework:", result.error);
               }
             })
           );
+
+          return taxFrameworks;
         } catch (error) {
-          console.error("Error fetching project types:", error);
+          console.error("Error fetching frameworks:", error);
+          return []; // Ensure a valid fallback return
         }
       };
 
-      fetchFrameworks();
-    }
-  }, [frameworks, dispatch]);
+      const processFrameworks = async () => {
+        const taxFrameworks = await fetchFrameworks();
 
-  useEffect(() => {
-    if (Array.isArray(technologies) && technologies.size > 0) {
-      const fetchTechnologies = async () => {
-        const techData = await Promise.all(
-          Array.from(technologies).map(async (tax) => {
-            const result = await dispatch(getTechnology(tax));
-            if (getTechnology.fulfilled.match(result)) {
-              const taxonomy = result.payload as Taxonomy;
-              taxTechnologies.add(taxonomy);
-            } else {
-              console.error("Failed to fetch project type:", result.error);
-              return null;
-            }
-          })
-        );
+        if (taxFrameworks.length > 0) {
+          try {
+            const frameworks = await dispatch(
+              getTaxImages({ type: "frameworks", taxonomies: taxFrameworks })
+            ).unwrap();
+
+            const updatedFrameworks: Set<Taxonomy> = new Set(
+              frameworks.map((tax) => new Taxonomy(tax))
+            );
+
+            setFrameworks(updatedFrameworks);
+          } catch (error) {
+            console.error("Error fetching tax images:", error);
+          }
+        }
       };
 
-      fetchTechnologies();
+      processFrameworks();
     }
-  }, [technologies, dispatch]);
+  }, [development, dispatch, setFrameworks]);
+
+  useEffect(() => {
+    if (development && development.technologies.size > 0) {
+      const fetchTechnologies = async (): Promise<Array<Record<string, any>>> => {
+        try {
+          const taxTechnologies: Array<Record<string, any>> = [];
+
+          await Promise.all(
+            Array.from(development.technologies).map(async (tax) => {
+              const result = await dispatch(getTechnology(tax));
+              if (getTechnology.fulfilled.match(result)) {
+                const taxonomy = result.payload as Record<string, any>;
+                taxTechnologies.push(taxonomy);
+              } else {
+                console.error("Failed to fetch project type:", result.error);
+              }
+            })
+          );
+
+          return taxTechnologies;
+        } catch (error) {
+          console.error("Error fetching project types:", error);
+          return [];
+        }
+      };
+
+      const processTechnologies = async () => {
+        const taxTechnologies = await fetchTechnologies();
+
+        if (taxTechnologies.length > 0) {
+          try {
+            const technologies = await dispatch(getTaxImages({ type: 'technologies', taxonomies: taxTechnologies })).unwrap();
+
+            const updatedTechnologies: Set<Taxonomy> = new Set(
+              technologies.map((tax) => new Taxonomy(tax))
+            );
+
+            setTechnologies(updatedTechnologies);
+          } catch (error) {
+            console.error("Error fetching tax images:", error);
+          }
+        }
+      };
+
+      processTechnologies();
+    }
+  }, [development, dispatch, setTechnologies]);
 
   const handleSeeCode = () => {
     window.open(repoURL, '_blank');
@@ -166,7 +212,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
   return (
     <>{(
-      taxTypes.size > 0 || taxLanguages.size > 0 || taxFrameworks.size > 0 || taxTechnologies.size > 0 ||
+      types.size > 0 || languages.size > 0 || frameworks.size > 0 || technologies.size > 0 ||
       checkList.length > 0 ||
       (typeof content === 'string' && content !== '') ||
       (versionsList?.current !== '' && versionsList?.previous.length > 0) ||
@@ -175,17 +221,17 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
         <h4 className="title">development</h4>
 
-        {taxTypes.size > 0 && <TaxList taxonomies={taxTypes} title={'types'} />}
+        {types.size > 0 && <TaxList taxonomies={types} title={'types'} />}
 
-        {taxLanguages.size > 0 && <TaxListIcon taxonomies={taxLanguages} title={'languages'} />}
+        {languages.size > 0 && <TaxListIcon taxonomies={languages} title={'Languages'} />}
 
-        {taxFrameworks.size > 0 && <TaxListIcon taxonomies={taxFrameworks} title={'frameworks'} />}
+        {frameworks.size > 0 && <TaxListIcon taxonomies={frameworks} title={'frameworks'} />}
 
-        {taxTechnologies.size > 0 && <TaxListIcon taxonomies={taxTechnologies} title={'technologies'} />}
+        {technologies.size > 0 && <TaxListIcon taxonomies={technologies} title={'technologies'} />}
 
         {checkList.length > 0 && <CheckList checkList={checkList} />}
 
-        {typeof content === 'string' && <ContentComponent html={content} />}
+        {typeof content === 'string' && content !== '' && <ContentComponent html={content} />}
 
         {/* <Versions versions_list={development?.versionsList} /> */}
 
