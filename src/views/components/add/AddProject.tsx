@@ -2,6 +2,7 @@ import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } f
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../model/store';
+import Project from '../../../model/Project';
 
 import { addProject } from '../../../controllers/addSlice';
 import {
@@ -26,6 +27,8 @@ const AddProject: React.FC = () => {
 
   const [repoURL, setRepoURL] = useState('');
   const [title, setTitle] = useState('');
+  const [project, setProject] = useState<Project>(new Project())
+  const [projectID, setProjectID] = useState(project.id);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     try {
@@ -49,18 +52,8 @@ const AddProject: React.FC = () => {
     e.preventDefault();
 
     try {
-      const form = document.getElementById('add_project') as HTMLFormElement;
-      const formData = new FormData(form);
 
-      if (repoURL) {
-        const parsedUrl = new URL(repoURL);
-        const pathname = parsedUrl.pathname;
-        const parts = pathname.split('/');
-        const filteredArray = parts.filter(item => item !== "");
-
-        formData.append('id', filteredArray[1]);
-        formData.append('owner', filteredArray[0]);
-      } else {
+      if (!repoURL) {
         throw new Error('A valid repo url is required.');
       }
 
@@ -68,16 +61,13 @@ const AddProject: React.FC = () => {
         throw new Error('A valid project title is required.');
       }
 
-      let project: Record<string, any> = {};
+      project.create(repoURL, title);
 
-      formData.forEach((value, key) => {
-        project[key] = value;
+      dispatch(addProject(project.toObject())).unwrap().then((response) => {
+        setProjectID(response.project_id);
+        dispatch(setMessageType('success'));
+        dispatch(setMessage(response.success_message));
       });
-
-      dispatch(addProject(project));
-
-      dispatch(setMessageType('info'));
-      dispatch(setMessage('Standbye while an attempt to log you is made.'));
     } catch (error) {
       const err = error as Error;
       dispatch(setMessageType('error'));
@@ -89,6 +79,8 @@ const AddProject: React.FC = () => {
   useEffect(() => {
     if (addLoading) {
       dispatch(setShowStatusBar(Date.now()));
+      dispatch(setMessageType('info'));
+      dispatch(setMessage('Standbye while an attempt to log you is made.'));
     }
   }, [addLoading]);
 
@@ -135,13 +127,13 @@ const AddProject: React.FC = () => {
           </button>
         </form>
 
-        <UpdateSolution />
+        <UpdateSolution projectID={projectID} solution={project.solution} />
 
-        <UpdateProcess />
+        <UpdateProcess projectID={projectID} process={project.process}/>
 
-        <UpdateProblem />
+        <UpdateProblem projectID={projectID} problem={project.problem}/>
 
-        <UpdateDetails />
+        <UpdateDetails projectID={projectID} details={project.details}/>
 
         <StatusBarComponent />
       </main>

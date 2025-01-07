@@ -2,25 +2,23 @@ import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } f
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../model/store';
+import ProjectDetails from '../../../model/ProjectDetails';
 
 import {
   setMessage,
   setMessageType,
   setShowStatusBar,
 } from '../../../controllers/messageSlice';
-
 import { updateDetails } from '../../../controllers/updateSlice';
 
 interface UpdateDetailsProps {
-  projectID: string
+  projectID: string;
+  details: ProjectDetails;
 }
 
-const UpdateDetails: React.FC<UpdateDetailsProps> = ({ projectID }) => {
+const UpdateDetails: React.FC<UpdateDetailsProps> = ({ projectID, details }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { details } = useSelector(
-    (state: RootState) => state.project
-  );
   const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
     (state: RootState) => state.update
   );
@@ -46,9 +44,9 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ projectID }) => {
     }
   }, [updateSuccessMessage, dispatch]);
 
-  const [detailsList, setDetailsList] = useState(details?.detailsList);
-  const [teamList, setTeamList] = useState(details?.teamList);
-  const [clientID, setClientID] = useState(details?.clientID);
+  const [detailsList, setDetailsList] = useState(details.detailsList);
+  const [teamList, setTeamList] = useState(details.teamList);
+  const [clientID, setClientID] = useState(details.clientID);
 
   const handleChangeClientID = (e: ChangeEvent<HTMLInputElement>) => {
     try {
@@ -57,7 +55,7 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ projectID }) => {
       const { name, value } = target;
 
       if (name === 'client_id') {
-        setClientID([]);
+        setClientID(value);
       }
     } catch (error) {
       const err = error as Error;

@@ -2,6 +2,7 @@ import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } f
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../model/store';
+import ProjectDevelopment from '../../../model/ProjectDevelopment';
 
 import {
   setMessage,
@@ -17,15 +18,15 @@ import {
 import { updateDevelopment } from '../../../controllers/updateSlice';
 
 interface UpdateDevelopmentProps {
-  projectID: string
+  projectID: string;
+  development: ProjectDevelopment;
 }
 
-const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID }) => {
+const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, development }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { development } = useSelector(
-    (state: RootState) => state.project
-  );
+  const { types, languages, frameworks, technologies } = development;
+
   const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
     (state: RootState) => state.update
   );
@@ -50,10 +51,6 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID }) => {
       dispatch(setMessageType('success'));
     }
   }, [updateSuccessMessage, dispatch]);
-
-  const { projectTypes, languages, frameworks, technologies } = useSelector(
-    (state: RootState) => state.taxonomies
-  );
 
   useEffect(() => {
     dispatch(getProjectTypes());
@@ -126,8 +123,8 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID }) => {
     });
   };
 
-  
-const handleUpdateDelivery = async (e: MouseEvent<HTMLButtonElement>) => {
+
+  const handleUpdateDelivery = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     try {

@@ -2,25 +2,23 @@ import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } f
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../model/store';
+import ProjectStatus from '../../../model/ProjectStatus';
 
 import {
     setMessage,
     setMessageType,
     setShowStatusBar,
 } from '../../../controllers/messageSlice';
-
 import { updateStatus } from '../../../controllers/updateSlice';
 
 interface UpdateStatusProps {
     projectID: string;
+    status: ProjectStatus;
 }
 
-const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectID }) => {
+const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectID, status }) => {
     const dispatch = useDispatch<AppDispatch>();
 
-    const { status } = useSelector(
-        (state: RootState) => state.project
-    );
     const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
         (state: RootState) => state.update
     );

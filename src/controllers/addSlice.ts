@@ -18,6 +18,7 @@ interface AddState {
   addError: Error | null;
   addErrorMessage: string;
   addStatusCode: string;
+  projectID: string;
 }
 
 const initialState: AddState = {
@@ -26,17 +27,26 @@ const initialState: AddState = {
   addError: null,
   addErrorMessage: '',
   addStatusCode: '',
+  projectID: '',
 };
 
-export const addProject = createAsyncThunk(
+type AddResponse = {
+  project_id: string;
+  success_message: string;
+};
+
+export const addProject = createAsyncThunk<AddResponse, Record<string, any>>(
   'add/addProject',
-  async (project: Record<string, any>) => {
+  async (project) => {
     try {
       const projectCollection = collection(db, 'portfolio');
 
       await setDoc(doc(projectCollection, project.id), project);
 
-      return `${project.id} was added to portfolio`;
+      return {
+        project_id: project.id,
+        success_message: `${project.id} was added to portfolio`,
+      };
     } catch (error) {
       const err = error as Error;
 
@@ -52,7 +62,10 @@ export const addProjectType = createAsyncThunk(
     try {
       const projectTypeCollection = collection(db, 'project_types');
 
-      await setDoc(doc(projectTypeCollection, taxonomy.id), taxonomy.toObject());
+      await setDoc(
+        doc(projectTypeCollection, taxonomy.id),
+        taxonomy.toObject()
+      );
 
       return `${taxonomy.id} was added to projectTypes`;
     } catch (error) {
@@ -124,9 +137,13 @@ const addSliceOptions: CreateSliceOptions<AddState> = {
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(addProject.fulfilled, (state, action) => {
+        state.addLoading = false;
+        state.addSuccessMessage = action.payload.success_message;
+        state.projectID = action.payload.project_id;
+      })
       .addMatcher(
         isAnyOf(
-          addProject.fulfilled,
           addProjectType.fulfilled,
           addLanguage.fulfilled,
           addFramework.fulfilled,

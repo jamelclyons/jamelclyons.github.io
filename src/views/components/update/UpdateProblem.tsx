@@ -2,6 +2,7 @@ import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } f
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../model/store';
+import ProjectProblem from '../../../model/ProjectProblem';
 
 import {
   setMessage,
@@ -9,13 +10,15 @@ import {
   setShowStatusBar,
 } from '../../../controllers/messageSlice';
 
-const UpdateProblem: React.FC = () => {
+interface UpdateProblemProps {
+  projectID: string;
+  problem: ProjectProblem;
+}
+
+const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectID, problem }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { problem } = useSelector(
-    (state: RootState) => state.project
-  );
-const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
+  const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
     (state: RootState) => state.update
   );
 

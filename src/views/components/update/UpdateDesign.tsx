@@ -2,6 +2,7 @@ import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } f
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../model/store';
+import ProjectDesign from '../../../model/ProjectDesign';
 
 import {
   setMessage,
@@ -14,15 +15,13 @@ import { updateDesign } from '../../../controllers/updateSlice';
 import Gallery from '../../../model/Gallery';
 
 interface UpdateDesignProps {
-  projectID: string
+  projectID: string;
+  design: ProjectDesign;
 }
 
-const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectID }) => {
+const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectID, design }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { design } = useSelector(
-    (state: RootState) => state.project
-  );
   const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
     (state: RootState) => state.update
   );

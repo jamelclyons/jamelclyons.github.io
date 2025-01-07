@@ -2,6 +2,7 @@ import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } f
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../model/store';
+import ProjectDelivery from '../../../model/ProjectDelivery';
 
 import {
   setMessage,
@@ -12,15 +13,13 @@ import {
 import { updateDelivery } from '../../../controllers/updateSlice';
 
 interface UpdateDeliveryProps {
-  projectID: string
+  projectID: string;
+  delivery: ProjectDelivery;
 }
 
-const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectID }) => {
+const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectID, delivery }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { delivery } = useSelector(
-    (state: RootState) => state.project
-  );
   const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
     (state: RootState) => state.update
   );
@@ -46,9 +45,9 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectID }) => {
     }
   }, [updateSuccessMessage, dispatch]);
 
-  const [gallery, setGallery] = useState(delivery?.gallery);
+  const [gallery, setGallery] = useState(delivery.gallery);
   const [checkList, setCheckList] = useState(delivery?.checkList);
-  const [content, setContent] = useState(delivery?.checkList);
+  // const [content, setContent] = useState(delivery?.checkList);
 
   const handleChangeGallery = (e: ChangeEvent<HTMLInputElement>) => {
     try {
@@ -70,15 +69,15 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectID }) => {
     }
   };
 
-  const handleChangeContent = (e: ChangeEvent<HTMLInputElement>) => {
-    try {
-      setContent([]);
-    } catch (error) {
-      const err = error as Error;
-      dispatch(setMessage(err.message));
-      dispatch(setMessageType('error'));
-    }
-  };
+  // const handleChangeContent = (e: ChangeEvent<HTMLInputElement>) => {
+  //   try {
+  //     setContent([]);
+  //   } catch (error) {
+  //     const err = error as Error;
+  //     dispatch(setMessage(err.message));
+  //     dispatch(setMessageType('error'));
+  //   }
+  // };
 
   const handleUpdateDelivery = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();

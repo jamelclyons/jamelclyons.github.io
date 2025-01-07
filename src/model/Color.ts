@@ -4,11 +4,11 @@ class Color extends Model {
   name: string;
   color: string;
 
-  constructor(name: string, color: string) {
+  constructor(data: Record<string, any>) {
     super();
-    
-    this.name = name;
-    this.color = color;
+
+    this.name = data?.name;
+    this.color = data?.color;
   }
 }
 

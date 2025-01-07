@@ -5,7 +5,6 @@ import ProjectVersions from './ProjectVersions';
 class ProjectDevelopment extends Model {
   content: string | object;
   checkList: Array<Task>;
-  owner: string;
   repoURL: string;
   versionsList: ProjectVersions;
   types: Set<string>;
@@ -16,15 +15,28 @@ class ProjectDevelopment extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    this.content = data?.content || '';
-    this.checkList = data?.check_list || [];
-    this.owner = data?.owner || '';
     this.repoURL = data?.repo_url || '';
-    this.versionsList = data?.versions_list || null;
-    this.types = data?.types ? new Set(data.types) : new Set;
-    this.languages = data?.languages ? new Set(data.languages) : new Set;
-    this.frameworks = data?.frameworks ? new Set(data.frameworks) : new Set;
-    this.technologies = data?.technologies ? new Set(data.technologies) : new Set;
+    this.checkList = data?.check_list ? this.toArrayTask(data.check_list) : [];
+    this.versionsList = data?.versions_list
+      ? new ProjectVersions(data.versions_list)
+      : new ProjectVersions();
+    this.types = data?.types ? new Set(data.types) : new Set();
+    this.languages = data?.languages ? new Set(data.languages) : new Set();
+    this.frameworks = data?.frameworks ? new Set(data.frameworks) : new Set();
+    this.technologies = data?.technologies
+      ? new Set(data.technologies)
+      : new Set();
+    this.content = data?.content || '';
+  }
+
+  toArrayTask(data: Array<Record<string, any>>) {
+    const checkList: Array<Task> = [];
+
+    data.forEach((task) => {
+      checkList.push(new Task(task));
+    });
+
+    return checkList;
   }
 }
 

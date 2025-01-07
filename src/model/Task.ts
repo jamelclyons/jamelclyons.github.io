@@ -4,11 +4,11 @@ class Task extends Model {
   name: string;
   status: boolean;
 
-  constructor(name: string, status: boolean) {
+  constructor(data: Record<string, any>) {
     super();
 
-    this.name = name;
-    this.status = status;
+    this.name = data?.name;
+    this.status = data?.status;
   }
 }
 

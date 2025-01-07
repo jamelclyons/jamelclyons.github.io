@@ -2,6 +2,7 @@ import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } f
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../model/store';
+import Project from '../../../model/Project';
 
 import {
   setMessage,
@@ -11,7 +12,12 @@ import {
 
 import ProjectSolution from '../../../model/ProjectSolution';
 
-const UpdateSolution: React.FC = () => {
+interface UpdateSolutionProps {
+  projectID: string;
+  solution: ProjectSolution;
+}
+
+const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectID, solution }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
