@@ -11,12 +11,12 @@ import {
   setShowStatusBar,
 } from '../../../controllers/messageSlice';
 
-import StatusBarComponent from '../StatusBarComponent';
-
 import UpdateDetails from '../update/UpdateDetails';
 import UpdateProcess from '../update/UpdateProcess';
 import UpdateSolution from '../update/UpdateSolution';
 import UpdateProblem from '../update/UpdateProblem';
+
+import StatusBarComponent from '../StatusBarComponent';
 
 const AddProject: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

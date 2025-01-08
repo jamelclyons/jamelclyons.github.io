@@ -14,7 +14,7 @@ const Search = lazy(() => import('./views/Search'));
 const Resume = lazy(() => import('./views/Resume'));
 const Contact = lazy(() => import('./views/Contact'));
 const AddSkill = lazy(() => import('./views/SkillAdd'));
-const AddProject = lazy(() => import('./views/ProjectAdd'));
+const ProjectAdd = lazy(() => import('./views/ProjectAdd'));
 const NotFound = lazy(() => import('./views/NotFound'));
 
 import {
@@ -35,6 +35,7 @@ import Repo from './model/Repo';
 import User from './model/User';
 import Project from './model/Project';
 import Portfolio from './model/Portfolio';
+import ProjectUpdate from './views/ProjectUpdate';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -142,7 +143,8 @@ const App: React.FC = () => {
             <Route path="/projects/:taxonomy/:term" element={<Search portfolio={portfolio} />} />
             <Route path="/resume" element={<Resume user={user} />} />
             <Route path="/contact" element={<Contact user={user} />} />
-            <Route path="/add/project" element={<AddProject />} />
+            <Route path="/add/project" element={<ProjectAdd />} />
+            <Route path="/update/project/:projectID" element={<ProjectUpdate />} />
             <Route path="/add/skill" element={<AddSkill />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

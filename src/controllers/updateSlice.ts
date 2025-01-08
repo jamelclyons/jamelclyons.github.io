@@ -47,6 +47,21 @@ const initialState: UpdateState = {
 const projectCollection: CollectionReference<DocumentData, DocumentData> =
   collection(db, 'portfolio');
 
+  export const updateProject = createAsyncThunk(
+    'update/updateProject',
+    async (data: Record<string, any>) => {
+      try {
+        await updateDoc(doc(projectCollection, data.id), data);
+  
+        return `Project with the #ID: ${data.id} was updated.`;
+      } catch (error) {
+        const err = error as Error;
+        console.error(err);
+        throw new Error(err.message);
+      }
+    }
+  );
+
 export const updateSolution = createAsyncThunk(
   'update/updateSolution',
   async (data: Record<string, any>) => {

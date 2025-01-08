@@ -1,8 +1,10 @@
-import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } from 'react';
+import React, { useEffect, useState, MouseEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../model/store';
 import ProjectDevelopment from '../../../model/ProjectDevelopment';
+import Task from '../../../model/Task';
+import ProjectVersions from '../../../model/ProjectVersions';
 
 import {
   setMessage,
@@ -25,12 +27,13 @@ interface UpdateDevelopmentProps {
 const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, development }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { types, languages, frameworks, technologies } = development;
-
   const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
     (state: RootState) => state.update
   );
-
+  const { projectTypesObject, languagesObject, frameworksObject, technologiesObject } = useSelector(
+    (state: RootState) => state.taxonomies
+  );
+  
   useEffect(() => {
     if (updateLoading) {
       dispatch(setMessage('Standbye while an attempt to update the development section of your project is made.'));
@@ -68,21 +71,23 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, develo
     dispatch(getTechnologies());
   }, []);
 
-  const [checkList, setCheckList] = useState(development);
-  const [versionsList, setVersionsList] = useState([]);
-  const [selectedProjectTypes, setSelectedProjectTypes] = useState<Set<string>>(new Set());
-  const [selectedLanguages, setSelectedLanguages] = useState<Set<string>>(new Set());
-  const [selectedFrameworks, setSelectedFrameworks] = useState<Set<string>>(new Set());
-  const [selectedTechnologies, setSelectedTechnologies] = useState<Set<string>>(new Set());
+  const [checkList, setCheckList] = useState<Array<Task>>(development.checkList);
+  const [versionsList, setVersionsList] = useState<ProjectVersions>(development.versionsList);
+  const [selectedProjectTypes, setSelectedProjectTypes] = useState<Set<string>>(new Set(development.types));
+  const [selectedLanguages, setSelectedLanguages] = useState<Set<string>>(new Set(development.languages));
+  const [selectedFrameworks, setSelectedFrameworks] = useState<Set<string>>(new Set(development.frameworks));
+  const [selectedTechnologies, setSelectedTechnologies] = useState<Set<string>>(new Set(development.technologies));
 
   const handleProjectTypesCheckboxChange = (id: string) => {
     setSelectedProjectTypes((prevSelectedIds) => {
       const updatedSelection = new Set(prevSelectedIds);
+
       if (updatedSelection.has(id)) {
         updatedSelection.delete(id);
       } else {
         updatedSelection.add(id);
       }
+
       return updatedSelection;
     });
   };
@@ -90,11 +95,13 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, develo
   const handleLanguagesCheckboxChange = (id: string) => {
     setSelectedLanguages((prevSelectedIds) => {
       const updatedSelection = new Set(prevSelectedIds);
+
       if (updatedSelection.has(id)) {
         updatedSelection.delete(id);
       } else {
         updatedSelection.add(id);
       }
+
       return updatedSelection;
     });
   };
@@ -102,11 +109,13 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, develo
   const handleFrameworksCheckboxChange = (id: string) => {
     setSelectedFrameworks((prevSelectedIds) => {
       const updatedSelection = new Set(prevSelectedIds);
+
       if (updatedSelection.has(id)) {
         updatedSelection.delete(id);
       } else {
         updatedSelection.add(id);
       }
+
       return updatedSelection;
     });
   };
@@ -114,11 +123,13 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, develo
   const handleTechnologiesCheckboxChange = (id: string) => {
     setSelectedTechnologies((prevSelectedIds) => {
       const updatedSelection = new Set(prevSelectedIds);
+
       if (updatedSelection.has(id)) {
         updatedSelection.delete(id);
       } else {
         updatedSelection.add(id);
       }
+
       return updatedSelection;
     });
   };
@@ -158,8 +169,8 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, develo
       <div className="project-selection">
         <label htmlFor="options">Choose Project Types:</label>
 
-        {Array.isArray(projectTypes) &&
-          projectTypes.map((item) => (
+        {Array.isArray(projectTypesObject) &&
+          projectTypesObject.map((item) => (
             <div className="project-checkbox" key={item.id}>
               <input
                 type="checkbox"
@@ -176,8 +187,8 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, develo
       <div className="project-selection">
         <label htmlFor="options">Choose Languages:</label>
 
-        {Array.isArray(languages) &&
-          languages.map((item) => (
+        {Array.isArray(languagesObject) &&
+          languagesObject.map((item) => (
             <div className="project-checkbox" key={item.id}>
               <input
                 type="checkbox"
@@ -194,8 +205,8 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, develo
       <div className="project-selection">
         <label htmlFor="options">Choose Frameworks:</label>
 
-        {Array.isArray(frameworks) &&
-          frameworks.map((item) => (
+        {Array.isArray(frameworksObject) &&
+          frameworksObject.map((item) => (
             <div className="project-checkbox" key={item.id}>
               <input
                 type="checkbox"
@@ -212,8 +223,8 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, develo
       <div className="project-selection">
         <label htmlFor="options">Choose Technologies:</label>
 
-        {Array.isArray(technologies) &&
-          technologies.map((item) => (
+        {Array.isArray(technologiesObject) &&
+          technologiesObject.map((item) => (
             <div className="project-checkbox" key={item.id}>
               <input
                 type="checkbox"
