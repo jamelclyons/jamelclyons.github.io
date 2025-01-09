@@ -13,18 +13,19 @@ import TheProcess from './TheProcess';
 import type { RootState } from '../../../model/store';
 import Project from '../../../model/Project';
 import RepoContent from '../../../model/RepoContent';
+import GitHubRepoQuery from '../../../model/GitHubRepoQuery';
 
 import { loadMarkdown } from '../../../controllers/contentSlice';
 
 interface ProjectComponentProps {
   project: Project;
+  repoQuery: GitHubRepoQuery;
 }
 
-const ProjectComponent: React.FC<ProjectComponentProps> = ({ project }) => {
+const ProjectComponent: React.FC<ProjectComponentProps> = ({ project, repoQuery }) => {
   const {
     title, description, solution, process, problem, details
   } = project;
-
   const { contents } = useSelector(
     (state: RootState) => state.github
   );
@@ -132,7 +133,7 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ project }) => {
         <TheProblem problem={problem} />
 
         {/* Project details is for clients only */}
-        <Details details={details} />
+        <Details details={details} contributorsQuery={repoQuery} />
       </main>
     </>
   );

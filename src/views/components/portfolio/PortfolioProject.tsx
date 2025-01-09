@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import Project from '../../../model/Project'
 
-import ProjectStatus from '../ProjectStatusComponent';
 import ProjectDescription from './ProjectDescription';
 
 interface PortfolioProjectProps {

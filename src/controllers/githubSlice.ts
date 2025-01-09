@@ -13,6 +13,7 @@ import Organization from '../model/Organization';
 import User from '../model/User';
 import Repo from '../model/Repo';
 import Taxonomy from '../model/Taxonomy';
+import GitHubRepoQuery from '../model/GitHubRepoQuery';
 
 let octokit = new Octokit();
 
@@ -39,13 +40,14 @@ interface GithubState {
   githubStatusCode: number;
   githubError: Error | null;
   githubErrorMessage: string;
-  userObject: Record<string,any>;
-  organizations: Array<Record<string,any>>;
-  repos: Array<Record<string,any>>;
+  userObject: Record<string, any>;
+  organizations: Array<Record<string, any>>;
+  repos: Array<Record<string, any>>;
   socialAccounts: [];
-  repo: Record<string,any>;
-  contents: Array<Record<string,any>>;
-  languagesObject: Array<Record<string,any>>;
+  repo: Record<string, any>;
+  contents: Array<Record<string, any>>;
+  languagesObject: Array<Record<string, any>>;
+  contributorsObject: Array<Record<string, any>>;
 }
 
 const initialState: GithubState = {
@@ -60,6 +62,7 @@ const initialState: GithubState = {
   repo: {},
   contents: [],
   languagesObject: [],
+  contributorsObject: [],
 };
 
 export const getUser = createAsyncThunk(
@@ -85,7 +88,7 @@ export const getRepos = createAsyncThunk('github/getRepos', async () => {
   try {
     const { data } = await octokit.request('/user/repos');
 
-    let repos: Array<Record<string,any>> = [];
+    let repos: Array<Record<string, any>> = [];
 
     if (Array.isArray(data)) {
       data.forEach((repo) => {
@@ -153,29 +156,32 @@ export const getRepo = createAsyncThunk(
   }
 );
 
-export const getRepoContents = createAsyncThunk('github/getRepoContents', async (query: Record<string, any>) => {
-  try {
-    const repoContents = await octokit.rest.repos.getContent({
-      owner: query.owner as string,
-      repo: query.repo as string,
-      path: query.path as string,
-    });
-
-    let contents: Array<Record<string,any>> = [];
-
-    if (Array.isArray(repoContents.data) && repoContents.data.length > 0) {
-      repoContents.data.forEach((content) => {
-        contents.push(new RepoContent(content).toObject());
+export const getRepoContents = createAsyncThunk(
+  'github/getRepoContents',
+  async (query: Record<string, any>) => {
+    try {
+      const repoContents = await octokit.rest.repos.getContent({
+        owner: query.owner as string,
+        repo: query.repo as string,
+        path: query.path as string,
       });
-    }
 
-    return contents;
-  } catch (error) {
-    const err = error as Error;
-    console.error(err);
-    throw new Error(err.message);
+      let contents: Array<Record<string, any>> = [];
+
+      if (Array.isArray(repoContents.data) && repoContents.data.length > 0) {
+        repoContents.data.forEach((content) => {
+          contents.push(new RepoContent(content).toObject());
+        });
+      }
+
+      return contents;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
   }
-});
+);
 
 export const getRepoLanguages = createAsyncThunk(
   'github/getRepoLanguages',
@@ -186,7 +192,7 @@ export const getRepoLanguages = createAsyncThunk(
         repo: query.repo as string,
       });
 
-      let languages: Array<Record<string,any>> = [];
+      let languages: Array<Record<string, any>> = [];
 
       Object.entries(repoLanguages.data).forEach(([language, usage]) => {
         languages.push(
@@ -202,6 +208,30 @@ export const getRepoLanguages = createAsyncThunk(
       });
 
       return languages;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const getContributors = createAsyncThunk(
+  'github/getContributors',
+  async (query: GitHubRepoQuery) => {
+    try {
+      const repoContributors = await octokit.rest.repos.listContributors({
+        owner: query.owner,
+        repo: query.repo,
+      });
+
+      let contributors: Array<Record<string, any>> = [];
+
+      repoContributors.data.forEach((user) => {
+        contributors.push(user);
+      });
+
+      return contributors;
     } catch (error) {
       const err = error as Error;
       console.error(err);

@@ -29,7 +29,7 @@ class Portfolio extends Model {
     let projects: Set<Project> = new Set();
 
     data.forEach((project) => {
-      projects.add(new Project(project.id, project));
+      projects.add(new Project(project));
     });
 
     return projects;

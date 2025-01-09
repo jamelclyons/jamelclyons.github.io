@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -11,6 +11,7 @@ import { setMessage, setMessageType, setShowStatusBar } from '../controllers/mes
 
 import type { AppDispatch, RootState } from '../model/store';
 import Project from '../model/Project';
+import GitHubRepoQuery from '../model/GitHubRepoQuery';
 
 const ProjectPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,6 +23,14 @@ const ProjectPage: React.FC = () => {
 
   const project: Project = location.state;
 
+  const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>(new GitHubRepoQuery(project.owner, project.id));
+
+  useEffect(() => {
+    if (project) {
+      setRepoQuery(new GitHubRepoQuery(project.owner, project.id))
+    }
+  }, [project]);
+
   useEffect(() => {
     if (project.title) {
       document.title = project.title.toUpperCase();
@@ -29,10 +38,10 @@ const ProjectPage: React.FC = () => {
   }, [project]);
 
   useEffect(() => {
-    if (project.owner && project.id) {
+    if (repoQuery) {
       dispatch(getRepoContents({
-        owner: project.owner,
-        repo: project.id,
+        owner: repoQuery.owner,
+        repo: repoQuery.repo,
         path: ''
       }));
     }
@@ -58,7 +67,7 @@ const ProjectPage: React.FC = () => {
             <StatusBarComponent />
           </main>
         ) : (
-          project && <ProjectComponent project={project} />
+          project && <ProjectComponent project={project} repoQuery={repoQuery} />
         )}
       </>
     </section>
