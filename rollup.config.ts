@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 import resolve from '@rollup/plugin-node-resolve';
 
 const rollupConfig: RollupOptions = {
-  input: 'src/index.tsx', // Use the entry point as index.tsx
+  input: 'src/index.tsx',
   output: {
     dir: 'dist',
     entryFileNames: 'js/index.js',
@@ -13,7 +13,7 @@ const rollupConfig: RollupOptions = {
     assetFileNames: 'js/assets/[name].[hash].[ext]',
     format: 'esm',
     manualChunks: {
-      vendor: ['react', 'react-dom', 'react-router-dom'], // Create a vendor chunk
+      vendor: ['react', 'react-dom', 'react-router-dom'],
     },
   },
   plugins: [

@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"]  // Add paths alias for the src folder
+      "@/*": ["src/*"]
     },
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
@@ -19,7 +19,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "types": ["vite/client"],
-    "downlevelIteration": true,
+    "downlevelIteration": true
   },
   "include": ["src", "vite-env.d.ts"],
   "exclude": ["node_modules", "dist"]
