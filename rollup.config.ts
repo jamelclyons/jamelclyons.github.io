@@ -1,7 +1,7 @@
 import { RollupOptions } from 'rollup';
+
 import typescript from '@rollup/plugin-typescript';
 import react from '@vitejs/plugin-react';
-
 import resolve from '@rollup/plugin-node-resolve';
 
 const rollupConfig: RollupOptions = {
