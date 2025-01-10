@@ -10,12 +10,7 @@ const rollupConfig: RollupOptions = {
     format: 'esm',
     sourcemap: true,
   },
-  external: ['react', 'react-dom'],
-  watch: {
-    include: 'src/**/*.ts',
-    exclude: 'node_modules/**',
-    clearScreen: false,
-  },
+  external: ['react', 'react-dom'], // Keep this if using external CDNs
 };
 
 export default rollupConfig;

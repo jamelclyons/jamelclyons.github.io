@@ -2,8 +2,15 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import rollupOptions from './rollup.config';
 
+import path from 'path';
+
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
   plugins: [react()],
   define: {
     'import.meta.env': process.env,
@@ -20,14 +27,7 @@ export default defineConfig({
     },
   },
   build: {
-    chunkSizeWarningLimit: 1000,
-    manifest: true,
     sourcemap: true,
-    emptyOutDir: true,
-    modulePreload: false,
-    outDir: 'dist/',
-    assetsDir: 'js',
-    target: 'esnext',
     rollupOptions: rollupOptions,
   },
 });
