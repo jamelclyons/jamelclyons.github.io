@@ -1,6 +1,6 @@
 import Model from './Model';
 import ProjectSolution from './ProjectSolution';
-import ProjectURLs from './ProjectURLs';
+import { ProjectURLs } from './ProjectURLs';
 import ProjectProcess from './ProjectProcess';
 import ProjectDesign from './ProjectDesign';
 import ProjectDevelopment from './ProjectDevelopment';

@@ -1,7 +1,7 @@
 import Model from './Model';
-import {ProjectURL} from './ProjectURL';
+import { ProjectURL } from './ProjectURL';
 
-class ProjectURLs extends Model {
+export class ProjectURLs extends Model {
   homepage: ProjectURL;
   ios: ProjectURL;
   android: ProjectURL;
@@ -9,10 +9,12 @@ class ProjectURLs extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    this.homepage = data?.homepage ? new ProjectURL(data?.homepage) : new ProjectURL;
-    this.ios = data?.ios ? new ProjectURL(data?.ios) : new ProjectURL;
-    this.android = data?.android ? new ProjectURL(data?.android) : new ProjectURL;
+    this.homepage = data?.homepage
+      ? new ProjectURL(data?.homepage)
+      : new ProjectURL();
+    this.ios = data?.ios ? new ProjectURL(data?.ios) : new ProjectURL();
+    this.android = data?.android
+      ? new ProjectURL(data?.android)
+      : new ProjectURL();
   }
 }
-
-export default ProjectURLs;

@@ -20,7 +20,8 @@
   "scripts": {
     "refactor": "./refactor.sh && npm run push",
     "push": "npm run update-prod",
-    "dev": "npm-run-all --parallel vite gulp",
+    "dev": "npm-run-all --parallel tsc:dev vite gulp",
+    "tsc:dev": "tsc --watch",
     "sync": "browser-sync start --config browsersync.config.js",
     "vite": "vite -c vite.config.ts",
     "build": "npm-run-all gulp:build vite:build",

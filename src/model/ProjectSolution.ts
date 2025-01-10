@@ -1,7 +1,7 @@
 import Model from './Model';
 import Feature from './Feature';
 import Image from './Image';
-import ProjectURLs from './ProjectURLs';
+import { ProjectURLs } from './ProjectURLs';
 import Gallery from './Gallery';
 
 class ProjectSolution extends Model {
@@ -18,7 +18,7 @@ class ProjectSolution extends Model {
     this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
     this.features = data?.features
       ? this.getFeatures(data.features)
-      : new Set;
+      : new Set();
     this.content = data?.content || [];
     this.currency = data?.currency || '';
     this.price = data?.price || 0;
