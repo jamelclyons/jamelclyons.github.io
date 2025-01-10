@@ -11,8 +11,8 @@ import ProjectTeamComponent from './ProjectTeam';
 import { getContributors } from '../../../controllers/githubSlice';
 
 interface ProjectDetailsProps {
-  details: ProjectDetails,
-  contributorsQuery: GitHubRepoQuery
+  details: ProjectDetails;
+  contributorsQuery: GitHubRepoQuery;
 }
 
 const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ details, contributorsQuery }) => {

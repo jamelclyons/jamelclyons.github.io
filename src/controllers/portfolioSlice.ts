@@ -39,7 +39,7 @@ export const getPortfolio = createAsyncThunk(
   async (repos: Array<Repo>) => {
     try {
       let projects: Set<Record<string, any>> = new Set();
-      let repoProjects: Set<Project> = new Set();
+      let repoProjects: Set<Record<string, any>> = new Set();
 
       if (Array.isArray(repos) && repos.length > 0) {
         repos.forEach((repo) => {
@@ -53,7 +53,7 @@ export const getPortfolio = createAsyncThunk(
       const querySnapshot: QuerySnapshot = await getDocs(portfolioCollection);
 
       if (querySnapshot.size > 0) {
-        repoProjects.forEach((project: Project) => {
+        repoProjects.forEach((project: Record<string,any>) => {
           const matchingDoc = querySnapshot.docs.find(
             (doc) => doc.id === project.id
           );
