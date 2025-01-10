@@ -2,6 +2,8 @@ import { RollupOptions } from 'rollup';
 import typescript from '@rollup/plugin-typescript';
 import react from '@vitejs/plugin-react';
 
+import resolve from '@rollup/plugin-node-resolve';
+
 const rollupConfig: RollupOptions = {
   input: 'src/index.tsx', // Use the entry point as index.tsx
   output: {
@@ -15,8 +17,9 @@ const rollupConfig: RollupOptions = {
     },
   },
   plugins: [
-    typescript(), // Handle TypeScript files
-    react(), // Handle React JSX/TSX files
+    resolve(),
+    typescript(),
+    react(),
   ],
 };
 

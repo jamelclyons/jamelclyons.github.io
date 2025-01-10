@@ -3,7 +3,7 @@
   "homepage": "https://jamelclyons.github.io/",
   "version": "1.0.0",
   "description": "GitHub Portfolio",
-  "main": "index.js",
+  "main": "dist/js/index.js",
   "author": {
     "name": "Jamel C. Lyons",
     "title": "Software Development Engineer",
@@ -54,6 +54,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-typescript": "^12.1.2",
     "@types/marked": "^5.0.2",
     "@types/react": "^18.3.18",
