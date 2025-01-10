@@ -1,7 +1,9 @@
 import { RollupOptions } from 'rollup';
+import typescript from '@rollup/plugin-typescript';
+import react from '@vitejs/plugin-react';
 
 const rollupConfig: RollupOptions = {
-  input: './index.html',
+  input: 'src/index.tsx', // Use the entry point as index.tsx
   output: {
     dir: 'dist',
     entryFileNames: 'js/index.js',
@@ -12,6 +14,10 @@ const rollupConfig: RollupOptions = {
       vendor: ['react', 'react-dom', 'react-router-dom'], // Create a vendor chunk
     },
   },
+  plugins: [
+    typescript(), // Handle TypeScript files
+    react(), // Handle React JSX/TSX files
+  ],
 };
 
 export default rollupConfig;
