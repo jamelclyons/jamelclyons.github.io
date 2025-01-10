@@ -26,6 +26,7 @@
     "build": "npm-run-all gulp:build vite:build",
     "vite:build": "vite build",
     "gulp:build": "gulp build",
+    "serve": "vite serve",
     "preview": "vite preview",
     "update-dev": "git push github-portfolio development",
     "update-prod": "git push github-portfolio",

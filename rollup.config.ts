@@ -8,8 +8,10 @@ const rollupConfig: RollupOptions = {
     chunkFileNames: 'js/chunks/[name].[hash].js',
     assetFileNames: 'js/assets/[name].[hash].[ext]',
     format: 'esm',
+    manualChunks: {
+      vendor: ['react', 'react-dom', 'react-router-dom'], // Create a vendor chunk
+    },
   },
-  external: ['react', 'react-dom'], // Keep this if using external CDNs
 };
 
 export default rollupConfig;

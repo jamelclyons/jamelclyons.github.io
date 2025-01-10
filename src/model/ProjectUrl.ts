@@ -6,9 +6,9 @@ class ProjectURL extends Model {
   url: string;
   image: Image;
 
-  constructor(data?: Record<string, any>) {
+  constructor(data: Record<string, any> = {}) {
     super();
-    
+
     this.name = data?.name;
     this.url = data?.url;
     this.image = new Image(data?.image);
