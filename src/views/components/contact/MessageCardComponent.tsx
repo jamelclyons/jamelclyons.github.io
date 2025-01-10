@@ -1,61 +1,85 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import { useDispatch } from 'react-redux';
 
+import type { AppDispatch, RootState } from '../../../model/store';
+
 import { sendEmail } from '../../../controllers/contactSlice';
+import {
+  setMessage,
+  setMessageType,
+  setShowStatusBar,
+} from '../../../controllers/messageSlice';
 
-function MessageCardComponent(props) {
-  const { page } = props;
+interface MessageCardComponentProps {
+  page: string;
+}
 
-  const dispatch = useDispatch();
+const MessageCardComponent: React.FC<MessageCardComponentProps> = ({ page }) => {
+  const dispatch = useDispatch<AppDispatch>();
 
-  const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    subject: '',
-    message: '',
-  });
+  const [firstName, setFirstName] = useState<string>();
+  const [lastName, setLastName] = useState<string>();
+  const [email, setEmail] = useState<string>();
+  const [subject, setSubject] = useState<string>();
+  const [msg, setMsg] = useState<string>();
 
-  const { firstname, lastname, email, subject, msg } = formData;
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    try {
+      const target = e.target as HTMLInputElement;
+
+      const { name, value } = target;
+
+      if (name === 'first_name') { setFirstName(value); }
+
+      if (name === 'last_name') { setLastName(value); }
+
+      if (name === 'email') { setEmail(value); }
+
+      if (name === 'subject') { setSubject(value) }
+
+      if (name === 'msg') { setMsg(value) }
+
+    } catch (error) {
+      const err = error as Error;
+      dispatch(setMessage(err.message));
+      dispatch(setMessageType('error'));
+    }
   };
 
   const handleSubmit = async () => {
-    dispatch(sendEmail({page, firstname, lastname, email, subject, msg}));
+    const form = document.getElementById('message_card') as HTMLFormElement;
+    const formData = new FormData(form);
+console
+    // dispatch(sendEmail(email));
   };
 
   return (
     <>
-      <form className="message-card">
+      <form className="message-card" id='message_card'>
         <table>
           <tbody>
             <tr>
               <td>
                 <input
                   type="text"
-                  name="firstname"
+                  name="first_name"
                   className="input"
                   id="first_name"
                   placeholder="First Name"
                   onChange={handleInputChange}
-                  value={firstname}
+                  value={firstName}
                 />
               </td>
               <td>
                 <input
                   type="text"
-                  name="lastname"
+                  name="last_name"
                   className="input"
                   id="last_name"
                   placeholder="Last Name"
                   onChange={handleInputChange}
-                  value={lastname}
+                  value={lastName}
                 />
               </td>
             </tr>
@@ -87,7 +111,6 @@ function MessageCardComponent(props) {
               <td colSpan={2}>
                 <textarea
                   name="msg"
-                  type="text"
                   id="contact_message"
                   placeholder="Message"
                   onChange={handleInputChange}

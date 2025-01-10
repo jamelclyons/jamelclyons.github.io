@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } from 'react';
+import React, { useEffect, useState, ChangeEvent, MouseEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../model/store';

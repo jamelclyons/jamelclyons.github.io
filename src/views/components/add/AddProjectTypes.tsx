@@ -25,7 +25,7 @@ const AddProjectTypes: React.FC = () => {
 
   const { addLoading, addStatusCode, addSuccessMessage, addErrorMessage } =
     useSelector((state: RootState) => state.add);
-  const { projectTypes } = useSelector((state: RootState) => state.taxonomies);
+  const { projectTypesObject } = useSelector((state: RootState) => state.taxonomies);
 
   const [id, setId] = useState('');
   const [title, setTitle] = useState('');
@@ -57,18 +57,19 @@ const AddProjectTypes: React.FC = () => {
     }
   };
 
-  const projectType = new Taxonomy(
-    id,
-    'project-types',
-    title,
-    icon_url,
-    class_name
-  );
 
   const handleAddProjectType = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     try {
+      const projectType = new Taxonomy({
+        id: id,
+        type: 'project-types',
+        title: title,
+        icon_url: icon_url,
+        class_name: class_name
+      });
+
       if (projectType.isValid()) {
         dispatch(addProjectType(projectType));
 

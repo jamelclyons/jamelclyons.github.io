@@ -22,7 +22,7 @@ const AddFrameworks: React.FC = () => {
 
   const { addLoading, addStatusCode, addSuccessMessage, addErrorMessage } =
     useSelector((state: RootState) => state.add);
-  const { frameworks } = useSelector(
+  const { frameworksObject } = useSelector(
     (state: RootState) => state.taxonomies
   );
 
@@ -56,18 +56,18 @@ const AddFrameworks: React.FC = () => {
     }
   };
 
-  const framework = new Taxonomy(
-    id,
-    'technologies',
-    title,
-    icon_url,
-    class_name
-  );
-
   const handleAddFramework = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     try {
+      const framework = new Taxonomy({
+        id: id,
+        type: 'technologies',
+        title: title,
+        icon_url: icon_url,
+        class_name: class_name
+      });
+
       dispatch(addFramework(framework));
 
       dispatch(setMessageType('info'));

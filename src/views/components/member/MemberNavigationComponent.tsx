@@ -1,9 +1,13 @@
 import React from 'react';
 
-function MemberNavigationComponent(props) {
-  const { resume, portfolioElement } = props;
-  
-  const scrollToSection = (sectionId) => {
+interface MemberNavigationComponentProps {
+  resume: string;
+  portfolioElement: string;
+}
+
+const MemberNavigationComponent: React.FC<MemberNavigationComponentProps> = ({ resume, portfolioElement }) => {
+
+  const scrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);
 
     if (section) {

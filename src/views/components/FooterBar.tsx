@@ -5,7 +5,7 @@ import ContactBar from './ContactBar';
 import ContactMethods from '../../model/ContactMethods';
 
 interface SocialBarProps {
-  contactMethods: Record<string, any>;
+  contactMethods: ContactMethods;
 }
 
 const SocialBar: React.FC<SocialBarProps> = ({ contactMethods }) => {

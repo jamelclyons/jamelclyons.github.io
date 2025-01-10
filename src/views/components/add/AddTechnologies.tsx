@@ -24,7 +24,7 @@ const AddTechnologies: React.FC = () => {
 
   const { addLoading, addStatusCode, addSuccessMessage, addErrorMessage } =
     useSelector((state: RootState) => state.add);
-  const { technologies } = useSelector(
+  const { technologiesObject } = useSelector(
     (state: RootState) => state.taxonomies
   );
 
@@ -58,13 +58,13 @@ const AddTechnologies: React.FC = () => {
     }
   };
 
-  const technology = new Taxonomy(
-    id,
-    'technologies',
-    title,
-    icon_url,
-    class_name
-  );
+  const technology = new Taxonomy({
+    id: id,
+    type: 'technologies',
+    title: title,
+    icon_url: icon_url,
+    class_name: class_name
+  });
 
   const handleAddTechnology = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();

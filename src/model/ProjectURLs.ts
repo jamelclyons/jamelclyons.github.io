@@ -1,5 +1,5 @@
 import Model from './Model';
-import ProjectURL from './ProjectURL';
+import {ProjectURL} from './ProjectURL';
 
 class ProjectURLs extends Model {
   homepage: ProjectURL;

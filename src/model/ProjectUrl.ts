@@ -1,7 +1,7 @@
 import Model from './Model';
 import Image from './Image';
 
-class ProjectURL extends Model {
+export class ProjectURL extends Model {
   name: string;
   url: string;
   image: Image;
@@ -14,5 +14,3 @@ class ProjectURL extends Model {
     this.image = new Image(data?.image);
   }
 }
-
-export default ProjectURL;

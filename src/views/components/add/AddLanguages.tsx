@@ -25,7 +25,7 @@ const AddLanguages: React.FC = () => {
 
   const { addLoading, addStatusCode, addSuccessMessage, addErrorMessage } =
     useSelector((state: RootState) => state.add);
-  const { languages } = useSelector(
+  const { languagesObject } = useSelector(
     (state: RootState) => state.taxonomies
   );
 
@@ -47,7 +47,7 @@ const AddLanguages: React.FC = () => {
         setTitle(value);
       } else if (name === 'icon_url') {
         setIconUrl(value);
-      } 
+      }
     } catch (error) {
       const err = error as Error;
       dispatch(setMessage(err.message));
@@ -55,18 +55,19 @@ const AddLanguages: React.FC = () => {
     }
   };
 
-  const language = new Taxonomy(
-    id,
-    'languages',
-    title,
-    icon_url,
-    class_name
-  );
 
   const handleAddLanguage = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     try {
+      const language = new Taxonomy({
+        id: id,
+        type: 'languages',
+        title: title,
+        icon_url: icon_url,
+        class_name: class_name
+      });
+
       dispatch(addLanguage(language));
 
       dispatch(setMessageType('info'));
