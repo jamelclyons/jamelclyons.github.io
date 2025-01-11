@@ -15,9 +15,9 @@ export default defineConfig({
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
   },
   plugins: [react(), typescript({ tsconfig: './tsconfig.json' })],
-  define: {
-    'import.meta.env': process.env,
-  },
+  // define: {
+  //   'import.meta.env': process.env,
+  // },
   base: '/',
   server: {
     port: 3000,

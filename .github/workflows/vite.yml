@@ -54,11 +54,6 @@ jobs:
           VITE_OCTOKIT_AUTH: ${{ secrets.VITE_OCTOKIT_AUTH }}
         run: echo "Environment variables are set."
 
-      - name: Debug environment variables
-        run: |
-          echo "VITE_OCTOKIT_AUTH is ${{ secrets.VITE_OCTOKIT_AUTH }}"
-          echo "VITE_FIREBASE_API_KEY is ${{ secrets.VITE_FIREBASE_API_KEY }}"
-
       # Step 5: Build the project
       - name: Build project
         run: npm run build
