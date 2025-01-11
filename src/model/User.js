@@ -107,8 +107,8 @@ var User = /** @class */ (function (_super) {
         _this.title = (data === null || data === void 0 ? void 0 : data.title) || author.title;
         _this.bio = (data === null || data === void 0 ? void 0 : data.bio) || '';
         _this.email = (data === null || data === void 0 ? void 0 : data.email) || author.contact.email;
-        _this.phone = (data === null || data === void 0 ? void 0 : data.phone) || '';
-        _this.resume = (data === null || data === void 0 ? void 0 : data.resume) || '';
+        _this.phone = (data === null || data === void 0 ? void 0 : data.phone) || author.contact.phone;
+        _this.resume = (data === null || data === void 0 ? void 0 : data.resume) || author.resume;
         _this.website = (data === null || data === void 0 ? void 0 : data.website) || homepage;
         _this.organizations = _this.setOrganizations(data === null || data === void 0 ? void 0 : data.organizations) || [];
         _this.repos = (data === null || data === void 0 ? void 0 : data.repos) || '';

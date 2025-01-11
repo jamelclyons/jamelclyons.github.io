@@ -10,11 +10,11 @@ const Resume: React.FC<ResumeProps> = ({ user }) => {
   useEffect(() => {
     document.title = `Resume - ${user?.name}`;
   }, []);
-
+console.log(user.resume)
   return (
     <section className="resume">
       <main>
-        <iframe id="pdfViewer" src="../../Resume.pdf"></iframe>
+        <iframe id="pdfViewer" src={user.resume}></iframe>
       </main>
     </section>
   );

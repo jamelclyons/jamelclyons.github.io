@@ -47,6 +47,7 @@ interface GithubState {
   repo: Record<string, any>;
   contents: Array<Record<string, any>>;
   languagesObject: Array<Record<string, any>>;
+  technologiesObject: Array<Record<string,any>>;
   contributorsObject: Array<Record<string, any>>;
 }
 
@@ -62,6 +63,7 @@ const initialState: GithubState = {
   repo: {},
   contents: [],
   languagesObject: [],
+  technologiesObject: [],
   contributorsObject: [],
 };
 
@@ -193,8 +195,22 @@ export const getRepoLanguages = createAsyncThunk(
       });
 
       let languages: Array<Record<string, any>> = [];
+      let technologies: Array<Record<string, any>> = [];
 
       Object.entries(repoLanguages.data).forEach(([language, usage]) => {
+        if (language === 'Dockerfile') {
+          technologies.push(
+            new Taxonomy({
+              id: 'docker',
+              type: 'technology',
+              title: 'Docker',
+              icon_url: '',
+              class_name: '',
+              usage: usage,
+            }).toObject()
+          );
+        }
+
         languages.push(
           new Taxonomy({
             id: language.toLowerCase(),
@@ -207,7 +223,7 @@ export const getRepoLanguages = createAsyncThunk(
         );
       });
 
-      return languages;
+      return { languages: languages, technologies: technologies };
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -329,7 +345,8 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubLoading = false;
         state.githubErrorMessage = '';
         state.githubError = null;
-        state.languagesObject = action.payload;
+        state.languagesObject = action.payload?.languages;
+        state.technologiesObject = action.payload?.technologies;
       })
       .addCase(getSocialAccounts.fulfilled, (state, action) => {
         state.githubLoading = false;

@@ -25,7 +25,7 @@ class User extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    const { homepage, author } = packageJson;
+    const { homepage, author} = packageJson;
 
     this.id = this.getGitHubUsername(homepage);
     this.avatarURL = data?.avatar_url || '';
@@ -33,8 +33,8 @@ class User extends Model {
     this.title = data?.title || author.title;
     this.bio = data?.bio || '';
     this.email = data?.email || author.contact.email;
-    this.phone = data?.phone || '';
-    this.resume = data?.resume || '';
+    this.phone = data?.phone || author.contact.phone;
+    this.resume = data?.resume || author.resume;
     this.website = data?.website || homepage;
     this.organizations = this.setOrganizations(data?.organizations) || [];
     this.repos = data?.repos || '';

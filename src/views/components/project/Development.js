@@ -69,9 +69,10 @@ var Development = function (_a) {
     var _c = __read(useState(''), 2), repo = _c[0], setRepo = _c[1];
     var _d = __read(useState(new Set()), 2), types = _d[0], setTypes = _d[1];
     var _e = __read(useState(), 2), languagesObject = _e[0], setLanguagesObject = _e[1];
-    var _f = __read(useState(new Set()), 2), languages = _f[0], setLanguages = _f[1];
-    var _g = __read(useState(new Set()), 2), frameworks = _g[0], setFrameworks = _g[1];
-    var _h = __read(useState(new Set()), 2), technologies = _h[0], setTechnologies = _h[1];
+    var _f = __read(useState(), 2), technologiesObject = _f[0], setTechnologiesObject = _f[1];
+    var _g = __read(useState(new Set()), 2), languages = _g[0], setLanguages = _g[1];
+    var _h = __read(useState(new Set()), 2), frameworks = _h[0], setFrameworks = _h[1];
+    var _j = __read(useState(new Set()), 2), technologies = _j[0], setTechnologies = _j[1];
     useEffect(function () {
         if (repoURL) {
             try {
@@ -94,7 +95,8 @@ var Development = function (_a) {
                 repo: repo,
                 path: ''
             })).unwrap().then(function (contents) {
-                setLanguagesObject(contents);
+                setLanguagesObject(contents.languages);
+                setTechnologiesObject(contents.technologies);
             });
         }
     }, [owner, repo, dispatch]);

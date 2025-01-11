@@ -7,6 +7,10 @@
   "author": {
     "name": "Jamel C. Lyons",
     "title": "Software Development Engineer",
+    "company": {
+      "name": "J.C. LYONS ENTERPRISES LLC",
+      "founded_on": "06/16/2010"
+    },
     "contact": {
       "gitHub": "https://github.com/jamelclyons",
       "linkedIn": "https://www.linkedin.com/in/jamelclyons/",
@@ -14,7 +18,8 @@
       "instagram": "https://www.instagram.com/jamelclyons/",
       "phone": "+16145003703",
       "email": "jamel.c.lyons@gmail.com"
-    }
+    },
+    "resume": "https://drive.google.com/file/d/1oUdMUbpC4EzCHnybStxQTSM33tUcfX7v/preview"
   },
   "license": "ISC",
   "scripts": {

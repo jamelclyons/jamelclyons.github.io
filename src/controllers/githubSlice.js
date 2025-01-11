@@ -85,6 +85,7 @@ var initialState = {
     repo: {},
     contents: [],
     languagesObject: [],
+    technologiesObject: [],
     contributorsObject: [],
 };
 export var getUser = createAsyncThunk('github/getUser', function (username) { return __awaiter(void 0, void 0, void 0, function () {
@@ -225,7 +226,7 @@ export var getRepoContents = createAsyncThunk('github/getRepoContents', function
     });
 }); });
 export var getRepoLanguages = createAsyncThunk('github/getRepoLanguages', function (query) { return __awaiter(void 0, void 0, void 0, function () {
-    var repoLanguages, languages_1, error_7, err;
+    var repoLanguages, languages_1, technologies_1, error_7, err;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -237,8 +238,19 @@ export var getRepoLanguages = createAsyncThunk('github/getRepoLanguages', functi
             case 1:
                 repoLanguages = _a.sent();
                 languages_1 = [];
+                technologies_1 = [];
                 Object.entries(repoLanguages.data).forEach(function (_a) {
                     var _b = __read(_a, 2), language = _b[0], usage = _b[1];
+                    if (language === 'Dockerfile') {
+                        technologies_1.push(new Taxonomy({
+                            id: 'docker',
+                            type: 'technology',
+                            title: 'Docker',
+                            icon_url: '',
+                            class_name: '',
+                            usage: usage,
+                        }).toObject());
+                    }
                     languages_1.push(new Taxonomy({
                         id: language.toLowerCase(),
                         type: 'language',
@@ -248,7 +260,7 @@ export var getRepoLanguages = createAsyncThunk('github/getRepoLanguages', functi
                         usage: usage,
                     }).toObject());
                 });
-                return [2 /*return*/, languages_1];
+                return [2 /*return*/, { languages: languages_1, technologies: technologies_1 }];
             case 2:
                 error_7 = _a.sent();
                 err = error_7;
@@ -377,10 +389,12 @@ var githubSliceOptions = {
             state.contents = action.payload;
         })
             .addCase(getRepoLanguages.fulfilled, function (state, action) {
+            var _a, _b;
             state.githubLoading = false;
             state.githubErrorMessage = '';
             state.githubError = null;
-            state.languagesObject = action.payload;
+            state.languagesObject = (_a = action.payload) === null || _a === void 0 ? void 0 : _a.languages;
+            state.technologiesObject = (_b = action.payload) === null || _b === void 0 ? void 0 : _b.technologies;
         })
             .addCase(getSocialAccounts.fulfilled, function (state, action) {
             state.githubLoading = false;

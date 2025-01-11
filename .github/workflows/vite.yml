@@ -2,11 +2,9 @@
 name: Deploy static content to Pages
 
 on:
-  # Triggers on pushes to the default branch (master)
   push:
     branches: ['master']
 
-  # Allows manual triggers from the Actions tab
   workflow_dispatch:
 
 permissions:
@@ -25,18 +23,15 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
 
-      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm ci
 
@@ -53,17 +48,14 @@ jobs:
           VITE_OCTOKIT_AUTH: ${{ secrets.VITE_OCTOKIT_AUTH }}
         run: npm run build
 
-      # Step 6: Configure GitHub Pages
       - name: Configure Pages
         uses: actions/configure-pages@v4
 
-      # Step 7: Upload build artifact
       - name: Upload artifact to Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: './dist'
 
-      # Step 8: Deploy to GitHub Pages
       - name: Deploy to Pages
         id: deployment
         uses: actions/deploy-pages@v4

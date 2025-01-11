@@ -15,6 +15,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { Privacy, privacyFromString } from './enum/Enums';
 import Model from './Model';
+import packageJson from '../../package.json';
 var ProjectDetails = /** @class */ (function (_super) {
     __extends(ProjectDetails, _super);
     function ProjectDetails(data) {
@@ -61,12 +62,13 @@ var ProjectDetails = /** @class */ (function (_super) {
             writable: true,
             value: void 0
         });
+        var author = packageJson.author;
         _this.privacy = (data === null || data === void 0 ? void 0 : data.privacy)
             ? privacyFromString(data === null || data === void 0 ? void 0 : data.privacy)
             : Privacy.Private;
         _this.clientID = (data === null || data === void 0 ? void 0 : data.client_id) || '0';
-        _this.clientName = (data === null || data === void 0 ? void 0 : data.client_name) || 'J.C. LYONS ENTERPRISES LLC';
-        _this.startDate = (data === null || data === void 0 ? void 0 : data.start_date) || '06/16/2010';
+        _this.clientName = (data === null || data === void 0 ? void 0 : data.client_name) || author.company.name;
+        _this.startDate = (data === null || data === void 0 ? void 0 : data.start_date) || author.company.founded_on;
         _this.endDate = (data === null || data === void 0 ? void 0 : data.end_date) || 'Active Development';
         _this.content = (data === null || data === void 0 ? void 0 : data.content) || '';
         _this.teamList = (data === null || data === void 0 ? void 0 : data.team_list) || [];

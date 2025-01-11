@@ -33,6 +33,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
   const [repo, setRepo] = useState<string>('');
   const [types, setTypes] = useState<Set<Taxonomy>>(new Set());
   const [languagesObject, setLanguagesObject] = useState<Array<Record<string, any>>>();
+  const [technologiesObject, setTechnologiesObject] = useState<Array<Record<string, any>>>();
   const [languages, setLanguages] = useState<Set<Taxonomy>>(new Set());
   const [frameworks, setFrameworks] = useState<Set<Taxonomy>>(new Set());
   const [technologies, setTechnologies] = useState<Set<Taxonomy>>(new Set());
@@ -60,7 +61,9 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
         repo: repo,
         path: ''
       })).unwrap().then((contents) => {
-        setLanguagesObject(contents)
+        setLanguagesObject(contents.languages)
+        setTechnologiesObject(contents.technologies)
+
       });
     }
   }, [owner, repo, dispatch]);
