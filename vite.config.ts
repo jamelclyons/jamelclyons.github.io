@@ -10,7 +10,7 @@ import typescript from '@rollup/plugin-typescript';
 export default defineConfig({
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': path.resolve(__dirname, 'src'),
     },
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
   },
@@ -35,5 +35,3 @@ export default defineConfig({
     rollupOptions: rollupOptions,
   },
 });
-
-console.log('Using tsconfig:', path.resolve(__dirname, './tsconfig.json'));
