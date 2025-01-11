@@ -35,3 +35,5 @@ export default defineConfig({
     rollupOptions: rollupOptions,
   },
 });
+
+console.log('Using tsconfig:', path.resolve(__dirname, './tsconfig.json'));
