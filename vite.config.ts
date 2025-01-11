@@ -18,7 +18,7 @@ export default defineConfig({
   define: {
     'import.meta.env': process.env,
   },
-  base: './',
+  base: '/jamelclyons.github.io/',
   server: {
     port: 3000,
     cors: true,
