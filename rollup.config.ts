@@ -16,11 +16,7 @@ const rollupConfig: RollupOptions = {
       vendor: ['react', 'react-dom', 'react-router-dom'],
     },
   },
-  plugins: [
-    resolve(),
-    typescript(),
-    react(),
-  ],
+  plugins: [resolve(), typescript({ tsconfig: './tsconfig.json' }), react()],
 };
 
 export default rollupConfig;
