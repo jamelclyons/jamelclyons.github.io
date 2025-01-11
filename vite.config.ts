@@ -4,14 +4,17 @@ import rollupOptions from './rollup.config';
 
 import path from 'path';
 
+import typescript from '@rollup/plugin-typescript';
+
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
   },
-  plugins: [react()],
+  plugins: [react(), typescript({ tsconfig: './tsconfig.json' })],
   define: {
     'import.meta.env': process.env,
   },
