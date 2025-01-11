@@ -1,11 +1,13 @@
 import { RollupOptions } from 'rollup';
 
+import path from 'path';
+
 import typescript from '@rollup/plugin-typescript';
 import react from '@vitejs/plugin-react';
 import resolve from '@rollup/plugin-node-resolve';
 
 const rollupConfig: RollupOptions = {
-  input: 'src/index.tsx',
+  input: path.resolve(__dirname, 'index.html'),
   output: {
     dir: 'dist',
     entryFileNames: 'js/index.js',
