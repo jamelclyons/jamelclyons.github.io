@@ -32,6 +32,7 @@ export default defineConfig({
   build: {
     sourcemap: true,
     chunkSizeWarningLimit: 1000,
+    emptyOutDir: false,
     rollupOptions: rollupOptions,
   },
 });
