@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Member from '../member/Member';
+import Member from '../member/MemberCard';
 
 import User from '../../../model/User';
 

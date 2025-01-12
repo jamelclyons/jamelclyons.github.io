@@ -9,3 +9,19 @@ export function camelCaseToPath(input: string) {
 export function snakeCaseToPath(input: string) {
   return input.replace(/_/, '-');
 }
+
+export function formatTime(input: string) {
+  const date = new Date(input);
+
+  const pad = (num: number) => String(num).padStart(2, '0');
+
+  const mm = pad(date.getMonth() + 1);
+  const dd = pad(date.getDate());
+  const yyyy = date.getFullYear();
+
+  const hh = pad(date.getHours());
+  const min = pad(date.getMinutes());
+  const ss = pad(date.getSeconds());
+
+  return `${mm}/${dd}/${yyyy} @ ${hh}:${min}:${ss}`;
+}

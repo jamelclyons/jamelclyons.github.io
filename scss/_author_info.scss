@@ -2,32 +2,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
+  width: 100%;
 
-  .author-bio-card {
-    width: fit-content;
+  .author-bio-card{
+    display: flex;
+    gap: 1rem;
     background-color: black;
     color: white;
-  }
-
-  .author {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    width: 100%;
-
-    .author-card {
-      box-shadow: none;
-
-      .author-pic {
-        img {
-          width: auto;
-          max-height: 50vh;
-          border-radius: var(--border-radius);
-          box-shadow: var(--card-box-shadow);
-        }
-      }
-    }
   }
 }

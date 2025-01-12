@@ -21,7 +21,7 @@ const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ details, contr
   const { privacy, clientID, clientName, startDate, endDate } = details;
 
   const [teamList, setTeamList] = useState<Array<User>>();
-
+console.log(privacy)
   useEffect(() => {
     if (privacy === 'public' || clientID === '0') {
       const getTeamList = async () => {
@@ -49,7 +49,7 @@ const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ details, contr
       getTeamList();
     }
   }, [privacy, clientID, dispatch]);
-
+console.log(teamList)
   return (
     <>
       {(privacy === 'public' || clientID === '0') && (

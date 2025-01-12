@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../model/store';
 import ProjectDevelopment from '../../../model/ProjectDevelopment';
 import Taxonomy from '../../../model/Taxonomy';
+import Image from '@/model/Image';
 
 import CheckList from './CheckList';
 import ContentComponent from '../content/ContentComponent';
@@ -11,6 +12,7 @@ import ProjectURLs from './ProjectURLsComponent';
 import Versions from './Versions';
 import TaxList from '../TaxList';
 import TaxListIcon from '../TaxListIcon';
+import ImageComponent from '../ImageComponent';
 
 import {
   getProjectType,
@@ -37,6 +39,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
   const [languages, setLanguages] = useState<Set<Taxonomy>>(new Set());
   const [frameworks, setFrameworks] = useState<Set<Taxonomy>>(new Set());
   const [technologies, setTechnologies] = useState<Set<Taxonomy>>(new Set());
+  const [gitHub, setGitHub] = useState<Image>(new Image());
 
   useEffect(() => {
     if (repoURL) {
@@ -47,6 +50,17 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
         setOwner(parts[0]);
         setRepo(parts[1]);
+      } catch (error) {
+        const err = error as Error;
+        console.error('Invalid URL format:', err.message);
+      }
+    }
+  }, [repoURL, dispatch]);
+
+  useEffect(() => {
+    if (repoURL) {
+      try {
+       setGitHub(new Image({title: 'GitHub', url: '', class_name: 'fa fa-github fa-fw'}));
       } catch (error) {
         const err = error as Error;
         console.error('Invalid URL format:', err.message);
@@ -186,7 +200,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
           return [];
         }
       };
-
+console.log(technologiesObject);
       const processTechnologies = async () => {
         const taxTechnologies = await fetchTechnologies();
 
@@ -239,8 +253,10 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
         {/* <Versions versions_list={development?.versionsList} /> */}
 
         {repoURL !== '' &&
-          <button onClick={handleSeeCode}>
-            <h3 className='title'>See Code</h3>
+          <button className='repo' onClick={handleSeeCode}>
+            <h3 className='title'>
+              <ImageComponent image={gitHub} />
+              See Code</h3>
           </button>}
       </div>
     }</>

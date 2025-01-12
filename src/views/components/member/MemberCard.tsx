@@ -2,21 +2,21 @@ import React from 'react';
 
 import User from '../../../model/User';
 
+import MemberPic from './MemberPic';
 import MemberContact from './MemberContact';
 
 interface MemberProps {
   user: User
 }
 
-const Member: React.FC<MemberProps> = ({ user }) => {
+const MemberCard: React.FC<MemberProps> = ({ user }) => {
 
   return (
     <>
       <div className="author-card card">
-        <div className="author-pic">
-          <img src={user?.avatarURL} alt="" />
-        </div>
-        <h2 className="title">{user?.title}</h2>
+        <MemberPic user={user} />
+
+        <h3 className="title">{user?.title}</h3>
 
         <MemberContact contactMethods={user.contactMethods} />
       </div>
@@ -24,4 +24,4 @@ const Member: React.FC<MemberProps> = ({ user }) => {
   );
 }
 
-export default Member;
+export default MemberCard;

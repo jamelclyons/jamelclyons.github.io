@@ -1,16 +1,19 @@
 @use '_gallery.scss';
+@use '_project_description.scss';
 @use '_project_status.scss';
 @use '_project_skills_bar.scss';
 
 button.project {
   background-color: white;
+  width: fit-content;
+  max-width: 90vw;
 
   .project-card {
     height: 100%;
     padding: 1rem;
 
     .title {
-      color: var(--color-text);
+      color: var(--card-color);
     }
   }
 }

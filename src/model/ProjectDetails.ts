@@ -5,7 +5,7 @@ import User from './User';
 import packageJson from '../../package.json';
 
 class ProjectDetails extends Model {
-  privacy: Privacy = Privacy.Private;
+  privacy: Privacy;
   clientID: string;
   clientName: string;
   startDate: string;
@@ -20,7 +20,7 @@ class ProjectDetails extends Model {
 
     this.privacy = data?.privacy
       ? privacyFromString(data?.privacy)
-      : Privacy.Private;
+      : Privacy.Public;
     this.clientID = data?.client_id || '0';
     this.clientName = data?.client_name || author.company.name;
     this.startDate = data?.start_date || author.company.founded_on;

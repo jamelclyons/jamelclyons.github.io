@@ -53,7 +53,7 @@ const ContactComponent: React.FC<ContactProps> = ({ user }) => {
     <main>
       {contactPage?.title && <h2 className="title">{contactPage.title}</h2>}
 
-      <div className="contact-card card">
+      <div className="contact-card">
         <MessageCardComponent page={'/contact'} />
       </div>
 

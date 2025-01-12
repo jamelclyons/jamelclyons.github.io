@@ -24,7 +24,7 @@ export default defineConfig({
     cors: true,
     open: true,
     watch: {
-      ignored: ['**/node_modules/**', '**/dist/**'],
+      ignored: ['**/node_modules/**'],
       usePolling: true,
       interval: 300,
     },

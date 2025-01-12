@@ -4,13 +4,13 @@ button,
   border: none;
   width: fit-content;
   height: fit-content;
-  background-color: var(--button-color);
+  background-color: var(--button-background-color);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   
   h2,
   h3 {
     padding: 0.5em;
-    color: var(--button-text-color);
+    color: var(--button-color);
   }
 }

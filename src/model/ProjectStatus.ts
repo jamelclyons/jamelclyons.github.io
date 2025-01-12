@@ -1,5 +1,7 @@
 import Model from './Model';
 
+import { formatTime } from '@/utilities/String';
+
 class ProjectStatus extends Model {
   createdAt: string;
   updatedAt: string;
@@ -8,8 +10,8 @@ class ProjectStatus extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    this.createdAt = data?.created_at || '';
-    this.updatedAt = data?.updated_at || '';
+    this.createdAt = data?.created_at ? formatTime(data.created_at) : '';
+    this.updatedAt = data?.updated_at ? formatTime(data.created_at) : '';
     this.progress = data?.progress || '0';
   }
 }

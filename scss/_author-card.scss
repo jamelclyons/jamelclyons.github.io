@@ -1,0 +1,19 @@
+@use '_author-pic.scss';
+@use '_author-contact.scss';
+
+.author-card.card {
+  background-color: var(--card-background-color-secondary);
+  color: var(--card-color-secondary);
+
+  h3.title {
+    padding: 0.5em;
+  }
+
+  .author-contact .contact-bar {
+    a {
+      i {
+        color: var(--card-color-secondary);
+      }
+    }
+  }
+}

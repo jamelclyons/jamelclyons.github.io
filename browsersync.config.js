@@ -1,11 +1,11 @@
 module.exports = {
     browser: "google chrome",
-    proxy: "http://localhost:5173",
+    proxy: "http://localhost:3000",
     port: 3000,
     open: true,
     notify: false,
     files: [
-      "dist/**/*.{html,js,css,vue,jsx,tsx}",
+      "dist/**/*.{html,js,css,scss,vue,jsx,tsx}",
     ],
     watch: true,
     cors: true,
