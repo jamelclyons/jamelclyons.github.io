@@ -18,6 +18,36 @@
 
 .about {
   margin-top: 6.25rem;
+
+  .stats,
+  .stats-user,
+  .stats-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .stats {
+    flex-wrap: wrap;
+  }
+
+  .stats-user {
+    flex-direction: column;
+
+    .author-pic {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .skills {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
   .story {
     display: flex;
     flex-direction: column;
@@ -27,5 +57,13 @@
   section {
     margin: 0;
     min-height: fit-content;
+  }
+}
+
+@media screen and (min-width: 700px) {
+  .stats-bar {
+    flex-direction: column;
+    gap: 2rem;
+    height: 100%;
   }
 }

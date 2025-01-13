@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { marked } from 'marked';
 
-import MemberInfoComponent from './components/member/MemberInfoComponent';
+import MemberPic from './components/member/MemberPic';
+import SkillsComponent from './components/SkillsComponent';
 import ContentComponent from './components/content/ContentComponent';
 
 import { getRepoContents } from '../controllers/githubSlice';
@@ -12,12 +13,14 @@ import { loadMarkdown } from '../controllers/contentSlice';
 import type { AppDispatch, RootState } from '../model/store';
 import RepoContent from '../model/RepoContent';
 import User from '../model/User';
+import Skills from '@/model/Skills';
 
 interface AboutProps {
   user: User;
+  skills: Skills
 }
 
-const About: React.FC<AboutProps> = ({ user }) => {
+const About: React.FC<AboutProps> = ({ user, skills }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { contents } = useSelector((state: RootState) => state.github);
@@ -40,14 +43,10 @@ const About: React.FC<AboutProps> = ({ user }) => {
   }, []);
 
   useEffect(() => {
-    console.log(contents)
-  }, [contents]);
-
-  useEffect(() => {
     if (Array.isArray(contents) && contents.length > 0) {
       contents.map((content) => {
         if (content.type === 'file') {
-          if (content.name === 'README.md') {
+          if (content.name === 'story.md') {
             setContent(new RepoContent(content));
           }
         }
@@ -66,6 +65,18 @@ const About: React.FC<AboutProps> = ({ user }) => {
     }
   }, [contents, content]);
 
+  const handleProjects = () => {
+    window.location.href = '/#/portfolio';
+  };
+
+  const handleSkills = () => {
+    const skillsElement = document.getElementById('skills');
+
+    if (skillsElement) {
+      skillsElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const handleResume = () => {
     window.location.href = '/#/resume';
   };
@@ -73,11 +84,31 @@ const About: React.FC<AboutProps> = ({ user }) => {
   return (
     <>
       <section className="about">
-        <MemberInfoComponent user={user} />
+        <div className='stats'>
+          <div className="stats-user">
+            <MemberPic user={user} />
 
-        <button onClick={handleResume}>
-          <h3 className="title">resume</h3>
-        </button>
+            <h2 className="title">{user?.title}</h2>
+          </div>
+
+          <div className="stats-bar">
+            <button onClick={handleProjects}>
+              <h3 className="title">projects</h3>
+            </button>
+
+            <button onClick={handleSkills}>
+              <h3 className="title">skills</h3>
+            </button>
+
+            <button onClick={handleResume}>
+              <h3 className="title">resume</h3>
+            </button>
+          </div>
+        </div>
+
+        <div className="skills" id="skills">
+          <SkillsComponent skills={skills}/>
+        </div>
 
         <div className="story">
           {typeof markdown === 'string' && markdown !== '' && <ContentComponent html={markdown} />}

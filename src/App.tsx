@@ -36,6 +36,7 @@ import User from './model/User';
 import Project from './model/Project';
 import Portfolio from './model/Portfolio';
 import ProjectUpdate from './views/ProjectUpdate';
+import Skills from './model/Skills';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -47,6 +48,7 @@ const App: React.FC = () => {
   );
 
   const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio);
+  const [skills, setSkills] = useState<Skills>(new Skills);
 
   const user = new User(userObject);
 
@@ -69,6 +71,27 @@ const App: React.FC = () => {
   useEffect(() => {
     dispatch(getTechnologies());
   }, []);
+
+  useEffect(() => {
+    if (
+      projectTypesObject ||
+      languagesObject ||
+      frameworksObject ||
+      technologiesObject
+    ) {
+      setSkills(new Skills(
+        projectTypesObject,
+        languagesObject,
+        frameworksObject,
+        technologiesObject
+      ));
+    }
+  }, [
+    projectTypesObject,
+    languagesObject,
+    frameworksObject,
+    technologiesObject
+  ]);
 
   useEffect(() => {
     if (user.id) {
@@ -137,7 +160,7 @@ const App: React.FC = () => {
         <Suspense fallback={<LoadingComponent />}>
           <Routes>
             <Route path="/" element={<Home user={user} portfolio={portfolio} />} />
-            <Route path="/about" element={<About user={user} />} />
+            <Route path="/about" element={<About user={user} skills={skills} />} />
             <Route path="/portfolio" element={<PortfolioPage user={user} portfolio={portfolio} />} />
             <Route path="/portfolio/:projectID" element={<ProjectPage />} />
             <Route path="/projects/:taxonomy/:term" element={<Search portfolio={portfolio} />} />
