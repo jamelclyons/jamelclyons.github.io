@@ -42,6 +42,11 @@
     }
   }
 
+  #skills,
+  #story {
+    scroll-margin: 6rem;
+  }
+
   .skills {
     display: flex;
     flex-direction: column;
@@ -60,10 +65,21 @@
   }
 }
 
-@media screen and (min-width: 700px) {
-  .stats-bar {
-    flex-direction: column;
-    gap: 2rem;
-    height: 100%;
+@media screen and (min-width: 900px) {
+  .about {
+    .stats {
+      width: 100%;
+      max-width: 1000px;
+      justify-content: space-between;
+      gap: 2.5rem;
+      padding: 0 2.5rem;
+
+      .stats-bar {
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 2rem;
+        height: 100%;
+      }
+    }
   }
 }

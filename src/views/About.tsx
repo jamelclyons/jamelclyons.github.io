@@ -77,6 +77,14 @@ const About: React.FC<AboutProps> = ({ user, skills }) => {
     }
   };
 
+  const handleStory = () => {
+    const storyElement = document.getElementById('story');
+
+    if (storyElement) {
+      storyElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const handleResume = () => {
     window.location.href = '/#/resume';
   };
@@ -100,6 +108,10 @@ const About: React.FC<AboutProps> = ({ user, skills }) => {
               <h3 className="title">skills</h3>
             </button>
 
+            <button onClick={handleStory}>
+              <h3 className="title">story</h3>
+            </button>
+
             <button onClick={handleResume}>
               <h3 className="title">resume</h3>
             </button>
@@ -107,10 +119,14 @@ const About: React.FC<AboutProps> = ({ user, skills }) => {
         </div>
 
         <div className="skills" id="skills">
-          <SkillsComponent skills={skills}/>
+          <h2 className="title">skills</h2>
+
+          <SkillsComponent skills={skills} />
         </div>
 
-        <div className="story">
+        <div className="story" id="story">
+          <h2 className="title">story</h2>
+
           {typeof markdown === 'string' && markdown !== '' && <ContentComponent html={markdown} />}
         </div>
 
