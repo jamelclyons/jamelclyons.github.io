@@ -50,8 +50,14 @@ const MessageCardComponent: React.FC<MessageCardComponentProps> = ({ page }) => 
   const handleSubmit = async () => {
     const form = document.getElementById('message_card') as HTMLFormElement;
     const formData = new FormData(form);
-console
-    // dispatch(sendEmail(email));
+
+    const data: Record<string, string> = {};
+
+    formData.forEach((value, key) => {
+      data[key] = value.toString();
+    });
+
+    dispatch(sendEmail(data));
   };
 
   return (
@@ -117,22 +123,19 @@ console
                   value={msg}></textarea>
               </td>
             </tr>
-            <tr>
-              <td colSpan={2}>
-                <input type="hidden" name="action" value="thfw_email_contact" />
-                <button
-                  className="sendmsg"
-                  id="contact_submit"
-                  name="submit"
-                  type="button"
-                  value="submit"
-                  onClick={handleSubmit}>
-                  <h3>SEND</h3>
-                </button>
-              </td>
-            </tr>
           </tbody>
         </table>
+
+        <input type="hidden" name="action" value="thfw_email_contact" />
+        <button
+          className="sendmsg"
+          id="contact_submit"
+          name="submit"
+          type="button"
+          value="submit"
+          onClick={handleSubmit}>
+          <h3>SEND</h3>
+        </button>
       </form>
     </>
   );

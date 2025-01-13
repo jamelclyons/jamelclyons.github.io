@@ -1,8 +1,9 @@
 import Model from './Model';
+import Owner from './Owner';
 
 class Repo extends Model {
   id: string;
-  owner: string;
+  owner: Owner;
   createdAt: string;
   updatedAt: string;
   homepage: string;
@@ -13,7 +14,7 @@ class Repo extends Model {
     super();
 
     this.id = data?.name ?? data?.id ?? '';
-    this.owner = this.getOwner(data?.owner);
+    this.owner = new Owner(data?.owner);
     this.createdAt = data?.created_at ?? '';
     this.updatedAt = data?.updated_at ?? '';
     this.homepage = data?.homepage ?? '';

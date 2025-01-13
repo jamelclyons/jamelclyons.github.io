@@ -1,7 +1,7 @@
 import Model from './Model';
 import Feature from './Feature';
 import Image from './Image';
-import { ProjectURLs } from './ProjectURLs';
+import ProjectURLs from './ProjectURLs';
 import Gallery from './Gallery';
 
 class ProjectSolution extends Model {

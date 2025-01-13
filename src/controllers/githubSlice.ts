@@ -41,13 +41,14 @@ interface GithubState {
   githubError: Error | null;
   githubErrorMessage: string;
   userObject: Record<string, any>;
+  organizationObject: Record<string, any>;
   organizations: Array<Record<string, any>>;
   repos: Array<Record<string, any>>;
   socialAccounts: [];
   repo: Record<string, any>;
   contents: Array<Record<string, any>>;
   languagesObject: Array<Record<string, any>>;
-  technologiesObject: Array<Record<string,any>>;
+  technologiesObject: Array<Record<string, any>>;
   contributorsObject: Array<Record<string, any>>;
 }
 
@@ -57,6 +58,7 @@ const initialState: GithubState = {
   githubError: null,
   githubErrorMessage: '',
   userObject: {},
+  organizationObject: {},
   organizations: [],
   repos: [],
   socialAccounts: [],
@@ -121,9 +123,24 @@ export const getOrganizations = createAsyncThunk(
   }
 );
 
+export const getOrganization = createAsyncThunk(
+  'github/getOrganization',
+  async (organization: string) => {
+    try {
+      const { data } = await octokit.request(`/orgs/${organization}`);
+
+      return data;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
 export const getOrganizationsRepos = createAsyncThunk(
   'github/getOrganizationsRepos',
-  async (organization) => {
+  async (organization: string) => {
     try {
       const { data } = await octokit.request(`/orgs/${organization}/repos`);
 
@@ -294,7 +311,6 @@ export const getSocialAccounts = createAsyncThunk(
       );
 
       const responseData = await response.json();
-      console.log(responseData);
 
       return responseData;
     } catch (error) {
@@ -322,6 +338,12 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubErrorMessage = '';
         state.githubError = null;
         state.organizations = action.payload;
+      })
+      .addCase(getOrganization.fulfilled, (state, action) => {
+        state.githubLoading = false;
+        state.githubErrorMessage = '';
+        state.githubError = null;
+        state.organizationObject = action.payload;
       })
       .addCase(getRepos.fulfilled, (state, action) => {
         state.githubLoading = false;

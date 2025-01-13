@@ -1,7 +1,7 @@
 import Model from './Model';
-import { ProjectURL } from './ProjectURL';
+import ProjectURL from './ProjectURL';
 
-export class ProjectURLs extends Model {
+class ProjectURLs extends Model {
   homepage: ProjectURL;
   ios: ProjectURL;
   android: ProjectURL;
@@ -18,3 +18,5 @@ export class ProjectURLs extends Model {
       : new ProjectURL();
   }
 }
+
+export default ProjectURLs;

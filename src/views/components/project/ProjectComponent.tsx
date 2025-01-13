@@ -24,7 +24,7 @@ interface ProjectComponentProps {
 
 const ProjectComponent: React.FC<ProjectComponentProps> = ({ project, repoQuery }) => {
   const {
-    title, description, solution, process, problem, details
+    owner, title, description, solution, process, problem, details
   } = project;
   const { contents } = useSelector(
     (state: RootState) => state.github
@@ -128,12 +128,12 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ project, repoQuery 
 
         <TheSolution solution={solution} />
 
-        <TheProcess process={process} />
+        <TheProcess process={process} repoQuery={repoQuery} />
 
         <TheProblem problem={problem} />
 
         {/* Project details is for clients only */}
-        <Details details={details} contributorsQuery={repoQuery} />
+        {owner.type !== 'User' && <Details details={details} owner={owner} contributorsQuery={repoQuery} />}
       </main>
     </>
   );

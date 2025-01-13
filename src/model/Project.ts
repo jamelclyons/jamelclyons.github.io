@@ -1,21 +1,21 @@
 import Model from './Model';
 import ProjectSolution from './ProjectSolution';
-import { ProjectURLs } from './ProjectURLs';
+import ProjectURLs from './ProjectURLs';
 import ProjectProcess from './ProjectProcess';
 import ProjectDesign from './ProjectDesign';
 import ProjectDevelopment from './ProjectDevelopment';
 import ProjectDelivery from './ProjectDelivery';
 import ProjectProblem from './ProjectProblem';
 import ProjectDetails from './ProjectDetails';
-
 import Repo from './Repo';
+import Gallery from './Gallery';
+import Owner from './Owner';
 
 import { DocumentData } from 'firebase/firestore';
-import Gallery from './Gallery';
 
 class Project extends Model {
   id: string;
-  owner: string;
+  owner: Owner;
   title: string;
   description: string;
   solution: ProjectSolution;
@@ -27,21 +27,13 @@ class Project extends Model {
     super();
 
     this.id = data?.id;
-    this.owner = data?.owner;
+    this.owner = new Owner(data?.owner);
     this.title = data?.title ? this.getTitle(data?.id) : '';
     this.description = data?.description ?? 'No Description Provided.';
-    this.solution = data?.solution
-      ? new ProjectSolution(data.solution)
-      : new ProjectSolution();
-    this.process = data?.process
-      ? new ProjectProcess(data.process)
-      : new ProjectProcess();
-    this.problem = data?.problem
-      ? new ProjectProblem(data.problem)
-      : new ProjectProblem();
-    this.details = data?.details
-      ? new ProjectDetails(data.details)
-      : new ProjectDetails();
+    this.solution = new ProjectSolution(data?.solution);
+    this.process = new ProjectProcess(data?.process);
+    this.problem = new ProjectProblem(data?.problem);
+    this.details = new ProjectDetails(data?.details);
   }
 
   create(repo_url: string, title: string) {
@@ -71,7 +63,7 @@ class Project extends Model {
 
   fromRepo(repo: Repo) {
     this.id = repo.id;
-    this.owner = repo.owner;
+    this.owner = new Owner(repo.owner);
     this.title = this.title ? this.title : this.getTitle(this.id);
     this.description =
       repo.description !== '' ? repo.description : 'No Description Provided.';

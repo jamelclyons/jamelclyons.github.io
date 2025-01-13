@@ -47,27 +47,29 @@ interface Email {
   msg: string;
 }
 
-export const sendEmail = createAsyncThunk<string, Email>(
+export const sendEmail = createAsyncThunk<string, Record<string, any>>(
   'contact/sendEmail',
-  async ({ page, firstname, lastname, email, subject, msg }) => {
+  async (data) => {
     try {
-      const response = await fetch(`/wp-json/seven-tech/v1/email/${page}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          firstname: firstname,
-          lastname: lastname,
-          subject: subject,
-          message: msg,
-        }),
-      });
+      console.log(data);
+      // const response = await fetch(`/wp-json/seven-tech/v1/email/${page}`, {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({
+      //     email: email,
+      //     firstname: firstname,
+      //     lastname: lastname,
+      //     subject: subject,
+      //     message: msg,
+      //   }),
+      // });
 
-      const responseData = await response.json();
+      // const responseData = await response.json();
 
-      return responseData;
+      // return responseData;
+      return 'Success';
     } catch (error) {
       const err = error as Error;
       console.error(err);

@@ -5,6 +5,7 @@ import type { AppDispatch } from '../../../model/store';
 import ProjectDevelopment from '../../../model/ProjectDevelopment';
 import Taxonomy from '../../../model/Taxonomy';
 import Image from '@/model/Image';
+import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 
 import CheckList from './CheckList';
 import ContentComponent from '../content/ContentComponent';
@@ -24,15 +25,14 @@ import { getRepoLanguages } from '../../../controllers/githubSlice';
 
 interface DevelopmentProps {
   development: ProjectDevelopment;
+  repoQuery: GitHubRepoQuery;
 }
 
-const Development: React.FC<DevelopmentProps> = ({ development }) => {
+const Development: React.FC<DevelopmentProps> = ({ development, repoQuery }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { checkList, content, repoURL, versionsList } = development;
 
-  const [owner, setOwner] = useState<string>('');
-  const [repo, setRepo] = useState<string>('');
   const [types, setTypes] = useState<Set<Taxonomy>>(new Set());
   const [languagesObject, setLanguagesObject] = useState<Array<Record<string, any>>>();
   const [technologiesObject, setTechnologiesObject] = useState<Array<Record<string, any>>>();
@@ -44,12 +44,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
   useEffect(() => {
     if (repoURL) {
       try {
-        const repoUrl = new URL(repoURL);
-        const pathname = repoUrl.pathname;
-        const parts = pathname.split('/').filter(Boolean);
-
-        setOwner(parts[0]);
-        setRepo(parts[1]);
+        setGitHub(new Image({ title: 'GitHub', url: '', class_name: 'fa fa-github fa-fw' }));
       } catch (error) {
         const err = error as Error;
         console.error('Invalid URL format:', err.message);
@@ -58,29 +53,17 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
   }, [repoURL, dispatch]);
 
   useEffect(() => {
-    if (repoURL) {
-      try {
-       setGitHub(new Image({title: 'GitHub', url: '', class_name: 'fa fa-github fa-fw'}));
-      } catch (error) {
-        const err = error as Error;
-        console.error('Invalid URL format:', err.message);
-      }
-    }
-  }, [repoURL, dispatch]);
-
-  useEffect(() => {
-    if (owner && repo) {
+    if (repoQuery) {
       dispatch(getRepoLanguages({
-        owner: owner,
-        repo: repo,
+        owner: repoQuery.owner,
+        repo: repoQuery.repo,
         path: ''
       })).unwrap().then((contents) => {
         setLanguagesObject(contents.languages)
         setTechnologiesObject(contents.technologies)
-
       });
     }
-  }, [owner, repo, dispatch]);
+  }, [repoQuery, dispatch]);
 
   useEffect(() => {
     if (development.types.size > 0) {
@@ -114,16 +97,20 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
   useEffect(() => {
     if (languagesObject && languagesObject.length > 0) {
-      const updatedLanguages: Set<Taxonomy> = new Set();
+      const getLanguageImages = async () => {
+        const updatedLanguages: Set<Taxonomy> = new Set();
 
-      dispatch(getTaxImages({ type: 'languages', taxonomies: languagesObject })).unwrap().then((langs) => {
-        langs.forEach((lang) => {
-          let language = new Taxonomy(lang);
-          updatedLanguages.add(language);
+        await dispatch(getTaxImages({ type: 'languages', taxonomies: languagesObject })).unwrap().then((langs) => {
+          langs.forEach((lang) => {
+            let language = new Taxonomy(lang);
+            updatedLanguages.add(language);
+          });
         });
-      });
 
-      setLanguages(updatedLanguages);
+        setLanguages(updatedLanguages);
+      }
+
+      getLanguageImages();
     }
   }, [dispatch, languagesObject, setLanguages]);
 
@@ -177,22 +164,39 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
   }, [development, dispatch, setFrameworks]);
 
   useEffect(() => {
-    if (development && development.technologies.size > 0) {
+    if (development.technologies || technologiesObject) {
       const fetchTechnologies = async (): Promise<Array<Record<string, any>>> => {
         try {
           const taxTechnologies: Array<Record<string, any>> = [];
 
-          await Promise.all(
-            Array.from(development.technologies).map(async (tax) => {
-              const result = await dispatch(getTechnology(tax));
-              if (getTechnology.fulfilled.match(result)) {
-                const taxonomy = result.payload as Record<string, any>;
-                taxTechnologies.push(taxonomy);
-              } else {
-                console.error("Failed to fetch project type:", result.error);
-              }
-            })
-          );
+          if (development.technologies && development.technologies.size > 0) {
+            await Promise.all(
+              Array.from(development.technologies).map(async (tax) => {
+                const result = await dispatch(getTechnology(tax));
+                if (getTechnology.fulfilled.match(result)) {
+                  const taxonomy = result.payload as Record<string, any>;
+                  taxTechnologies.push(taxonomy);
+                } else {
+                  console.error("Failed to fetch project type:", result.error);
+                }
+              })
+            );
+          }
+
+          if (technologiesObject && technologiesObject.length > 0) {
+            await Promise.all(
+              Array.from(technologiesObject).map(async (tax) => {
+                const tech = new Taxonomy(tax);
+                const result = await dispatch(getTechnology(tech.id));
+                if (getTechnology.fulfilled.match(result)) {
+                  const taxonomy = result.payload as Record<string, any>;
+                  taxTechnologies.push(taxonomy);
+                } else {
+                  console.error("Failed to fetch project type:", result.error);
+                }
+              })
+            );
+          }
 
           return taxTechnologies;
         } catch (error) {
@@ -200,7 +204,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
           return [];
         }
       };
-console.log(technologiesObject);
+      console.log(technologiesObject);
       const processTechnologies = async () => {
         const taxTechnologies = await fetchTechnologies();
 

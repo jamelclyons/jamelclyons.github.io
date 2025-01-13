@@ -23,11 +23,11 @@ const ProjectPage: React.FC = () => {
 
   const project: Project = location.state;
 
-  const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>(new GitHubRepoQuery(project.owner, project.id));
+  const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>(new GitHubRepoQuery(project.owner.login, project.id));
 
   useEffect(() => {
     if (project) {
-      setRepoQuery(new GitHubRepoQuery(project.owner, project.id))
+      setRepoQuery(new GitHubRepoQuery(project.owner.login, project.id))
     }
   }, [project]);
 

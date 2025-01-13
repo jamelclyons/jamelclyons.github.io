@@ -1,27 +1,54 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import type { AppDispatch } from '../../../model/store';
+import type { AppDispatch, RootState } from '../../../model/store';
 import ProjectDetails from '../../../model/ProjectDetails';
 import GitHubRepoQuery from '../../../model/GitHubRepoQuery';
 import User from '../../../model/User';
+import Owner from '@/model/Owner';
 
 import ProjectTeamComponent from './ProjectTeam';
 
-import { getContributors } from '../../../controllers/githubSlice';
+import { getContributors, getOrganization } from '../../../controllers/githubSlice';
+import Organization from '@/model/Organization';
 
 interface ProjectDetailsProps {
   details: ProjectDetails;
+  owner: Owner;
   contributorsQuery: GitHubRepoQuery;
 }
 
-const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ details, contributorsQuery }) => {
+const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ details, owner, contributorsQuery }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { privacy, clientID, clientName, startDate, endDate } = details;
+  const { privacy, clientID, startDate, endDate } = details;
 
+  const [clientName, setClientName] = useState<string>(details.clientName);
+  const [organization, setOrganization] = useState<Organization>(new Organization());
   const [teamList, setTeamList] = useState<Array<User>>();
-console.log(privacy)
+
+  const { organizationObject } = useSelector(
+    (state: RootState) => state.github
+  );
+
+  useEffect(() => {
+    if (owner && owner.type === 'Organization') {
+      dispatch(getOrganization(owner.login));
+    }
+  }, [owner, dispatch]);
+
+  useEffect(() => {
+    if (organizationObject) {
+      setOrganization(new Organization(organizationObject));
+    }
+  }, [organizationObject]);
+
+  useEffect(() => {
+    if (organization && organization.name) {
+      setClientName(organization.name);
+    }
+  }, [organization]);
+
   useEffect(() => {
     if (privacy === 'public' || clientID === '0') {
       const getTeamList = async () => {
@@ -49,7 +76,7 @@ console.log(privacy)
       getTeamList();
     }
   }, [privacy, clientID, dispatch]);
-console.log(teamList)
+
   return (
     <>
       {(privacy === 'public' || clientID === '0') && (

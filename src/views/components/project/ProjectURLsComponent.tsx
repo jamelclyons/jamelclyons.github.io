@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ProjectURLs } from "../../../model/ProjectURLs";
+import ProjectURLs from "../../../model/ProjectURLs";
 import IconComponent from "../IconComponent";
 
 interface ProjectURLsProps {

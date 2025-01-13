@@ -7,4 +7,5 @@ class GitHubRepoQuery {
     this.repo = repo;
   }
 }
+
 export default GitHubRepoQuery;
