@@ -49,12 +49,45 @@ const App: React.FC = () => {
 
   const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio);
   const [skills, setSkills] = useState<Skills>(new Skills);
+  const [user, setUser] = useState<User>(new User);
 
-  const user = new User(userObject);
+  useEffect(() => {
+    if (user.id) {
+      dispatch(getUser(user.id));
+    }
+  }, [user.id]);
+
+  useEffect(() => {
+    if (user.id) {
+      dispatch(getOrganizations());
+    }
+  }, [user.id]);
+
+  useEffect(() => {
+    if (userObject) {
+      setUser(new User(userObject));
+    }
+  }, [userObject]);
 
   useEffect(() => {
     document.title = user.name;
-  }, []);
+  }, [user]);
+
+  useEffect(() => {
+    let favicon = document.getElementById("favicon");
+
+    if (!favicon) {
+      favicon = document.createElement("link");
+      favicon.setAttribute("rel", "icon");
+      favicon.setAttribute("type", "image/png");
+      favicon.setAttribute("id", "favicon");
+      document.head.appendChild(favicon);
+    }
+
+    if (user.avatarURL) {
+      favicon.setAttribute("href", user.avatarURL);
+    }
+  }, [user.avatarURL]);
 
   useEffect(() => {
     dispatch(getProjectTypes());
@@ -92,18 +125,6 @@ const App: React.FC = () => {
     frameworksObject,
     technologiesObject
   ]);
-
-  useEffect(() => {
-    if (user.id) {
-      dispatch(getUser(user.id));
-    }
-  }, [user.id]);
-
-  useEffect(() => {
-    if (user.id) {
-      dispatch(getOrganizations());
-    }
-  }, [user.id]);
 
   // useEffect(() => {
   //   if (organizations) {
