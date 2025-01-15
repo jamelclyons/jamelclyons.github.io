@@ -53,19 +53,6 @@ const Development: React.FC<DevelopmentProps> = ({ development, repoQuery }) => 
   }, [repoURL, dispatch]);
 
   useEffect(() => {
-    if (repoQuery) {
-      dispatch(getRepoLanguages({
-        owner: repoQuery.owner,
-        repo: repoQuery.repo,
-        path: ''
-      })).unwrap().then((contents) => {
-        setLanguagesObject(contents.languages)
-        setTechnologiesObject(contents.technologies)
-      });
-    }
-  }, [repoQuery, dispatch]);
-
-  useEffect(() => {
     if (development.types.size > 0) {
       let taxTypes: Set<Taxonomy> = new Set();
 
@@ -204,7 +191,7 @@ const Development: React.FC<DevelopmentProps> = ({ development, repoQuery }) => 
           return [];
         }
       };
-      console.log(technologiesObject);
+      
       const processTechnologies = async () => {
         const taxTechnologies = await fetchTechnologies();
 

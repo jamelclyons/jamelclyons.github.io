@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import LoadingComponent from './components/LoadingComponent';
@@ -12,18 +12,31 @@ import { setMessage, setMessageType, setShowStatusBar } from '../controllers/mes
 import type { AppDispatch, RootState } from '../model/store';
 import Project from '../model/Project';
 import GitHubRepoQuery from '../model/GitHubRepoQuery';
+import Portfolio from '@/model/Portfolio';
 
-const ProjectPage: React.FC = () => {
+interface ProjectPageProps {
+  portfolio: Portfolio;
+}
+
+const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const location = useLocation();
+  const { projectID } = useParams<string>();
 
   const { projectLoading, projectErrorMessage } = useSelector(
     (state: RootState) => state.project
   );
 
-  const project: Project = location.state;
+  const [project, setProject] = useState<Project>(new Project);
+  const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>();
 
-  const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>(new GitHubRepoQuery(project.owner.login, project.id));
+  useEffect(() => {
+    if (projectID) {
+      console.log(projectID)
+
+      console.log(portfolio.filterProject(projectID))
+      setProject(portfolio.filterProject(projectID));
+    }
+  }, [projectID]);
 
   useEffect(() => {
     if (project) {
@@ -32,7 +45,7 @@ const ProjectPage: React.FC = () => {
   }, [project]);
 
   useEffect(() => {
-    if (project.title) {
+    if (project) {
       document.title = project.title.toUpperCase();
     }
   }, [project]);
@@ -67,7 +80,7 @@ const ProjectPage: React.FC = () => {
             <StatusBarComponent />
           </main>
         ) : (
-          project && <ProjectComponent project={project} repoQuery={repoQuery} />
+          project && repoQuery && <ProjectComponent project={project} repoQuery={repoQuery} />
         )}
       </>
     </section>

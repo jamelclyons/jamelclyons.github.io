@@ -21,7 +21,8 @@ const ProjectUpdate = lazy(() => import('./views/ProjectUpdate'));
 import {
   getUser,
   getOrganizations,
-  getRepos
+  getRepos,
+  getRepoLanguages
 } from './controllers/githubSlice';
 import { getPortfolio } from './controllers/portfolioSlice';
 import {
@@ -46,6 +47,8 @@ const App: React.FC = () => {
     (state: RootState) => state.taxonomies
   );
 
+  const [gitHubRepos, setGitHubRepos] = useState<Array<Repo>>([new Repo]);
+  const [repos, setRepos] = useState<Array<Repo>>();
   const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio);
   const [skills, setSkills] = useState<Skills>(new Skills);
   const [user, setUser] = useState<User>(new User);
@@ -117,12 +120,12 @@ const App: React.FC = () => {
       frameworksObject ||
       technologiesObject
     ) {
-      setSkills(new Skills(
-        projectTypesObject,
-        languagesObject,
-        frameworksObject,
-        technologiesObject
-      ));
+      setSkills(new Skills({
+        projectTypes: projectTypesObject,
+        languages: languagesObject,
+        frameworks: frameworksObject,
+        technologies: technologiesObject
+      }));
     }
   }, [
     projectTypesObject,
@@ -132,24 +135,49 @@ const App: React.FC = () => {
   ]);
 
   useEffect(() => {
-    const fetchPortfolio = async () => {
+    const fetchRepos = async () => {
       const reposObject = await dispatch(getRepos()).unwrap();
 
-      let repos: Array<Repo> = [];
+      let repositories: Array<Repo> = []
 
       if (Array.isArray(reposObject) && reposObject.length > 0) {
         reposObject.forEach((repo) => {
-          repos.push(new Repo(repo));
+          repositories.push(new Repo(repo));
         });
-      }
 
-      dispatch(getPortfolio(repos));
+        setGitHubRepos(repositories)
+      }
     }
 
     if (user.id) {
-      fetchPortfolio();
+      fetchRepos();
     }
   }, [dispatch, user.id]);
+
+  useEffect(() => {
+    const fetchRepoSkills = async (repo: Repo): Promise<Repo> => {
+      const data = await dispatch(getRepoLanguages(repo)).unwrap();
+      return new Repo(data);
+    };
+  
+    const fetchAllRepoSkills = async () => {
+      if (gitHubRepos.length > 0) {
+        const fetchedRepos = await Promise.all(
+          gitHubRepos.map((repo) => fetchRepoSkills(repo))
+        );
+  
+        setRepos(fetchedRepos);
+      }
+    };
+  
+    fetchAllRepoSkills();
+  }, [gitHubRepos, dispatch]);
+
+  useEffect(() => {
+    if (repos && repos.length > 0) {
+      dispatch(getPortfolio(repos));
+    }
+  }, [repos, dispatch]);
 
   useEffect(() => {
     if (portfolioObject || skills) {
@@ -166,7 +194,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Home user={user} portfolio={portfolio} />} />
             <Route path="/about" element={<About user={user} skills={skills} />} />
             <Route path="/portfolio" element={<PortfolioPage user={user} portfolio={portfolio} />} />
-            <Route path="/portfolio/:projectID" element={<ProjectPage />} />
+            <Route path="/portfolio/:projectID" element={<ProjectPage portfolio={portfolio} />} />
             <Route path="/projects/:taxonomy/:term" element={<Search portfolio={portfolio} />} />
             <Route path="/resume" element={<Resume user={user} />} />
             <Route path="/contact" element={<Contact user={user} />} />

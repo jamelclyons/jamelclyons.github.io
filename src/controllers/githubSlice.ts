@@ -47,8 +47,6 @@ interface GithubState {
   socialAccounts: [];
   repo: Record<string, any>;
   contents: Array<Record<string, any>>;
-  languagesObject: Array<Record<string, any>>;
-  technologiesObject: Array<Record<string, any>>;
   contributorsObject: Array<Record<string, any>>;
 }
 
@@ -64,8 +62,6 @@ const initialState: GithubState = {
   socialAccounts: [],
   repo: {},
   contents: [],
-  languagesObject: [],
-  technologiesObject: [],
   contributorsObject: [],
 };
 
@@ -204,43 +200,26 @@ export const getRepoContents = createAsyncThunk(
 
 export const getRepoLanguages = createAsyncThunk(
   'github/getRepoLanguages',
-  async (query: Record<string, any>) => {
+  async (repoObject: Record<string, any>) => {
     try {
       const repoLanguages = await octokit.rest.repos.listLanguages({
-        owner: query.owner as string,
-        repo: query.repo as string,
+        owner: repoObject.owner.login,
+        repo: repoObject.id,
       });
 
-      let languages: Array<Record<string, any>> = [];
-      let technologies: Array<Record<string, any>> = [];
+      let skills: Array<Record<string, any>> = [];
 
       Object.entries(repoLanguages.data).forEach(([language, usage]) => {
-        if (language === 'Dockerfile') {
-          technologies.push(
-            new Taxonomy({
-              id: 'docker',
-              type: 'technology',
-              title: 'Docker',
-              icon_url: '',
-              class_name: '',
-              usage: usage,
-            }).toObject()
-          );
-        }
-
-        languages.push(
-          new Taxonomy({
-            id: language.toLowerCase(),
-            type: 'language',
-            title: language.toUpperCase(),
-            icon_url: '',
-            class_name: '',
-            usage: usage,
-          }).toObject()
-        );
+        let skill = { language: language, usage: usage };
+        skills.push(skill);
       });
+      console.log(skills)
 
-      return { languages: languages, technologies: technologies };
+      const repo: Repo = new Repo(repoObject);
+      repo.setSkills(skills);
+      console.log(repo)
+
+      return repo.toObject();
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -367,8 +346,7 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubLoading = false;
         state.githubErrorMessage = '';
         state.githubError = null;
-        state.languagesObject = action.payload?.languages;
-        state.technologiesObject = action.payload?.technologies;
+        state.repo = action.payload;
       })
       .addCase(getSocialAccounts.fulfilled, (state, action) => {
         state.githubLoading = false;

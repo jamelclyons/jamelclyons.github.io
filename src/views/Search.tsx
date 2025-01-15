@@ -22,52 +22,15 @@ interface SearchProps {
 }
 
 const Search: React.FC<SearchProps> = ({ portfolio }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { taxonomy, term } = useParams<string>();
+
   const { projects, skills } = portfolio;
   const { projectTypes, languages, frameworks, technologies } = skills;
-
-  const dispatch = useDispatch<AppDispatch>();
-  const {taxonomy, term } = useParams();
 
   const { portfolioLoading, portfolioErrorMessage } = useSelector(
     (state: RootState) => state.portfolio
   );
-
-  const [filteredProjects, setFilteredProjects] = useState<Set<Project>>(projects);
-
-  useEffect(() => {
-    if (taxonomy && term) {
-      let updatedProjects: Set<Project> = new Set();
-
-      projects.forEach((project: Project) => {
-
-        if (taxonomy == 'project-types') {
-          if (project.process.development.types.has(term)) {
-            updatedProjects.add(project);
-          }
-        }
-
-        if (taxonomy == 'languages') {
-          if (project.process.development.languages.has(term)) {
-            updatedProjects.add(project);
-          }
-        }
-
-        if (taxonomy == 'frameworks') {
-          if (project.process.development.frameworks.has(term)) {
-            updatedProjects.add(project);
-          }
-        }
-
-        if (taxonomy == 'technologies') {
-          if (project.process.development.technologies.has(term)) {
-            updatedProjects.add(project);
-          }
-        }
-      });
-
-      setFilteredProjects(updatedProjects);
-    }
-  }, [taxonomy, term, dispatch]);
 
   useEffect(() => {
     if (taxonomy && term) {
@@ -96,7 +59,12 @@ const Search: React.FC<SearchProps> = ({ portfolio }) => {
   return (
     <section className="search">
       <>
-        {projects && projects.size > 0 && <ProjectsComponent projects={filteredProjects} />}
+        {
+          projects &&
+          projects.size > 0 &&
+          (taxonomy && term) &&
+          <ProjectsComponent projects={portfolio.filterProjects(taxonomy, term)} />
+        }
 
         {projectTypes.size > 0 && <TaxList taxonomies={projectTypes} title={'Project Types'} />}
 

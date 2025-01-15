@@ -12,14 +12,8 @@ interface PortfolioProjectProps {
 const PortfolioProject: React.FC<PortfolioProjectProps> = ({ project }) => {
     const { id, title, description, solution } = project;
 
-    const navigate = useNavigate();
-
-    const handleClick = (path: string) => {
-        navigate(path, { state: project })
-    }
-
     return (
-        <button className='project' onClick={() => handleClick(`/portfolio/${id}`)}>
+        <a className='project' href={`/#/portfolio/${id}`}>
             <div className="project-card card">
                 <h2 className="title">{title}</h2>
 
@@ -36,7 +30,7 @@ const PortfolioProject: React.FC<PortfolioProjectProps> = ({ project }) => {
 
                 <ProjectDescription description={description} />
             </div>
-        </button>)
+        </a>)
 }
 
 export default PortfolioProject

@@ -1,5 +1,7 @@
 import Model from './Model';
 import Owner from './Owner';
+import Skills from './Skills';
+import Taxonomy from './Taxonomy';
 
 class Repo extends Model {
   id: string;
@@ -9,6 +11,7 @@ class Repo extends Model {
   homepage: string;
   description: string;
   repoURL: string;
+  skills: Skills = new Skills();
 
   constructor(data: Record<string, any> = {}) {
     super();
@@ -32,6 +35,39 @@ class Repo extends Model {
     }
 
     return '';
+  }
+
+  setSkills(repoSkills: Array<Record<string, any>>) {
+    let skills = new Skills();
+
+    repoSkills.forEach((repoSkill) => {
+      if (repoSkill?.language === 'Dockerfile') {
+
+        skills.technologies.add(
+          new Taxonomy({
+            id: 'docker',
+            type: 'technology',
+            title: 'Docker',
+            icon_url: '',
+            class_name: '',
+            usage: repoSkill?.usage,
+          })
+        );
+      }
+
+      skills.languages.add(
+        new Taxonomy({
+          id: repoSkill?.language.toLowerCase(),
+          type: 'language',
+          title: repoSkill?.language.toUpperCase(),
+          icon_url: '',
+          class_name: '',
+          usage: repoSkill?.usage,
+        })
+      );
+    });
+
+    this.skills = skills;
   }
 }
 

@@ -7,6 +7,7 @@ class ProjectDevelopment extends Model {
   checkList: Array<Task>;
   repoURL: string;
   versionsList: ProjectVersions;
+  // Add skills
   types: Set<string>;
   languages: Set<string>;
   frameworks: Set<string>;
