@@ -13,7 +13,8 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ user, portfolio }) => {
-  const { languages, frameworks, technologies } = portfolio;
+  const { skills } = portfolio;
+  const { languages, frameworks, technologies } = skills;
 
   useEffect(() => {
     document.title = user.name;

@@ -16,6 +16,7 @@ const Contact = lazy(() => import('./views/Contact'));
 const AddSkill = lazy(() => import('./views/SkillAdd'));
 const ProjectAdd = lazy(() => import('./views/ProjectAdd'));
 const NotFound = lazy(() => import('./views/NotFound'));
+const ProjectUpdate = lazy(() => import('./views/ProjectUpdate'));
 
 import {
   getUser,
@@ -33,9 +34,7 @@ import {
 import type { AppDispatch, RootState } from './model/store';
 import Repo from './model/Repo';
 import User from './model/User';
-import Project from './model/Project';
 import Portfolio from './model/Portfolio';
-import ProjectUpdate from './views/ProjectUpdate';
 import Skills from './model/Skills';
 
 const App: React.FC = () => {
@@ -90,6 +89,12 @@ const App: React.FC = () => {
   }, [user.avatarURL]);
 
   useEffect(() => {
+    if (organizations) {
+      user.setOrganizations(organizations);
+    }
+  }, [organizations]);
+
+  useEffect(() => {
     dispatch(getProjectTypes());
   }, []);
 
@@ -126,12 +131,6 @@ const App: React.FC = () => {
     technologiesObject
   ]);
 
-  // useEffect(() => {
-  //   if (organizations) {
-  //     userType?.setOrganizations(organizations);
-  //   }
-  // }, [organizations]);
-
   useEffect(() => {
     const fetchPortfolio = async () => {
       const reposObject = await dispatch(getRepos()).unwrap();
@@ -153,26 +152,10 @@ const App: React.FC = () => {
   }, [dispatch, user.id]);
 
   useEffect(() => {
-    if (
-      portfolioObject ||
-      projectTypesObject ||
-      languagesObject ||
-      frameworksObject ||
-      technologiesObject
-    ) {
-      setPortfolio(new Portfolio(
-        portfolioObject,
-        projectTypesObject,
-        languagesObject,
-        frameworksObject,
-        technologiesObject
-      ));
+    if (portfolioObject || skills) {
+      setPortfolio(new Portfolio(portfolioObject, skills));
     }
-  }, [portfolioObject,
-    projectTypesObject,
-    languagesObject,
-    frameworksObject,
-    technologiesObject]);
+  }, [portfolioObject, skills]);
 
   return (
     <>

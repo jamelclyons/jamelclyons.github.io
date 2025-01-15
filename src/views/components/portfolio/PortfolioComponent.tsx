@@ -11,8 +11,9 @@ interface PortfolioComponentProps {
 }
 
 const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ portfolio }) => {
-  const { projects, projectTypes, languages, frameworks, technologies } = portfolio;
-
+  const { projects, skills } = portfolio;
+  const { projectTypes, languages, frameworks, technologies } = skills;
+  
   return (
     <>
       {projects.size > 0 && (

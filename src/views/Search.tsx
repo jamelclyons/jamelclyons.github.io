@@ -22,7 +22,8 @@ interface SearchProps {
 }
 
 const Search: React.FC<SearchProps> = ({ portfolio }) => {
-  const { projects, projectTypes, languages, frameworks, technologies } = portfolio;
+  const { projects, skills } = portfolio;
+  const { projectTypes, languages, frameworks, technologies } = skills;
 
   const dispatch = useDispatch<AppDispatch>();
   const {taxonomy, term } = useParams();
