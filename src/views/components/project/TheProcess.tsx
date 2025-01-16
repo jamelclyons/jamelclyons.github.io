@@ -6,14 +6,12 @@ import Development from './Development';
 import Delivery from './Delivery';
 
 import ProjectProcess from '../../../model/ProjectProcess';
-import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 
 interface ProcessProps {
   process: ProjectProcess;
-  repoQuery: GitHubRepoQuery;
 }
 
-const TheProcess: React.FC<ProcessProps> = ({ process, repoQuery }) => {
+const TheProcess: React.FC<ProcessProps> = ({ process }) => {
   const { status, design, development, delivery } = process;
 
   return (
@@ -26,7 +24,7 @@ const TheProcess: React.FC<ProcessProps> = ({ process, repoQuery }) => {
 
           <Design design={design} />
 
-          <Development development={development} repoQuery={repoQuery} />
+          <Development development={development} />
 
           <Delivery delivery={delivery} />
         </div>}

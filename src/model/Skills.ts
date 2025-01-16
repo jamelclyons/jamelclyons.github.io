@@ -2,7 +2,7 @@ import Model from './Model';
 import Taxonomy from './Taxonomy';
 
 class Skills extends Model {
-  projectTypes: Set<Taxonomy>;
+  types: Set<Taxonomy>;
   languages: Set<Taxonomy>;
   frameworks: Set<Taxonomy>;
   technologies: Set<Taxonomy>;
@@ -10,20 +10,20 @@ class Skills extends Model {
   constructor(data: Record<string, any> = []) {
     super();
 
-    this.projectTypes = Array.isArray(data?.projectTypes) ? this.getProjectTypes(data?.projectTypes) : new Set();
+    this.types = Array.isArray(data?.types) ? this.getProjectTypes(data?.types) : new Set();
     this.languages = Array.isArray(data?.languages) ? this.getLanguages(data?.languages) : new Set();
     this.frameworks = Array.isArray(data?.frameworks) ? this.getFrameworks(data?.frameworks) : new Set();
     this.technologies = Array.isArray(data?.technologies) ? this.getTechnologies(data?.technologies) : new Set();
   }
 
   getProjectTypes(data: Array<Record<string, any>> = []) {
-    let projectTypes: Set<Taxonomy> = new Set();
+    let types: Set<Taxonomy> = new Set();
 
-    data.forEach((projectType) => {
-      projectTypes.add(new Taxonomy(projectType));
+    data.forEach((type) => {
+      types.add(new Taxonomy(type));
     });
 
-    return projectTypes;
+    return types;
   }
 
   getLanguages(data: Array<Record<string, any>> = []) {

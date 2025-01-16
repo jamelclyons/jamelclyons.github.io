@@ -17,16 +17,18 @@ import Skills from '@/model/Skills';
 
 interface AboutProps {
   user: User;
-  skills: Skills
 }
 
-const About: React.FC<AboutProps> = ({ user, skills }) => {
+const About: React.FC<AboutProps> = ({ user }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { contents } = useSelector((state: RootState) => state.github);
+  const { skillsObject } = useSelector((state: RootState) => state.portfolio);
 
   const [content, setContent] = useState<RepoContent>();
   const [markdown, setMarkdown] = useState<string | object>();
+
+  const skills = new Skills(skillsObject);
 
   useEffect(() => {
     document.title = `About - ${user.name}`;

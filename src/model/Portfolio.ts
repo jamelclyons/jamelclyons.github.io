@@ -30,37 +30,41 @@ class Portfolio extends Model {
     let updatedProjects: Set<Project> = new Set();
 
     if (taxonomy && term) {
-      this.projects.forEach((project: Project) => {
+      Array.from(this.projects).forEach((project: Project) => {
         if (taxonomy === 'project-types') {
-          project.process.development.types.forEach((type) => {
-            if (type === term) {
+          project.process.development.skills.types.forEach((type) => {
+            if (type.id === term) {
               updatedProjects.add(project);
             }
           });
         }
 
-        if (taxonomy === 'languages') {
-          project.process.development.languages.forEach((language) => {
-            if (language === term) {
-              updatedProjects.add(project);
+        if (taxonomy == 'languages') {
+          Array.from(project.process.development.skills.languages).forEach(
+            (language) => {
+              if (language.id === term) {
+                updatedProjects.add(project);
+              }
             }
-          });
+          );
         }
 
         if (taxonomy === 'frameworks') {
-          project.process.development.frameworks.forEach((framework) => {
-            if (framework === term) {
+          project.process.development.skills.frameworks.forEach((framework) => {
+            if (framework.id === term) {
               updatedProjects.add(project);
             }
           });
         }
 
         if (taxonomy === 'technologies') {
-          project.process.development.technologies.forEach((framework) => {
-            if (framework === term) {
-              updatedProjects.add(project);
+          project.process.development.skills.technologies.forEach(
+            (framework) => {
+              if (framework.id === term) {
+                updatedProjects.add(project);
+              }
             }
-          });
+          );
         }
       });
     }

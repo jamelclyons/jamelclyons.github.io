@@ -26,6 +26,7 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ project, repoQuery 
   const {
     owner, title, description, solution, process, problem, details
   } = project;
+
   const { contents } = useSelector(
     (state: RootState) => state.github
   );
@@ -128,7 +129,7 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ project, repoQuery 
 
         <TheSolution solution={solution} />
 
-        <TheProcess process={process} repoQuery={repoQuery} />
+        <TheProcess process={process} />
 
         <TheProblem problem={problem} />
 

@@ -26,7 +26,7 @@ const Search: React.FC<SearchProps> = ({ portfolio }) => {
   const { taxonomy, term } = useParams<string>();
 
   const { projects, skills } = portfolio;
-  const { projectTypes, languages, frameworks, technologies } = skills;
+  const { types, languages, frameworks, technologies } = skills;
 
   const { portfolioLoading, portfolioErrorMessage } = useSelector(
     (state: RootState) => state.portfolio
@@ -66,7 +66,7 @@ const Search: React.FC<SearchProps> = ({ portfolio }) => {
           <ProjectsComponent projects={portfolio.filterProjects(taxonomy, term)} />
         }
 
-        {projectTypes.size > 0 && <TaxList taxonomies={projectTypes} title={'Project Types'} />}
+        {types.size > 0 && <TaxList taxonomies={types} title={'Project Types'} />}
 
         {languages.size > 0 && <TaxListIcon taxonomies={languages} title={'Languages'} />}
 

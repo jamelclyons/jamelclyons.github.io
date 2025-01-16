@@ -213,11 +213,9 @@ export const getRepoLanguages = createAsyncThunk(
         let skill = { language: language, usage: usage };
         skills.push(skill);
       });
-      console.log(skills)
 
-      const repo: Repo = new Repo(repoObject);
+      const repo = new Repo(repoObject);
       repo.setSkills(skills);
-      console.log(repo)
 
       return repo.toObject();
     } catch (error) {

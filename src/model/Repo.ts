@@ -11,7 +11,7 @@ class Repo extends Model {
   homepage: string;
   description: string;
   repoURL: string;
-  skills: Skills = new Skills();
+  skills: Skills;
 
   constructor(data: Record<string, any> = {}) {
     super();
@@ -23,6 +23,7 @@ class Repo extends Model {
     this.homepage = data?.homepage ?? '';
     this.description = data?.description ?? '';
     this.repoURL = data?.repo_url ?? data?.html_url ?? '';
+    this.skills = data?.skills ? new Skills(data?.skills) : new Skills();
   }
 
   getOwner(data: Record<string, any>) {

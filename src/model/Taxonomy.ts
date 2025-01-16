@@ -50,6 +50,16 @@ class Taxonomy extends Model {
 
     return true;
   }
+
+  setIconURL(url: string) {
+    this.iconURL = url;
+    this.image.url = url;
+  }
+
+  setClassName(className: string) {
+    this.className = className;
+    this.image.className = className;
+  }
 }
 
 export default Taxonomy;

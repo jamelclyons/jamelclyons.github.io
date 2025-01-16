@@ -71,6 +71,7 @@ class Project extends Model {
     this.process.status.createdAt = repo.createdAt;
     this.process.status.updatedAt = repo.updatedAt;
     this.process.development.repoURL = repo.repoURL;
+    this.process.development.skills = repo.skills;
   }
 
   fromDocumentData(id: string, data: DocumentData) {

@@ -24,6 +24,7 @@ interface PortfolioState {
   portfolioErrorMessage: string;
   portfolioObject: Array<Record<string, any>>;
   projects: Array<Record<string, any>>;
+  skillsObject: Record<string, any>;
 }
 
 const initialState: PortfolioState = {
@@ -32,6 +33,7 @@ const initialState: PortfolioState = {
   portfolioErrorMessage: '',
   portfolioObject: [],
   projects: [],
+  skillsObject: [],
 };
 
 export const getPortfolio = createAsyncThunk(
@@ -40,20 +42,21 @@ export const getPortfolio = createAsyncThunk(
     try {
       let projects: Set<Record<string, any>> = new Set();
       let repoProjects: Set<Record<string, any>> = new Set();
-
+// Temp adding only repo
       if (Array.isArray(repos) && repos.length > 0) {
         repos.forEach((repo) => {
           let project = new Project();
 
           project.fromRepo(repo);
-          repoProjects.add(project);
+          // repoProjects.add(project.toObject());
+          projects.add(project.toObject());
         });
       }
 
       const querySnapshot: QuerySnapshot = await getDocs(portfolioCollection);
 
       if (querySnapshot.size > 0) {
-        repoProjects.forEach((project: Record<string,any>) => {
+        repoProjects.forEach((project: Record<string, any>) => {
           const matchingDoc = querySnapshot.docs.find(
             (doc) => doc.id === project.id
           );
@@ -116,7 +119,11 @@ export const getProjectsBy = createAsyncThunk(
 export const portfolioSlice = createSlice({
   name: 'portfolio',
   initialState,
-  reducers: {},
+  reducers: {
+    setSkills: (state, action) => {
+      state.skillsObject = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getPortfolio.fulfilled, (state, action) => {
@@ -150,4 +157,5 @@ export const portfolioSlice = createSlice({
   },
 });
 
+export const { setSkills } = portfolioSlice.actions;
 export default portfolioSlice;

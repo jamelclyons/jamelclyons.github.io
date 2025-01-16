@@ -10,11 +10,11 @@ interface SkillsComponentProps {
 }
 
 const SkillsComponent: React.FC<SkillsComponentProps> = ({ skills }) => {
-    const { projectTypes, languages, frameworks, technologies } = skills;
+    const { types, languages, frameworks, technologies } = skills;
 
     return (
         <>
-            {projectTypes.size > 0 && <TaxList taxonomies={projectTypes} title={'Project Types'} />}
+            {types.size > 0 && <TaxList taxonomies={types} title={'Project Types'} />}
 
             {languages.size > 0 && <TaxListIcon taxonomies={languages} title={'Languages'} />}
 

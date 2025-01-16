@@ -1,45 +1,105 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import type { AppDispatch } from '../../../model/store';
+import type { AppDispatch, RootState } from '../../../model/store';
 import ProjectDevelopment from '../../../model/ProjectDevelopment';
-import Taxonomy from '../../../model/Taxonomy';
 import Image from '@/model/Image';
-import GitHubRepoQuery from '@/model/GitHubRepoQuery';
+import Skills from '@/model/Skills';
 
 import CheckList from './CheckList';
 import ContentComponent from '../content/ContentComponent';
 import ProjectURLs from './ProjectURLsComponent';
 import Versions from './Versions';
-import TaxList from '../TaxList';
-import TaxListIcon from '../TaxListIcon';
 import ImageComponent from '../ImageComponent';
-
-import {
-  getProjectType,
-  getFramework,
-  getTechnology,
-} from '../../../controllers/taxonomiesSlice';
-import { getTaxImages } from '../../../controllers/taxonomiesSlice';
-import { getRepoLanguages } from '../../../controllers/githubSlice';
+import SkillsComponent from '../SkillsComponent';
+import Taxonomy from '@/model/Taxonomy';
 
 interface DevelopmentProps {
   development: ProjectDevelopment;
-  repoQuery: GitHubRepoQuery;
 }
 
-const Development: React.FC<DevelopmentProps> = ({ development, repoQuery }) => {
+const Development: React.FC<DevelopmentProps> = ({ development }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { checkList, content, repoURL, versionsList } = development;
 
-  const [types, setTypes] = useState<Set<Taxonomy>>(new Set());
-  const [languagesObject, setLanguagesObject] = useState<Array<Record<string, any>>>();
-  const [technologiesObject, setTechnologiesObject] = useState<Array<Record<string, any>>>();
-  const [languages, setLanguages] = useState<Set<Taxonomy>>(new Set());
-  const [frameworks, setFrameworks] = useState<Set<Taxonomy>>(new Set());
-  const [technologies, setTechnologies] = useState<Set<Taxonomy>>(new Set());
+  const { skillsObject } = useSelector((state: RootState) => state.portfolio);
+
   const [gitHub, setGitHub] = useState<Image>(new Image());
+  const [skills, setSkills] = useState<Skills>(new Skills());
+
+  useEffect(() => {
+    if (skillsObject &&
+      (development.skills.types.size > 0 ||
+        development.skills.languages.size > 0 ||
+        development.skills.frameworks.size > 0 ||
+        development.skills.technologies.size > 0
+      )) {
+      let imageTypes: Set<Taxonomy> = new Set();
+      let imageLanguages: Set<Taxonomy> = new Set();
+      let imageFrameworks: Set<Taxonomy> = new Set();
+      let imageTechnologies: Set<Taxonomy> = new Set();
+
+      const skillsType = new Skills(skillsObject);
+
+      if (development.skills.types.size > 0) {
+        skillsType.types.forEach((skill: Record<string, any>) => {
+          Array.from(development.skills.types).forEach((type) => {
+            if (skill.id === type.id) {
+              type.setClassName(skill.className);
+              type.setIconURL(skill.iconURL);
+              imageTypes.add(type);
+            }
+          });
+        });
+      }
+
+      if (development.skills.languages.size > 0) {
+        skillsType.languages.forEach((skill: Record<string, any>) => {
+          Array.from(development.skills.languages).forEach((language) => {
+            if (skill.id === language.id) {
+              language.setClassName(skill.className);
+              language.setIconURL(skill.iconURL);
+              console.log(language)
+              imageLanguages.add(language);
+            }
+          });
+        });
+      }
+
+      if (development.skills.frameworks.size > 0) {
+        skillsType.frameworks.forEach((skill: Record<string, any>) => {
+          Array.from(development.skills.frameworks).forEach((framework) => {
+            if (skill.id === framework.id) {
+              framework.setClassName(skill.className);
+              framework.setIconURL(skill.iconURL);
+              imageFrameworks.add(framework);
+            }
+          });
+        });
+      }
+
+      if (development.skills.technologies.size > 0) {
+        skillsType.technologies.forEach((skill: Record<string, any>) => {
+          Array.from(development.skills.technologies).forEach((technology) => {
+            if (skill.id === technology.id) {
+              technology.setClassName(skill.className);
+              technology.setIconURL(skill.iconURL);
+              imageTechnologies.add(technology);
+            }
+          });
+        });
+      }
+
+      const updatedSkills = new Skills();
+      updatedSkills.types = imageTypes;
+      updatedSkills.languages = imageLanguages;
+      updatedSkills.frameworks = imageFrameworks;
+      updatedSkills.technologies = imageTechnologies;
+
+      setSkills(updatedSkills);
+    }
+  }, []);
 
   useEffect(() => {
     if (repoURL) {
@@ -52,175 +112,14 @@ const Development: React.FC<DevelopmentProps> = ({ development, repoQuery }) => 
     }
   }, [repoURL, dispatch]);
 
-  useEffect(() => {
-    if (development.types.size > 0) {
-      let taxTypes: Set<Taxonomy> = new Set();
-
-      const fetchProjectTypes = async () => {
-        try {
-          await Promise.all(
-            Array.from(development.types).map(async (tax) => {
-              const result = await dispatch(getProjectType(tax));
-
-              if (getProjectType.fulfilled.match(result)) {
-                const taxonomy = result.payload as Record<string, any>;
-                taxTypes.add(new Taxonomy(taxonomy));
-              } else {
-                console.error("Failed to fetch project type:", result.error);
-                return null;
-              }
-            })
-          );
-
-          setTypes(taxTypes);
-        } catch (error) {
-          console.error("Error fetching project types:", error);
-        }
-      };
-
-      fetchProjectTypes();
-    }
-  }, [development, dispatch, setTypes]);
-
-  useEffect(() => {
-    if (languagesObject && languagesObject.length > 0) {
-      const getLanguageImages = async () => {
-        const updatedLanguages: Set<Taxonomy> = new Set();
-
-        await dispatch(getTaxImages({ type: 'languages', taxonomies: languagesObject })).unwrap().then((langs) => {
-          langs.forEach((lang) => {
-            let language = new Taxonomy(lang);
-            updatedLanguages.add(language);
-          });
-        });
-
-        setLanguages(updatedLanguages);
-      }
-
-      getLanguageImages();
-    }
-  }, [dispatch, languagesObject, setLanguages]);
-
-  useEffect(() => {
-    if (development && development.frameworks.size > 0) {
-      const fetchFrameworks = async (): Promise<Array<Record<string, any>>> => {
-        try {
-          const taxFrameworks: Array<Record<string, any>> = [];
-
-          await Promise.all(
-            Array.from(development.frameworks).map(async (tax) => {
-              const result = await dispatch(getFramework(tax));
-              if (getFramework.fulfilled.match(result)) {
-                const taxonomy = result.payload as Record<string, any>;
-                taxFrameworks.push(taxonomy);
-              } else {
-                console.error("Failed to fetch framework:", result.error);
-              }
-            })
-          );
-
-          return taxFrameworks;
-        } catch (error) {
-          console.error("Error fetching frameworks:", error);
-          return []; // Ensure a valid fallback return
-        }
-      };
-
-      const processFrameworks = async () => {
-        const taxFrameworks = await fetchFrameworks();
-
-        if (taxFrameworks.length > 0) {
-          try {
-            const frameworks = await dispatch(
-              getTaxImages({ type: "frameworks", taxonomies: taxFrameworks })
-            ).unwrap();
-
-            const updatedFrameworks: Set<Taxonomy> = new Set(
-              frameworks.map((tax) => new Taxonomy(tax))
-            );
-
-            setFrameworks(updatedFrameworks);
-          } catch (error) {
-            console.error("Error fetching tax images:", error);
-          }
-        }
-      };
-
-      processFrameworks();
-    }
-  }, [development, dispatch, setFrameworks]);
-
-  useEffect(() => {
-    if (development.technologies || technologiesObject) {
-      const fetchTechnologies = async (): Promise<Array<Record<string, any>>> => {
-        try {
-          const taxTechnologies: Array<Record<string, any>> = [];
-
-          if (development.technologies && development.technologies.size > 0) {
-            await Promise.all(
-              Array.from(development.technologies).map(async (tax) => {
-                const result = await dispatch(getTechnology(tax));
-                if (getTechnology.fulfilled.match(result)) {
-                  const taxonomy = result.payload as Record<string, any>;
-                  taxTechnologies.push(taxonomy);
-                } else {
-                  console.error("Failed to fetch project type:", result.error);
-                }
-              })
-            );
-          }
-
-          if (technologiesObject && technologiesObject.length > 0) {
-            await Promise.all(
-              Array.from(technologiesObject).map(async (tax) => {
-                const tech = new Taxonomy(tax);
-                const result = await dispatch(getTechnology(tech.id));
-                if (getTechnology.fulfilled.match(result)) {
-                  const taxonomy = result.payload as Record<string, any>;
-                  taxTechnologies.push(taxonomy);
-                } else {
-                  console.error("Failed to fetch project type:", result.error);
-                }
-              })
-            );
-          }
-
-          return taxTechnologies;
-        } catch (error) {
-          console.error("Error fetching project types:", error);
-          return [];
-        }
-      };
-      
-      const processTechnologies = async () => {
-        const taxTechnologies = await fetchTechnologies();
-
-        if (taxTechnologies.length > 0) {
-          try {
-            const technologies = await dispatch(getTaxImages({ type: 'technologies', taxonomies: taxTechnologies })).unwrap();
-
-            const updatedTechnologies: Set<Taxonomy> = new Set(
-              technologies.map((tax) => new Taxonomy(tax))
-            );
-
-            setTechnologies(updatedTechnologies);
-          } catch (error) {
-            console.error("Error fetching tax images:", error);
-          }
-        }
-      };
-
-      processTechnologies();
-    }
-  }, [development, dispatch, setTechnologies]);
-
   const handleSeeCode = () => {
     window.open(repoURL, '_blank');
   };
 
+  console.log(skills)
   return (
     <>{(
-      types.size > 0 || languages.size > 0 || frameworks.size > 0 || technologies.size > 0 ||
+      skills ||
       checkList.length > 0 ||
       (typeof content === 'string' && content !== '') ||
       (versionsList?.current !== '' && versionsList?.previous.length > 0) ||
@@ -229,13 +128,7 @@ const Development: React.FC<DevelopmentProps> = ({ development, repoQuery }) => 
 
         <h4 className="title">development</h4>
 
-        {types.size > 0 && <TaxList taxonomies={types} title={'types'} />}
-
-        {languages.size > 0 && <TaxListIcon taxonomies={languages} title={'Languages'} />}
-
-        {frameworks.size > 0 && <TaxListIcon taxonomies={frameworks} title={'frameworks'} />}
-
-        {technologies.size > 0 && <TaxListIcon taxonomies={technologies} title={'technologies'} />}
+        {skills && <SkillsComponent skills={skills} />}
 
         {checkList.length > 0 && <CheckList checkList={checkList} />}
 

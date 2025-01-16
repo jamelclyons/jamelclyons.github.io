@@ -1,17 +1,14 @@
 import Model from './Model';
 import Task from './Task';
 import ProjectVersions from './ProjectVersions';
+import Skills from './Skills';
 
 class ProjectDevelopment extends Model {
   content: string | object;
   checkList: Array<Task>;
   repoURL: string;
   versionsList: ProjectVersions;
-  // Add skills
-  types: Set<string>;
-  languages: Set<string>;
-  frameworks: Set<string>;
-  technologies: Set<string>;
+  skills: Skills;
 
   constructor(data: Record<string, any> = {}) {
     super();
@@ -21,12 +18,7 @@ class ProjectDevelopment extends Model {
     this.versionsList = data?.versions_list
       ? new ProjectVersions(data.versions_list)
       : new ProjectVersions();
-    this.types = data?.types ? new Set(data.types) : new Set();
-    this.languages = data?.languages ? new Set(data.languages) : new Set();
-    this.frameworks = data?.frameworks ? new Set(data.frameworks) : new Set();
-    this.technologies = data?.technologies
-      ? new Set(data.technologies)
-      : new Set();
+    this.skills = data?.skills ? new Skills(data.skills) : new Skills;
     this.content = data?.content || '';
   }
 

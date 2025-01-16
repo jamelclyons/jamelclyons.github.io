@@ -12,7 +12,7 @@ interface PortfolioComponentProps {
 
 const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ portfolio }) => {
   const { projects, skills } = portfolio;
-  const { projectTypes, languages, frameworks, technologies } = skills;
+  const { types, languages, frameworks, technologies } = skills;
   
   return (
     <>
@@ -22,7 +22,7 @@ const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ portfolio }) =>
 
           <ProjectsComponent projects={projects} />
 
-          {projectTypes.size > 0 && <TaxList taxonomies={projectTypes} title={'Project Types'} />}
+          {types.size > 0 && <TaxList taxonomies={types} title={'Project Types'} />}
 
           {languages.size > 0 && <TaxListIcon taxonomies={languages} title={'Languages'} />}
 

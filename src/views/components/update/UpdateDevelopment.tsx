@@ -18,6 +18,7 @@ import {
   getTechnologies,
 } from '../../../controllers/taxonomiesSlice';
 import { updateDevelopment } from '../../../controllers/updateSlice';
+import Taxonomy from '@/model/Taxonomy';
 
 interface UpdateDevelopmentProps {
   projectID: string;
@@ -73,20 +74,20 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, develo
 
   const [checkList, setCheckList] = useState<Array<Task>>(development.checkList);
   const [versionsList, setVersionsList] = useState<ProjectVersions>(development.versionsList);
-  const [selectedProjectTypes, setSelectedProjectTypes] = useState<Set<string>>(new Set(development.types));
-  const [selectedLanguages, setSelectedLanguages] = useState<Set<string>>(new Set(development.languages));
-  const [selectedFrameworks, setSelectedFrameworks] = useState<Set<string>>(new Set(development.frameworks));
-  const [selectedTechnologies, setSelectedTechnologies] = useState<Set<string>>(new Set(development.technologies));
+  const [selectedProjectTypes, setSelectedProjectTypes] = useState<Set<Taxonomy>>(new Set(development.skills.types));
+  const [selectedLanguages, setSelectedLanguages] = useState<Set<Taxonomy>>(new Set(development.skills.languages));
+  const [selectedFrameworks, setSelectedFrameworks] = useState<Set<Taxonomy>>(new Set(development.skills.frameworks));
+  const [selectedTechnologies, setSelectedTechnologies] = useState<Set<Taxonomy>>(new Set(development.skills.technologies));
 
   const handleProjectTypesCheckboxChange = (id: string) => {
     setSelectedProjectTypes((prevSelectedIds) => {
       const updatedSelection = new Set(prevSelectedIds);
 
-      if (updatedSelection.has(id)) {
-        updatedSelection.delete(id);
-      } else {
-        updatedSelection.add(id);
-      }
+      // if (updatedSelection.has(id)) {
+      //   updatedSelection.delete(id);
+      // } else {
+      //   updatedSelection.add(id);
+      // }
 
       return updatedSelection;
     });
@@ -96,11 +97,11 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, develo
     setSelectedLanguages((prevSelectedIds) => {
       const updatedSelection = new Set(prevSelectedIds);
 
-      if (updatedSelection.has(id)) {
-        updatedSelection.delete(id);
-      } else {
-        updatedSelection.add(id);
-      }
+      // if (updatedSelection.has(id)) {
+      //   updatedSelection.delete(id);
+      // } else {
+      //   updatedSelection.add(id);
+      // }
 
       return updatedSelection;
     });
@@ -110,11 +111,11 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, develo
     setSelectedFrameworks((prevSelectedIds) => {
       const updatedSelection = new Set(prevSelectedIds);
 
-      if (updatedSelection.has(id)) {
-        updatedSelection.delete(id);
-      } else {
-        updatedSelection.add(id);
-      }
+      // if (updatedSelection.has(id)) {
+      //   updatedSelection.delete(id);
+      // } else {
+      //   updatedSelection.add(id);
+      // }
 
       return updatedSelection;
     });
@@ -124,11 +125,11 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, develo
     setSelectedTechnologies((prevSelectedIds) => {
       const updatedSelection = new Set(prevSelectedIds);
 
-      if (updatedSelection.has(id)) {
-        updatedSelection.delete(id);
-      } else {
-        updatedSelection.add(id);
-      }
+      // if (updatedSelection.has(id)) {
+      //   updatedSelection.delete(id);
+      // } else {
+      //   updatedSelection.add(id);
+      // }
 
       return updatedSelection;
     });
