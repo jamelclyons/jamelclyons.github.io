@@ -8,10 +8,20 @@ interface TaxListProps {
 }
 
 const TaxList: React.FC<TaxListProps> = ({ taxonomies, title }) =>{
+
   const handleClick = (taxonomy: Taxonomy) => {
+    handleSkills();
     window.location.href = `/#/projects/${taxonomy.path}/${taxonomy.id}`;
   };
 
+  const handleSkills = () => {
+    const skillsElement = document.getElementById('top');
+
+    if (skillsElement) {
+      skillsElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+console.log(taxonomies)
   return (
     taxonomies && taxonomies?.size > 0 && (
       <div className="tax-list">

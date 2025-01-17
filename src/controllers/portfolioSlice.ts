@@ -42,18 +42,18 @@ export const getPortfolio = createAsyncThunk(
     try {
       let projects: Set<Record<string, any>> = new Set();
       let repoProjects: Set<Record<string, any>> = new Set();
-// Temp adding only repo
-      if (Array.isArray(repos) && repos.length > 0) {
+
+      const querySnapshot: QuerySnapshot = await getDocs(portfolioCollection);
+
+      if (repos.length > 0) {
         repos.forEach((repo) => {
           let project = new Project();
 
           project.fromRepo(repo);
-          // repoProjects.add(project.toObject());
-          projects.add(project.toObject());
+
+          repoProjects.add(project.toObject());
         });
       }
-
-      const querySnapshot: QuerySnapshot = await getDocs(portfolioCollection);
 
       if (querySnapshot.size > 0) {
         repoProjects.forEach((project: Record<string, any>) => {
@@ -67,9 +67,11 @@ export const getPortfolio = createAsyncThunk(
 
           projects.add(project.toObject());
         });
-      }
 
-      return Array.from(projects);
+        return Array.from(projects);
+      }
+      
+      return Array.from(repoProjects);
     } catch (error) {
       const err = error as Error;
       console.error(err);

@@ -6,3 +6,9 @@
     text-transform: lowercase;
   }
 }
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}

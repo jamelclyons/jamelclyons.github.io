@@ -11,11 +11,10 @@ import {
 } from '../controllers/messageSlice';
 
 import ProjectsComponent from './components/portfolio/ProjectsComponent';
-import TaxList from './components/TaxList';
-import TaxListIcon from './components/TaxListIcon';
+import SkillsComponent from './components/SkillsComponent';
 
 import Portfolio from '../model/Portfolio';
-import Project from '../model/Project';
+import HeaderTaxonomyComponent from './components/HeaderTaxonomyComponent';
 
 interface SearchProps {
   portfolio: Portfolio;
@@ -26,7 +25,6 @@ const Search: React.FC<SearchProps> = ({ portfolio }) => {
   const { taxonomy, term } = useParams<string>();
 
   const { projects, skills } = portfolio;
-  const { types, languages, frameworks, technologies } = skills;
 
   const { portfolioLoading, portfolioErrorMessage } = useSelector(
     (state: RootState) => state.portfolio
@@ -57,8 +55,10 @@ const Search: React.FC<SearchProps> = ({ portfolio }) => {
   }, [portfolioErrorMessage]);
 
   return (
-    <section className="search">
+    <section className="search" id="top">
       <>
+        {taxonomy && term && <HeaderTaxonomyComponent skill={skills.filter(taxonomy, term)} />}
+
         {
           projects &&
           projects.size > 0 &&
@@ -66,13 +66,7 @@ const Search: React.FC<SearchProps> = ({ portfolio }) => {
           <ProjectsComponent projects={portfolio.filterProjects(taxonomy, term)} />
         }
 
-        {types.size > 0 && <TaxList taxonomies={types} title={'Project Types'} />}
-
-        {languages.size > 0 && <TaxListIcon taxonomies={languages} title={'Languages'} />}
-
-        {frameworks.size > 0 && <TaxListIcon taxonomies={frameworks} title={'Frameworks'} />}
-
-        {technologies.size > 0 && <TaxListIcon taxonomies={technologies} title={'Technologies'} />}
+        {skills && <SkillsComponent skills={skills} />}
       </>
     </section>
   );

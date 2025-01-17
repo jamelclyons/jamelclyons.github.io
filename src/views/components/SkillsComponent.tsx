@@ -11,7 +11,7 @@ interface SkillsComponentProps {
 
 const SkillsComponent: React.FC<SkillsComponentProps> = ({ skills }) => {
     const { types, languages, frameworks, technologies } = skills;
-
+console.log(types)
     return (
         <>
             {types.size > 0 && <TaxList taxonomies={types} title={'Project Types'} />}

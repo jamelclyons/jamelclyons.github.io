@@ -1,7 +1,7 @@
 import Model from './Model';
 import Owner from './Owner';
 import Skills from './Skills';
-import Taxonomy from './Taxonomy';
+import Taxonomy, { Language, Technology } from './Taxonomy';
 
 class Repo extends Model {
   id: string;
@@ -45,9 +45,8 @@ class Repo extends Model {
       if (repoSkill?.language === 'Dockerfile') {
 
         skills.technologies.add(
-          new Taxonomy({
+          new Technology({
             id: 'docker',
-            type: 'technology',
             title: 'Docker',
             icon_url: '',
             class_name: '',
@@ -57,9 +56,8 @@ class Repo extends Model {
       }
 
       skills.languages.add(
-        new Taxonomy({
+        new Language({
           id: repoSkill?.language.toLowerCase(),
-          type: 'language',
           title: repoSkill?.language.toUpperCase(),
           icon_url: '',
           class_name: '',

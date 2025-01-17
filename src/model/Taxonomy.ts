@@ -19,7 +19,7 @@ class Taxonomy extends Model {
     this.id = data?.id ? data.id : '';
     this.type = data?.type ? data.type : '';
     this.title = data?.title ? data.title : '';
-    this.path = this.type ? snakeCaseToPath(this.type) : '';
+    this.path = data?.path ? snakeCaseToPath(data.path) : snakeCaseToPath(this.type);
     this.iconURL = data?.icon_url ? data.icon_url : '';
     this.className = data?.class_name ? data.class_name : '';
     this.usage = data?.usage ? data.usage : '';
@@ -59,6 +59,42 @@ class Taxonomy extends Model {
   setClassName(className: string) {
     this.className = className;
     this.image.className = className;
+  }
+}
+
+export class ProjectType extends Taxonomy {
+  type: string = 'project_type';
+  path: string = 'project-types';
+
+  constructor(data?: Record<string, any>) {
+    super(data);
+  }
+}
+
+export class Language extends Taxonomy {
+  type: string = 'language';
+  path: string = 'languages';
+
+  constructor(data?: Record<string, any>) {
+    super(data);
+  }
+}
+
+export class Framework extends Taxonomy {
+  type: string = 'framework';
+  path: string = 'frameworks';
+
+  constructor(data?: Record<string, any>) {
+    super(data);
+  }
+}
+
+export class Technology extends Taxonomy {
+  type: string = 'technology';
+  path: string = 'technologies';
+
+  constructor(data?: Record<string, any>) {
+    super(data);
   }
 }
 

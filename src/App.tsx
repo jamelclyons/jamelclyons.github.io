@@ -53,7 +53,7 @@ const App: React.FC = () => {
   const { projectTypesObject, languagesObject, frameworksObject, technologiesObject } = useSelector(
     (state: RootState) => state.taxonomies
   );
-
+  
   const [gitHubRepos, setGitHubRepos] = useState<Array<Repo>>([new Repo]);
   const [repos, setRepos] = useState<Array<Repo>>();
   const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio);
@@ -127,7 +127,7 @@ const App: React.FC = () => {
       technologiesObject
     ) {
       dispatch(setSkills({
-        projectTypes: projectTypesObject,
+        types: projectTypesObject,
         languages: languagesObject,
         frameworks: frameworksObject,
         technologies: technologiesObject

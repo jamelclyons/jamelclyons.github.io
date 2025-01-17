@@ -1,7 +1,12 @@
 @use './error_page.scss';
+@use './skills.scss';
 
 section.search {
   margin-top: 6.25rem;
+}
+
+#top{
+  scroll-margin: 6rem;
 }
 
 .search-form {

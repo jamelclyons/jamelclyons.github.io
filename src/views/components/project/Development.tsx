@@ -116,7 +116,6 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
     window.open(repoURL, '_blank');
   };
 
-  console.log(skills)
   return (
     <>{(
       skills ||

@@ -8,11 +8,13 @@ import StatusBarComponent from './components/StatusBarComponent';
 
 import { getRepoContents } from '../controllers/githubSlice';
 import { setMessage, setMessageType, setShowStatusBar } from '../controllers/messageSlice';
+import { getProject } from '@/controllers/projectSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
 import Project from '../model/Project';
 import GitHubRepoQuery from '../model/GitHubRepoQuery';
 import Portfolio from '@/model/Portfolio';
+import Repo from '@/model/Repo';
 
 interface ProjectPageProps {
   portfolio: Portfolio;
@@ -22,7 +24,7 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { projectID } = useParams<string>();
 
-  const { projectLoading, projectErrorMessage } = useSelector(
+  const { projectLoading, projectErrorMessage, projectObject } = useSelector(
     (state: RootState) => state.project
   );
 
@@ -31,15 +33,12 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
 
   useEffect(() => {
     if (projectID) {
-      console.log(projectID)
-
-      console.log(portfolio.filterProject(projectID))
       setProject(portfolio.filterProject(projectID));
     }
   }, [projectID]);
-
+console.log(project)
   useEffect(() => {
-    if (project) {
+    if (project.owner.login && project.id) {
       setRepoQuery(new GitHubRepoQuery(project.owner.login, project.id))
     }
   }, [project]);

@@ -10,15 +10,31 @@ interface ProjectSkillsProp {
 
 const ProjectSkills: React.FC<ProjectSkillsProp> = ({ skills }) => {
 
+  const handleClick = (skill: Taxonomy) => {
+    handleSkills();
+    window.location.href = `/#/projects/${skill.path}/${skill.id}`;
+  };
+
+  const handleSkills = () => {
+    const skillsElement = document.getElementById('top');
+
+    if (skillsElement) {
+      skillsElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <>
-      {skills?.size > 0 && (
+      {skills.size > 0 && (
         <div className="project-skills-bar">
           {Array.from(skills).map((skill, index) => (
             <div className="icon" key={index}>
-              <a href={`#/projects/${skill.path}/${skill.id}`}>
+              <button
+                key={index}
+                className="skills-button"
+                onClick={() => handleClick(skill)}>
                 <IconComponent image={skill.image} />
-              </a>
+              </button>
             </div>
           ))}
         </div>
