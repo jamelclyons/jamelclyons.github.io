@@ -19,6 +19,7 @@ import RepoContentQuery from '@/model/RepoContentQuery';
 import Organization from '@/model/Organization';
 import OrganizationsComponent from './components/OrganizationsComponent';
 import StoryComponent from './components/StoryComponent';
+import Portfolio from '@/model/Portfolio';
 
 interface AboutProps {
   user: User;
@@ -28,12 +29,12 @@ const About: React.FC<AboutProps> = ({ user }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { contents } = useSelector((state: RootState) => state.github);
-  const { skillsObject } = useSelector((state: RootState) => state.portfolio);
+  const { portfolioObject, skillsObject } = useSelector((state: RootState) => state.portfolio);
 
+  const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject));
+  const [skills, setSkills] = useState<Skills>(new Skills(skillsObject));
   const [content, setContent] = useState<RepoContent>();
   const [markdown, setMarkdown] = useState<string | object>();
-
-  const skills = new Skills(skillsObject);
 
   useEffect(() => {
     document.title = `About - ${user.name}`;
@@ -49,6 +50,18 @@ const About: React.FC<AboutProps> = ({ user }) => {
         )))
     }
   }, []);
+
+  useEffect(() => {
+    if (portfolioObject) {
+      setPortfolio(new Portfolio(portfolioObject));
+    }
+  }, [portfolioObject]);
+
+  useEffect(() => {
+    if (skillsObject) {
+      setSkills(new Skills(skillsObject));
+    }
+  }, [skillsObject]);
 
   useEffect(() => {
     if (Array.isArray(contents) && contents.length > 0) {
@@ -108,13 +121,25 @@ const About: React.FC<AboutProps> = ({ user }) => {
           </div>
 
           <div className="stats-bar">
-            <button onClick={handleProjects}>
-              <h3 className="title">projects</h3>
-            </button>
+            <div className="badge">
+              <div className="badge-number">
+                <h5>{portfolio.count}</h5>
+              </div>
 
-            <button onClick={handleSkills}>
-              <h3 className="title">skills</h3>
-            </button>
+              <button onClick={handleProjects}>
+                <h3 className="title">projects</h3>
+              </button>
+            </div>
+
+            <div className="badge">
+              <div className="badge-number">
+                <h5>{skills.count}</h5>
+              </div>
+
+              <button onClick={handleSkills}>
+                <h3 className="title">skills</h3>
+              </button>
+            </div>
 
             <button onClick={handleStory}>
               <h3 className="title">story</h3>

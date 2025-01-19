@@ -1,11 +1,17 @@
 import Model from './Model';
-import Taxonomy, { Framework, Language, ProjectType, Technology } from './Taxonomy';
+import Taxonomy, {
+  Framework,
+  Language,
+  ProjectType,
+  Technology,
+} from './Taxonomy';
 
 class Skills extends Model {
   types: Set<ProjectType>;
   languages: Set<Language>;
   frameworks: Set<Framework>;
   technologies: Set<Technology>;
+  count: number = 0;
 
   constructor(data: Record<string, any> = []) {
     super();
@@ -22,6 +28,8 @@ class Skills extends Model {
     this.technologies = Array.isArray(data?.technologies)
       ? this.getTechnologies(data.technologies)
       : new Set();
+
+    this.count = this.getCount();
   }
 
   getProjectTypes(data: Array<Record<string, any>> = []) {
@@ -56,7 +64,7 @@ class Skills extends Model {
 
   getTechnologies(data: Array<Record<string, any>> = []) {
     let technologies: Set<Technology> = new Set();
-    
+
     data.forEach((technology) => {
       technologies.add(new Technology(technology));
     });
@@ -65,7 +73,6 @@ class Skills extends Model {
   }
 
   filter(taxonomy: string, term: string) {
-
     if (taxonomy === 'project-types') {
       for (const type of this.types) {
         if (type.id === term) {
@@ -99,6 +106,15 @@ class Skills extends Model {
     }
 
     return new Taxonomy();
+  }
+
+  getCount() {
+    return (
+      this.types.size +
+      this.languages.size +
+      this.frameworks.size +
+      this.technologies.size
+    );
   }
 }
 

@@ -4,15 +4,13 @@ import Skills from './Skills';
 
 class Portfolio extends Model {
   projects: Set<Project>;
-  skills: Skills;
+  count: number = 0;
 
-  constructor(
-    projects: Array<Record<string, any>> = []
-  ) {
+  constructor(projects: Array<Record<string, any>> = []) {
     super();
 
     this.projects = this.getProjects(projects);
-    this.skills = new Skills;
+    this.count = this.getCount();
   }
 
   getProjects(data: Array<Record<string, any>> = []) {
@@ -81,6 +79,10 @@ class Portfolio extends Model {
     });
 
     return filteredProject;
+  }
+
+  getCount() {
+    return this.projects.size;
   }
 }
 

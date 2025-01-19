@@ -4,6 +4,7 @@
 @use './error_page.scss';
 @use './_author.scss';
 @use './organizations';
+@use './_badge.scss';
 
 .mission-statement-card.card {
   flex-direction: row;
@@ -24,9 +25,13 @@
   .stats-user,
   .stats-bar {
     display: flex;
-    align-items: center;
+    align-items: space-evenly;
     justify-content: center;
     gap: 1rem;
+  }
+
+  .stats-bar {
+    align-items: end;
   }
 
   .stats {
@@ -76,15 +81,22 @@
     .stats {
       width: 100%;
       max-width: 1000px;
-      justify-content: space-between;
-      gap: 2.5rem;
+      justify-content: space-evenly;
       padding: 0 2.5rem;
+      height: 100%;
+
+      .stats-user {
+        max-width: 50vw;
+      }
 
       .stats-bar {
         flex-direction: column;
-        justify-content: space-between;
+        align-items: center;
+        justify-content: center;
         gap: 2rem;
+        max-width: 25vw;
         height: 100%;
+        padding: 2.5rem 0;
       }
     }
   }
