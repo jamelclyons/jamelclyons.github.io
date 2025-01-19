@@ -17,7 +17,7 @@ class User extends Model {
   phone: string;
   resume: string;
   website: string;
-  organizations: Array<Organization>;
+  organizations: Array<Organization> = [];
   repos: Array<Repo>;
   contactMethods: ContactMethods;
   images: Record<string, Image>;
@@ -25,7 +25,7 @@ class User extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    const { homepage, author} = packageJson;
+    const { homepage, author } = packageJson;
 
     this.id = this.getGitHubUsername(homepage);
     this.avatarURL = data?.avatar_url || '';
@@ -36,9 +36,10 @@ class User extends Model {
     this.phone = data?.phone || author.contact.phone;
     this.resume = data?.resume || author.resume;
     this.website = data?.website || homepage;
-    this.organizations = this.setOrganizations(data?.organizations) || [];
     this.repos = data?.repos || '';
-    this.contactMethods = new ContactMethods(data?.contact_methods);
+    this.contactMethods = data?.contact_methods
+      ? new ContactMethods(data?.contact_methods)
+      : new ContactMethods();
     this.images = data?.images || '';
   }
 
@@ -58,14 +59,17 @@ class User extends Model {
     }
   }
 
-  setOrganizations(organizations: Array<Record<string, any>>) {
-    if (Array.isArray(organizations) && organizations.length > 0) {
-      return organizations.map(
-        (organization: Record<string, any>) => new Organization(organization)
-      );
+  setOrganizations(organizationsObject: Array<Record<string, any>>) {
+    let organizations: Array<Organization> = [];
+
+    if (Array.isArray(organizationsObject) && organizationsObject.length > 0) {
+
+      organizationsObject.forEach((organization) => {
+        organizations.push(new Organization(organization));
+      });
     }
 
-    return [];
+    this.organizations = organizations;
   }
 }
 

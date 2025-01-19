@@ -4,6 +4,12 @@
 .author-card.card {
   background-color: var(--card-background-color-secondary);
   color: var(--card-color-secondary);
+  max-width: 70vw;
+
+  img {
+    border-radius: unset;
+    box-shadow: unset;
+  }
 
   h3.title {
     padding: 0.5em;

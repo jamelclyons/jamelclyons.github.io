@@ -11,4 +11,9 @@
     background-color: black;
     color: white;
   }
+
+  img {
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+  }
 }

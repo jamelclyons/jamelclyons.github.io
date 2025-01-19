@@ -11,9 +11,11 @@ interface SkillsComponentProps {
 
 const SkillsComponent: React.FC<SkillsComponentProps> = ({ skills }) => {
     const { types, languages, frameworks, technologies } = skills;
-    
+
     return (
-        <>
+        <div className="skills" id="skills">
+            <h2 className="title">skills</h2>
+
             {types.size > 0 && <TaxList taxonomies={types} title={'Project Types'} />}
 
             {languages.size > 0 && <TaxListIcon taxonomies={languages} title={'Languages'} />}
@@ -21,7 +23,7 @@ const SkillsComponent: React.FC<SkillsComponentProps> = ({ skills }) => {
             {frameworks.size > 0 && <TaxListIcon taxonomies={frameworks} title={'Frameworks'} />}
 
             {technologies.size > 0 && <TaxListIcon taxonomies={technologies} title={'Technologies'} />}
-        </>
+        </div>
     )
 }
 

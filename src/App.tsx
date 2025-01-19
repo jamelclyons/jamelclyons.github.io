@@ -41,62 +41,62 @@ import Skills from './model/Skills';
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { userObject, organizations } = useSelector((state: RootState) => state.github);
+  const { userObject, organizationsObject } = useSelector((state: RootState) => state.github);
   const { portfolioObject, skillsObject } = useSelector((state: RootState) => state.portfolio);
   const { projectTypesObject, languagesObject, frameworksObject, technologiesObject } = useSelector(
     (state: RootState) => state.taxonomies
   );
 
   const [gitHubRepos, setGitHubRepos] = useState<Array<Repo>>();
-  const [user, setUser] = useState<User>(new User);
+  const [user, setUser] = useState<User>(new User(userObject));
   const [repos, setRepos] = useState<Array<Repo>>();
   const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject));
   const [skills, setSkills] = useState<Skills>(new Skills(skillsObject));
 
   useEffect(() => {
-    if (user.id) {
+    if (userObject || organizationsObject.length > 0) {
+      const user = new User(userObject)
+      user.setOrganizations(organizationsObject);
+      setUser(user);
+    }
+  }, [userObject, organizationsObject]);
+
+  useEffect(() => {
+    if (user) {
+      document.title = user.name;
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      let favicon = document.getElementById("favicon");
+
+      if (!favicon) {
+        favicon = document.createElement("link");
+        favicon.setAttribute("rel", "icon");
+        favicon.setAttribute("type", "image/png");
+        favicon.setAttribute("id", "favicon");
+        document.head.appendChild(favicon);
+      }
+
+      if (user.avatarURL) {
+        favicon.setAttribute("href", user.avatarURL);
+      }
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
       dispatch(getUser(user.id));
     }
-  }, [user.id]);
+  }, [dispatch, user]);
 
   useEffect(() => {
     if (user.id) {
       dispatch(getOrganizations());
     }
-  }, [user.id]);
-
-  useEffect(() => {
-    if (userObject) {
-      setUser(new User(userObject));
-    }
-  }, [userObject]);
-
-  useEffect(() => {
-    document.title = user.name;
-  }, [user]);
-
-  useEffect(() => {
-    let favicon = document.getElementById("favicon");
-
-    if (!favicon) {
-      favicon = document.createElement("link");
-      favicon.setAttribute("rel", "icon");
-      favicon.setAttribute("type", "image/png");
-      favicon.setAttribute("id", "favicon");
-      document.head.appendChild(favicon);
-    }
-
-    if (user.avatarURL) {
-      favicon.setAttribute("href", user.avatarURL);
-    }
-  }, [user.avatarURL]);
-
-  useEffect(() => {
-    if (organizations) {
-      user.setOrganizations(organizations);
-    }
-  }, [organizations]);
-
+  }, [dispatch, user]);
+  
   useEffect(() => {
     dispatch(getProjectTypes());
   }, []);
@@ -136,6 +136,12 @@ const App: React.FC = () => {
     technologiesObject
   ]);
 
+  useEffect(() => {
+    if (skillsObject) {
+      setSkills(new Skills(skillsObject));
+    }
+  }, [skillsObject]);
+  
   useEffect(() => {
     const fetchRepos = async () => {
       const reposObject = await dispatch(getRepos()).unwrap();
@@ -190,12 +196,6 @@ const App: React.FC = () => {
       setPortfolio(new Portfolio(portfolioObject));
     }
   }, [portfolioObject]);
-
-  useEffect(() => {
-    if (skillsObject) {
-      setSkills(new Skills(skillsObject));
-    }
-  }, [skillsObject]);
 
   return (
     <>

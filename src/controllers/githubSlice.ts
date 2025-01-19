@@ -4,10 +4,12 @@ import {
   isAnyOf,
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
+import { useDispatch } from 'react-redux';
 
 import { Octokit, RestEndpointMethodTypes } from '@octokit/rest';
 import { GetResponseTypeFromEndpointMethod } from '@octokit/types';
 
+import type { AppDispatch, RootState } from '@/model/store';
 import RepoContent from '../model/RepoContent';
 import Organization from '../model/Organization';
 import User from '../model/User';
@@ -40,7 +42,7 @@ interface GithubState {
   githubErrorMessage: string;
   userObject: Record<string, any>;
   organizationObject: Record<string, any>;
-  organizations: Array<Record<string, any>>;
+  organizationsObject: Array<Record<string, any>>;
   repos: Array<Record<string, any>>;
   socialAccounts: OctokitResponse | null;
   repoObject: Record<string, any>;
@@ -57,7 +59,7 @@ const initialState: GithubState = {
   githubErrorMessage: '',
   userObject: {},
   organizationObject: {},
-  organizations: [],
+  organizationsObject: [],
   repos: [],
   socialAccounts: null,
   repoObject: {},
@@ -106,11 +108,11 @@ export const getRepos = createAsyncThunk('github/getRepos', async () => {
   }
 });
 
-export const getOrganizations = createAsyncThunk(
-  'github/getOrganizations',
-  async () => {
+export const getOrganization = createAsyncThunk(
+  'github/getOrganization',
+  async (organization: string) => {
     try {
-      const { data } = await octokit.request('/user/orgs');
+      const { data } = await octokit.request(`/orgs/${organization}`);
 
       return data;
     } catch (error) {
@@ -121,13 +123,27 @@ export const getOrganizations = createAsyncThunk(
   }
 );
 
-export const getOrganization = createAsyncThunk(
-  'github/getOrganization',
-  async (organization: string) => {
+export const getOrganizations = createAsyncThunk(
+  'github/getOrganizations',
+  async (_,{dispatch}) => {
     try {
-      const { data } = await octokit.request(`/orgs/${organization}`);
+      const { data } = await octokit.request('/user/orgs');
 
-      return data;
+      let organizations: Array<Record<string, any>> = [];
+
+      if (Array.isArray(data) && data.length > 0) {
+        const organizationPromises = data.map(async (organization) => {
+          const orgData = await dispatch(getOrganization(organization.login)).unwrap();
+          const orgClass = new Organization(orgData);
+          return orgClass.toObject();
+        });
+
+        // Wait for all organization data to resolve
+        const resolvedOrganizations = await Promise.all(organizationPromises);
+        organizations.push(...resolvedOrganizations);
+      }
+
+      return organizations;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -319,7 +335,7 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubLoading = false;
         state.githubErrorMessage = '';
         state.githubError = null;
-        state.organizations = action.payload;
+        state.organizationsObject = action.payload;
       })
       .addCase(getOrganization.fulfilled, (state, action) => {
         state.githubLoading = false;

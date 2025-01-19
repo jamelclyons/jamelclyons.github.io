@@ -16,6 +16,9 @@ import User from '../model/User';
 import Skills from '@/model/Skills';
 import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 import RepoContentQuery from '@/model/RepoContentQuery';
+import Organization from '@/model/Organization';
+import OrganizationsComponent from './components/OrganizationsComponent';
+import StoryComponent from './components/StoryComponent';
 
 interface AboutProps {
   user: User;
@@ -123,36 +126,11 @@ const About: React.FC<AboutProps> = ({ user }) => {
           </div>
         </div>
 
-        <div className="skills" id="skills">
-          <h2 className="title">skills</h2>
+        <SkillsComponent skills={skills} />
 
-          <SkillsComponent skills={skills} />
-        </div>
+        {typeof markdown === 'string' && <StoryComponent story={markdown} />}
 
-        <div className="story" id="story">
-          <h2 className="title">story</h2>
-
-          {typeof markdown === 'string' && markdown !== '' && <ContentComponent html={markdown} />}
-        </div>
-
-        {Array.isArray(user.organizations) && user.organizations.length > 0 && (
-          <div className="organizations">
-            <h2 className="title">
-              {user.organizations.length === 1
-                ? 'Organization'
-                : 'Organizations'}
-            </h2>
-
-            {user.organizations.map((organization, index) => (
-              <a href={organization.url} key={index}>
-                <img
-                  src={organization.avatarURL}
-                  alt={`${organization.name} avatar`}
-                />
-              </a>
-            ))}
-          </div>
-        )}
+        <OrganizationsComponent organizations={user.organizations} />
       </section>
     </>
   );
