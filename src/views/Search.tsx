@@ -12,19 +12,21 @@ import {
 
 import ProjectsComponent from './components/portfolio/ProjectsComponent';
 import SkillsComponent from './components/SkillsComponent';
+import HeaderTaxonomyComponent from './components/HeaderTaxonomyComponent';
 
 import Portfolio from '../model/Portfolio';
-import HeaderTaxonomyComponent from './components/HeaderTaxonomyComponent';
+import Skills from '@/model/Skills';
 
 interface SearchProps {
   portfolio: Portfolio;
+  skills: Skills
 }
 
-const Search: React.FC<SearchProps> = ({ portfolio }) => {
+const Search: React.FC<SearchProps> = ({ portfolio, skills }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { taxonomy, term } = useParams<string>();
 
-  const { projects, skills } = portfolio;
+  const { projects } = portfolio;
 
   const { portfolioLoading, portfolioErrorMessage } = useSelector(
     (state: RootState) => state.portfolio

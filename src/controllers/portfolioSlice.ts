@@ -1,20 +1,24 @@
-import { createSlice, createAsyncThunk, isAnyOf } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
 
 import {
   collection,
   getDocs,
-  doc,
-  getDoc,
   query,
   where,
   QuerySnapshot,
-  DocumentData,
 } from 'firebase/firestore';
 
 import db from '../services/firebase/config';
 
 import Project from '../model/Project';
 import Repo from '../model/Repo';
+
+export type SkillsObject = {
+  types: Array<Record<string, any>>;
+  languages: Array<Record<string, any>>;
+  frameworks: Array<Record<string, any>>;
+  technologies: Array<Record<string, any>>;
+}
 
 const portfolioCollection = collection(db, 'portfolio');
 
@@ -33,15 +37,15 @@ const initialState: PortfolioState = {
   portfolioErrorMessage: '',
   portfolioObject: [],
   projects: [],
-  skillsObject: [],
+  skillsObject: {},
 };
 
 export const getPortfolio = createAsyncThunk(
   'portfolio/getPortfolio',
   async (repos: Array<Repo>) => {
     try {
-      let projects: Set<Record<string, any>> = new Set();
-      let repoProjects: Set<Record<string, any>> = new Set();
+      let projects: Array<Record<string, any>> = [];
+      let repoProjects: Array<Record<string, any>> = [];
 
       const querySnapshot: QuerySnapshot = await getDocs(portfolioCollection);
 
@@ -49,9 +53,9 @@ export const getPortfolio = createAsyncThunk(
         repos.forEach((repo) => {
           let project = new Project();
 
-          project.fromRepo(repo);
+          project.fromRepo(repo.toObject());
 
-          repoProjects.add(project.toObject());
+          repoProjects.push(project.toObject());
         });
       }
 
@@ -65,13 +69,13 @@ export const getPortfolio = createAsyncThunk(
             project.fromDocumentData(matchingDoc.id, matchingDoc.data());
           }
 
-          projects.add(project.toObject());
+          projects.push(project.toObject());
         });
 
-        return Array.from(projects);
+        return projects;
       }
-      
-      return Array.from(repoProjects);
+
+      return repoProjects;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -122,7 +126,7 @@ export const portfolioSlice = createSlice({
   name: 'portfolio',
   initialState,
   reducers: {
-    setSkills: (state, action) => {
+    setPortfolioSkills: (state, action: PayloadAction<SkillsObject>) => {
       state.skillsObject = action.payload;
     },
   },
@@ -159,5 +163,5 @@ export const portfolioSlice = createSlice({
   },
 });
 
-export const { setSkills } = portfolioSlice.actions;
+export const { setPortfolioSkills } = portfolioSlice.actions;
 export default portfolioSlice;

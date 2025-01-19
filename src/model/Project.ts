@@ -10,6 +10,7 @@ import ProjectDetails from './ProjectDetails';
 import Repo from './Repo';
 import Gallery from './Gallery';
 import Owner from './Owner';
+import Skills from './Skills';
 
 import { DocumentData } from 'firebase/firestore';
 
@@ -61,17 +62,17 @@ class Project extends Model {
       : '';
   }
 
-  fromRepo(repo: Repo) {
-    this.id = repo.id;
-    this.owner = new Owner(repo.owner);
+  fromRepo(data: Record<string, any>) {
+    this.id = data.id;
+    this.owner = new Owner(data.owner);
     this.title = this.title ? this.title : this.getTitle(this.id);
     this.description =
-      repo.description !== '' ? repo.description : 'No Description Provided.';
-    this.solution.urlsList.homepage.url = repo.homepage;
-    this.process.status.createdAt = repo.createdAt;
-    this.process.status.updatedAt = repo.updatedAt;
-    this.process.development.repoURL = repo.repoURL;
-    this.process.development.skills = repo.skills;
+      data.description !== '' ? data.description : 'No Description Provided.';
+    this.solution.urlsList.homepage.url = data.homepage;
+    this.process.status.createdAt = data.createdAt;
+    this.process.status.updatedAt = data.updatedAt;
+    this.process.development.repoURL = data.repoURL;
+    this.process.development.skills = data.skills;
   }
 
   fromDocumentData(id: string, data: DocumentData) {

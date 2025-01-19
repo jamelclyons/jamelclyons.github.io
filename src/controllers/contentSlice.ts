@@ -55,28 +55,6 @@ export const getContent = createAsyncThunk(
   }
 );
 
-export const loadMarkdown = async (url: string) => {
-  try {
-    return await fetchContent(url);
-  } catch (error) {
-    console.error('Error fetching markdown:', error);
-  }
-};
-
-export const fetchContent = async (contentURL: string) => {
-  try {
-    const response = await fetch(contentURL);
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch file: ${response.statusText}`);
-    }
-
-    return await response.text();
-  } catch (error) {
-    console.error('Error fetching markdown file:', error);
-  }
-};
-
 const contentSliceOptions: CreateSliceOptions<ContentState> = {
   name: 'content',
   initialState,

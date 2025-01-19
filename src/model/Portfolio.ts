@@ -7,13 +7,12 @@ class Portfolio extends Model {
   skills: Skills;
 
   constructor(
-    projects: Array<Record<string, any>> = [],
-    skills: Skills = new Skills()
+    projects: Array<Record<string, any>> = []
   ) {
     super();
 
     this.projects = this.getProjects(projects);
-    this.skills = skills;
+    this.skills = new Skills;
   }
 
   getProjects(data: Array<Record<string, any>> = []) {

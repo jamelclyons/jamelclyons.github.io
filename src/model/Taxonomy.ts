@@ -24,8 +24,8 @@ class Taxonomy extends Model {
     this.className = data?.class_name ? data.class_name : '';
     this.usage = data?.usage ? data.usage : '';
     this.image = new Image({
-      id: data?.id,
-      title: data?.title,
+      id: this.id,
+      title: this.title,
       url: this.iconURL,
       class_name: this.className,
     });
@@ -63,8 +63,8 @@ class Taxonomy extends Model {
 }
 
 export class ProjectType extends Taxonomy {
-  type: string = 'project_type';
-  path: string = 'project-types';
+  readonly type: string = 'project_type';
+  readonly path: string = 'project-types';
 
   constructor(data?: Record<string, any>) {
     super(data);
@@ -72,8 +72,8 @@ export class ProjectType extends Taxonomy {
 }
 
 export class Language extends Taxonomy {
-  type: string = 'language';
-  path: string = 'languages';
+  readonly type: string = 'language';
+  readonly path: string = 'languages';
 
   constructor(data?: Record<string, any>) {
     super(data);
@@ -81,8 +81,8 @@ export class Language extends Taxonomy {
 }
 
 export class Framework extends Taxonomy {
-  type: string = 'framework';
-  path: string = 'frameworks';
+  readonly type: string = 'framework';
+  readonly path: string = 'frameworks';
 
   constructor(data?: Record<string, any>) {
     super(data);
@@ -90,8 +90,8 @@ export class Framework extends Taxonomy {
 }
 
 export class Technology extends Taxonomy {
-  type: string = 'technology';
-  path: string = 'technologies';
+  readonly type: string = 'technology';
+  readonly path: string = 'technologies';
 
   constructor(data?: Record<string, any>) {
     super(data);

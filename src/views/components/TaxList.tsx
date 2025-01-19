@@ -21,7 +21,7 @@ const TaxList: React.FC<TaxListProps> = ({ taxonomies, title }) =>{
       skillsElement.scrollIntoView({ behavior: 'smooth' });
     }
   };
-console.log(taxonomies)
+
   return (
     taxonomies && taxonomies?.size > 0 && (
       <div className="tax-list">

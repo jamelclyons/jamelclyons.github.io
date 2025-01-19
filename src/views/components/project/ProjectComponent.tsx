@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { marked } from 'marked';
 
@@ -10,12 +10,14 @@ import TheSolution from './TheSolution';
 import TheProblem from './TheProblem';
 import TheProcess from './TheProcess';
 
-import type { RootState } from '../../../model/store';
+import type { AppDispatch, RootState } from '../../../model/store';
 import Project from '../../../model/Project';
 import RepoContent from '../../../model/RepoContent';
 import GitHubRepoQuery from '../../../model/GitHubRepoQuery';
 
-import { loadMarkdown } from '../../../controllers/contentSlice';
+import { dispatch } from '@/model/hooks';
+import { getRepoFile } from '@/controllers/githubSlice';
+import Repo from '@/model/Repo';
 
 interface ProjectComponentProps {
   project: Project;
@@ -23,6 +25,8 @@ interface ProjectComponentProps {
 }
 
 const ProjectComponent: React.FC<ProjectComponentProps> = ({ project, repoQuery }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const {
     owner, title, description, solution, process, problem, details
   } = project;
@@ -65,60 +69,65 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ project, repoQuery 
     }
   }, [contents]);
 
-  useEffect(() => {
-    if (solutionContent) {
-      loadMarkdown(solutionContent.downloadURL)
-        .then((markdown) => {
-          if (typeof markdown === 'string') {
-            solution.content = marked(markdown).valueOf();
-          }
-        });
-    }
-  }, [contents, solutionContent]);
+  // useEffect(() => {
+  //   if (solutionContent) {
+  //     dispatch(getRepoFile(new Repo().toObject()));
+  //   }
+  // }, [dispatch, solutionContent]);
 
-  useEffect(() => {
-    if (designContent) {
-      loadMarkdown(designContent.downloadURL)
-        .then((markdown) => {
-          if (typeof markdown === 'string') {
-            process.design.content = marked(markdown).valueOf();
-          }
-        });
-    }
-  }, [contents, designContent]);
+  // useEffect(() => {
+  //   if (solutionContent?.downloadURL) {
+  //     const content = async () => {
+  //       return await dispatch(fetchContent(solutionContent.downloadURL)).unwrap()
+  //     };
 
-  useEffect(() => {
-    if (developmentContent) {
-      loadMarkdown(developmentContent.downloadURL)
-        .then((markdown) => {
-          if (typeof markdown === 'string') {
-            process.development.content = marked(markdown).valueOf();
-          }
-        });
-    }
-  }, [contents, developmentContent]);
+  //     content();
+  //   }
+  // }, [contents, solutionContent]);
 
-  useEffect(() => {
-    if (deliveryContent) {
-      loadMarkdown(deliveryContent.downloadURL)
-        .then((markdown) => {
-          if (typeof markdown === 'string') {
-            process.delivery.content = marked(markdown).valueOf();
-          }
-        });
-    }
-  }, [contents, deliveryContent]);
+  // useEffect(() => {
+  //   if (designContent) {
+  //     loadMarkdown(designContent.downloadURL)
+  //       .then((markdown) => {
+  //         if (typeof markdown === 'string') {
+  //           process.design.content = marked(markdown).valueOf();
+  //         }
+  //       });
+  //   }
+  // }, [contents, designContent]);
 
-  useEffect(() => {
-    if (problemContent) {
-      loadMarkdown(problemContent.downloadURL)
-        .then((markdown) => {
-          if (typeof markdown === 'string') {
-            problem.content = marked(markdown).valueOf();
-          }
-        });
-    }
-  }, [contents, problemContent]);
+  // useEffect(() => {
+  //   if (developmentContent) {
+  //     loadMarkdown(developmentContent.downloadURL)
+  //       .then((markdown) => {
+  //         if (typeof markdown === 'string') {
+  //           process.development.content = marked(markdown).valueOf();
+  //         }
+  //       });
+  //   }
+  // }, [contents, developmentContent]);
+
+  // useEffect(() => {
+  //   if (deliveryContent) {
+  //     loadMarkdown(deliveryContent.downloadURL)
+  //       .then((markdown) => {
+  //         if (typeof markdown === 'string') {
+  //           process.delivery.content = marked(markdown).valueOf();
+  //         }
+  //       });
+  //   }
+  // }, [contents, deliveryContent]);
+
+  // useEffect(() => {
+  //   if (problemContent) {
+  //     loadMarkdown(problemContent.downloadURL)
+  //       .then((markdown) => {
+  //         if (typeof markdown === 'string') {
+  //           problem.content = marked(markdown).valueOf();
+  //         }
+  //       });
+  //   }
+  // }, [contents, problemContent]);
 
   return (
     <>

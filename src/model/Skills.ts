@@ -1,65 +1,64 @@
 import Model from './Model';
-import Taxonomy from './Taxonomy';
+import Taxonomy, { Framework, Language, ProjectType, Technology } from './Taxonomy';
 
 class Skills extends Model {
-  types: Set<Taxonomy>;
-  languages: Set<Taxonomy>;
-  frameworks: Set<Taxonomy>;
-  technologies: Set<Taxonomy>;
+  types: Set<ProjectType>;
+  languages: Set<Language>;
+  frameworks: Set<Framework>;
+  technologies: Set<Technology>;
 
   constructor(data: Record<string, any> = []) {
     super();
 
     this.types = Array.isArray(data?.types)
-      ? this.getProjectTypes(data?.types)
+      ? this.getProjectTypes(data.types)
       : new Set();
     this.languages = Array.isArray(data?.languages)
-      ? this.getLanguages(data?.languages)
+      ? this.getLanguages(data.languages)
       : new Set();
     this.frameworks = Array.isArray(data?.frameworks)
-      ? this.getFrameworks(data?.frameworks)
+      ? this.getFrameworks(data.frameworks)
       : new Set();
     this.technologies = Array.isArray(data?.technologies)
-      ? this.getTechnologies(data?.technologies)
+      ? this.getTechnologies(data.technologies)
       : new Set();
   }
 
   getProjectTypes(data: Array<Record<string, any>> = []) {
-    let types: Set<Taxonomy> = new Set();
+    let types: Set<ProjectType> = new Set();
 
     data.forEach((type) => {
-      types.add(new Taxonomy(type));
+      types.add(new ProjectType(type));
     });
 
     return types;
   }
 
   getLanguages(data: Array<Record<string, any>> = []) {
-    let languages: Set<Taxonomy> = new Set();
+    let languages: Set<Language> = new Set();
 
     data.forEach((language) => {
-      languages.add(new Taxonomy(language));
+      languages.add(new Language(language));
     });
 
     return languages;
   }
 
   getFrameworks(data: Array<Record<string, any>> = []) {
-    let frameworks: Set<Taxonomy> = new Set();
+    let frameworks: Set<Framework> = new Set();
 
     data.forEach((framework) => {
-      frameworks.add(new Taxonomy(framework));
+      frameworks.add(new Framework(framework));
     });
 
     return frameworks;
   }
 
   getTechnologies(data: Array<Record<string, any>> = []) {
-    let technologies: Set<Taxonomy> = new Set();
+    let technologies: Set<Technology> = new Set();
+    
     data.forEach((technology) => {
-      console.log(technology)
-
-      technologies.add(new Taxonomy(technology));
+      technologies.add(new Technology(technology));
     });
 
     return technologies;

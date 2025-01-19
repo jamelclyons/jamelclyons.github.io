@@ -1,43 +1,62 @@
 :root {
   --total-skills: 7;
-  --icon-width: 12rem;
-  --animation-duration: calc(var(--total-skills) * 1.5s);
+  --icon-width: 4rem;
+  --icon-gap: 2rem;
+  --total-width: 42rem;
+  --animation-duration: 21s;
 }
 
 .author-knowledge {
   display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  cursor: grab;
   width: 100%;
-}
 
-.author-knowledge-slide {
-  display: flex;
-  gap: 2rem;
-  animation: var(--animation-duration) slide infinite linear;
-}
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
-.author-knowledge-slide:hover {
-  animation-play-state: paused;
-}
+  &:active {
+    cursor: grabbing;
+  }
 
-.author-knowledge-slide {
-  .icon {
-    padding: 0;
-    width: var(--icon-width);
+  .author-knowledge-slide {
+    display: flex;
+    gap: 2rem;
+    padding-left: 2rem;
+    width: 100%;
+    animation: slide infinite var(--animation-duration) linear;
+    animation-direction: alternate;
 
-    i {
-      font-size: 4rem;
+    &:hover {
+      animation: none;
+      animation-play-state: paused;
     }
 
-    img {
-      width: auto;
-      height: 4rem;
-      border-radius: .85rem;
+    .icon {
+      padding: 0;
+      width: var(--icon-width);
+  
+      i {
+        font-size: 4rem;
+      }
+  
+      img {
+        width: 4rem;
+        height: 4rem;
+        border-radius: 0.85rem;
+      }
     }
   }
 }
 
 @keyframes slide {
-  100% {
-    transform: translateX(calc(-100% / 2));
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(var(--total-width) * -1));
   }
 }

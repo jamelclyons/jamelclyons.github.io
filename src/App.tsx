@@ -24,26 +24,19 @@ import {
   getRepos,
   getRepoLanguages
 } from './controllers/githubSlice';
-import { getPortfolio, setSkills } from './controllers/portfolioSlice';
+import { getPortfolio, setPortfolioSkills, SkillsObject } from './controllers/portfolioSlice';
 import {
   getLanguages,
   getProjectTypes,
   getFrameworks,
   getTechnologies,
 } from './controllers/taxonomiesSlice';
-import {
-  getProjectType,
-  getFramework,
-  getTechnology,
-} from './controllers/taxonomiesSlice';
-import { getTaxImages } from './controllers/taxonomiesSlice';
 
 import type { AppDispatch, RootState } from './model/store';
 import Repo from './model/Repo';
 import User from './model/User';
 import Portfolio from './model/Portfolio';
 import Skills from './model/Skills';
-import Taxonomy from './model/Taxonomy';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -53,11 +46,12 @@ const App: React.FC = () => {
   const { projectTypesObject, languagesObject, frameworksObject, technologiesObject } = useSelector(
     (state: RootState) => state.taxonomies
   );
-  
-  const [gitHubRepos, setGitHubRepos] = useState<Array<Repo>>([new Repo]);
-  const [repos, setRepos] = useState<Array<Repo>>();
-  const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio);
+
+  const [gitHubRepos, setGitHubRepos] = useState<Array<Repo>>();
   const [user, setUser] = useState<User>(new User);
+  const [repos, setRepos] = useState<Array<Repo>>();
+  const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject));
+  const [skills, setSkills] = useState<Skills>(new Skills(skillsObject));
 
   useEffect(() => {
     if (user.id) {
@@ -121,17 +115,19 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (
-      projectTypesObject ||
-      languagesObject ||
-      frameworksObject ||
+      projectTypesObject &&
+      languagesObject &&
+      frameworksObject &&
       technologiesObject
     ) {
-      dispatch(setSkills({
+      const skillsPayload: SkillsObject = {
         types: projectTypesObject,
         languages: languagesObject,
         frameworks: frameworksObject,
         technologies: technologiesObject
-      }));
+      }
+
+      dispatch(setPortfolioSkills(skillsPayload));
     }
   }, [
     projectTypesObject,
@@ -161,15 +157,19 @@ const App: React.FC = () => {
   }, [dispatch, user.id]);
 
   useEffect(() => {
-    const fetchRepoSkills = async (repo: Repo): Promise<Repo> => {
+    const fetchRepoSkills = async (repo: Repo): Promise<Record<string, any>> => {
       const data = await dispatch(getRepoLanguages(repo)).unwrap();
-      return new Repo(data);
+      repo.setSkills(data);
+      return repo.toObject();
     };
 
     const fetchAllRepoSkills = async () => {
-      if (gitHubRepos.length > 0) {
+      if (gitHubRepos && gitHubRepos.length > 0) {
         const fetchedRepos = await Promise.all(
-          gitHubRepos.map((repo) => fetchRepoSkills(repo))
+          gitHubRepos.map(async (repo) => {
+            const updatedRepo = await fetchRepoSkills(repo);
+            return new Repo(updatedRepo);
+          })
         );
 
         setRepos(fetchedRepos);
@@ -186,10 +186,16 @@ const App: React.FC = () => {
   }, [repos, dispatch]);
 
   useEffect(() => {
-    if (portfolioObject || skillsObject) {
-      setPortfolio(new Portfolio(portfolioObject, new Skills(skillsObject)));
+    if (portfolioObject) {
+      setPortfolio(new Portfolio(portfolioObject));
     }
-  }, [portfolioObject, skillsObject]);
+  }, [portfolioObject]);
+
+  useEffect(() => {
+    if (skillsObject) {
+      setSkills(new Skills(skillsObject));
+    }
+  }, [skillsObject]);
 
   return (
     <>
@@ -197,11 +203,11 @@ const App: React.FC = () => {
       <Router>
         <Suspense fallback={<LoadingComponent />}>
           <Routes>
-            <Route path="/" element={<Home user={user} portfolio={portfolio} />} />
+            <Route path="/" element={<Home user={user} portfolio={portfolio} skills={skills} />} />
             <Route path="/about" element={<About user={user} />} />
-            <Route path="/portfolio" element={<PortfolioPage user={user} portfolio={portfolio} />} />
-            <Route path="/portfolio/:projectID" element={<ProjectPage portfolio={portfolio} />} />
-            <Route path="/projects/:taxonomy/:term" element={<Search portfolio={portfolio} />} />
+            <Route path="/portfolio" element={<PortfolioPage user={user} portfolio={portfolio} skills={skills} />} />
+            <Route path="/portfolio/:owner/:projectID" element={<ProjectPage portfolio={portfolio} />} />
+            <Route path="/projects/:taxonomy/:term" element={<Search portfolio={portfolio} skills={skills} />} />
             <Route path="/resume" element={<Resume user={user} />} />
             <Route path="/contact" element={<Contact user={user} />} />
             <Route path="/add/project" element={<ProjectAdd />} />

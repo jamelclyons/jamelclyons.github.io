@@ -3,18 +3,19 @@ import React, { useEffect } from 'react';
 import PortfolioComponent from './components/portfolio/PortfolioComponent';
 import MemberIntroductionComponent from './components/member/MemberComponent';
 import ContactComponent from './components/contact/ContactComponent';
+import MemberKnowledgeComponent from './components/member/MemberKnowledgeComponent';
 
 import User from '../model/User';
 import Portfolio from '../model/Portfolio';
+import Skills from '@/model/Skills';
 
 interface HomeProps {
   user: User;
   portfolio: Portfolio;
+  skills: Skills;
 }
 
-const Home: React.FC<HomeProps> = ({ user, portfolio }) => {
-  const { skills } = portfolio;
-  const { languages, frameworks, technologies } = skills;
+const Home: React.FC<HomeProps> = ({ user, portfolio, skills }) => {
 
   useEffect(() => {
     document.title = user.name;
@@ -25,12 +26,11 @@ const Home: React.FC<HomeProps> = ({ user, portfolio }) => {
       <section className="home">
         <MemberIntroductionComponent
           user={user}
-          languages={languages}
-          frameworks={frameworks}
-          technologies={technologies}
         />
 
-        <PortfolioComponent portfolio={portfolio} />
+        <MemberKnowledgeComponent skills={skills} />
+
+        <PortfolioComponent portfolio={portfolio} skills={skills} />
 
         <ContactComponent user={user} />
       </section>

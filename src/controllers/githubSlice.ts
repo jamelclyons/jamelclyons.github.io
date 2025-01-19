@@ -5,7 +5,7 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
-import { Octokit } from '@octokit/rest';
+import { Octokit, RestEndpointMethodTypes } from '@octokit/rest';
 import { GetResponseTypeFromEndpointMethod } from '@octokit/types';
 
 import RepoContent from '../model/RepoContent';
@@ -14,26 +14,24 @@ import User from '../model/User';
 import Repo from '../model/Repo';
 import Taxonomy from '../model/Taxonomy';
 import GitHubRepoQuery from '../model/GitHubRepoQuery';
+import { Buffer } from 'buffer';
+import RepoContentQuery from '@/model/RepoContentQuery';
 
-let octokit = new Octokit();
+type OctokitResponse<T = any, S = number> = {
+  data: T;
+  status: S;
+};
 
-try {
-  if (import.meta.env.VITE_OCTOKIT_AUTH == null) {
-    throw new Error(
-      'VITE_OCTOKIT_AUTH is not defined in the environment variables.'
-    );
-  } else {
-    octokit = new Octokit({
-      auth: import.meta.env.VITE_OCTOKIT_AUTH,
-    });
-  }
-} catch (error) {
-  const err = error as Error;
-  console.error(err.message);
-}
+type RepoLanguagesQuery =
+  RestEndpointMethodTypes['repos']['listLanguages']['parameters'];
+type RepoLanguages =
+  RestEndpointMethodTypes['repos']['listLanguages']['response'];
 
-const baseURL = 'https://api.github.com';
-const getUserURL = `${baseURL}/users`;
+const error = new Error();
+
+const octokit = new Octokit({
+  auth: import.meta.env.VITE_OCTOKIT_AUTH,
+});
 
 interface GithubState {
   githubLoading: boolean;
@@ -44,9 +42,11 @@ interface GithubState {
   organizationObject: Record<string, any>;
   organizations: Array<Record<string, any>>;
   repos: Array<Record<string, any>>;
-  socialAccounts: [];
-  repo: Record<string, any>;
+  socialAccounts: OctokitResponse | null;
+  repoObject: Record<string, any>;
+  repoLanguages: Array<Record<string, any>>;
   contents: Array<Record<string, any>>;
+  file: OctokitResponse | null;
   contributorsObject: Array<Record<string, any>>;
 }
 
@@ -59,9 +59,11 @@ const initialState: GithubState = {
   organizationObject: {},
   organizations: [],
   repos: [],
-  socialAccounts: [],
-  repo: {},
+  socialAccounts: null,
+  repoObject: {},
+  repoLanguages: [],
   contents: [],
+  file: null,
   contributorsObject: [],
 };
 
@@ -142,9 +144,9 @@ export const getOrganizationsRepos = createAsyncThunk(
 
       return data;
     } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
+      if (error instanceof Error) {
+        console.error(error);
+      }
     }
   }
 );
@@ -155,11 +157,11 @@ type RepoResponse = GetResponseTypeFromEndpointMethod<
 
 export const getRepo = createAsyncThunk(
   'github/getRepo',
-  async (query: Record<string, any>) => {
+  async (query: GitHubRepoQuery) => {
     try {
       const repo: RepoResponse = await octokit.rest.repos.get({
-        owner: query.owner as string,
-        repo: query.repo as string,
+        owner: query.owner,
+        repo: query.repo,
       });
 
       return new Repo(repo.data).toObject();
@@ -173,12 +175,12 @@ export const getRepo = createAsyncThunk(
 
 export const getRepoContents = createAsyncThunk(
   'github/getRepoContents',
-  async (query: Record<string, any>) => {
+  async (query: RepoContentQuery) => {
     try {
       const repoContents = await octokit.rest.repos.getContent({
-        owner: query.owner as string,
-        repo: query.repo as string,
-        path: query.path as string,
+        owner: query.owner,
+        repo: query.repo,
+        path: query.path,
       });
 
       let contents: Array<Record<string, any>> = [];
@@ -198,26 +200,43 @@ export const getRepoContents = createAsyncThunk(
   }
 );
 
+export const getRepoFile = createAsyncThunk(
+  'github/getRepoFile',
+  async (query: RepoContentQuery) => {
+    try {
+      const { owner, repo, path } = query;
+
+      const file: OctokitResponse = await octokit.request(
+        `repos/${owner}/${repo}/production/${path}`
+      );
+
+      return file;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
 export const getRepoLanguages = createAsyncThunk(
   'github/getRepoLanguages',
-  async (repoObject: Record<string, any>) => {
+  async (repo: Repo) => {
     try {
-      const repoLanguages = await octokit.rest.repos.listLanguages({
-        owner: repoObject.owner.login,
-        repo: repoObject.id,
-      });
+      const repoLanguages: RepoLanguages =
+        await octokit.rest.repos.listLanguages({
+          owner: repo.owner.login,
+          repo: repo.id,
+        });
 
-      let skills: Array<Record<string, any>> = [];
+      let skillsArray: Array<Record<string, any>> = [];
 
       Object.entries(repoLanguages.data).forEach(([language, usage]) => {
         let skill = { language: language, usage: usage };
-        skills.push(skill);
+        skillsArray.push(skill);
       });
 
-      const repo = new Repo(repoObject);
-      repo.setSkills(skills);
-
-      return repo.toObject();
+      return skillsArray;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -251,20 +270,14 @@ export const getContributors = createAsyncThunk(
 );
 
 export const getCommits = createAsyncThunk(
-  'github/getFounder',
-  async (username) => {
+  'github/getCommits',
+  async (username: string) => {
     try {
-      const response = await fetch(`${getUserURL}/${username}/repos`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await octokit.request(`users/${username}/repos`);
 
-      const responseData = await response.json();
-      console.log(responseData);
+      console.log(response);
 
-      return responseData;
+      return response;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -275,21 +288,13 @@ export const getCommits = createAsyncThunk(
 
 export const getSocialAccounts = createAsyncThunk(
   'github/getSocialAccounts',
-  async (username) => {
+  async (username: string) => {
     try {
-      const response = await fetch(
-        `${getUserURL}/${username}/social_accounts`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+      const response: OctokitResponse = await octokit.request(
+        `users/${username}/social_accounts`
       );
 
-      const responseData = await response.json();
-
-      return responseData;
+      return response;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -332,7 +337,7 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubLoading = false;
         state.githubErrorMessage = '';
         state.githubError = null;
-        state.repo = action.payload;
+        state.repoObject = action.payload;
       })
       .addCase(getRepoContents.fulfilled, (state, action) => {
         state.githubLoading = false;
@@ -340,11 +345,18 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubError = null;
         state.contents = action.payload;
       })
+      .addCase(getRepoFile.fulfilled, (state, action) => {
+        state.githubLoading = false;
+        state.githubErrorMessage = '';
+        state.githubError = null;
+        state.file = action.payload;
+      })
       .addCase(getRepoLanguages.fulfilled, (state, action) => {
         state.githubLoading = false;
         state.githubErrorMessage = '';
         state.githubError = null;
-        state.repo = action.payload;
+        state.githubStatusCode = 200;
+        state.repoLanguages = action.payload;
       })
       .addCase(getSocialAccounts.fulfilled, (state, action) => {
         state.githubLoading = false;
@@ -360,7 +372,8 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
           getRepo.pending,
           getRepoContents.pending,
           getRepoLanguages.pending,
-          getSocialAccounts.pending
+          getSocialAccounts.pending,
+          getRepoFile.pending
         ),
         (state) => {
           state.githubLoading = true;
@@ -376,7 +389,8 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
           getRepo.rejected,
           getRepoContents.rejected,
           getRepoLanguages.rejected,
-          getSocialAccounts.rejected
+          getSocialAccounts.rejected,
+          getRepoFile.rejected
         ),
         (state, action) => {
           state.githubLoading = false;

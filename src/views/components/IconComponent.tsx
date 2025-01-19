@@ -9,13 +9,13 @@ const IconComponent: React.FC<IconComponentProps> = ({ image }) => {
 
   return (
     <>
-      {image?.url ? (
-        <img src={image.url} alt={image.title} title={image.title} />
-      ) : (
-        image?.className && (
-          <i className={image.className} title={image.title}></i>
-        )
-      )}
+        {image?.url ? (
+          <img className="icon" src={image.url} alt={image.title} title={image.title} />
+        ) : (
+          image?.className && (
+            <i className={image.className} title={image.title}></i>
+          )
+        )}
     </>
   );
 }

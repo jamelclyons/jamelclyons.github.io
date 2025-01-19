@@ -1,18 +1,20 @@
 import React, { useEffect, useRef } from 'react';
 import IconComponent from '../IconComponent';
-import Taxonomy from '../../../model/Taxonomy';
+import Taxonomy from '@/model/Taxonomy';
+import Skills from '@/model/Skills';
 
 interface MemberKnowledgeProps {
-  languages: Set<Taxonomy>;
-  frameworks: Set<Taxonomy>;
-  technologies: Set<Taxonomy>;
+  skills: Skills;
 }
 
-const MemberKnowledgeComponent: React.FC<MemberKnowledgeProps> = ({
-  languages,
-  frameworks,
-  technologies
-}) => {
+const MemberKnowledgeComponent: React.FC<MemberKnowledgeProps> = ({ skills }) => {
+
+  const {
+    languages,
+    frameworks,
+    technologies
+  } = skills;
+
   const arrayLang = Array.from(languages);
   const arrayFrame = Array.from(frameworks);
   const arrayTech = Array.from(technologies);
@@ -36,6 +38,16 @@ const MemberKnowledgeComponent: React.FC<MemberKnowledgeProps> = ({
         skillsSlide.dataset.cloned = "true";
         document.documentElement.style.setProperty("--total-skills", `${totalSkills}`);
       }
+
+      const width = window.getComputedStyle(document.documentElement).getPropertyValue("--icon-width");
+      const gap = window.getComputedStyle(document.documentElement).getPropertyValue("--icon-gap");
+      const totalWidth = parseFloat(width) + parseFloat(gap);
+      const total = totalSkills * totalWidth;
+      const duration = total * (.25 / parseFloat(gap));
+
+      document.documentElement.style.setProperty("--animation-duration", `${duration}s`);
+      document.documentElement.style.setProperty("--total-width", `${total}rem`);
+      document.documentElement.style.setProperty("--total-skills", `${totalSkills}`);
     }
   }, [knowledge]);
 
@@ -46,10 +58,8 @@ const MemberKnowledgeComponent: React.FC<MemberKnowledgeProps> = ({
           {Array.isArray(knowledge) &&
             knowledge.length > 0 &&
             knowledge.map((knowledge: Taxonomy, index) => (
-              <a href={`/#/projects/${knowledge.path}/${knowledge.id}`}>
-                <IconComponent
-                  key={index}
-                  image={knowledge.image} />
+              <a href={`/#/projects/${knowledge.path}/${knowledge.id}`} key={index} >
+                <IconComponent image={knowledge.image} />
               </a>
             ))}
         </div>

@@ -21,85 +21,9 @@ interface DevelopmentProps {
 const Development: React.FC<DevelopmentProps> = ({ development }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { checkList, content, repoURL, versionsList } = development;
+  const { checkList, content, repoURL, versionsList, skills } = development;
 
-  const { skillsObject } = useSelector((state: RootState) => state.portfolio);
-
-  const [gitHub, setGitHub] = useState<Image>(new Image());
-  const [skills, setSkills] = useState<Skills>(new Skills());
-
-  useEffect(() => {
-    if (skillsObject &&
-      (development.skills.types.size > 0 ||
-        development.skills.languages.size > 0 ||
-        development.skills.frameworks.size > 0 ||
-        development.skills.technologies.size > 0
-      )) {
-      let imageTypes: Set<Taxonomy> = new Set();
-      let imageLanguages: Set<Taxonomy> = new Set();
-      let imageFrameworks: Set<Taxonomy> = new Set();
-      let imageTechnologies: Set<Taxonomy> = new Set();
-
-      const skillsType = new Skills(skillsObject);
-
-      if (development.skills.types.size > 0) {
-        skillsType.types.forEach((skill: Record<string, any>) => {
-          Array.from(development.skills.types).forEach((type) => {
-            if (skill.id === type.id) {
-              type.setClassName(skill.className);
-              type.setIconURL(skill.iconURL);
-              imageTypes.add(type);
-            }
-          });
-        });
-      }
-
-      if (development.skills.languages.size > 0) {
-        skillsType.languages.forEach((skill: Record<string, any>) => {
-          Array.from(development.skills.languages).forEach((language) => {
-            if (skill.id === language.id) {
-              language.setClassName(skill.className);
-              language.setIconURL(skill.iconURL);
-              console.log(language)
-              imageLanguages.add(language);
-            }
-          });
-        });
-      }
-
-      if (development.skills.frameworks.size > 0) {
-        skillsType.frameworks.forEach((skill: Record<string, any>) => {
-          Array.from(development.skills.frameworks).forEach((framework) => {
-            if (skill.id === framework.id) {
-              framework.setClassName(skill.className);
-              framework.setIconURL(skill.iconURL);
-              imageFrameworks.add(framework);
-            }
-          });
-        });
-      }
-
-      if (development.skills.technologies.size > 0) {
-        skillsType.technologies.forEach((skill: Record<string, any>) => {
-          Array.from(development.skills.technologies).forEach((technology) => {
-            if (skill.id === technology.id) {
-              technology.setClassName(skill.className);
-              technology.setIconURL(skill.iconURL);
-              imageTechnologies.add(technology);
-            }
-          });
-        });
-      }
-
-      const updatedSkills = new Skills();
-      updatedSkills.types = imageTypes;
-      updatedSkills.languages = imageLanguages;
-      updatedSkills.frameworks = imageFrameworks;
-      updatedSkills.technologies = imageTechnologies;
-
-      setSkills(updatedSkills);
-    }
-  }, []);
+  const [gitHub, setGitHub] = useState<Image>();
 
   useEffect(() => {
     if (repoURL) {
@@ -135,7 +59,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
         {/* <Versions versions_list={development?.versionsList} /> */}
 
-        {repoURL !== '' &&
+        {gitHub &&
           <button className='repo' onClick={handleSeeCode}>
             <h3 className='title'>
               <ImageComponent image={gitHub} />

@@ -9,13 +9,15 @@ import StatusBarComponent from './components/StatusBarComponent';
 
 import User from '../model/User';
 import Portfolio from '../model/Portfolio';
+import Skills from '@/model/Skills';
 
 interface PortfolioProps {
   user: User;
   portfolio: Portfolio;
+  skills: Skills;
 }
 
-const PortfolioPage: React.FC<PortfolioProps> = ({ user, portfolio }) => {
+const PortfolioPage: React.FC<PortfolioProps> = ({ user, portfolio, skills }) => {
 
   const { portfolioLoading } = useSelector(
     (state: RootState) => state.portfolio
@@ -28,12 +30,12 @@ const PortfolioPage: React.FC<PortfolioProps> = ({ user, portfolio }) => {
   if (portfolioLoading) {
     return <LoadingComponent />;
   }
-
+console.log(skills)
   return (
     <section className="portfolio">
       <>
-        {portfolio ? (
-          <PortfolioComponent portfolio={portfolio} />
+        {portfolio || skills ? (
+          <PortfolioComponent portfolio={portfolio} skills={skills} />
         ) : (
           <StatusBarComponent />
         )}

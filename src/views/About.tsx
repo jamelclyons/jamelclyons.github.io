@@ -8,12 +8,14 @@ import SkillsComponent from './components/SkillsComponent';
 import ContentComponent from './components/content/ContentComponent';
 
 import { getRepoContents } from '../controllers/githubSlice';
-import { loadMarkdown } from '../controllers/contentSlice';
+// import { loadMarkdown } from '../controllers/contentSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
 import RepoContent from '../model/RepoContent';
 import User from '../model/User';
 import Skills from '@/model/Skills';
+import GitHubRepoQuery from '@/model/GitHubRepoQuery';
+import RepoContentQuery from '@/model/RepoContentQuery';
 
 interface AboutProps {
   user: User;
@@ -36,11 +38,12 @@ const About: React.FC<AboutProps> = ({ user }) => {
 
   useEffect(() => {
     if (user) {
-      dispatch(getRepoContents({
-        owner: user.id,
-        repo: user.id,
-        path: ''
-      }))
+      dispatch(getRepoContents(
+        new RepoContentQuery(
+          user.id,
+          user.id,
+          ''
+        )))
     }
   }, []);
 
@@ -56,16 +59,16 @@ const About: React.FC<AboutProps> = ({ user }) => {
     }
   }, [contents]);
 
-  useEffect(() => {
-    if (content) {
-      loadMarkdown(content.downloadURL)
-        .then((markdown) => {
-          if (typeof markdown === 'string') {
-            setMarkdown(marked(markdown).valueOf());
-          }
-        });
-    }
-  }, [contents, content]);
+  // useEffect(() => {
+  //   if (content) {
+  //     loadMarkdown(content.downloadURL)
+  //       .then((markdown) => {
+  //         if (typeof markdown === 'string') {
+  //           setMarkdown(marked(markdown).valueOf());
+  //         }
+  //       });
+  //   }
+  // }, [contents, content]);
 
   const handleProjects = () => {
     window.location.href = '/#/portfolio';

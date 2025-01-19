@@ -10,5 +10,12 @@
 .header-title {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1.25rem;
+  width: 100%;
+
+  img {
+    max-width: 5rem;
+    max-height: 5rem;
+  }
 }

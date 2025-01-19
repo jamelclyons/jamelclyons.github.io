@@ -1,7 +1,8 @@
 import Model from './Model';
 import Owner from './Owner';
+import RepoContent from './RepoContent';
 import Skills from './Skills';
-import Taxonomy, { Language, Technology } from './Taxonomy';
+import { Language, Technology } from './Taxonomy';
 
 class Repo extends Model {
   id: string;
@@ -12,6 +13,7 @@ class Repo extends Model {
   description: string;
   repoURL: string;
   skills: Skills;
+  contents: RepoContent;
 
   constructor(data: Record<string, any> = {}) {
     super();
@@ -23,7 +25,10 @@ class Repo extends Model {
     this.homepage = data?.homepage ?? '';
     this.description = data?.description ?? '';
     this.repoURL = data?.repo_url ?? data?.html_url ?? '';
-    this.skills = data?.skills ? new Skills(data?.skills) : new Skills();
+    this.skills = data?.skills ? new Skills(data.skills) : new Skills();
+    this.contents = data?.contents
+      ? new RepoContent(data?.contents)
+      : new RepoContent();
   }
 
   getOwner(data: Record<string, any>) {
@@ -41,33 +46,63 @@ class Repo extends Model {
   setSkills(repoSkills: Array<Record<string, any>>) {
     let skills = new Skills();
 
-    repoSkills.forEach((repoSkill) => {
-      if (repoSkill?.language === 'Dockerfile') {
-
+    repoSkills.forEach(({ language, usage }) => {
+      if (language === 'Dockerfile') {
         skills.technologies.add(
           new Technology({
             id: 'docker',
             title: 'Docker',
             icon_url: '',
             class_name: '',
-            usage: repoSkill?.usage,
+            usage: usage,
           })
         );
       }
 
-      skills.languages.add(
-        new Language({
-          id: repoSkill?.language.toLowerCase(),
-          title: repoSkill?.language.toUpperCase(),
-          icon_url: '',
-          class_name: '',
-          usage: repoSkill?.usage,
-        })
-      );
+      if (language === 'SCSS') {
+        skills.technologies.add(
+          new Technology({
+            id: 'sass',
+            title: 'Sass',
+            icon_url: '',
+            class_name: '',
+            usage: usage,
+          })
+        );
+      }
+
+      if (language === 'hack') {
+        skills.languages.add(
+          new Language({
+            id: 'hack',
+            title: 'Hack',
+            icon_url: '',
+            class_name: '',
+            usage: usage,
+          })
+        );
+      }
+
+      if (
+        language !== 'hack' &&
+        language !== 'SCSS' &&
+        language !== 'Dockerfile'
+      )
+        skills.languages.add(
+          new Language({
+            id: language.toLowerCase(),
+            title: language.toUpperCase(),
+            icon_url: '',
+            class_name: '',
+            usage: usage,
+          })
+        );
     });
 
     this.skills = skills;
   }
+
+  setContent() {}
 }
 
 export default Repo;

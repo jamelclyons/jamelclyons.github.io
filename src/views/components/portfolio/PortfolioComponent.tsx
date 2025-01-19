@@ -1,34 +1,28 @@
 import React from 'react';
 
 import ProjectsComponent from './ProjectsComponent';
-import TaxList from '../TaxList';
-import TaxListIcon from '../TaxListIcon';
+import SkillsComponent from '../SkillsComponent';
 
-import Portfolio from '../../../model/Portfolio';
+import Portfolio from '@/model/Portfolio';
+import Skills from '@/model/Skills';
 
 interface PortfolioComponentProps {
   portfolio: Portfolio;
+  skills: Skills;
 }
 
-const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ portfolio }) => {
-  const { projects, skills } = portfolio;
-  const { types, languages, frameworks, technologies } = skills;
-  
+const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ portfolio, skills }) => {
+  const { projects } = portfolio;
+
   return (
     <>
-      {projects.size > 0 && (
+      {projects.size > 0 && skills && (
         <main className="portfolio">
           <h1 className="title">portfolio</h1>
 
           <ProjectsComponent projects={projects} />
 
-          {types.size > 0 && <TaxList taxonomies={types} title={'Project Types'} />}
-
-          {languages.size > 0 && <TaxListIcon taxonomies={languages} title={'Languages'} />}
-
-          {frameworks.size > 0 && <TaxListIcon taxonomies={frameworks} title={'Frameworks'} />}
-
-          {technologies.size > 0 && <TaxListIcon taxonomies={technologies} title={'Technologies'} />}
+          {skills && <SkillsComponent skills={skills} />}
         </main>
       )}
     </>

@@ -20,6 +20,11 @@ import db from '../services/firebase/config';
 
 import Taxonomy from '../model/Taxonomy';
 
+export type TaxImageQuery = {
+  id: string;
+  type: string;
+};
+
 interface TaxonomiesState {
   taxonomiesLoading: boolean;
   taxonomiesError: Error | null;
@@ -63,10 +68,29 @@ const getTaxonomy = (type: string, doc: DocumentData) => {
   return taxonomy.toObject();
 };
 
+export const getTaxImage = createAsyncThunk(
+  'taxonomies/getTaxImage',
+  async (query: TaxImageQuery) => {
+    try {
+      const docRef: DocumentReference<unknown, DocumentData> = doc(
+        collection(db, query.type),
+        query.id
+      );
+      const images = await getDoc(docRef);
+
+      return images;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
 export const getTaxImages = createAsyncThunk<
   Array<Record<string, any>>,
   { type: string; taxonomies: Array<Record<string, any>> }
->('taxonomies/getTaxImage', async ({ type, taxonomies }) => {
+>('taxonomies/getTaxImages', async ({ type, taxonomies }) => {
   try {
     const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(
       collection(db, type)
@@ -80,8 +104,8 @@ export const getTaxImages = createAsyncThunk<
       taxonomies.forEach((taxonomy) => {
         if (taxonomy.id === doc.id) {
           let tax = new Taxonomy(taxonomy);
-          tax.className = data?.class_name;
-          tax.iconURL = data?.icon_url;
+          tax.setClassName(data?.class_name);
+          tax.setIconURL(data?.icon_url);
           updatedTaxonomies.push(tax.toObject());
         }
       });
