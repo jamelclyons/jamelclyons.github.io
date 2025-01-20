@@ -32,14 +32,12 @@ const Search: React.FC<SearchProps> = ({ portfolio, skills }) => {
   );
 
   useEffect(() => {
-    if (taxonomy && term) {
-      const skillClass =
-        taxonomy.charAt(0).toUpperCase() + taxonomy.slice(1).toLowerCase();
-      const skill = term.charAt(0).toUpperCase() + term.slice(1).toLowerCase();
+    if (term) {
+      const skill = term.toUpperCase();
 
-      document.title = `Projects > ${skillClass} > ${skill}`;
+      document.title = skill;
     }
-  }, [taxonomy, term]);
+  }, [term]);
 
   useEffect(() => {
     if (portfolioLoading) {

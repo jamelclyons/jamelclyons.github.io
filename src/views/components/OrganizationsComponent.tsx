@@ -2,22 +2,26 @@ import React from 'react'
 
 import Organization from '@/model/Organization';
 
+import DescriptionComponent from './DescriptionComponent';
+
+import { spaceToPath } from '@/utilities/String';
+
 interface OrganizationsComponentProps {
   organizations: Array<Organization>;
 }
 
 const OrganizationsComponent: React.FC<OrganizationsComponentProps> = ({ organizations }) => {
-
   const handleClick = (organization: Organization) => {
     handleOrganizations();
-    window.location.href = `/#/orgs/${organization.login}`;
+    const name = spaceToPath(organization.name);
+    window.location.href = `/#/orgs/${name}`;
   };
 
   const handleOrganizations = () => {
-    const skillsElement = document.getElementById('top');
+    const element = document.getElementById('top');
 
-    if (skillsElement) {
-      skillsElement.scrollIntoView({ behavior: 'smooth' });
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -43,6 +47,7 @@ const OrganizationsComponent: React.FC<OrganizationsComponentProps> = ({ organiz
                 />
               </button>
               <h3>{organization.name}</h3>
+              <DescriptionComponent description={organization.description} />
             </div>
           ))}
         </div>

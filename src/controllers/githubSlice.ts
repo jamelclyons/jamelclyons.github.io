@@ -112,26 +112,11 @@ export const getOrganization = createAsyncThunk(
 
 export const getOrganizations = createAsyncThunk(
   'github/getOrganizations',
-  async (_, { dispatch }) => {
+  async () => {
     try {
       const { data } = await octokit.request('/user/orgs');
 
-      let organizations: Array<Record<string, any>> = [];
-
-      if (Array.isArray(data) && data.length > 0) {
-        const organizationPromises = data.map(async (organization) => {
-          const orgData = await dispatch(
-            getOrganization(organization.login)
-          ).unwrap();
-          const orgClass = new Organization(orgData);
-          return orgClass.toObject();
-        });
-
-        const resolvedOrganizations = await Promise.all(organizationPromises);
-        organizations.push(...resolvedOrganizations);
-      }
-
-      return organizations;
+      return data as Array<Record<string, any>>;
     } catch (error) {
       const err = error as Error;
       console.error(err);

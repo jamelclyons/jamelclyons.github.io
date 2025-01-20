@@ -1,4 +1,5 @@
 import Model from './Model';
+import ContactMethods from './ContactMethods';
 
 class Organization extends Model {
   id: string;
@@ -13,6 +14,8 @@ class Organization extends Model {
   location: string;
   email: string;
   url: string;
+  github: string;
+  contactMethods: ContactMethods;
 
   constructor(data: Record<string, any> = {}) {
     super();
@@ -25,10 +28,24 @@ class Organization extends Model {
     this.description = data?.description;
     this.name = data?.name;
     this.company = data?.company;
-    this.blog = data?.blog;
+    this.blog = data?.blog ? data.blog : '';
     this.location = data?.location;
     this.email = data?.email;
     this.url = data?.url;
+    this.github = data?.html_url || data?.github;
+    
+    const x = data?.twitter_username
+      ? `https://www.x.com/${data.twitter_username}`
+      : '';
+
+    const methods: Record<string, any> = {
+      website: this.blog,
+      email: this.email,
+      github: data?.html_url || data?.github,
+      x: x,
+    };
+
+    this.contactMethods = new ContactMethods(methods);
   }
 }
 

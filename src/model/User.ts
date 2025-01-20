@@ -26,20 +26,29 @@ class User extends Model {
     super();
 
     const { homepage, author } = packageJson;
+    const { gitHub, instagram, linkedIn, x, email, phone } =
+      packageJson.author.contact;
 
     this.id = this.getGitHubUsername(homepage);
     this.avatarURL = data?.avatar_url || '';
     this.name = data?.name || author.name;
     this.title = data?.title || author.title;
     this.bio = data?.bio || '';
-    this.email = data?.email || author.contact.email;
-    this.phone = data?.phone || author.contact.phone;
+    this.email = data?.email || email;
+    this.phone = data?.phone || phone;
     this.resume = data?.resume || author.resume;
     this.website = data?.website || homepage;
     this.repos = data?.repos || '';
     this.contactMethods = data?.contact_methods
       ? new ContactMethods(data?.contact_methods)
-      : new ContactMethods();
+      : new ContactMethods({
+          github: gitHub,
+          instagram: instagram,
+          linkedIn: linkedIn,
+          x: x,
+          email: email,
+          phone: phone,
+        });
     this.images = data?.images || '';
   }
 
@@ -59,16 +68,7 @@ class User extends Model {
     }
   }
 
-  setOrganizations(organizationsObject: Array<Record<string, any>>) {
-    let organizations: Array<Organization> = [];
-
-    if (Array.isArray(organizationsObject) && organizationsObject.length > 0) {
-
-      organizationsObject.forEach((organization) => {
-        organizations.push(new Organization(organization));
-      });
-    }
-
+  setOrganizations(organizations: Array<Organization>) {
     this.organizations = organizations;
   }
 }

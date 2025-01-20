@@ -9,49 +9,54 @@ interface ContactBarProps {
 }
 
 const ContactBar: React.FC<ContactBarProps> = ({ contactMethods }) => {
-    const { email, phone, gitHub, linkedIn, instagram, x } = contactMethods;
-    
-    const mailTo = `mailto:${email.value}`;
-    const callNow = `tel:+${phone.value}`;
+    const { email, phone, github, linkedin, instagram, x, website } = contactMethods;
 
-    return (
-        <div className="contact-bar">
-            {mailTo && email.image &&
-                <a href={mailTo} target="_blank">
-                    <ImageComponent image={email.image} />
-                </a>
-            }
+    const mailTo = email.value ? `mailto:${email.value}` : '';
+    const callNow = phone.value ? `tel:+${phone.value}` : '';
 
-            {gitHub.image &&
-                <a href={gitHub?.url} target="_blank">
-                    <ImageComponent image={gitHub.image} />
-                </a>
-            }
+    return (<div className="contact-bar">
+        {mailTo !== '' && email.image &&
+            <a href={mailTo} target="_blank">
+                <ImageComponent image={email.image} />
+            </a>
+        }
 
-            {linkedIn.image &&
-                <a href={linkedIn.url} target="_blank">
-                    <ImageComponent image={linkedIn.image} />
-                </a>
-            }
+        {github.image && github.url !== '' &&
+            <a href={github.url} target="_blank">
+                <ImageComponent image={github.image} />
+            </a>
+        }
 
-            {x.image &&
-                <a href={x.url} target="_blank">
-                    <ImageComponent image={x.image} />
-                </a>
-            }
+        {linkedin.image && linkedin.url !== '' &&
+            <a href={linkedin.url} target="_blank">
+                <ImageComponent image={linkedin.image} />
+            </a>
+        }
 
-            {instagram.image &&
-                <a href={instagram.url} target="_blank">
-                    <ImageComponent image={instagram.image} />
-                </a>
-            }
+        {website.image && website.url !== '' &&
+            <a href={website.url} target="_blank">
+                <ImageComponent image={website.image} />
+            </a>
+        }
 
-            {callNow && phone.image &&
-                <a href={callNow} target="_blank">
-                    <ImageComponent image={phone.image} />
-                </a>
-            }
-        </div>)
+        {x.image && x.url !== '' &&
+            <a href={x.url} target="_blank">
+                <ImageComponent image={x.image} />
+            </a>
+        }
+
+        {instagram.image && instagram.url &&
+            <a href={instagram.url} target="_blank">
+                <ImageComponent image={instagram.image} />
+            </a>
+        }
+
+        {callNow !== '' && phone.image &&
+            <a href={callNow} target="_blank">
+                <ImageComponent image={phone.image} />
+            </a>
+        }
+    </div>)
 }
 
 export default ContactBar

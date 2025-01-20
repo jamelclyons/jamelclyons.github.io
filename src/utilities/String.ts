@@ -7,7 +7,15 @@ export function camelCaseToPath(input: string) {
 }
 
 export function snakeCaseToPath(input: string) {
-  return input.replace(/_/, '-');
+  return input.replace(/_/, '-').toLowerCase();
+}
+
+export function spaceToPath(input: string) {
+  return input.replace(/\s+/g, '-').toLowerCase();
+}
+
+export function pathToSpace(input: string) {
+  return input.replace(/-/, ' ').toLowerCase();
 }
 
 export function formatTime(input: string) {

@@ -1,13 +1,12 @@
 import Model from './Model';
 import Contact from './Contact';
-
-import packageJson from '../../package.json';
 import Image from './Image';
 
 class ContactMethods extends Model {
-  gitHub: Contact;
+  github: Contact;
   instagram: Contact;
-  linkedIn: Contact;
+  linkedin: Contact;
+  website: Contact;
   x: Contact;
   email: Contact;
   phone: Contact;
@@ -15,15 +14,25 @@ class ContactMethods extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    const { gitHub, instagram, linkedIn, x, email, phone } =
-      packageJson.author.contact;
-
-    this.gitHub = this.getContactGitHub(gitHub);
-    this.instagram = this.getContactInstagram(instagram);
-    this.linkedIn = this.getContactLinkedIn(linkedIn);
-    this.x = this.getContactX(x);
-    this.email = this.getContactEmail(email);
-    this.phone = this.getContactPhone(phone);
+    this.github = data?.github
+      ? this.getContactGitHub(data.github)
+      : this.getContactGitHub('');
+    this.instagram = data?.instagram
+      ? this.getContactInstagram(data?.instagram)
+      : this.getContactInstagram('');
+    this.linkedin = data?.linkedIn
+      ? this.getContactLinkedIn(data.linkedIn)
+      : this.getContactLinkedIn('');
+    this.website = data?.website
+      ? this.getContactWebsite(data.website)
+      : this.getContactWebsite('');
+    this.x = data?.x ? this.getContactX(data.x) : this.getContactX('');
+    this.email = data?.email
+      ? this.getContactEmail(data.email)
+      : this.getContactEmail('');
+    this.phone = data?.phone
+      ? this.getContactPhone(data.phone)
+      : this.getContactPhone('');
   }
 
   getContact(data: Record<string, any>) {
@@ -57,6 +66,19 @@ class ContactMethods extends Model {
     const id = 'instagram';
     const title = 'Instagram';
     const className = 'fa fa-instagram fa-fw';
+    const image = new Image({
+      id: id,
+      title: title,
+      class_name: className,
+    });
+
+    return new Contact(id, title, url, image, '');
+  }
+
+  getContactWebsite(url: string) {
+    const id = 'website';
+    const title = 'Website';
+    const className = 'fa-solid fa-globe';
     const image = new Image({
       id: id,
       title: title,
@@ -114,7 +136,7 @@ class ContactMethods extends Model {
       title: title,
       class_name: className,
     });
-    
+
     return new Contact(id, title, '', image, value);
   }
 }

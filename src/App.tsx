@@ -20,6 +20,7 @@ const ProjectUpdate = lazy(() => import('./views/ProjectUpdate'));
 
 import {
   getUser,
+  getOrganization,
   getOrganizations,
   getRepos,
   getRepoLanguages
@@ -40,6 +41,8 @@ import Portfolio from './model/Portfolio';
 import Skills from './model/Skills';
 
 import OrganizationPage from './views/OrganizationPage';
+import Organization from './model/Organization';
+import Organizations from './model/Organizations';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -52,17 +55,43 @@ const App: React.FC = () => {
 
   const [gitHubRepos, setGitHubRepos] = useState<Array<Repo>>();
   const [user, setUser] = useState<User>(new User(userObject));
+  const [organizations, setOrganizations] = useState<Array<Organization>>();
   const [repos, setRepos] = useState<Array<Repo>>();
   const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio);
   const [skills, setSkills] = useState<Skills>(new Skills(skillsObject));
 
   useEffect(() => {
-    if (userObject || organizationsObject.length > 0) {
+    if (organizationsObject) {
+      const getOragizationsList = async () => {
+        let organizations: Array<Record<string, any>> = [];
+
+        if (Array.isArray(organizationsObject) && organizationsObject.length > 0) {
+          const organizationPromises = organizationsObject.map(async (organization) => {
+            const orgData = await dispatch(
+              getOrganization(organization.login)
+            ).unwrap();
+
+            return orgData;
+          });
+
+          const resolvedOrganizations = await Promise.all(organizationPromises);
+          organizations.push(...resolvedOrganizations);
+        }
+
+        setOrganizations(new Organizations(organizations).list);
+      }
+
+      getOragizationsList();
+    }
+  }, [organizationsObject]);
+
+  useEffect(() => {
+    if (userObject && organizations && organizations.length > 0) {
       const user = new User(userObject)
-      user.setOrganizations(organizationsObject);
+      user.setOrganizations(organizations);
       setUser(user);
     }
-  }, [userObject, organizationsObject]);
+  }, [userObject, organizations]);
 
   useEffect(() => {
     if (user) {
@@ -208,7 +237,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Home user={user} portfolio={portfolio} skills={skills} />} />
             <Route path="/about" element={<About user={user} portfolio={portfolio} skills={skills} />} />
-            <Route path="/orgs/:login" element={<OrganizationPage organizations={user.organizations} portfolio={portfolio} skills={skills} />} />
+            <Route path="/orgs/:name" element={<OrganizationPage organizations={user.organizations} portfolio={portfolio} skills={skills} />} />
             <Route path="/portfolio" element={<PortfolioPage user={user} portfolio={portfolio} skills={skills} />} />
             <Route path="/portfolio/:owner/:projectID" element={<ProjectPage portfolio={portfolio} />} />
             <Route path="/projects/:taxonomy/:term" element={<Search portfolio={portfolio} skills={skills} />} />
