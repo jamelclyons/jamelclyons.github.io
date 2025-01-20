@@ -59,7 +59,7 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
       setRepo(new Repo(repoObject));
     }
   }, [dispatch, repoObject]);
-  console.log(repo)
+
   useEffect(() => {
     if (repo) {
       dispatch(getRepoLanguages(repo));

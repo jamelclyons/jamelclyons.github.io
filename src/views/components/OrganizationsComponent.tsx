@@ -7,7 +7,20 @@ interface OrganizationsComponentProps {
 }
 
 const OrganizationsComponent: React.FC<OrganizationsComponentProps> = ({ organizations }) => {
-  console.log(organizations)
+
+  const handleClick = (organization: Organization) => {
+    handleOrganizations();
+    window.location.href = `/#/orgs/${organization.login}`;
+  };
+
+  const handleOrganizations = () => {
+    const skillsElement = document.getElementById('top');
+
+    if (skillsElement) {
+      skillsElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <>
       {Array.isArray(organizations) && organizations.length > 0 && (
@@ -19,13 +32,16 @@ const OrganizationsComponent: React.FC<OrganizationsComponentProps> = ({ organiz
           </h2>
 
           {organizations.map((organization, index) => (
-            <div className="organization">
-              <a href={organization.url} key={index}>
+            <div className="organization" key={index}>
+              <button
+                key={index}
+                className="organizations-button"
+                onClick={() => handleClick(organization)}>
                 <img
                   src={organization.avatarURL}
                   alt={`${organization.name} avatar`}
                 />
-              </a>
+              </button>
               <h3>{organization.name}</h3>
             </div>
           ))}

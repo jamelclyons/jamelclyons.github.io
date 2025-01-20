@@ -1,16 +1,14 @@
 import Model from '../model/Model';
 import Project from './Project';
-import Skills from './Skills';
+import Repo from './Repo';
 
 class Portfolio extends Model {
   projects: Set<Project>;
-  count: number = 0;
 
   constructor(projects: Array<Record<string, any>> = []) {
     super();
 
     this.projects = this.getProjects(projects);
-    this.count = this.getCount();
   }
 
   getProjects(data: Array<Record<string, any>> = []) {
@@ -21,6 +19,40 @@ class Portfolio extends Model {
     });
 
     return projects;
+  }
+
+  getProjectsFromRepos(repos: Array<Repo>) {
+    let repoProjects: Set<Project> = new Set();
+
+    if (repos.length > 0) {
+      repos.forEach((repo) => {
+        let project = new Project();
+
+        project.fromRepo(repo.toObject());
+
+        repoProjects.add(project);
+      });
+    }
+
+    this.projects = repoProjects;
+  }
+
+  getProjectsFromDB(docs: Array<Record<string, any>>) {
+    let projects: Set<Project> = new Set();
+
+    if (docs.length > 0) {
+      this.projects.forEach((project) => {
+        const matchingDoc = docs.find((doc) => doc.id === project.id);
+
+        if (matchingDoc) {
+          project.fromDocumentData(matchingDoc.id, matchingDoc.data());
+        }
+
+        projects.add(project);
+      });
+    }
+
+    this.projects = projects;
   }
 
   filterProjects(taxonomy: string, term: string): Set<Project> {
@@ -81,7 +113,21 @@ class Portfolio extends Model {
     return filteredProject;
   }
 
-  getCount() {
+  filterProjectsByLogin(login: string): Set<Project> {
+    let updatedProjects: Set<Project> = new Set();
+
+    if (login) {
+      Array.from(this.projects).forEach((project: Project) => {
+        if (project.owner.login === login) {
+          updatedProjects.add(project);
+        }
+      });
+    }
+
+    return updatedProjects;
+  }
+
+  getCount(): number {
     return this.projects.size;
   }
 }

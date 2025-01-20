@@ -14,25 +14,22 @@ import type { AppDispatch, RootState } from '../model/store';
 import RepoContent from '../model/RepoContent';
 import User from '../model/User';
 import Skills from '@/model/Skills';
-import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 import RepoContentQuery from '@/model/RepoContentQuery';
-import Organization from '@/model/Organization';
 import OrganizationsComponent from './components/OrganizationsComponent';
 import StoryComponent from './components/StoryComponent';
 import Portfolio from '@/model/Portfolio';
 
 interface AboutProps {
   user: User;
+  portfolio: Portfolio;
+  skills: Skills;
 }
 
-const About: React.FC<AboutProps> = ({ user }) => {
+const About: React.FC<AboutProps> = ({ user, portfolio, skills }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { contents } = useSelector((state: RootState) => state.github);
-  const { portfolioObject, skillsObject } = useSelector((state: RootState) => state.portfolio);
 
-  const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject));
-  const [skills, setSkills] = useState<Skills>(new Skills(skillsObject));
   const [content, setContent] = useState<RepoContent>();
   const [markdown, setMarkdown] = useState<string | object>();
 
@@ -50,18 +47,6 @@ const About: React.FC<AboutProps> = ({ user }) => {
         )))
     }
   }, []);
-
-  useEffect(() => {
-    if (portfolioObject) {
-      setPortfolio(new Portfolio(portfolioObject));
-    }
-  }, [portfolioObject]);
-
-  useEffect(() => {
-    if (skillsObject) {
-      setSkills(new Skills(skillsObject));
-    }
-  }, [skillsObject]);
 
   useEffect(() => {
     if (Array.isArray(contents) && contents.length > 0) {
@@ -112,18 +97,18 @@ const About: React.FC<AboutProps> = ({ user }) => {
 
   return (
     <>
-      <section className="about">
+      <section className="about" id='top'>
         <div className='stats'>
           <div className="stats-user">
             <MemberPic user={user} />
 
-            <h2 className="title">{user?.title}</h2>
+            <h2 className="title">{user.title}</h2>
           </div>
 
           <div className="stats-bar">
             <div className="badge">
               <div className="badge-number">
-                <h5>{portfolio.count}</h5>
+                <h5>{portfolio.projects.size}</h5>
               </div>
 
               <button onClick={handleProjects}>

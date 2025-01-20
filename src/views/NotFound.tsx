@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-const  NotFound = () => {
+const NotFound: React.FC = () => {
+  useEffect(() => {
+    document.title = '404 - Page Not Found';
+  }, []);
+
   return (
     <section className='not-found'>
       <h2>404 - Page Not Found</h2>

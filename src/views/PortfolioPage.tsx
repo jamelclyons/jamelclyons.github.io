@@ -30,7 +30,7 @@ const PortfolioPage: React.FC<PortfolioProps> = ({ user, portfolio, skills }) =>
   if (portfolioLoading) {
     return <LoadingComponent />;
   }
-console.log(skills)
+
   return (
     <section className="portfolio">
       <>

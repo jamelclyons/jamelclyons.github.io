@@ -29,10 +29,9 @@
 @use './_member_card.scss';
 @use './_page.scss';
 @use './author_list';
-@use './_icon.scss';
 
 @use './_img.scss';
-
+@use './_icon.scss';
 @use './author-card.scss';
 @use './description-card.scss';
 
@@ -40,6 +39,7 @@
 
 @use './_home.scss';
 @use './_about.scss';
+@use './organization';
 @use './_portfolio.scss';
 @use './_project.scss';
 @use './_search.scss';

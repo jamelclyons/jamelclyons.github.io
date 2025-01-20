@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import type { AppDispatch, RootState } from '../model/store';
+import Portfolio from '../model/Portfolio';
+import Skills from '@/model/Skills';
 
 import {
   setMessage,
@@ -13,9 +15,6 @@ import {
 import ProjectsComponent from './components/portfolio/ProjectsComponent';
 import SkillsComponent from './components/SkillsComponent';
 import HeaderTaxonomyComponent from './components/HeaderTaxonomyComponent';
-
-import Portfolio from '../model/Portfolio';
-import Skills from '@/model/Skills';
 
 interface SearchProps {
   portfolio: Portfolio;

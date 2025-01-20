@@ -32,11 +32,11 @@ const StatusBarComponent: React.FC = () => {
     message && (
       <span className={`modal-overlay ${show}`}>
         <div className="status">
-          <span className="close">
+          <div className="close">
             <button onClick={minimize}>
-              <h3>X</h3>
+              <i className="fa-solid fa-circle-xmark"></i>
             </button>
-          </span>
+          </div>
 
           <div className={`status-bar card ${messageType}`} id="status_bar">
             <span>{message}</span>

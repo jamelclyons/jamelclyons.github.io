@@ -34,9 +34,12 @@ import {
 
 import type { AppDispatch, RootState } from './model/store';
 import Repo from './model/Repo';
+import Repos from './model/Repos';
 import User from './model/User';
 import Portfolio from './model/Portfolio';
 import Skills from './model/Skills';
+
+import OrganizationPage from './views/OrganizationPage';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -50,7 +53,7 @@ const App: React.FC = () => {
   const [gitHubRepos, setGitHubRepos] = useState<Array<Repo>>();
   const [user, setUser] = useState<User>(new User(userObject));
   const [repos, setRepos] = useState<Array<Repo>>();
-  const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject));
+  const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio);
   const [skills, setSkills] = useState<Skills>(new Skills(skillsObject));
 
   useEffect(() => {
@@ -60,12 +63,6 @@ const App: React.FC = () => {
       setUser(user);
     }
   }, [userObject, organizationsObject]);
-
-  useEffect(() => {
-    if (user) {
-      document.title = user.name;
-    }
-  }, [user]);
 
   useEffect(() => {
     if (user) {
@@ -96,7 +93,7 @@ const App: React.FC = () => {
       dispatch(getOrganizations());
     }
   }, [dispatch, user]);
-  
+
   useEffect(() => {
     dispatch(getProjectTypes());
   }, []);
@@ -141,19 +138,15 @@ const App: React.FC = () => {
       setSkills(new Skills(skillsObject));
     }
   }, [skillsObject]);
-  
+
   useEffect(() => {
     const fetchRepos = async () => {
       const reposObject = await dispatch(getRepos()).unwrap();
 
-      let repositories: Array<Repo> = []
-
       if (Array.isArray(reposObject) && reposObject.length > 0) {
-        reposObject.forEach((repo) => {
-          repositories.push(new Repo(repo));
-        });
+        const repos = new Repos(reposObject);
 
-        setGitHubRepos(repositories)
+        setGitHubRepos(repos.collection)
       }
     }
 
@@ -187,13 +180,23 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (repos && repos.length > 0) {
-      dispatch(getPortfolio(repos));
+      const projects = new Portfolio();
+      projects.getProjectsFromRepos(repos);
+      setPortfolio(projects);
     }
   }, [repos, dispatch]);
 
   useEffect(() => {
-    if (portfolioObject) {
-      setPortfolio(new Portfolio(portfolioObject));
+    if (portfolio.projects.size > 0) {
+      dispatch(getPortfolio());
+    }
+  }, [portfolio, dispatch]);
+
+  useEffect(() => {
+    if (portfolioObject.length > 0) {
+      const project = new Portfolio();
+      project.getProjectsFromDB(portfolioObject);
+      setPortfolio(project);
     }
   }, [portfolioObject]);
 
@@ -204,7 +207,8 @@ const App: React.FC = () => {
         <Suspense fallback={<LoadingComponent />}>
           <Routes>
             <Route path="/" element={<Home user={user} portfolio={portfolio} skills={skills} />} />
-            <Route path="/about" element={<About user={user} />} />
+            <Route path="/about" element={<About user={user} portfolio={portfolio} skills={skills} />} />
+            <Route path="/orgs/:login" element={<OrganizationPage organizations={user.organizations} portfolio={portfolio} skills={skills} />} />
             <Route path="/portfolio" element={<PortfolioPage user={user} portfolio={portfolio} skills={skills} />} />
             <Route path="/portfolio/:owner/:projectID" element={<ProjectPage portfolio={portfolio} />} />
             <Route path="/projects/:taxonomy/:term" element={<Search portfolio={portfolio} skills={skills} />} />

@@ -1,4 +1,9 @@
-import { createSlice, createAsyncThunk, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  isAnyOf,
+  PayloadAction,
+} from '@reduxjs/toolkit';
 
 import {
   collection,
@@ -10,15 +15,12 @@ import {
 
 import db from '../services/firebase/config';
 
-import Project from '../model/Project';
-import Repo from '../model/Repo';
-
 export type SkillsObject = {
   types: Array<Record<string, any>>;
   languages: Array<Record<string, any>>;
   frameworks: Array<Record<string, any>>;
   technologies: Array<Record<string, any>>;
-}
+};
 
 const portfolioCollection = collection(db, 'portfolio');
 
@@ -42,40 +44,15 @@ const initialState: PortfolioState = {
 
 export const getPortfolio = createAsyncThunk(
   'portfolio/getPortfolio',
-  async (repos: Array<Repo>) => {
+  async () => {
     try {
-      let projects: Array<Record<string, any>> = [];
-      let repoProjects: Array<Record<string, any>> = [];
-
       const querySnapshot: QuerySnapshot = await getDocs(portfolioCollection);
 
-      if (repos.length > 0) {
-        repos.forEach((repo) => {
-          let project = new Project();
-
-          project.fromRepo(repo.toObject());
-
-          repoProjects.push(project.toObject());
-        });
+      if (querySnapshot.empty) {
+        return [];
       }
 
-      if (querySnapshot.size > 0) {
-        repoProjects.forEach((project: Record<string, any>) => {
-          const matchingDoc = querySnapshot.docs.find(
-            (doc) => doc.id === project.id
-          );
-
-          if (matchingDoc) {
-            project.fromDocumentData(matchingDoc.id, matchingDoc.data());
-          }
-
-          projects.push(project.toObject());
-        });
-
-        return projects;
-      }
-
-      return repoProjects;
+      return querySnapshot.docs as Array<Record<string, any>>;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -99,21 +76,8 @@ export const getProjectsBy = createAsyncThunk(
         where(params.taxonomy, 'array-contains', params.term)
       );
       const querySnapshot = await getDocs(projectQuery);
-      const docs = querySnapshot.docs;
-
-      if (docs.length === 0) {
-        throw new Error('No projects found.');
-      }
-
-      let projects: Array<Record<string, any>> = [];
-
-      docs.forEach((doc) => {
-        let project = new Project();
-        project.fromDocumentData(doc.id, doc.data());
-        projects.push(project.toObject());
-      });
-
-      return projects;
+     
+      return querySnapshot.docs as Array<Record<string,any>>;
     } catch (error) {
       const err = error as Error;
       console.error(err);

@@ -4,19 +4,14 @@ import {
   isAnyOf,
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
-import { useDispatch } from 'react-redux';
 
 import { Octokit, RestEndpointMethodTypes } from '@octokit/rest';
 import { GetResponseTypeFromEndpointMethod } from '@octokit/types';
 
-import type { AppDispatch, RootState } from '@/model/store';
 import RepoContent from '../model/RepoContent';
 import Organization from '../model/Organization';
-import User from '../model/User';
 import Repo from '../model/Repo';
-import Taxonomy from '../model/Taxonomy';
 import GitHubRepoQuery from '../model/GitHubRepoQuery';
-import { Buffer } from 'buffer';
 import RepoContentQuery from '@/model/RepoContentQuery';
 
 type OctokitResponse<T = any, S = number> = {
@@ -29,8 +24,6 @@ type RepoLanguagesQuery =
 type RepoLanguages =
   RestEndpointMethodTypes['repos']['listLanguages']['response'];
 
-const error = new Error();
-
 const octokit = new Octokit({
   auth: import.meta.env.VITE_OCTOKIT_AUTH,
 });
@@ -42,6 +35,7 @@ interface GithubState {
   githubErrorMessage: string;
   userObject: Record<string, any>;
   organizationObject: Record<string, any>;
+  organizationReposObject: Array<Record<string, any>>;
   organizationsObject: Array<Record<string, any>>;
   repos: Array<Record<string, any>>;
   socialAccounts: OctokitResponse | null;
@@ -59,6 +53,7 @@ const initialState: GithubState = {
   githubErrorMessage: '',
   userObject: {},
   organizationObject: {},
+  organizationReposObject: [],
   organizationsObject: [],
   repos: [],
   socialAccounts: null,
@@ -79,7 +74,7 @@ export const getUser = createAsyncThunk(
         },
       });
 
-      return new User(data).toObject();
+      return data;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -92,15 +87,7 @@ export const getRepos = createAsyncThunk('github/getRepos', async () => {
   try {
     const { data } = await octokit.request('/user/repos');
 
-    let repos: Array<Record<string, any>> = [];
-
-    if (Array.isArray(data)) {
-      data.forEach((repo) => {
-        repos.push(new Repo(repo).toObject());
-      });
-    }
-
-    return repos;
+    return data;
   } catch (error) {
     const err = error as Error;
     console.error(err);
@@ -125,7 +112,7 @@ export const getOrganization = createAsyncThunk(
 
 export const getOrganizations = createAsyncThunk(
   'github/getOrganizations',
-  async (_,{dispatch}) => {
+  async (_, { dispatch }) => {
     try {
       const { data } = await octokit.request('/user/orgs');
 
@@ -133,12 +120,13 @@ export const getOrganizations = createAsyncThunk(
 
       if (Array.isArray(data) && data.length > 0) {
         const organizationPromises = data.map(async (organization) => {
-          const orgData = await dispatch(getOrganization(organization.login)).unwrap();
+          const orgData = await dispatch(
+            getOrganization(organization.login)
+          ).unwrap();
           const orgClass = new Organization(orgData);
           return orgClass.toObject();
         });
 
-        // Wait for all organization data to resolve
         const resolvedOrganizations = await Promise.all(organizationPromises);
         organizations.push(...resolvedOrganizations);
       }

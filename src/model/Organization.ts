@@ -5,6 +5,7 @@ class Organization extends Model {
   createdAt: string;
   updatedAt: string;
   avatarURL: string;
+  login: string;
   description: string;
   name: string;
   company: string;
@@ -19,6 +20,7 @@ class Organization extends Model {
     this.id = data?.id;
     this.createdAt = data?.created_at;
     this.updatedAt = data?.updated_at;
+    this.login = data?.login;
     this.avatarURL = data?.avatar_url;
     this.description = data?.description;
     this.name = data?.name;
