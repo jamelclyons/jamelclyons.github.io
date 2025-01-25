@@ -30,8 +30,8 @@ const initialState: loginState = {
   loginSuccessMessage: '',
   loginErrorMessage: '',
   loginStatusCode: null,
-  isAuthenticated: false,
-  isAdmin: false,
+  isAuthenticated: Boolean(localStorage.getItem('is_authenticated')),
+  isAdmin: Boolean(localStorage.getItem('is_admin')),
   user: null,
   id: '',
   username: '',
@@ -42,45 +42,19 @@ const initialState: loginState = {
   refreshToken: localStorage.getItem('refresh_token'),
 };
 
-export const signInWithGitHubPopup = createAsyncThunk(
-  'login/signInWithGitHubPopup',
-  async () => {
-    try {
-      const github = new GithubAuthProvider();
+export const updateIsAuthenticated = (authenticated: boolean) => {
+  return {
+    type: 'login/updateIsAuthenticated',
+    payload: authenticated,
+  };
+};
 
-      const response = await signInWithPopup(auth, github);
-
-      const user = response.user;
-      const accessToken = await user.getIdToken();
-      const username = user.displayName ?? '';
-      const email = user.email ?? '';
-      const profileImage = user.photoURL ?? '';
-      const phoneNumber = user.phoneNumber ?? '';
-
-      updateAccessToken(accessToken);
-      updateRefreshToken(user.refreshToken);
-      updateAccountID(user.uid);
-      updateEmail(email);
-      updateUsername(username);
-      updateProfileImage(profileImage);
-
-      return {
-        id: user.uid,
-        access_token: accessToken,
-        refresh_token: user.refreshToken,
-        username: username,
-        email: email,
-        phone_number: phoneNumber,
-        profile_image: profileImage,
-        authenticated: true,
-      };
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
-    }
-  }
-);
+export const updateIsAdmin = (admin: boolean) => {
+  return {
+    type: 'login/updateIsAdmin',
+    payload: admin,
+  };
+};
 
 export const setIsAuthenticated = createAsyncThunk(
   'login/setIsAuthenticated',
@@ -88,7 +62,11 @@ export const setIsAuthenticated = createAsyncThunk(
     const state = getState() as RootState;
     const { accessToken, refreshToken } = state.login;
 
-    return Boolean(accessToken && refreshToken);
+    const authenticated = Boolean(accessToken && refreshToken);
+
+    updateIsAuthenticated(authenticated);
+
+    return authenticated;
   }
 );
 
@@ -98,20 +76,22 @@ export const setIsAdmin = createAsyncThunk(
     const state = getState() as RootState;
     const { isAuthenticated } = state.login;
 
-    let isAdmin: boolean = false;
+    let isAdmin = false;
 
     const user = auth.currentUser;
 
     if (isAuthenticated && user) {
-
-      user.getIdTokenResult().then((token) => {
-        console.log(token.claims);
-
-        isAdmin = token.claims?.isAdmin
-          ? token.claims?.isAdmin === 'true'
-          : false;
-      });
+      try {
+        const token = await user.getIdTokenResult();
+        isAdmin = Boolean(token.claims?.isAdmin);
+      } catch (error) {
+        console.error('Error retrieving token claims:', error);
+      }
     }
+
+    console.log('Admin status:', isAdmin);
+
+    updateIsAdmin(isAdmin);
 
     return isAdmin;
   }
@@ -159,10 +139,61 @@ export const updateRefreshToken = (refresh_token: string) => {
   };
 };
 
+export const signInWithGitHubPopup = createAsyncThunk(
+  'login/signInWithGitHubPopup',
+  async () => {
+    try {
+      const github = new GithubAuthProvider();
+
+      const response = await signInWithPopup(auth, github);
+
+      const user = response.user;
+      const accessToken = await user.getIdToken();
+      const token = await user.getIdTokenResult();
+      const refreshToken = user.refreshToken;
+      const username = user.displayName ?? '';
+      const email = user.email ?? '';
+      const profileImage = user.photoURL ?? '';
+      const phoneNumber = user.phoneNumber ?? '';
+      const isAdmin = Boolean(token.claims?.isAdmin);
+      
+      updateIsAuthenticated(Boolean(accessToken && refreshToken));
+      updateIsAdmin(isAdmin);
+      updateAccessToken(accessToken);
+      updateRefreshToken(user.refreshToken);
+      updateAccountID(user.uid);
+      updateEmail(email);
+      updateUsername(username);
+      updateProfileImage(profileImage);
+
+      return {
+        id: user.uid,
+        access_token: accessToken,
+        refresh_token: user.refreshToken,
+        username: username,
+        email: email,
+        phone_number: phoneNumber,
+        profile_image: profileImage,
+        authenticated: true,
+      };
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
 export const loginSlice = createSlice({
   name: 'login',
   initialState,
   reducers: {
+    updateIsAuthenticated: (state, action) => {
+      localStorage.setItem('is_authenticated', action.payload);
+    },
+    updateIsAdmin: (state, action) => {
+      localStorage.setItem('is_admin', action.payload);
+    },
     updateAccountID: (state, action) => {
       state.id = action.payload;
       localStorage.setItem('id', action.payload);
