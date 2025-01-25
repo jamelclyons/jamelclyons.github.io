@@ -6,7 +6,7 @@ import {
 
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 
-import db from '../services/firebase/config';
+import { db } from '../services/firebase/config';
 
 interface ContentState {
   contentLoading: boolean;

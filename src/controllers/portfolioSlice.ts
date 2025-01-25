@@ -13,7 +13,7 @@ import {
   QuerySnapshot,
 } from 'firebase/firestore';
 
-import db from '../services/firebase/config';
+import { db } from '../services/firebase/config';
 
 export type SkillsObject = {
   types: Array<Record<string, any>>;
@@ -76,8 +76,8 @@ export const getProjectsBy = createAsyncThunk(
         where(params.taxonomy, 'array-contains', params.term)
       );
       const querySnapshot = await getDocs(projectQuery);
-     
-      return querySnapshot.docs as Array<Record<string,any>>;
+
+      return querySnapshot.docs as Array<Record<string, any>>;
     } catch (error) {
       const err = error as Error;
       console.error(err);

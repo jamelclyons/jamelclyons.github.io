@@ -17,6 +17,9 @@ const AddSkill = lazy(() => import('./views/SkillAdd'));
 const ProjectAdd = lazy(() => import('./views/ProjectAdd'));
 const NotFound = lazy(() => import('./views/NotFound'));
 const ProjectUpdate = lazy(() => import('./views/ProjectUpdate'));
+const LoginPage = lazy(() => import('./views/LoginPage'));
+
+import ProtectedRoute from './ProtectedRoute';
 
 import {
   getUser,
@@ -43,6 +46,7 @@ import Skills from './model/Skills';
 import OrganizationPage from './views/OrganizationPage';
 import Organization from './model/Organization';
 import Organizations from './model/Organizations';
+import Dashboard from './views/Dashboard';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -61,27 +65,27 @@ const App: React.FC = () => {
   const [skills, setSkills] = useState<Skills>(new Skills(skillsObject));
 
   useEffect(() => {
-    if (organizationsObject) {
-      const getOragizationsList = async () => {
-        let organizations: Array<Record<string, any>> = [];
+    const getOrganizationsList = async () => {
+      let organizations: Array<Record<string, any>> = [];
 
-        if (Array.isArray(organizationsObject) && organizationsObject.length > 0) {
-          const organizationPromises = organizationsObject.map(async (organization) => {
-            const orgData = await dispatch(
-              getOrganization(organization.login)
-            ).unwrap();
+      const organizationPromises = organizationsObject.map(async (organization) => {
+        const orgData = await dispatch(
+          getOrganization(organization.login)
+        ).unwrap();
 
-            return orgData;
-          });
+        return orgData;
+      });
 
-          const resolvedOrganizations = await Promise.all(organizationPromises);
-          organizations.push(...resolvedOrganizations);
-        }
+      const resolvedOrganizations = await Promise.all(organizationPromises);
+      organizations.push(...resolvedOrganizations);
 
+      return organizations;
+    }
+
+    if (Array.isArray(organizationsObject) && organizationsObject.length > 0) {
+      getOrganizationsList().then((organizations) => {
         setOrganizations(new Organizations(organizations).list);
-      }
-
-      getOragizationsList();
+      });
     }
   }, [organizationsObject]);
 
@@ -112,16 +116,16 @@ const App: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    if (user) {
+    if (user.id) {
       dispatch(getUser(user.id));
     }
-  }, [dispatch, user]);
+  }, [dispatch, user.id]);
 
   useEffect(() => {
     if (user.id) {
       dispatch(getOrganizations());
     }
-  }, [dispatch, user]);
+  }, [dispatch, user.id]);
 
   useEffect(() => {
     dispatch(getProjectTypes());
@@ -243,13 +247,34 @@ const App: React.FC = () => {
             <Route path="/projects/:taxonomy/:term" element={<Search portfolio={portfolio} skills={skills} />} />
             <Route path="/resume" element={<Resume user={user} />} />
             <Route path="/contact" element={<Contact user={user} />} />
-            <Route path="/add/project" element={<ProjectAdd />} />
-            <Route path="/update/project/:projectID" element={<ProjectUpdate />} />
-            <Route path="/add/skill" element={<AddSkill />} />
+
+            <Route path="/admin/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/add/project" element={
+              <ProtectedRoute>
+                <ProjectAdd />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/update/project/:projectID" element={
+              <ProtectedRoute>
+                <ProjectUpdate />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/add/skill" element={
+              <ProtectedRoute>
+                <AddSkill />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/login" element={<LoginPage />} />
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
-      </Router>
+      </Router >
       <FooterComponent
         contactMethods={user.contactMethods}
       />

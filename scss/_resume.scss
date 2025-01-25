@@ -2,6 +2,7 @@
 
 section.resume {
   margin-top: 6.25rem;
+  overflow: hidden;
 
   iframe {
     display: flex;
@@ -12,6 +13,14 @@ section.resume {
     width: 90vw;
     min-height: 100vh;
     box-shadow: var(--box-shadow);
-    border-color: black;
+    border: none;
+    overflow: hidden;
+  }
+
+  iframe::-webkit-scrollbar {
+    width: 0px !important;
+    background: transparent !important;
+    -ms-overflow-style: none;
+    display: none !important;
   }
 }

@@ -7,7 +7,7 @@ import {
 
 import { collection, getDocs, setDoc, doc, getDoc } from 'firebase/firestore';
 
-import db from '../services/firebase/config';
+import { db } from '../services/firebase/config';
 
 import Taxonomy from '../model/Taxonomy';
 import Project from '../model/Project';

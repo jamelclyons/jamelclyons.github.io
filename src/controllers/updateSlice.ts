@@ -13,7 +13,7 @@ import {
   DocumentData,
 } from 'firebase/firestore';
 
-import db from '../services/firebase/config';
+import { db } from '../services/firebase/config';
 
 import ProjectSolution from '../model/ProjectSolution';
 import ProjectProcess from '../model/ProjectProcess';
@@ -47,20 +47,20 @@ const initialState: UpdateState = {
 const projectCollection: CollectionReference<DocumentData, DocumentData> =
   collection(db, 'portfolio');
 
-  export const updateProject = createAsyncThunk(
-    'update/updateProject',
-    async (data: Record<string, any>) => {
-      try {
-        await updateDoc(doc(projectCollection, data.id), data);
-  
-        return `Project with the #ID: ${data.id} was updated.`;
-      } catch (error) {
-        const err = error as Error;
-        console.error(err);
-        throw new Error(err.message);
-      }
+export const updateProject = createAsyncThunk(
+  'update/updateProject',
+  async (data: Record<string, any>) => {
+    try {
+      await updateDoc(doc(projectCollection, data.id), data);
+
+      return `Project with the #ID: ${data.id} was updated.`;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
     }
-  );
+  }
+);
 
 export const updateSolution = createAsyncThunk(
   'update/updateSolution',

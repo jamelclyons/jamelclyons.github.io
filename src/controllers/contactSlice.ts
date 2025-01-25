@@ -6,7 +6,7 @@ import {
 
 import { collection, doc, getDoc } from 'firebase/firestore';
 
-import db from '../services/firebase/config';
+import { db } from '../services/firebase/config';
 
 import Model from '../model/Model';
 

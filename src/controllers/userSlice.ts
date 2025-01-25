@@ -15,7 +15,7 @@ import {
   DocumentReference,
 } from 'firebase/firestore';
 
-import db from '../services/firebase/config';
+import { db } from '../services/firebase/config';
 
 import User from '../model/User';
 import Image from '../model/Image';

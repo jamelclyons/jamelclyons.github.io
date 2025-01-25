@@ -20,7 +20,7 @@ import {
   QueryDocumentSnapshot,
 } from 'firebase/firestore';
 
-import db from '../services/firebase/config';
+import { db } from '../services/firebase/config';
 
 import ProjectSolution from '../model/ProjectSolution';
 import ProjectProcess from '../model/ProjectProcess';

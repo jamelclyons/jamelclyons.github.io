@@ -16,7 +16,7 @@ import {
   DocumentSnapshot,
 } from 'firebase/firestore';
 
-import db from '../services/firebase/config';
+import { db } from '../services/firebase/config';
 
 import Taxonomy from '../model/Taxonomy';
 
