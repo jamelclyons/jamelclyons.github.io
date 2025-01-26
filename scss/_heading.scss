@@ -3,9 +3,10 @@ h2,
 h3,
 h4,
 h5 {
-  letter-spacing: 0.25rem;
-  margin-right: -0.25rem;
-  font-weight: unset;
+  letter-spacing: 0.5rem;
+  margin-right: -0.5rem;
+  font-weight: 575;
+  font-family: var(--heading-font);
 }
 
 h1 {

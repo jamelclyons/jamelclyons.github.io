@@ -1,16 +1,19 @@
 @use './_root.scss';
 @use './_variables.scss';
-@use './_fonts.scss';
+@use './_heading.scss';
 @use './_body.scss';
-@use './_buttons.scss';
 @use './_section.scss';
 @use './_cards.scss';
+
+@use './_html.scss';
 @use './_paragraph.scss';
+@use './_quote.scss';
+@use './_buttons.scss';
+
 @use './_content.scss';
 // @use './_gallery.scss';
 @use './_title.scss';
 @use './_photo.scss';
-@use './_html.scss';
 @use './_logo.scss';
 @use './_main.scss';
 @use './_comments.scss';

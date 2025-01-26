@@ -1,43 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import type { AppDispatch, RootState } from '../../../model/store';
-import ProjectDevelopment from '../../../model/ProjectDevelopment';
+import type { AppDispatch, RootState } from '@/model/store';
+import ProjectDevelopment from '@/model/ProjectDevelopment';
 import Image from '@/model/Image';
-import Skills from '@/model/Skills';
 
 import CheckList from './CheckList';
 import ContentComponent from '../content/ContentComponent';
-import ProjectURLs from './ProjectURLsComponent';
 import Versions from './Versions';
 import ImageComponent from '../ImageComponent';
 import SkillsComponent from '../SkillsComponent';
-import Taxonomy from '@/model/Taxonomy';
+import LoginComponent from '../LoginComponent';
 
 interface DevelopmentProps {
   development: ProjectDevelopment;
 }
 
 const Development: React.FC<DevelopmentProps> = ({ development }) => {
-  const dispatch = useDispatch<AppDispatch>();
-
   const { checkList, content, repoURL, versionsList, skills } = development;
+  const { isAuthenticated } = useSelector(
+    (state: RootState) => state.auth
+  );
 
-  const [gitHub, setGitHub] = useState<Image>();
-
-  useEffect(() => {
-    if (repoURL) {
-      try {
-        setGitHub(new Image({ title: 'GitHub', url: '', class_name: 'fa fa-github fa-fw' }));
-      } catch (error) {
-        const err = error as Error;
-        console.error('Invalid URL format:', err.message);
-      }
-    }
-  }, [repoURL, dispatch]);
+  const [showLogin, setShowLogin] = useState<boolean>(false);
 
   const handleSeeCode = () => {
-    window.open(repoURL, '_blank');
+    if (isAuthenticated) {
+      window.open(repoURL, '_blank');
+    } else {
+      setShowLogin(true);
+    }
   };
 
   return (
@@ -59,14 +51,24 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
         {/* <Versions versions_list={development?.versionsList} /> */}
 
-        {gitHub &&
-          <button className='repo' onClick={handleSeeCode}>
-            <h3 className='title'>
-              <ImageComponent image={gitHub} />
-              See Code</h3>
-          </button>}
+        <button className='repo' onClick={handleSeeCode}>
+          <ImageComponent image={new Image({ title: 'GitHub', url: '', class_name: 'fa fa-github fa-fw' })} />
+          <h3 className='title'>{
+            isAuthenticated ?
+              'See Code' : 'Login to See Code'
+          }</h3>
+        </button>
       </div>
-    }</>
+    }
+
+      {showLogin && (
+        <div className="modal-overlay">
+          <main className="login">
+            <LoginComponent />
+          </main>
+        </div>
+      )}
+    </>
   );
 }
 

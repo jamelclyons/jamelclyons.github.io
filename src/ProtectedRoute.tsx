@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '@/model/store';
 
-import { setIsAdmin, setIsAuthenticated } from './controllers/loginSlice';
+import { setIsAdmin, setIsAuthenticated } from './controllers/authSlice';
+import { dispatch } from './model/hooks';
 
 interface ProtectedRouteProps {
     children: JSX.Element;
@@ -12,31 +13,16 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     const dispatch = useDispatch<AppDispatch>();
-
+    
     const {
-        isAuthenticated,
         isAdmin
     } = useSelector((state: RootState) => state.login);
 
-    const [allowed, setAllowed] = useState<Boolean>();
+    useEffect(()=>{
+        dispatch(setIsAdmin())
+    },[]);
 
-    useEffect(() => {
-        dispatch(setIsAuthenticated());
-    }, []);
-
-    useEffect(() => {
-        if (isAuthenticated) {
-            dispatch(setIsAdmin());
-        }
-    }, [dispatch, isAuthenticated]);
-console.log(isAdmin)
-    useEffect(() => {
-        if (isAdmin) {
-            setAllowed(true);
-        }
-    }, [isAdmin]);
-
-    return allowed ? (
+    return isAdmin ? (
         children
     ) : (
         <Navigate to="/login" />

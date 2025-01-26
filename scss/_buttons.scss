@@ -1,5 +1,9 @@
 button,
 .search-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   cursor: pointer;
   border: none;
   width: fit-content;
@@ -7,10 +11,14 @@ button,
   background-color: var(--button-background-color);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
-  
+  padding: .75rem;
+
   h2,
   h3 {
-    padding: 0.5em;
+    color: var(--button-color);
+  }
+
+  i{
     color: var(--button-color);
   }
 }

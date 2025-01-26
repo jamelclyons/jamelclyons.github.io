@@ -4,63 +4,61 @@ import { signInWithPopup, GithubAuthProvider } from 'firebase/auth';
 
 import { auth } from '@/services/firebase/config';
 
-import type { RootState } from '@/model/store';
-
 interface loginState {
-  loginLoading: boolean;
-  loginError: Error | null;
-  loginSuccessMessage: string;
-  loginErrorMessage: string;
-  loginStatusCode: number | null;
+  authLoading: boolean;
+  authError: Error | null;
+  authSuccessMessage: string;
+  authErrorMessage: string;
+  authStatusCode: number | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
   user: Record<string, any> | null;
-  id: string;
-  username: string;
-  email: string;
-  phoneNumber: string;
-  profileImage: string;
+  id: string | null;
+  username: string | null;
+  email: string | null;
+  phoneNumber: string | null;
+  profileImage: string | null;
   accessToken: string | null;
   refreshToken: string | null;
 }
 
 const initialState: loginState = {
-  loginLoading: false,
-  loginError: null,
-  loginSuccessMessage: '',
-  loginErrorMessage: '',
-  loginStatusCode: null,
+  authLoading: false,
+  authError: null,
+  authSuccessMessage: '',
+  authErrorMessage: '',
+  authStatusCode: null,
   isAuthenticated: Boolean(localStorage.getItem('is_authenticated')),
   isAdmin: Boolean(localStorage.getItem('is_admin')),
   user: null,
-  id: '',
-  username: '',
-  email: '',
-  phoneNumber: '',
-  profileImage: '',
+  id: localStorage.getItem('id'),
+  username: localStorage.getItem('username'),
+  email: localStorage.getItem('email'),
+  phoneNumber: localStorage.getItem('phone_number'),
+  profileImage: localStorage.getItem('profile_image'),
   accessToken: localStorage.getItem('access_token'),
   refreshToken: localStorage.getItem('refresh_token'),
 };
 
 export const updateIsAuthenticated = (authenticated: boolean) => {
   return {
-    type: 'login/updateIsAuthenticated',
+    type: 'auth/updateIsAuthenticated',
     payload: authenticated,
   };
 };
 
 export const updateIsAdmin = (admin: boolean) => {
   return {
-    type: 'login/updateIsAdmin',
+    type: 'auth/updateIsAdmin',
     payload: admin,
   };
 };
 
 export const setIsAuthenticated = createAsyncThunk(
-  'login/setIsAuthenticated',
-  async (_, { getState }) => {
-    const state = getState() as RootState;
-    const { accessToken, refreshToken } = state.login;
+  'auth/setIsAuthenticated',
+  async () => {
+    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
 
     const authenticated = Boolean(accessToken && refreshToken);
 
@@ -72,9 +70,8 @@ export const setIsAuthenticated = createAsyncThunk(
 
 export const setIsAdmin = createAsyncThunk(
   'login/setIsAdmin',
-  async (_, { getState }) => {
-    const state = getState() as RootState;
-    const { isAuthenticated } = state.login;
+  async () => {
+    const isAuthenticated = Boolean(localStorage.getItem('is_authenticated'))
 
     let isAdmin = false;
 
@@ -84,64 +81,64 @@ export const setIsAdmin = createAsyncThunk(
       try {
         const token = await user.getIdTokenResult();
         isAdmin = Boolean(token.claims?.isAdmin);
+
+        console.log('Admin status:', isAdmin);
+
+        updateIsAdmin(isAdmin);
+
+        return isAdmin;
       } catch (error) {
         console.error('Error retrieving token claims:', error);
       }
     }
-
-    console.log('Admin status:', isAdmin);
-
-    updateIsAdmin(isAdmin);
-
-    return isAdmin;
   }
 );
 
 export const updateAccountID = (id: string) => {
   return {
-    type: 'login/updateAccountID',
+    type: 'auth/updateAccountID',
     payload: id,
   };
 };
 
 export const updateEmail = (email: string) => {
   return {
-    type: 'login/updateEmail',
+    type: 'auth/updateEmail',
     payload: email,
   };
 };
 
 export const updateUsername = (username: string) => {
   return {
-    type: 'login/updateUsername',
+    type: 'auth/updateUsername',
     payload: username,
   };
 };
 
 export const updateProfileImage = (profileImage: string) => {
   return {
-    type: 'login/updateProfileImage',
+    type: 'auth/updateProfileImage',
     payload: profileImage,
   };
 };
 
 export const updateAccessToken = (access_token: string) => {
   return {
-    type: 'login/updateAccessToken',
+    type: 'auth/updateAccessToken',
     payload: access_token,
   };
 };
 
 export const updateRefreshToken = (refresh_token: string) => {
   return {
-    type: 'login/updateRefreshToken',
+    type: 'auth/updateRefreshToken',
     payload: refresh_token,
   };
 };
 
 export const signInWithGitHubPopup = createAsyncThunk(
-  'login/signInWithGitHubPopup',
-  async () => {
+  'auth/signInWithGitHubPopup',
+  async (_, { dispatch }) => {
     try {
       const github = new GithubAuthProvider();
 
@@ -155,16 +152,17 @@ export const signInWithGitHubPopup = createAsyncThunk(
       const email = user.email ?? '';
       const profileImage = user.photoURL ?? '';
       const phoneNumber = user.phoneNumber ?? '';
+      const isAuthenticated = Boolean(accessToken && refreshToken);
       const isAdmin = Boolean(token.claims?.isAdmin);
-      
-      updateIsAuthenticated(Boolean(accessToken && refreshToken));
-      updateIsAdmin(isAdmin);
-      updateAccessToken(accessToken);
-      updateRefreshToken(user.refreshToken);
-      updateAccountID(user.uid);
-      updateEmail(email);
-      updateUsername(username);
-      updateProfileImage(profileImage);
+
+      dispatch(updateIsAuthenticated(isAuthenticated));
+      dispatch(updateIsAdmin(isAdmin));
+      dispatch(updateAccessToken(accessToken));
+      dispatch(updateRefreshToken(user.refreshToken));
+      dispatch(updateAccountID(user.uid));
+      dispatch(updateEmail(email));
+      dispatch(updateUsername(username));
+      dispatch(updateProfileImage(profileImage));
 
       return {
         id: user.uid,
@@ -175,6 +173,7 @@ export const signInWithGitHubPopup = createAsyncThunk(
         phone_number: phoneNumber,
         profile_image: profileImage,
         authenticated: true,
+        admin: isAdmin
       };
     } catch (error) {
       const err = error as Error;
@@ -184,46 +183,73 @@ export const signInWithGitHubPopup = createAsyncThunk(
   }
 );
 
-export const loginSlice = createSlice({
-  name: 'login',
+export const logout = createAsyncThunk(
+  'auth/logout',
+  async () => {
+    try {
+      auth.signOut();
+
+      localStorage.removeItem('is_authenticated');
+      localStorage.removeItem('is_admin');
+      localStorage.removeItem('id');
+      localStorage.removeItem('username');
+      localStorage.removeItem('email');
+      localStorage.removeItem('phone_number');
+      localStorage.removeItem('profile_image');
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+
+      return 'You have been logged out successfully.';
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const authSlice = createSlice({
+  name: 'auth',
   initialState,
   reducers: {
     updateIsAuthenticated: (state, action) => {
       localStorage.setItem('is_authenticated', action.payload);
+      state.isAuthenticated = Boolean(localStorage.getItem('is_authenticated'));
     },
     updateIsAdmin: (state, action) => {
       localStorage.setItem('is_admin', action.payload);
+      state.isAdmin = Boolean(localStorage.getItem('is_admin'));
     },
     updateAccountID: (state, action) => {
-      state.id = action.payload;
       localStorage.setItem('id', action.payload);
+      state.id = localStorage.getItem('id');
     },
     updateEmail: (state, action) => {
-      state.email = action.payload;
       localStorage.setItem('email', action.payload);
+      state.email = localStorage.getItem('email');
     },
     updateUsername: (state, action) => {
-      state.username = action.payload;
       localStorage.setItem('username', action.payload);
+      state.username = localStorage.getItem('username');
     },
     updateProfileImage: (state, action) => {
-      state.profileImage = action.payload;
       localStorage.setItem('profile_image', action.payload);
+      state.profileImage = localStorage.getItem('profile_image');
     },
     updateAccessToken: (state, action) => {
-      state.accessToken = action.payload;
       localStorage.setItem('access_token', action.payload);
+      state.accessToken = localStorage.getItem('access_token');
     },
     updateRefreshToken: (state, action) => {
-      state.refreshToken = action.payload;
       localStorage.setItem('refresh_token', action.payload);
+      state.refreshToken = localStorage.getItem('refresh_token');
     },
   },
   extraReducers: (builder) => {
     builder.addCase(signInWithGitHubPopup.fulfilled, (state, action) => {
-      state.loginLoading = false;
-      state.loginErrorMessage = '';
-      state.loginError = null;
+      state.authLoading = false;
+      state.authErrorMessage = '';
+      state.authError = null;
       state.user = action.payload;
       state.id = action.payload.id;
       state.accessToken = action.payload.access_token;
@@ -233,13 +259,19 @@ export const loginSlice = createSlice({
       state.username = action.payload.username;
       state.isAuthenticated = action.payload.authenticated;
     });
+    builder.addCase(logout.fulfilled, (state, action) => {
+      state.authLoading = false;
+      state.authErrorMessage = '';
+      state.authError = null;
+      state.authSuccessMessage = action.payload;
+    });
     builder.addCase(setIsAuthenticated.fulfilled, (state, action) => {
-      state.loginLoading = false;
-      state.loginErrorMessage = '';
-      state.loginError = null;
+      state.authLoading = false;
+      state.authErrorMessage = '';
+      state.authError = null;
       state.isAuthenticated = action.payload;
     });
   },
 });
 
-export default loginSlice;
+export default authSlice;
