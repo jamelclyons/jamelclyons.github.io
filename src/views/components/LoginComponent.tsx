@@ -65,15 +65,11 @@ function LoginComponent() {
 
   return (
     <>
-      <div className="login-options">
-
-        <div className="providers">
-          <button className="login-button google" onClick={handleGitHubSignIn}>
-            <ImageComponent image={new Image({ title: 'GitHub', url: '', class_name: 'fa fa-github fa-fw' })} />
-
-            <h3>Login with GitHub</h3>
-          </button>
-        </div>
+      <div className="providers">
+        <button className="login-button google" onClick={handleGitHubSignIn}>
+          <ImageComponent image={new Image({ title: 'GitHub', url: '', class_name: 'fa fa-github fa-fw' })} />
+          <h3>Login with GitHub</h3>
+        </button>
       </div>
 
       <StatusBarComponent />

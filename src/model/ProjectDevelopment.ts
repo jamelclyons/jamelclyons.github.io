@@ -12,7 +12,7 @@ class ProjectDevelopment extends Model {
 
   constructor(data: Record<string, any> = {}) {
     super();
-
+    
     this.repoURL = data?.repo_url || '';
     this.checkList = data?.check_list ? this.toArrayTask(data.check_list) : [];
     this.versionsList = data?.versions_list

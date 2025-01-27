@@ -12,7 +12,6 @@ const StoryComponent: React.FC<StoryComponentProps> = ({ story }) => {
         <div className="story" id="story">
             <h2 className="title">story</h2>
 
-
             <ContentComponent html={story} />
         </div>
     }</>)

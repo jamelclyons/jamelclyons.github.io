@@ -34,7 +34,8 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
 
   const [project, setProject] = useState<Project>();
   const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>();
-  const [repo, setRepo] = useState<Repo>(new Repo({ id: projectID, owner: { login: owner } }));
+  const [repo, setRepo] = useState<Repo>();
+  const [solutionContent, setSolutionContent] = useState<string>();
 
   useEffect(() => {
     if (owner && projectID) {
@@ -49,12 +50,6 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
   }, [dispatch, repoQuery]);
 
   useEffect(() => {
-    if (repoQuery) {
-      dispatch(getRepoContents(new RepoContentQuery(repoQuery.owner, repoQuery.repo, '')));
-    }
-  }, [dispatch, repoQuery]);
-
-  useEffect(() => {
     if (repoObject) {
       setRepo(new Repo(repoObject));
     }
@@ -65,16 +60,6 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
       dispatch(getRepoLanguages(repo));
     }
   }, [dispatch, repo]);
-
-  useEffect(() => {
-    if (repoQuery) {
-      // const getFile = async () => {
-      //   return await dispatch(getRepoFile(new RepoContentQuery(owner, projectID, 'TheSolution.md'))).unwrap();
-      // }
-
-      dispatch(getRepoFile(new RepoContentQuery(repoQuery.owner, repoQuery.repo, 'TheSolution.md')))
-    }
-  }, [dispatch, repoQuery]);
 
   useEffect(() => {
     if (repo && repoLanguages) {
@@ -103,9 +88,21 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
 
   useEffect(() => {
     if (portfolio.projects.size > 0 && projectID) {
-      setProject(portfolio.filterProject(projectID));
+      const filteredProject = portfolio.filterProject(projectID);
+
+      if (solutionContent) {
+        filteredProject.solution.content = solutionContent;
+      }
+
+      setProject(filteredProject);
     }
   }, [portfolio.projects, projectID]);
+
+  useEffect(() => {
+    if (project) {
+
+    }
+  }, [project]);
 
   useEffect(() => {
     if (projectErrorMessage) {

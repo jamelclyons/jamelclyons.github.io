@@ -68,31 +68,28 @@ export const setIsAuthenticated = createAsyncThunk(
   }
 );
 
-export const setIsAdmin = createAsyncThunk(
-  'login/setIsAdmin',
-  async () => {
-    const isAuthenticated = Boolean(localStorage.getItem('is_authenticated'))
+export const setIsAdmin = createAsyncThunk('login/setIsAdmin', async () => {
+  const isAuthenticated = Boolean(localStorage.getItem('is_authenticated'));
 
-    let isAdmin = false;
+  let isAdmin = false;
 
-    const user = auth.currentUser;
+  const user = auth.currentUser;
 
-    if (isAuthenticated && user) {
-      try {
-        const token = await user.getIdTokenResult();
-        isAdmin = Boolean(token.claims?.isAdmin);
+  if (isAuthenticated && user) {
+    try {
+      const token = await user.getIdTokenResult();
+      isAdmin = Boolean(token.claims?.isAdmin);
 
-        console.log('Admin status:', isAdmin);
+      console.log('Admin status:', isAdmin);
 
-        updateIsAdmin(isAdmin);
+      updateIsAdmin(isAdmin);
 
-        return isAdmin;
-      } catch (error) {
-        console.error('Error retrieving token claims:', error);
-      }
+      return isAdmin;
+    } catch (error) {
+      console.error('Error retrieving token claims:', error);
     }
   }
-);
+});
 
 export const updateAccountID = (id: string) => {
   return {
@@ -173,7 +170,7 @@ export const signInWithGitHubPopup = createAsyncThunk(
         phone_number: phoneNumber,
         profile_image: profileImage,
         authenticated: true,
-        admin: isAdmin
+        admin: isAdmin,
       };
     } catch (error) {
       const err = error as Error;
@@ -183,12 +180,10 @@ export const signInWithGitHubPopup = createAsyncThunk(
   }
 );
 
-export const logout = createAsyncThunk(
-  'auth/logout',
-  async () => {
-    try {
-      auth.signOut();
-
+export const logout = createAsyncThunk('auth/logout', async () => {
+  try {
+    await auth.signOut();
+    
       localStorage.removeItem('is_authenticated');
       localStorage.removeItem('is_admin');
       localStorage.removeItem('id');
@@ -199,14 +194,13 @@ export const logout = createAsyncThunk(
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
 
-      return 'You have been logged out successfully.';
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
-    }
+    return 'You have been logged out successfully.';
+  } catch (error) {
+    const err = error as Error;
+    console.error(err);
+    throw new Error(err.message);
   }
-);
+});
 
 export const authSlice = createSlice({
   name: 'auth',

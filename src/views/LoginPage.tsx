@@ -40,7 +40,7 @@ const LoginPage: React.FC = () => {
     }, [navigate, isAuthenticated, isAdmin]);
 
     return (
-        <section>
+        <section className='login'>
             <main>
                 <LoginComponent />
             </main>

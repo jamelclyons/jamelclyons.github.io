@@ -13,7 +13,7 @@ interface ContentState {
   contentStatusCode: string;
   contentError: Error | null;
   contentErrorMessage: string;
-  content: Array<string>;
+  content: string;
   title: string;
 }
 
@@ -22,31 +22,21 @@ const initialState: ContentState = {
   contentStatusCode: '',
   contentError: null,
   contentErrorMessage: '',
-  content: [],
+  content: '',
   title: '',
 };
 
 export const getContent = createAsyncThunk(
   'content/getContent',
-  async (pageSlug: string) => {
+  async (url: string) => {
     try {
-      const contentCollection = collection(db, 'content');
-      const docRef = doc(contentCollection, pageSlug);
-      const docSnap = await getDoc(docRef);
+      const content = await fetch(url, {
+        headers: {
+          auth: `Bearer ${import.meta.env.VITE_OCTOKIT_AUTH}`,
+        },
+      });
 
-      if (!docSnap.exists()) {
-        throw new Error('Could not be found.');
-      }
-
-      let content: Array<string> = [];
-
-      if (Array.isArray(docSnap.data())) {
-        docSnap.data().forEach((document: string) => {
-          content.push(document);
-        });
-      }
-
-      return content;
+      return content.text();
     } catch (error) {
       const err = error as Error;
       console.error(err);

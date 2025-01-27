@@ -38,6 +38,8 @@
 @use './author-card.scss';
 @use './description-card.scss';
 
+@use './_options.scss';
+
 @use './_header.scss';
 
 @use './_home.scss';
@@ -50,6 +52,7 @@
 @use './_contact.scss';
 @use './_add.scss';
 @use './_not_found.scss';
+@use './_login.scss';
 
 @use '_statusBar.scss';
 

@@ -1,37 +1,22 @@
 import {
   createSlice,
   createAsyncThunk,
-  isAnyOf,
   PayloadAction,
 } from '@reduxjs/toolkit';
 
 import {
   collection,
-  getDocs,
   doc,
   getDoc,
-  query,
-  where,
-  QuerySnapshot,
   CollectionReference,
   DocumentReference,
   DocumentSnapshot,
   DocumentData,
-  QueryDocumentSnapshot,
 } from 'firebase/firestore';
 
 import { db } from '../services/firebase/config';
 
-import ProjectSolution from '../model/ProjectSolution';
-import ProjectProcess from '../model/ProjectProcess';
-import ProjectProblem from '../model/ProjectProblem';
-import ProjectDetails from '../model/ProjectDetails';
-import Project from '../model/Project';
 import Repo from '../model/Repo';
-import ProjectStatus from '../model/ProjectStatus';
-import ProjectDesign from '../model/ProjectDesign';
-import ProjectDevelopment from '../model/ProjectDevelopment';
-import ProjectDelivery from '../model/ProjectDelivery';
 
 const portfolioCollection: CollectionReference<DocumentData, DocumentData> =
   collection(db, 'portfolio');
@@ -58,15 +43,11 @@ export const getProject = createAsyncThunk(
       const docSnap: DocumentSnapshot<DocumentData, DocumentData> =
         await getDoc(docRef);
 
-      let project = new Project();
-
-      project.fromRepo(repo);
-
-      if (docSnap.exists()) {
-        project.fromDocumentData(docSnap.id, docSnap.data());
+      if (!docSnap.exists()) {
+        return {};
       }
 
-      return project.toObject();
+      return { id: docSnap.id, ...docSnap.data() };
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -91,7 +72,6 @@ export const projectSlice = createSlice({
         state.projectLoading = true;
         state.projectError = null;
         state.projectErrorMessage = '';
-        state.projectObject = {};
       })
       .addCase(getProject.rejected, (state, action) => {
         state.projectLoading = false;

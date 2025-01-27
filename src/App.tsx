@@ -14,7 +14,7 @@ const Search = lazy(() => import('./views/Search'));
 const Resume = lazy(() => import('./views/Resume'));
 const Contact = lazy(() => import('./views/Contact'));
 const AddSkill = lazy(() => import('./views/SkillAdd'));
-const ProjectAdd = lazy(() => import('./views/ProjectAdd'));
+const ProjectsEditPage = lazy(() => import('./views/ProjectsEditPage'));
 const NotFound = lazy(() => import('./views/NotFound'));
 const ProjectUpdate = lazy(() => import('./views/ProjectUpdate'));
 const LoginPage = lazy(() => import('./views/LoginPage'));
@@ -253,9 +253,9 @@ const App: React.FC = () => {
                 <Dashboard />
               </ProtectedRoute>
             } />
-            <Route path="/admin/add/project" element={
+            <Route path="/admin/update/projects" element={
               <ProtectedRoute>
-                <ProjectAdd />
+                <ProjectsEditPage />
               </ProtectedRoute>
             } />
             <Route path="/admin/update/project/:projectID" element={

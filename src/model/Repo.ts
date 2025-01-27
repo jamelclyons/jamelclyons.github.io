@@ -6,6 +6,7 @@ import { Language, Technology } from './Taxonomy';
 
 class Repo extends Model {
   id: string;
+  privacy: boolean;
   owner: Owner;
   createdAt: string;
   updatedAt: string;
@@ -13,22 +14,20 @@ class Repo extends Model {
   description: string;
   repoURL: string;
   skills: Skills;
-  contents: RepoContent;
+  contents: RepoContent = new RepoContent;
 
   constructor(data: Record<string, any> = {}) {
     super();
 
     this.id = data?.name ?? data?.id ?? '';
-    this.owner = new Owner(data?.owner);
+    this.privacy = data?.private ?? '';
+    this.owner = data?.owner ? new Owner(data.owner) : new Owner();
     this.createdAt = data?.created_at ?? '';
     this.updatedAt = data?.updated_at ?? '';
     this.homepage = data?.homepage ?? '';
     this.description = data?.description ?? '';
-    this.repoURL = data?.repo_url ?? data?.html_url ?? '';
+    this.repoURL = data?.repo_url ?? data?.url ?? data?.html_url ?? '';
     this.skills = data?.skills ? new Skills(data.skills) : new Skills();
-    this.contents = data?.contents
-      ? new RepoContent(data?.contents)
-      : new RepoContent();
   }
 
   getOwner(data: Record<string, any>) {

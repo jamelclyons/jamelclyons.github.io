@@ -1,14 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { marked } from 'marked';
-
 import MemberPic from './components/member/MemberPic';
 import SkillsComponent from './components/SkillsComponent';
-import ContentComponent from './components/content/ContentComponent';
 
 import { getRepoContents } from '../controllers/githubSlice';
-// import { loadMarkdown } from '../controllers/contentSlice';
+import { getContent } from '@/controllers/contentSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
 import RepoContent from '../model/RepoContent';
@@ -30,8 +27,8 @@ const About: React.FC<AboutProps> = ({ user, portfolio, skills }) => {
 
   const { contents } = useSelector((state: RootState) => state.github);
 
-  const [content, setContent] = useState<RepoContent>();
-  const [markdown, setMarkdown] = useState<string | object>();
+  const [storyContent, setStoryContent] = useState<RepoContent>();
+  const [story, setStory] = useState<string>();
 
   useEffect(() => {
     document.title = `About - ${user.name}`;
@@ -43,7 +40,8 @@ const About: React.FC<AboutProps> = ({ user, portfolio, skills }) => {
         new RepoContentQuery(
           user.id,
           user.id,
-          ''
+          '',
+          'main'
         )))
     }
   }, []);
@@ -53,23 +51,23 @@ const About: React.FC<AboutProps> = ({ user, portfolio, skills }) => {
       contents.map((content) => {
         if (content.type === 'file') {
           if (content.name === 'story.md') {
-            setContent(new RepoContent(content));
+            setStoryContent(new RepoContent(content));
           }
         }
       });
     }
   }, [contents]);
 
-  // useEffect(() => {
-  //   if (content) {
-  //     loadMarkdown(content.downloadURL)
-  //       .then((markdown) => {
-  //         if (typeof markdown === 'string') {
-  //           setMarkdown(marked(markdown).valueOf());
-  //         }
-  //       });
-  //   }
-  // }, [contents, content]);
+  useEffect(() => {
+    const fetchStoryContent = async (url: string) => {
+      const storyMarkdown = await dispatch(getContent(url)).unwrap();
+      setStory(storyMarkdown)
+    };
+
+    if (storyContent) {
+      fetchStoryContent(storyContent.downloadURL);
+    }
+  }, [contents, storyContent]);
 
   const handleProjects = () => {
     window.location.href = '/#/portfolio';
@@ -138,7 +136,7 @@ const About: React.FC<AboutProps> = ({ user, portfolio, skills }) => {
 
         <SkillsComponent skills={skills} />
 
-        {typeof markdown === 'string' && <StoryComponent story={markdown} />}
+        {story && <StoryComponent story={story} />}
 
         <OrganizationsComponent organizations={user.organizations} />
       </section>

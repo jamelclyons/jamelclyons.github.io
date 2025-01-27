@@ -42,7 +42,7 @@ interface GithubState {
   repoObject: Record<string, any>;
   repoLanguages: Array<Record<string, any>>;
   contents: Array<Record<string, any>>;
-  file: OctokitResponse | null;
+  file: string | null;
   contributorsObject: Array<Record<string, any>>;
 }
 
@@ -153,7 +153,7 @@ export const getRepo = createAsyncThunk(
         repo: query.repo,
       });
 
-      return new Repo(repo.data).toObject();
+      return repo.data;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -164,12 +164,12 @@ export const getRepo = createAsyncThunk(
 
 export const getRepoContents = createAsyncThunk(
   'github/getRepoContents',
-  async (query: RepoContentQuery) => {
+  async (query: GitHubRepoQuery) => {
     try {
       const repoContents = await octokit.rest.repos.getContent({
         owner: query.owner,
         repo: query.repo,
-        path: query.path,
+        path: '',
       });
 
       let contents: Array<Record<string, any>> = [];
@@ -193,13 +193,16 @@ export const getRepoFile = createAsyncThunk(
   'github/getRepoFile',
   async (query: RepoContentQuery) => {
     try {
-      const { owner, repo, path } = query;
+      const { owner, repo, path, branch } = query;
 
-      const file: OctokitResponse = await octokit.request(
-        `repos/${owner}/${repo}/production/${path}`
-      );
+      const response: OctokitResponse = await octokit.repos.getContent({
+        owner: owner,
+        repo: repo,
+        path: path,
+        ref: branch,
+      });
 
-      return file;
+      return atob(response.data.content);
     } catch (error) {
       const err = error as Error;
       console.error(err);

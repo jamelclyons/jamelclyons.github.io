@@ -16,7 +16,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     
     const {
         isAdmin
-    } = useSelector((state: RootState) => state.login);
+    } = useSelector((state: RootState) => state.auth);
 
     useEffect(()=>{
         dispatch(setIsAdmin())
