@@ -50,7 +50,6 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectID, design }) => {
   const [gallery, setGallery] = useState(design?.gallery);
   const [colorsList, setColorsList] = useState(design?.colorsList);
   const [checkList, setCheckList] = useState(design?.checkList);
-  const [content, setContent] = useState(design?.content);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     try {

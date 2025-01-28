@@ -11,7 +11,7 @@ interface DesignProps {
 }
 
 const Design: React.FC<DesignProps> = ({ design }) => {
-  const { checkList, colorsList, gallery, content } = design;
+  const { checkList, colorsList, gallery, contentURL } = design;
   const { logos, icons, animations, umlDiagrams } = gallery;
 
   return (
@@ -19,7 +19,7 @@ const Design: React.FC<DesignProps> = ({ design }) => {
       {(checkList.length > 0 ||
         colorsList.length > 0 ||
         logos.length > 0 || icons.length > 0 || animations.length > 0 || umlDiagrams.length > 0 ||
-        (typeof content === 'string' && content !== '')) &&
+        contentURL) &&
         <div className="project-process-design" id="project_process_design">
           <h4 className="title">design</h4>
 
@@ -35,7 +35,7 @@ const Design: React.FC<DesignProps> = ({ design }) => {
 
           {umlDiagrams.length > 0 && <Gallery title={'uml diagrams'} gallery={umlDiagrams} />}
 
-          {typeof content === 'string' && <ContentComponent html={content} />}
+          {contentURL && <ContentComponent title={''} url={contentURL} />}
         </div>
       }
     </>

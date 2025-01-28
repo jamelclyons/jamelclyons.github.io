@@ -11,12 +11,12 @@ interface DeliveryProps {
 }
 
 const Delivery: React.FC<DeliveryProps> = ({ delivery }) => {
-  const { checkList, gallery, content } = delivery;
+  const { checkList, gallery, contentURL } = delivery;
 
   return (
     <>
       {checkList.length > 0 ||
-        (typeof content === 'string' && content !== '') ||
+        contentURL !== '' ||
         gallery.length > 0 &&
         <div className="project-process-delivery" id="project_process_delivery">
           <h4 className="title">delivery</h4>
@@ -25,7 +25,7 @@ const Delivery: React.FC<DeliveryProps> = ({ delivery }) => {
 
           {gallery.length > 0 && <Gallery gallery={gallery} title='' />}
 
-          {typeof content === 'string' && content !== '' && <ContentComponent html={content} />}
+          {contentURL && <ContentComponent title={null} url={contentURL} />}
         </div>
       }
     </>

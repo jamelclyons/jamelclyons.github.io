@@ -13,7 +13,7 @@ interface SolutionProps {
 }
 
 const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
-  const { features, currency, price, urlsList, gallery, content } = solution;
+  const { features, currency, price, urlsList, gallery, contentURL } = solution;
 
   return (
     <>
@@ -22,7 +22,7 @@ const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
         price > 0 ||
         urlsList?.homepage?.url === '' || urlsList?.ios?.url === '' || urlsList?.android?.url === '' ||
         gallery.images.length > 0 ||
-        typeof content === 'string') &&
+        contentURL) &&
         <div className="project-solution" id="project_solution">
           {gallery.images.length > 0 && <GalleryComponent gallery={gallery.images} title='' />}
 
@@ -34,7 +34,7 @@ const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
 
           <h3>THE SOLUTION</h3>
 
-          {typeof content === 'string' && <ContentComponent html={content} />}
+          {contentURL && <ContentComponent title={null} url={contentURL} />}
         </div>
       }
     </>

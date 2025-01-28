@@ -11,14 +11,15 @@ button,
   background-color: var(--button-background-color);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
-  padding: .75rem;
 
   h2,
   h3 {
     color: var(--button-color);
+    padding: 0.75rem;
   }
 
-  i{
+  i {
     color: var(--button-color);
+    padding-left: 0.5rem;
   }
 }

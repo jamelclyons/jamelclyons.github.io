@@ -4,18 +4,23 @@
 .author-card.card {
   background-color: var(--card-background-color-secondary);
   color: var(--card-color-secondary);
-  max-width: 70vw;
+  gap: 0.374rem;
+  height: fit-content;
+  width: fit-content;
+  padding: 0;
 
   img {
-    border-radius: unset;
     box-shadow: unset;
+    max-width: 50vw;
   }
 
-  h3.title {
-    padding: 0.5em;
+  .title {
+    padding: 0.75em;
   }
 
   .author-contact .contact-bar {
+    padding: 0 1rem 1rem;
+
     a {
       i {
         color: var(--card-color-secondary);

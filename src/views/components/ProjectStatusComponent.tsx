@@ -18,7 +18,7 @@ const ProjectStatusComponent: React.FC<ProjectStatusProps> = ({ projectStatus })
             <h5>Started: {createdAt}</h5>
             <h5>Updated: {updatedAt}</h5>
             <progress value={progress} max="100"></progress>
-            <p>{progress}% Completed</p>
+            <h6>{progress}% Completed</h6>
           </div>
         </>
       )}

@@ -9,17 +9,17 @@ interface ProblemProps {
 }
 
 const TheProblem: React.FC<ProblemProps> = ({ problem }) => {
-  const { gallery, content } = problem;
+  const { gallery, contentURL } = problem;
 
   return (
     <>
-      {(gallery.images.length > 0 || (typeof content === 'string' && content !== '')) &&
+      {(gallery.images.length > 0 || contentURL) &&
         <div className="project-problem" id="project_problem">
           <h3 className="title">the problem</h3>
 
           <Gallery title={'Problem'} gallery={gallery.images} />
 
-          {typeof content === 'string' && content !== '' && <ContentComponent html={content} />}
+          {contentURL && <ContentComponent title={null} url={contentURL} />}
         </div>
       }
     </>

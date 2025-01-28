@@ -14,7 +14,7 @@ const SkillsComponent: React.FC<SkillsComponentProps> = ({ skills }) => {
 
     return (
         <div className="skills" id="skills">
-            <h2 className="title">skills</h2>
+            <h5 className="title">skills</h5>
 
             {types.size > 0 && <TaxList taxonomies={types} title={'Project Types'} />}
 

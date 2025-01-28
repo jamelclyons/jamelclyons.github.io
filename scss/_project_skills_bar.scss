@@ -1,11 +1,15 @@
 .project-skills-bar {
   display: flex;
   justify-content: center;
-  gap: .5rem;
+  gap: 1rem;
   flex-wrap: wrap;
   width: 100%;
   overflow-x: auto;
   white-space: nowrap;
+
+  .icon {
+    padding: 0;
+  }
 
   i {
     font-size: 2rem;

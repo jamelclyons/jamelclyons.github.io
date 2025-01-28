@@ -6,7 +6,7 @@ import Gallery from './Gallery';
 class ProjectSolution extends Model {
   gallery: Gallery;
   features: Set<Feature>;
-  content: string | null;
+  contentURL: string | null;
   currency: string;
   price: number;
   urlsList: ProjectURLs;
@@ -18,7 +18,7 @@ class ProjectSolution extends Model {
     this.features = data?.features
       ? this.setFeatures(data.features)
       : new Set<Feature>();
-    this.content = data?.content || null;
+    this.contentURL = data?.content?.url || null;
     this.currency = data?.currency || 'USD';
     this.price = data?.price || 0;
     this.urlsList = data?.urlsList

@@ -49,28 +49,3 @@ section.author {
     }
   }
 }
-
-.author-card.card {
-  gap: 0.374rem;
-  height: fit-content;
-  padding: 0;
-  max-width: 500px;
-
-  .author-role,
-  .author-bio,
-  .author-contact {
-    width: 100%;
-    padding: 0.5rem;
-  }
-
-  .author-role {
-    h5 {
-      text-transform: capitalize;
-    }
-  }
-
-  p {
-    text-align: left;
-    height: 100%;
-  }
-}

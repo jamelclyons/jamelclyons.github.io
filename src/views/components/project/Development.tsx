@@ -14,6 +14,8 @@ import SkillsComponent from '../SkillsComponent';
 import {
   signInWithGitHubPopup
 } from '@/controllers/authSlice';
+import StatusBarComponent from '../StatusBarComponent';
+import { setMessage, setMessageType, setShowStatusBar } from '@/controllers/messageSlice';
 
 interface DevelopmentProps {
   development: ProjectDevelopment;
@@ -22,10 +24,17 @@ interface DevelopmentProps {
 const Development: React.FC<DevelopmentProps> = ({ development }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { checkList, content, repoURL, versionsList, skills } = development;
+  const { checkList, contentURL, repoURL, versionsList, skills } = development;
   const { isAuthenticated } = useSelector(
     (state: RootState) => state.auth
   );
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      dispatch(setMessage('Click Log in with GitHub to gain access to the code and/or obtain administrator privileges.'));
+      dispatch(setMessageType('info'));
+    }
+  }, []);
 
   const handleSeeCode = () => {
     if (isAuthenticated) {
@@ -39,7 +48,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
     <>{(
       skills ||
       checkList.length > 0 ||
-      (typeof content === 'string' && content !== '') ||
+      (typeof contentURL === 'string' && contentURL !== '') ||
       (versionsList?.current !== '' && versionsList?.previous.length > 0) ||
       repoURL !== '') &&
       <div className="project-process-development" id="project_process_development">
@@ -50,7 +59,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
         {checkList.length > 0 && <CheckList checkList={checkList} />}
 
-        {typeof content === 'string' && content !== '' && <ContentComponent html={content} />}
+        {contentURL && <ContentComponent title={''} url={contentURL} />}
 
         {/* <Versions versions_list={development?.versionsList} /> */}
 
@@ -58,9 +67,11 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
           <ImageComponent image={new Image({ title: 'GitHub', url: '', class_name: 'fa fa-github fa-fw' })} />
           <h3 className='title'>{
             isAuthenticated ?
-              'See Code' : 'Login to See Code'
+              'See Code' : 'Login with GitHub'
           }</h3>
         </button>
+
+        {!isAuthenticated && <StatusBarComponent />}
       </div>
     }
     </>

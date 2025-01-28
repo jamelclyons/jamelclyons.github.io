@@ -10,16 +10,18 @@ import RepoContentQuery from '@/model/RepoContentQuery';
 import { marked } from 'marked';
 
 interface ContentComponentProps {
-  html: string
+  title: string | null;
+  url: string
 }
 
-const ContentComponent: React.FC<ContentComponentProps> = ({ html }) => {
+const ContentComponent: React.FC<ContentComponentProps> = ({ title, url }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const [content, setContent] = useState<string | object | null >(null);
+  const [html, setHTML] = useState<string | object | null>(null);
 
   useEffect(() => {
-    if (html !== '') {
+    if (url !== '') {
+      console.log(url)
       const fetchContent = async () => {
         try {
           const getContentObject = async (url: string) => {
@@ -28,21 +30,24 @@ const ContentComponent: React.FC<ContentComponentProps> = ({ html }) => {
             const query = new RepoContentQuery(parts[1], parts[2], parts[4], parts[3]);
             return await dispatch(getRepoFile(query)).unwrap();
           };
-  
-          const contentObject = await getContentObject(html);
+
+          const contentObject = await getContentObject(url);
           const htmlContent = marked(contentObject).valueOf();
 
-          setContent(htmlContent);
+          setHTML(htmlContent);
         } catch (error) {
           console.error("Error fetching content:", error);
         }
       };
-  
+
       fetchContent();
     }
-  }, [html, dispatch]);
+  }, [url, dispatch]);
 
-  return <>{content && <div className='card content' dangerouslySetInnerHTML={{ __html: content }} />}</>;
+  return <>{html && <div className='content'>
+    {title && <h4 className='title'>{title}</h4>}
+    <div dangerouslySetInnerHTML={{ __html: html }}></div>
+  </div>}</>;
 }
 
 export default ContentComponent;

@@ -69,15 +69,15 @@ class Project extends Model {
     this.description =
       repo.description !== '' ? repo.description : 'No Description Provided.';
     this.solution.urlsList.homepage.url = repo.homepage;
-    this.solution.content = repo.contents.solution ? repo.contents.solution.downloadURL : null;
+    this.solution.contentURL = repo.contents.solution ? repo.contents.solution.downloadURL : null;
     this.process.status.createdAt = repo.createdAt;
     this.process.status.updatedAt = repo.updatedAt;
-    this.process.design.content = repo.contents.design ? repo.contents.design.downloadURL : null;
-    this.process.development.content = repo.contents.development ? repo.contents.development.downloadURL : null;
+    this.process.design.contentURL = repo.contents.design ? repo.contents.design.downloadURL : null;
+    this.process.development.contentURL = repo.contents.development ? repo.contents.development.downloadURL : null;
     this.process.development.repoURL = repo.repoURL;
     this.process.development.skills = repo.skills;
-    this.process.delivery.content = repo.contents.delivery ? repo.contents.delivery.downloadURL : null;
-    this.problem.content = repo.contents.problem ? repo.contents.problem.downloadURL : null;
+    this.process.delivery.contentURL = repo.contents.delivery ? repo.contents.delivery.downloadURL : null;
+    this.problem.contentURL = repo.contents.problem ? repo.contents.problem.downloadURL : null;
   }
 
   fromDocumentData(id: string, data: DocumentData) {

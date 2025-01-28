@@ -5,14 +5,14 @@ import Task from './Task';
 class ProjectDelivery extends Model {
   checkList: Array<Task>;
   gallery: Array<Image>;
-  content: string | null;
+  contentURL: string | null;
 
   constructor(data: Record<string, any> = {}) {
     super();
 
     this.checkList = data?.check_list ? this.toArrayTask(data?.check_list) : [];
     this.gallery = data?.gallery ? this.toArrayImage(data.gallery) : [];
-    this.content = data?.content || null;
+    this.contentURL = data?.content || null;
   }
 
   toArrayTask(data: Array<Record<string, any>>) {
