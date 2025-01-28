@@ -180,11 +180,14 @@ export const getRepoContents = createAsyncThunk(
         });
       }
 
-      return contents;
+      return {
+        status: repoContents.status,
+        contents: contents,
+      };
     } catch (error) {
       const err = error as Error;
       console.error(err);
-      throw new Error(err.message);
+      // throw new Error(err.message);
     }
   }
 );
@@ -335,7 +338,8 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubLoading = false;
         state.githubErrorMessage = '';
         state.githubError = null;
-        state.contents = action.payload;
+        state.githubStatusCode = action.payload?.status ?? 0;
+        state.contents = action.payload?.contents ?? [];
       })
       .addCase(getRepoFile.fulfilled, (state, action) => {
         state.githubLoading = false;

@@ -27,7 +27,7 @@ class Portfolio extends Model {
     if (repos.length > 0) {
       repos.forEach((repo) => {
         let project = new Project();
-
+// console.log(repo)
         project.fromRepo(repo);
 
         repoProjects.add(project);

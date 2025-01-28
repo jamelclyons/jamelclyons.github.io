@@ -26,7 +26,8 @@ import {
   getOrganization,
   getOrganizations,
   getRepos,
-  getRepoLanguages
+  getRepoLanguages,
+  getRepoContents
 } from './controllers/githubSlice';
 import { getPortfolio, setPortfolioSkills, SkillsObject } from './controllers/portfolioSlice';
 import {
@@ -47,6 +48,7 @@ import OrganizationPage from './views/OrganizationPage';
 import Organization from './model/Organization';
 import Organizations from './model/Organizations';
 import Dashboard from './views/Dashboard';
+import GitHubRepoQuery from './model/GitHubRepoQuery';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -60,6 +62,7 @@ const App: React.FC = () => {
   const [gitHubRepos, setGitHubRepos] = useState<Array<Repo>>();
   const [user, setUser] = useState<User>(new User(userObject));
   const [organizations, setOrganizations] = useState<Array<Organization>>();
+  const [repoSkills, setRepoSkills] = useState<Array<Repo>>();
   const [repos, setRepos] = useState<Array<Repo>>();
   const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio);
   const [skills, setSkills] = useState<Skills>(new Skills(skillsObject));
@@ -204,12 +207,36 @@ const App: React.FC = () => {
           })
         );
 
-        setRepos(fetchedRepos);
+        setRepoSkills(fetchedRepos);
       }
     };
 
     fetchAllRepoSkills();
   }, [gitHubRepos, dispatch]);
+
+  useEffect(() => {
+    const fetchRepoContents = async (query: GitHubRepoQuery): Promise<Array<Record<string, any>>> => {
+      const data = await dispatch(getRepoContents(query)).unwrap();
+      return data?.contents ?? [];
+    };
+
+    const fetchAllRepoContents = async () => {
+      if (repoSkills && repoSkills.length > 0) {
+        const fetchedRepos = await Promise.all(
+          repoSkills.map(async (repo) => {
+            const contents = await fetchRepoContents(new GitHubRepoQuery(repo.owner.login, repo.id));
+            repo.setContents(contents);
+            // console.log(repo)
+            return repo;
+          })
+        );
+
+        setRepos(fetchedRepos);
+      }
+    };
+
+    fetchAllRepoContents();
+  }, [repoSkills, dispatch]);
 
   useEffect(() => {
     if (repos && repos.length > 0) {
@@ -227,9 +254,9 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (portfolioObject.length > 0) {
-      const project = new Portfolio();
-      project.getProjectsFromDB(portfolioObject);
-      setPortfolio(project);
+      const projects = new Portfolio();
+      projects.getProjectsFromDB(portfolioObject);
+      setPortfolio(projects);
     }
   }, [portfolioObject]);
 

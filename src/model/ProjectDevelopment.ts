@@ -4,7 +4,7 @@ import ProjectVersions from './ProjectVersions';
 import Skills from './Skills';
 
 class ProjectDevelopment extends Model {
-  content: string | object;
+  content: string | null;
   checkList: Array<Task>;
   repoURL: string;
   versionsList: ProjectVersions;
@@ -19,7 +19,7 @@ class ProjectDevelopment extends Model {
       ? new ProjectVersions(data.versions_list)
       : new ProjectVersions();
     this.skills = data?.skills ? new Skills(data.skills) : new Skills;
-    this.content = data?.content || '';
+    this.content = data?.content || null;
   }
 
   toArrayTask(data: Array<Record<string, any>>) {

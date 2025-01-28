@@ -1,5 +1,6 @@
 import Model from './Model';
 import Owner from './Owner';
+import RepoContents from './RepoContents';
 import RepoContent from './RepoContent';
 import Skills from './Skills';
 import { Language, Technology } from './Taxonomy';
@@ -14,7 +15,7 @@ class Repo extends Model {
   description: string;
   repoURL: string;
   skills: Skills;
-  contents: RepoContent = new RepoContent;
+  contents: RepoContents = new RepoContents;
 
   constructor(data: Record<string, any> = {}) {
     super();
@@ -101,7 +102,33 @@ class Repo extends Model {
     this.skills = skills;
   }
 
-  setContent() {}
+  setContents(contentsObject: Array<Record<string, any>>) {
+    if (Array.isArray(contentsObject) && contentsObject.length > 0) {
+      contentsObject.map((content) => {
+        if (content.type === 'file') {
+          if (content.name === 'TheSolution.md') {
+            this.contents.setSolution(new RepoContent(content));
+          }
+
+          if (content.name === 'Design.md') {
+            this.contents.setDesign(new RepoContent(content));
+          }
+
+          if (content.name === 'Development.md') {
+            this.contents.setDevelopment(new RepoContent(content));
+          }
+
+          if (content.name === 'Delivery.md') {
+            this.contents.setDelivery(new RepoContent(content));
+          }
+
+          if (content.name === 'TheProblem.md') {
+            this.contents.setProblem(new RepoContent(content));
+          }
+        }
+      });
+    }
+  }
 }
 
 export default Repo;
