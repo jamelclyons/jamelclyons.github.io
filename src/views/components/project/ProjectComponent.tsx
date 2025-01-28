@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
 
 import DescriptionComponent from '../DescriptionComponent';
 
@@ -8,13 +7,8 @@ import TheSolution from './TheSolution';
 import TheProblem from './TheProblem';
 import TheProcess from './TheProcess';
 
-import type { AppDispatch, RootState } from '@/model/store';
 import Project from '@/model/Project';
-import RepoContent from '@/model/RepoContent';
 import GitHubRepoQuery from '@/model/GitHubRepoQuery';
-import RepoContentQuery from '@/model/RepoContentQuery';
-
-import { getRepoContents, getRepoFile } from '@/controllers/githubSlice';
 
 interface ProjectComponentProps {
   project: Project;
@@ -22,8 +16,6 @@ interface ProjectComponentProps {
 }
 
 const ProjectComponent: React.FC<ProjectComponentProps> = ({ project, repoQuery }) => {
-  const dispatch = useDispatch<AppDispatch>();
-
   const {
     owner, title, description, solution, process, problem, details
   } = project;

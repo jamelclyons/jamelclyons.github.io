@@ -1,14 +1,10 @@
-section {
-
-  main.project-problem {
-    margin: 5rem 0;
-
-  }
-}
-
 .project-problem {
-
-  p {
-    width: 100%;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 1000px;
 }

@@ -181,7 +181,6 @@ const App: React.FC = () => {
 
       if (Array.isArray(reposObject) && reposObject.length > 0) {
         const repos = new Repos(reposObject);
-
         setGitHubRepos(repos.collection)
       }
     }
@@ -192,18 +191,18 @@ const App: React.FC = () => {
   }, [dispatch, user.id]);
 
   useEffect(() => {
-    const fetchRepoSkills = async (repo: Repo): Promise<Record<string, any>> => {
+    const fetchRepoSkills = async (repo: Repo): Promise<Repo> => {
       const data = await dispatch(getRepoLanguages(repo)).unwrap();
       repo.setSkills(data);
-      return repo.toObject();
+
+      return repo;
     };
 
     const fetchAllRepoSkills = async () => {
       if (gitHubRepos && gitHubRepos.length > 0) {
         const fetchedRepos = await Promise.all(
           gitHubRepos.map(async (repo) => {
-            const updatedRepo = await fetchRepoSkills(repo);
-            return new Repo(updatedRepo);
+            return await fetchRepoSkills(repo);
           })
         );
 
@@ -217,6 +216,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const fetchRepoContents = async (query: GitHubRepoQuery): Promise<Array<Record<string, any>>> => {
       const data = await dispatch(getRepoContents(query)).unwrap();
+
       return data?.contents ?? [];
     };
 
@@ -226,7 +226,7 @@ const App: React.FC = () => {
           repoSkills.map(async (repo) => {
             const contents = await fetchRepoContents(new GitHubRepoQuery(repo.owner.login, repo.id));
             repo.setContents(contents);
-            // console.log(repo)
+
             return repo;
           })
         );
@@ -240,9 +240,8 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (repos && repos.length > 0) {
-      const projects = new Portfolio();
-      projects.getProjectsFromRepos(repos);
-      setPortfolio(projects);
+      portfolio.getProjectsFromRepos(repos);
+      setPortfolio(portfolio);
     }
   }, [repos, dispatch]);
 
@@ -254,9 +253,8 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (portfolioObject.length > 0) {
-      const projects = new Portfolio();
-      projects.getProjectsFromDB(portfolioObject);
-      setPortfolio(projects);
+      portfolio.getProjectsFromDB(portfolioObject);
+      setPortfolio(portfolio);
     }
   }, [portfolioObject]);
 

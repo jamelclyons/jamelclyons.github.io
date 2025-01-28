@@ -27,7 +27,7 @@ class Repo extends Model {
     this.updatedAt = data?.updated_at ?? '';
     this.homepage = data?.homepage ?? '';
     this.description = data?.description ?? '';
-    this.repoURL = data?.repo_url ?? data?.url ?? data?.html_url ?? '';
+    this.repoURL = data?.html_url ? data.html_url : '';
     this.skills = data?.skills ? new Skills(data.skills) : new Skills();
   }
 

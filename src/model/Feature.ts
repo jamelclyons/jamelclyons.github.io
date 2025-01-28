@@ -3,10 +3,10 @@ import Model from './Model';
 class Feature extends Model {
   name: string;
 
-  constructor(name: string) {
+  constructor(data?: Record<string,any>) {
     super();
     
-    this.name = name;
+    this.name = data?.name ? data.name : 'Not Provided';
   }
 }
 

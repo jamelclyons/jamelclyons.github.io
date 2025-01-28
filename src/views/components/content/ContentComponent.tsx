@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import type { AppDispatch } from '@/model/store';
 
@@ -42,7 +42,7 @@ const ContentComponent: React.FC<ContentComponentProps> = ({ html }) => {
     }
   }, [html, dispatch]);
 
-  return <>{content && <div className='card' dangerouslySetInnerHTML={{ __html: content }} />}</>;
+  return <>{content && <div className='card content' dangerouslySetInnerHTML={{ __html: content }} />}</>;
 }
 
 export default ContentComponent;

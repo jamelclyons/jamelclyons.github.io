@@ -10,6 +10,7 @@ import ProjectDetails from './ProjectDetails';
 import Repo from './Repo';
 import Gallery from './Gallery';
 import Owner from './Owner';
+import Feature from './Feature';
 
 import { DocumentData } from 'firebase/firestore';
 
@@ -62,7 +63,6 @@ class Project extends Model {
   }
 
   fromRepo(repo: Repo) {
-    console.log(repo)
     this.id = repo.id;
     this.owner = repo.owner;
     this.title = this.title ? this.title : this.getTitle(this.id);
@@ -82,15 +82,15 @@ class Project extends Model {
 
   fromDocumentData(id: string, data: DocumentData) {
     this.id = id;
-    this.title = data?.title ? data.title : this.getTitle(this.id);
+    this.title = data?.title ? data.title : this.getTitle(id);
     this.solution.gallery = data?.solution?.gallery
       ? new Gallery(data.solution.gallery)
       : new Gallery();
-    this.solution.currency = data?.solution?.currency;
-    this.solution.features = data?.solution?.features;
-    this.solution.price = data?.solution?.price;
+    this.solution.currency = data?.solution?.currency ? data.solution.currency : 'USD';
+    this.solution.features = Array.isArray(data?.solution?.features) && data?.solution?.features.length > 0 ? this.setFeatures(data.solution.features) : new Set();
+    this.solution.price = data?.solution?.price ? data.solution.price : 0;
     this.solution.urlsList = data?.solution?.urlsList
-      ? new ProjectURLs()
+      ? new ProjectURLs(data.solution.urlsList)
       : new ProjectURLs();
     this.process.status.progress = data?.process?.status?.progress ?? '0';
     this.process.design = data?.process?.design
@@ -108,6 +108,18 @@ class Project extends Model {
     this.details = data?.details
       ? new ProjectDetails(data.details)
       : new ProjectDetails();
+  }
+
+  setFeatures(featuresObject: Array<Record<string,any>>){
+    const features = new Set<Feature>();
+
+    if(Array.isArray(featuresObject) && featuresObject.length > 0){
+      featuresObject.map((feature) => {
+        features.add(new Feature(feature));
+      });
+    }
+
+    return features;
   }
 }
 

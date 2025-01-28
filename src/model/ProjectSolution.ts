@@ -16,22 +16,22 @@ class ProjectSolution extends Model {
 
     this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
     this.features = data?.features
-      ? this.getFeatures(data.features)
-      : new Set();
+      ? this.setFeatures(data.features)
+      : new Set<Feature>();
     this.content = data?.content || null;
-    this.currency = data?.currency || '';
+    this.currency = data?.currency || 'USD';
     this.price = data?.price || 0;
     this.urlsList = data?.urlsList
       ? new ProjectURLs(data?.urlsList)
       : new ProjectURLs();
   }
 
-  getFeatures(data?: Set<Feature>): Set<Feature> {
+  setFeatures(data?: Array<Record<string, any>>): Set<Feature> {
     let features = new Set<Feature>();
 
-    if (data && data?.size > 0) {
+    if (data && data?.length > 0) {
       data.forEach((feature) => {
-        features.add(feature);
+        features.add(new Feature(feature));
       });
     }
 

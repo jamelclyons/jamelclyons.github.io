@@ -10,25 +10,28 @@ import ContentComponent from '../content/ContentComponent';
 import Versions from './Versions';
 import ImageComponent from '../ImageComponent';
 import SkillsComponent from '../SkillsComponent';
-import LoginComponent from '../LoginComponent';
+
+import {
+  signInWithGitHubPopup
+} from '@/controllers/authSlice';
 
 interface DevelopmentProps {
   development: ProjectDevelopment;
 }
 
 const Development: React.FC<DevelopmentProps> = ({ development }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const { checkList, content, repoURL, versionsList, skills } = development;
   const { isAuthenticated } = useSelector(
     (state: RootState) => state.auth
   );
 
-  const [showLogin, setShowLogin] = useState<boolean>(false);
-
   const handleSeeCode = () => {
     if (isAuthenticated) {
       window.open(repoURL, '_blank');
     } else {
-      setShowLogin(true);
+      dispatch(signInWithGitHubPopup());
     }
   };
 
@@ -60,14 +63,6 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
         </button>
       </div>
     }
-
-      {showLogin && (
-        <div className="modal-overlay">
-          <main className="login">
-            <LoginComponent />
-          </main>
-        </div>
-      )}
     </>
   );
 }
