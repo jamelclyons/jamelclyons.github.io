@@ -35,7 +35,7 @@ const Design: React.FC<DesignProps> = ({ design }) => {
 
           {umlDiagrams.length > 0 && <Gallery title={'uml diagrams'} gallery={umlDiagrams} />}
 
-          {contentURL && <ContentComponent title={''} url={contentURL} />}
+          {contentURL && <ContentComponent title={null} url={contentURL} />}
         </div>
       }
     </>

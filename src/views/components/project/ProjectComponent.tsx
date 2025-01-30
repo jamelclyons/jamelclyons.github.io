@@ -23,7 +23,7 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ project, repoQuery 
   return (
     <>
       <main className="project">
-        {title !== '' && <h1 className="title">{title}</h1>}
+       <h1 className="title">{title}</h1>
 
         <DescriptionComponent description={description} />
 

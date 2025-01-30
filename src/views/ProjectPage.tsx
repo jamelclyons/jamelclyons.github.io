@@ -7,11 +7,13 @@ import ProjectComponent from './components/project/ProjectComponent';
 import StatusBarComponent from './components/StatusBarComponent';
 
 import { setMessage, setMessageType, setShowStatusBar } from '../controllers/messageSlice';
+import { getRepo, getRepoLanguages, getRepoContents } from '../controllers/githubSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
 import Project from '../model/Project';
 import GitHubRepoQuery from '../model/GitHubRepoQuery';
 import Portfolio from '@/model/Portfolio';
+import Repo from '@/model/Repo';
 
 interface ProjectPageProps {
   portfolio: Portfolio;
@@ -25,8 +27,13 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
     (state: RootState) => state.project
   );
 
+  const { repoObject, repoLanguages, contents } = useSelector(
+    (state: RootState) => state.github
+  );
+
   const [project, setProject] = useState<Project>();
   const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>();
+  const [repo, setRepo] = useState<Repo>();
 
   useEffect(() => {
     if (owner && projectID) {
@@ -45,6 +52,43 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
       document.title = project.title.toUpperCase();
     }
   }, [project]);
+
+  useEffect(() => {
+    if (portfolio.projects.size === 0 && repoQuery) {
+      dispatch(getRepo(repoQuery))
+    }
+  }, [portfolio, dispatch, repoQuery]);
+
+  useEffect(() => {
+    if (repoQuery) {
+      dispatch(getRepoLanguages(repoQuery))
+    }
+  }, [dispatch, repoQuery]);
+
+  useEffect(() => {
+    if (repoQuery) {
+      dispatch(getRepoContents(repoQuery))
+    }
+  }, [dispatch, repoQuery]);
+
+  useEffect(() => {
+    if (portfolio.projects.size === 0 && repoObject) {
+      console.log(contents)
+      const repo = new Repo(repoObject)
+      repo.setSkills(repoLanguages);
+      // All contents are coming through need just this repo
+      repo.setContents(contents);
+      setRepo(repo)
+    }
+  }, [repoObject, repoLanguages, contents]);
+
+  useEffect(() => {
+    if (repo) {
+      const project = new Project();
+      project.fromRepo(repo);
+      setProject(project);
+    }
+  }, [repo]);
 
   useEffect(() => {
     if (projectErrorMessage) {

@@ -15,14 +15,16 @@ interface SolutionProps {
 const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
   const { features, currency, price, urlsList, gallery, contentURL } = solution;
 
+  const hasContent = features.size > 0 ||
+    currency ||
+    price > 0 ||
+    urlsList.homepage.url === '' || urlsList.ios.url === '' || urlsList.android.url === '' ||
+    gallery.images.length > 0 ||
+    contentURL;
+
   return (
     <>
-      {(features.size > 0 ||
-        currency ||
-        price > 0 ||
-        urlsList?.homepage?.url === '' || urlsList?.ios?.url === '' || urlsList?.android?.url === '' ||
-        gallery.images.length > 0 ||
-        contentURL) &&
+      {hasContent &&
         <div className="project-solution" id="project_solution">
           {gallery.images.length > 0 && <GalleryComponent gallery={gallery.images} title='' />}
 

@@ -216,12 +216,12 @@ export const getRepoFile = createAsyncThunk(
 
 export const getRepoLanguages = createAsyncThunk(
   'github/getRepoLanguages',
-  async (repo: Repo) => {
+  async (query: GitHubRepoQuery) => {
     try {
       const repoLanguages: RepoLanguages =
         await octokit.rest.repos.listLanguages({
-          owner: repo.owner.login,
-          repo: repo.id,
+          owner: query.owner,
+          repo: query.repo,
         });
 
       let skillsArray: Array<Record<string, any>> = [];

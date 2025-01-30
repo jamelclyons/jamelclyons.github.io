@@ -43,12 +43,13 @@ import Repos from './model/Repos';
 import User from './model/User';
 import Portfolio from './model/Portfolio';
 import Skills from './model/Skills';
-
-import OrganizationPage from './views/OrganizationPage';
 import Organization from './model/Organization';
 import Organizations from './model/Organizations';
-import Dashboard from './views/Dashboard';
+
+import OrganizationPage from './views/OrganizationPage';
 import GitHubRepoQuery from './model/GitHubRepoQuery';
+
+import Dashboard from './views/Dashboard';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -60,12 +61,16 @@ const App: React.FC = () => {
   );
 
   const [gitHubRepos, setGitHubRepos] = useState<Array<Repo>>();
-  const [user, setUser] = useState<User>(new User(userObject));
+  const [user, setUser] = useState<User>(new User());
   const [organizations, setOrganizations] = useState<Array<Organization>>();
   const [repoSkills, setRepoSkills] = useState<Array<Repo>>();
   const [repos, setRepos] = useState<Array<Repo>>();
   const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio);
   const [skills, setSkills] = useState<Skills>(new Skills(skillsObject));
+
+  useEffect(() => {
+    dispatch(getUser(user.id));
+  }, [dispatch]);
 
   useEffect(() => {
     const getOrganizationsList = async () => {
@@ -119,32 +124,24 @@ const App: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    if (user.id) {
-      dispatch(getUser(user.id));
-    }
-  }, [dispatch, user.id]);
-
-  useEffect(() => {
-    if (user.id) {
-      dispatch(getOrganizations());
-    }
-  }, [dispatch, user.id]);
+    dispatch(getOrganizations());
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(getProjectTypes());
-  }, []);
+  }, [dispatch, user]);
 
   useEffect(() => {
     dispatch(getLanguages());
-  }, []);
+  }, [dispatch, user]);
 
   useEffect(() => {
     dispatch(getFrameworks());
-  }, []);
+  }, [dispatch, user]);
 
   useEffect(() => {
     dispatch(getTechnologies());
-  }, []);
+  }, [dispatch, user]);
 
   useEffect(() => {
     if (
@@ -188,11 +185,11 @@ const App: React.FC = () => {
     if (user.id) {
       fetchRepos();
     }
-  }, [dispatch, user.id]);
+  }, [dispatch, user]);
 
   useEffect(() => {
     const fetchRepoSkills = async (repo: Repo): Promise<Repo> => {
-      const data = await dispatch(getRepoLanguages(repo)).unwrap();
+      const data = await dispatch(getRepoLanguages(new GitHubRepoQuery(repo.owner.login, repo.id))).unwrap();
       repo.setSkills(data);
 
       return repo;

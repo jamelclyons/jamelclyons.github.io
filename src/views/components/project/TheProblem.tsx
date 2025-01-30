@@ -11,9 +11,11 @@ interface ProblemProps {
 const TheProblem: React.FC<ProblemProps> = ({ problem }) => {
   const { gallery, contentURL } = problem;
 
+  const hasContent = gallery.images.length > 0 || contentURL;
+
   return (
     <>
-      {(gallery.images.length > 0 || contentURL) &&
+      {hasContent &&
         <div className="project-problem" id="project_problem">
           <h3 className="title">the problem</h3>
 
