@@ -4,11 +4,13 @@ import Repo from './Repo';
 
 class Portfolio extends Model {
   projects: Set<Project>;
+  size: number;
 
   constructor(projects: Array<Record<string, any>> = []) {
     super();
 
     this.projects = this.getProjects(projects);
+    this.size = this.getCount();
   }
 
   getProjects(data: Array<Record<string, any>> = []) {
@@ -19,6 +21,10 @@ class Portfolio extends Model {
     });
 
     return projects;
+  }
+
+  getCount(){
+    return this.projects.size;
   }
 
   getProjectsFromRepos(repos: Array<Repo>) {
@@ -123,10 +129,6 @@ class Portfolio extends Model {
     }
 
     return updatedProjects;
-  }
-
-  getCount(): number {
-    return this.projects.size;
   }
 }
 

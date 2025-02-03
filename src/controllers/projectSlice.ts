@@ -53,13 +53,13 @@ export const getProject = createAsyncThunk(
         project.fromRepo(repo)
       }
 
-      const docRef: DocumentReference = doc(portfolioCollection, query.repo);
-      const docSnap: DocumentSnapshot<DocumentData, DocumentData> =
-        await getDoc(docRef);
+      // const docRef: DocumentReference = doc(portfolioCollection, query.repo);
+      // const docSnap: DocumentSnapshot<DocumentData, DocumentData> =
+      //   await getDoc(docRef);
 
-      if (docSnap.exists()) {
-        project.fromDocumentData(docSnap.id, docSnap.data())
-      }
+      // if (docSnap.exists()) {
+      //   project.fromDocumentData(docSnap.id, docSnap.data())
+      // }
 
       return project.toObject();
     } catch (error) {

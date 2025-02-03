@@ -34,8 +34,6 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
     if (projectID) {
       const filteredProject = portfolio.filterProject(projectID);
       setProject(filteredProject);
-      console.log(project)
-
     }
   }, [projectID]);
 
@@ -49,7 +47,7 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
     if (portfolio.projects.size === 0 && repoQuery) {
       dispatch(getProject(repoQuery));
     }
-  }, [project, repoQuery]);
+  }, [dispatch, repoQuery]);
 
   useEffect(() => {
     if (projectObject) {

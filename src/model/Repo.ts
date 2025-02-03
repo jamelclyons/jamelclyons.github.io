@@ -29,15 +29,15 @@ class Repo extends Model {
     this.updatedAt = data?.updated_at ?? '';
     this.homepage = data?.homepage ?? '';
     this.description = data?.description ?? '';
-    this.repoURL = data?.url ?? '';
+    this.repoURL = data?.url ?? data?.repo_url;
     this.skills = data?.skills ? new Skills(data.skills) : new Skills();
     this.contents = data?.contents
       ? new RepoContents(
-          data.contents.solution,
-          data.contents.design,
-          data.contents.development,
-          data.contents.delivery,
-          data.contents.problem
+          new RepoContent(data.contents.solution),
+          new RepoContent(data.contents.design),
+          new RepoContent(data.contents.development),
+          new RepoContent(data.contents.delivery),
+          new RepoContent(data.contents.problem)
         )
       : new RepoContents();
   }
@@ -112,7 +112,9 @@ class Repo extends Model {
 
     return {
       languages: Array.from(skills.languages).map((lang) => lang.toObject()),
-      technologies: Array.from(skills.technologies).map((tech) => tech.toObject()),
+      technologies: Array.from(skills.technologies).map((tech) =>
+        tech.toObject()
+      ),
     };
   }
 
@@ -126,7 +128,7 @@ class Repo extends Model {
 
   filterContents(contentsObject: Array<Record<string, any>>) {
     const contents: Record<string, any> = {};
-  
+
     if (Array.isArray(contentsObject) && contentsObject.length > 0) {
       contentsObject.forEach((content) => {
         if (content.type === 'file') {
@@ -150,7 +152,7 @@ class Repo extends Model {
         }
       });
     }
-  
+
     return contents;
   }
 }
