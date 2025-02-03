@@ -17,7 +17,7 @@ class ProjectDesign extends Model {
     this.colorsList = data?.colors_list
       ? this.toArrayColor(data.colors_list)
       : [];
-    this.contentURL = data?.content?.url || null;
+    this.contentURL = data?.content_url || null;
   }
 
   toArrayTask(data: Array<Record<string, any>>) {

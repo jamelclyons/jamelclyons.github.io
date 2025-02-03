@@ -7,6 +7,7 @@ import {
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 
 import { db } from '../services/firebase/config';
+import { headers } from '@/services/github/octokit';
 
 interface ContentState {
   contentLoading: boolean;
@@ -31,9 +32,7 @@ export const getContent = createAsyncThunk(
   async (url: string) => {
     try {
       const content = await fetch(url, {
-        headers: {
-          auth: `Bearer ${import.meta.env.VITE_OCTOKIT_AUTH}`,
-        },
+        headers: headers,
       });
 
       return content.text();

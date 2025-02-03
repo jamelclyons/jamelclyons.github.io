@@ -3,39 +3,38 @@ import Contact from './Contact';
 import Image from './Image';
 
 class ContactMethods extends Model {
-  github: Contact;
-  instagram: Contact;
+  hackerrank: Contact;
   linkedin: Contact;
-  website: Contact;
   x: Contact;
+  instagram: Contact;
+  github: Contact;
+  website: Contact;
   email: Contact;
   phone: Contact;
 
-  constructor(data: Record<string, any> = {}) {
+  constructor(
+    hackerrank?: string,
+    linkedin?: string,
+    x?: string,
+    instagram?: string,
+    github?: string,
+    website?: string,
+    email?: string,
+    phone?: string
+  ) {
     super();
 
-    this.github = data?.github
-      ? this.getContactGitHub(data.github)
-      : this.getContactGitHub('');
-    this.instagram = data?.instagram
-      ? this.getContactInstagram(data?.instagram)
-      : this.getContactInstagram('');
-    this.linkedin = data?.linkedIn
-      ? this.getContactLinkedIn(data.linkedIn)
-      : this.getContactLinkedIn('');
-    this.website = data?.website
-      ? this.getContactWebsite(data.website)
-      : this.getContactWebsite('');
-    this.x = data?.x ? this.getContactX(data.x) : this.getContactX('');
-    this.email = data?.email
-      ? this.getContactEmail(data.email)
-      : this.getContactEmail('');
-    this.phone = data?.phone
-      ? this.getContactPhone(data.phone)
-      : this.getContactPhone('');
+    this.hackerrank = this.setContactHackerRank(hackerrank);
+    this.linkedin = this.setContactLinkedIn(linkedin);
+    this.instagram = this.setContactInstagram(instagram);
+    this.x = this.setContactX(x);
+    this.github = this.setContactGitHub(github);
+    this.website = this.setContactWebsite(website);
+    this.email = this.setContactEmail(email);
+    this.phone = this.setContactPhone(phone);
   }
 
-  getContact(data: Record<string, any>) {
+  setContact(data: Record<string, any>) {
     const id = data?.id ?? '';
     const title = data?.title ?? '';
     const url = data?.url ?? '';
@@ -49,46 +48,25 @@ class ContactMethods extends Model {
     return new Contact(id, title, url, image, value);
   }
 
-  getContactGitHub(url: string) {
-    const id = 'gitHub';
-    const title = 'GitHub';
-    const className = 'fa fa-github fa-fw';
+  setContactHackerRank(url?: string) {
+    const id = 'hackerrank';
+    const title = 'Hacker Rank';
+    const className = 'fa-brands fa-hackerrank';
     const image = new Image({
       id: id,
       title: title,
       class_name: className,
-    });
+    }).toObject();
 
-    return new Contact(id, title, url, image, '');
-  }
-
-  getContactInstagram(url: string) {
-    const id = 'instagram';
-    const title = 'Instagram';
-    const className = 'fa fa-instagram fa-fw';
-    const image = new Image({
+    return this.setContact({
       id: id,
       title: title,
-      class_name: className,
+      image: image,
+      url: url,
     });
-
-    return new Contact(id, title, url, image, '');
   }
 
-  getContactWebsite(url: string) {
-    const id = 'website';
-    const title = 'Website';
-    const className = 'fa-solid fa-globe';
-    const image = new Image({
-      id: id,
-      title: title,
-      class_name: className,
-    });
-
-    return new Contact(id, title, url, image, '');
-  }
-
-  getContactLinkedIn(url: string) {
+  setContactLinkedIn(url?: string) {
     const id = 'linkedIn';
     const title = 'LinkedIn';
     const className = 'fa fa-linkedin fa-fw';
@@ -96,12 +74,17 @@ class ContactMethods extends Model {
       id: id,
       title: title,
       class_name: className,
-    });
+    }).toObject();
 
-    return new Contact(id, title, url, image, '');
+    return this.setContact({
+      id: id,
+      title: title,
+      image: image,
+      url: url,
+    });
   }
 
-  getContactX(url: string) {
+  setContactX(url?: string) {
     const id = 'x';
     const title = 'X';
     const className = 'fa-brands fa-x-twitter';
@@ -109,12 +92,71 @@ class ContactMethods extends Model {
       id: id,
       title: title,
       class_name: className,
-    });
+    }).toObject();
 
-    return new Contact(id, title, url, image, '');
+    return this.setContact({
+      id: id,
+      title: title,
+      image: image,
+      url: url,
+    });
   }
 
-  getContactEmail(value: string) {
+  setContactInstagram(url?: string) {
+    const id = 'instagram';
+    const title = 'Instagram';
+    const className = 'fa fa-instagram fa-fw';
+    const image = new Image({
+      id: id,
+      title: title,
+      class_name: className,
+    }).toObject();
+
+    return this.setContact({
+      id: id,
+      title: title,
+      image: image,
+      url: url,
+    });
+  }
+
+  setContactGitHub(url?: string) {
+    const id = 'gitHub';
+    const title = 'GitHub';
+    const className = 'fa fa-github fa-fw';
+    const image = new Image({
+      id: id,
+      title: title,
+      class_name: className,
+    }).toObject();
+
+    return this.setContact({
+      id: id,
+      title: title,
+      image: image,
+      url: url,
+    });
+  }
+
+  setContactWebsite(url?: string) {
+    const id = 'website';
+    const title = 'Website';
+    const className = 'fa-solid fa-globe';
+    const image = new Image({
+      id: id,
+      title: title,
+      class_name: className,
+    }).toObject();
+
+    return this.setContact({
+      id: id,
+      title: title,
+      image: image,
+      url: url,
+    });
+  }
+
+  setContactEmail(value?: string) {
     const id = 'email';
     const title = 'Email';
     const className = 'fa fa-envelope fa-fw';
@@ -122,12 +164,17 @@ class ContactMethods extends Model {
       id: id,
       title: title,
       class_name: className,
-    });
+    }).toObject();
 
-    return new Contact(id, title, '', image, value);
+    return this.setContact({
+      id: id,
+      title: title,
+      image: image,
+      value: value,
+    });
   }
 
-  getContactPhone(value: string) {
+  setContactPhone(value?: string) {
     const id = 'phone';
     const title = 'Phone';
     const className = 'fa-solid fa-phone';
@@ -135,9 +182,14 @@ class ContactMethods extends Model {
       id: id,
       title: title,
       class_name: className,
-    });
+    }).toObject();
 
-    return new Contact(id, title, '', image, value);
+    return this.setContact({
+      id: id,
+      title: title,
+      image: image,
+      value: value,
+    });
   }
 }
 

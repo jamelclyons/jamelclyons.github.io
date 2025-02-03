@@ -1,5 +1,8 @@
 import Model from './Model';
 import ContactMethods from './ContactMethods';
+import Repos from './Repos';
+
+import user from '../../user.json';
 
 class Organization extends Model {
   id: string;
@@ -15,10 +18,14 @@ class Organization extends Model {
   email: string;
   url: string;
   github: string;
-  contactMethods: ContactMethods;
+  contactMethods: ContactMethods = new ContactMethods();
+  reposURL: string;
+  repos: Repos;
 
   constructor(data: Record<string, any> = {}) {
     super();
+
+    const { company } = user;
 
     this.id = data?.id;
     this.createdAt = data?.created_at;
@@ -27,25 +34,48 @@ class Organization extends Model {
     this.avatarURL = data?.avatar_url;
     this.description = data?.description;
     this.name = data?.name;
-    this.company = data?.company;
+    this.company = data?.company || company;
     this.blog = data?.blog ? data.blog : '';
     this.location = data?.location;
     this.email = data?.email;
     this.url = data?.url;
-    this.github = data?.html_url || data?.github;
-    
-    const x = data?.twitter_username
-      ? `https://www.x.com/${data.twitter_username}`
-      : '';
+    this.github = data?.html_url;
 
-    const methods: Record<string, any> = {
-      website: this.blog,
-      email: this.email,
-      github: data?.html_url || data?.github,
-      x: x,
-    };
+    const x = data?.x;
 
-    this.contactMethods = new ContactMethods(methods);
+    this.contactMethods = new ContactMethods(
+      '',
+      '',
+      x,
+      '',
+      this.github,
+      this.blog,
+      this.email,
+      ''
+    );
+
+    this.reposURL = data?.repos_url;
+    this.repos = data?.repos ? new Repos(data.repos) : new Repos();
+  }
+
+  fromGitHub(data: Record<string, any>) {
+    this.id = data?.login;
+    this.avatarURL = data?.avatar_url;
+    this.name = data?.name;
+    this.description = data?.description;
+    this.email = data?.email;
+    this.blog = data?.blog;
+    this.reposURL = data?.repos_url;
+  }
+
+  fromDB(data: Record<string, any>) {
+    this.company = data?.company;
+    this.avatarURL = data?.avatar_url;
+  }
+
+  setRepos(data: Array<Record<string, any>>) {
+    const repos = new Repos(data);
+    return repos.collection.map((repo) => repo.toObject());
   }
 }
 

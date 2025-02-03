@@ -6,19 +6,14 @@ import {
 } from '@reduxjs/toolkit';
 
 import {
-  collection,
-  getDocs,
-  doc,
-  getDoc,
-  QuerySnapshot,
-  DocumentData,
-  DocumentReference,
-} from 'firebase/firestore';
+  getAccount,
+  getOrganizationDetailsList,
+  getRepoDetailsList,
+  getSocialAccounts,
+} from '@/controllers/githubSlice';
+import { getUserData } from '@/controllers/databaseSlice';
 
-import { db } from '../services/firebase/config';
-
-import User from '../model/User';
-import Image from '../model/Image';
+import User from '@/model/User';
 
 interface UserState {
   userLoading: boolean;
@@ -32,7 +27,7 @@ interface UserState {
   bio: string;
   resume: string;
   content: Array<string> | null;
-  userObject: Record<string, any> | null;
+  userObject: Record<string, any>;
   organizations: [];
   repos: [];
   socialAccounts: [];
@@ -50,25 +45,68 @@ const initialState: UserState = {
   bio: '',
   resume: '',
   content: null,
-  userObject: null,
+  userObject: {},
   organizations: [],
   repos: [],
   socialAccounts: [],
 };
 
-export const getUser = createAsyncThunk('user/getUser', async (username) => {
+export const getUser = createAsyncThunk('user/getUser', async (_, thunkAPI) => {
   try {
-    const userCollection = collection(db, 'user');
-    const docRef = doc(db, `user/${username}`);
-    const docSnap = await getDoc(docRef);
+    const user = new User();
 
-    if (!docSnap.exists()) {
-      throw new Error('Could not be found.');
+    let organizations = null;
+    let repos = null;
+
+    const userResponse = await thunkAPI.dispatch(getAccount());
+
+    if (getAccount.fulfilled.match(userResponse) && userResponse.payload) {
+      user.fromGitHub(userResponse.payload);
     }
 
-    let data = docSnap.data() as Record<string, any>;
+    if (user.organizationsURL) {
+      const orgResponse = await thunkAPI.dispatch(
+        getOrganizationDetailsList(user.organizationsURL)
+      );
 
-    return new User(data).toObject();
+      if (
+        getOrganizationDetailsList.fulfilled.match(orgResponse) &&
+        orgResponse.payload
+      ) {
+        organizations = orgResponse.payload;
+      }
+    }
+
+    const repoResponse = await thunkAPI.dispatch(getRepoDetailsList());
+
+    if (
+      getRepoDetailsList.fulfilled.match(repoResponse) &&
+      repoResponse.payload
+    ) {
+      repos = repoResponse.payload;
+    }
+
+    const contactsResponse = await thunkAPI.dispatch(
+      getSocialAccounts(user.id)
+    );
+
+    if (
+      getSocialAccounts.fulfilled.match(contactsResponse) &&
+      contactsResponse.payload
+    ) {
+      user.setContactMethods(contactsResponse.payload);
+    }
+
+    const databaseResponse = await thunkAPI.dispatch(getUserData(user.id));
+
+    if (
+      getUserData.fulfilled.match(databaseResponse) &&
+      databaseResponse.payload
+    ) {
+      user.fromDB(databaseResponse.payload);
+    }
+
+    return { ...user.toObject(), organizations, repos };
   } catch (error) {
     const err = error as Error;
     console.error(err);

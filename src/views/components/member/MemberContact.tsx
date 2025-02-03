@@ -12,7 +12,7 @@ const MemberContact: React.FC<MemberContactProps> = ({ contactMethods }) => {
 
     return (
         <div className="author-contact">
-            <ContactBar contactMethods={contactMethods} />
+            <ContactBar contactMethods={contactMethods} location='' />
         </div>)
 }
 

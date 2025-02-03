@@ -12,9 +12,10 @@ import SkillsComponent from './components/SkillsComponent';
 import HeaderOrganizationComponent from './components/HeaderOrganizationComponent';
 import ContactBar from './components/ContactBar';
 import { pathToSpace } from '@/utilities/String';
+import Organizations from '@/model/Organizations';
 
 interface OrganizationPageProps {
-    organizations: Array<Organization>;
+    organizations: Organizations;
     portfolio: Portfolio;
     skills: Skills;
 }
@@ -22,6 +23,7 @@ interface OrganizationPageProps {
 const OrganizationPage: React.FC<OrganizationPageProps> = ({ organizations, portfolio, skills }) => {
     const { name } = useParams<string>();
 
+    const { list } = organizations;
     const { projects } = portfolio;
 
     const { organizationObject } = useSelector(
@@ -38,8 +40,8 @@ const OrganizationPage: React.FC<OrganizationPageProps> = ({ organizations, port
     }, [name]);
 
     useEffect(() => {
-        if (Array.isArray(organizations) && organizations.length > 0) {
-            organizations.forEach((org) => {
+        if (Array.isArray(list) && list.length > 0) {
+            list.forEach((org) => {
                 if (org.name === organizationName) {
                     setOrganization(org);
                 }
@@ -56,7 +58,7 @@ const OrganizationPage: React.FC<OrganizationPageProps> = ({ organizations, port
             <>
                 <HeaderOrganizationComponent organization={organization} />
 
-                <ContactBar contactMethods={organization.contactMethods} />
+                <ContactBar contactMethods={organization.contactMethods} location='' />
 
                 {
                     projects &&

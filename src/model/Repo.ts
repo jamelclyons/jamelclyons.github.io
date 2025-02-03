@@ -8,27 +8,38 @@ import { Language, Technology } from './Taxonomy';
 class Repo extends Model {
   id: string;
   privacy: boolean;
+  size: number;
   owner: Owner;
   createdAt: string;
   updatedAt: string;
   homepage: string;
   description: string;
   repoURL: string;
-  skills: Skills;
-  contents: RepoContents = new RepoContents;
+  skills: Skills = new Skills();
+  contents: RepoContents = new RepoContents();
 
   constructor(data: Record<string, any> = {}) {
     super();
 
     this.id = data?.name ?? data?.id ?? '';
     this.privacy = data?.private ?? '';
+    this.size = data?.size ?? 0;
     this.owner = data?.owner ? new Owner(data.owner) : new Owner();
     this.createdAt = data?.created_at ?? '';
     this.updatedAt = data?.updated_at ?? '';
     this.homepage = data?.homepage ?? '';
     this.description = data?.description ?? '';
-    this.repoURL = data?.html_url ? data.html_url : '';
+    this.repoURL = data?.url ?? '';
     this.skills = data?.skills ? new Skills(data.skills) : new Skills();
+    this.contents = data?.contents
+      ? new RepoContents(
+          data.contents.solution,
+          data.contents.design,
+          data.contents.development,
+          data.contents.delivery,
+          data.contents.problem
+        )
+      : new RepoContents();
   }
 
   getOwner(data: Record<string, any>) {
@@ -99,35 +110,48 @@ class Repo extends Model {
         );
     });
 
-    this.skills = skills;
+    return {
+      languages: Array.from(skills.languages).map((lang) => lang.toObject()),
+      technologies: Array.from(skills.technologies).map((tech) => tech.toObject()),
+    };
   }
 
-  setContents(contentsObject: Array<Record<string, any>>) {
+  setContents(contentsObject: Record<string, any>) {
+    this.contents.setSolution(new RepoContent(contentsObject.solution));
+    this.contents.setDesign(new RepoContent(contentsObject.design));
+    this.contents.setDevelopment(new RepoContent(contentsObject.development));
+    this.contents.setDelivery(new RepoContent(contentsObject.delivery));
+    this.contents.setProblem(new RepoContent(contentsObject.problem));
+  }
+
+  filterContents(contentsObject: Array<Record<string, any>>) {
+    const contents: Record<string, any> = {};
+  
     if (Array.isArray(contentsObject) && contentsObject.length > 0) {
-      contentsObject.map((content) => {
+      contentsObject.forEach((content) => {
         if (content.type === 'file') {
-          if (content.name === 'TheSolution.md') {
-            this.contents.setSolution(new RepoContent(content));
-          }
-
-          if (content.name === 'Design.md') {
-            this.contents.setDesign(new RepoContent(content));
-          }
-
-          if (content.name === 'Development.md') {
-            this.contents.setDevelopment(new RepoContent(content));
-          }
-
-          if (content.name === 'Delivery.md') {
-            this.contents.setDelivery(new RepoContent(content));
-          }
-
-          if (content.name === 'TheProblem.md') {
-            this.contents.setProblem(new RepoContent(content));
+          switch (content.name) {
+            case 'TheSolution.md':
+              contents.solution = new RepoContent(content).toObject();
+              break;
+            case 'Design.md':
+              contents.design = new RepoContent(content).toObject();
+              break;
+            case 'Development.md':
+              contents.development = new RepoContent(content).toObject();
+              break;
+            case 'Delivery.md':
+              contents.delivery = new RepoContent(content).toObject();
+              break;
+            case 'TheProblem.md':
+              contents.problem = new RepoContent(content).toObject();
+              break;
           }
         }
       });
     }
+  
+    return contents;
   }
 }
 

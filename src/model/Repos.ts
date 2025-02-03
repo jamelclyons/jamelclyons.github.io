@@ -5,7 +5,7 @@ class Repos extends Model {
   collection: Array<Repo>;
   count: number = 0;
 
-  constructor(data: Array<Record<string, any>>) {
+  constructor(data?: Array<Record<string, any>>) {
     super();
 
     let repos: Array<Repo> = [];

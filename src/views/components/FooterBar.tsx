@@ -9,10 +9,9 @@ interface SocialBarProps {
 }
 
 const SocialBar: React.FC<SocialBarProps> = ({ contactMethods }) => {
-
   return (
     <div className="footer-bar">
-      <ContactBar contactMethods={contactMethods} />
+      <ContactBar contactMethods={contactMethods} location='footer' />
     </div>
   );
 }

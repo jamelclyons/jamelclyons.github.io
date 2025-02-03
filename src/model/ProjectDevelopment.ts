@@ -19,7 +19,7 @@ class ProjectDevelopment extends Model {
       ? new ProjectVersions(data.versions_list)
       : new ProjectVersions();
     this.skills = data?.skills ? new Skills(data.skills) : new Skills;
-    this.contentURL = data?.content?.url || null;
+    this.contentURL = data?.content_url || null;
   }
 
   toArrayTask(data: Array<Record<string, any>>) {

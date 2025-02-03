@@ -20,10 +20,11 @@ import UpdateProblem from './components/update/UpdateProblem';
 import StatusBarComponent from './components/StatusBarComponent';
 
 import Project from '../model/Project';
+import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 
 const ProjectUpdate: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { projectID } = useParams();
+    const { owner, projectID } = useParams();
 
     const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
         (state: RootState) => state.update
@@ -32,7 +33,7 @@ const ProjectUpdate: React.FC = () => {
         (state: RootState) => state.project
     );
 
-    const [project, setProject] = useState<Project>(new Project(projectObject));
+    const [project, setProject] = useState<Project>(new Project());
 
     const { solution, process, problem, details } = project;
 
@@ -40,11 +41,11 @@ const ProjectUpdate: React.FC = () => {
     const [repoURL, setRepoURL] = useState<string>(project.process.development.repoURL);
 
     useEffect(() => {
-        if (projectID) {
-            const repo = new Repo({ id: projectID });
-            dispatch(getProject(repo));
+        if (owner && projectID) {
+            const query = new GitHubRepoQuery(owner, projectID);
+            dispatch(getProject(query));
         }
-    }, [projectID]);
+    }, [owner, projectID]);
 
     useEffect(() => {
         if (projectObject) {

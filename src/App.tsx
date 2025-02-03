@@ -21,14 +21,6 @@ const LoginPage = lazy(() => import('./views/LoginPage'));
 
 import ProtectedRoute from './ProtectedRoute';
 
-import {
-  getUser,
-  getOrganization,
-  getOrganizations,
-  getRepos,
-  getRepoLanguages,
-  getRepoContents
-} from './controllers/githubSlice';
 import { getPortfolio, setPortfolioSkills, SkillsObject } from './controllers/portfolioSlice';
 import {
   getLanguages,
@@ -36,74 +28,48 @@ import {
   getFrameworks,
   getTechnologies,
 } from './controllers/taxonomiesSlice';
+import {
+  getUser,
+} from './controllers/userSlice';
 
 import type { AppDispatch, RootState } from './model/store';
-import Repo from './model/Repo';
 import Repos from './model/Repos';
 import User from './model/User';
 import Portfolio from './model/Portfolio';
 import Skills from './model/Skills';
-import Organization from './model/Organization';
 import Organizations from './model/Organizations';
 
 import OrganizationPage from './views/OrganizationPage';
-import GitHubRepoQuery from './model/GitHubRepoQuery';
-
 import Dashboard from './views/Dashboard';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { userObject, organizationsObject } = useSelector((state: RootState) => state.github);
+  const { userObject } = useSelector((state: RootState) => state.user);
   const { portfolioObject, skillsObject } = useSelector((state: RootState) => state.portfolio);
   const { projectTypesObject, languagesObject, frameworksObject, technologiesObject } = useSelector(
     (state: RootState) => state.taxonomies
   );
 
-  const [gitHubRepos, setGitHubRepos] = useState<Array<Repo>>();
-  const [user, setUser] = useState<User>(new User());
-  const [organizations, setOrganizations] = useState<Array<Organization>>();
-  const [repoSkills, setRepoSkills] = useState<Array<Repo>>();
-  const [repos, setRepos] = useState<Array<Repo>>();
+  const [user, setUser] = useState<User>(new User(userObject));
+  const [organizations, setOrganizations] = useState<Organizations>(new Organizations);
+  const [repos, setRepos] = useState<Repos>();
   const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio);
   const [skills, setSkills] = useState<Skills>(new Skills(skillsObject));
 
   useEffect(() => {
-    dispatch(getUser(user.id));
+    dispatch(getUser());
   }, [dispatch]);
 
   useEffect(() => {
-    const getOrganizationsList = async () => {
-      let organizations: Array<Record<string, any>> = [];
-
-      const organizationPromises = organizationsObject.map(async (organization) => {
-        const orgData = await dispatch(
-          getOrganization(organization.login)
-        ).unwrap();
-
-        return orgData;
-      });
-
-      const resolvedOrganizations = await Promise.all(organizationPromises);
-      organizations.push(...resolvedOrganizations);
-
-      return organizations;
+    if (userObject) {
+      setUser(new User(userObject));
     }
+  }, [userObject]);
 
-    if (Array.isArray(organizationsObject) && organizationsObject.length > 0) {
-      getOrganizationsList().then((organizations) => {
-        setOrganizations(new Organizations(organizations).list);
-      });
-    }
-  }, [organizationsObject]);
-
-  useEffect(() => {
-    if (userObject && organizations && organizations.length > 0) {
-      const user = new User(userObject)
-      user.setOrganizations(organizations);
-      setUser(user);
-    }
-  }, [userObject, organizations]);
+  useEffect(()=>{
+    setOrganizations(user.organizations);
+  },[user]);
 
   useEffect(() => {
     if (user) {
@@ -122,10 +88,6 @@ const App: React.FC = () => {
       }
     }
   }, [user]);
-
-  useEffect(() => {
-    dispatch(getOrganizations());
-  }, [dispatch]);
 
   useEffect(() => {
     dispatch(getProjectTypes());
@@ -173,71 +135,14 @@ const App: React.FC = () => {
   }, [skillsObject]);
 
   useEffect(() => {
-    const fetchRepos = async () => {
-      const reposObject = await dispatch(getRepos()).unwrap();
-
-      if (Array.isArray(reposObject) && reposObject.length > 0) {
-        const repos = new Repos(reposObject);
-        setGitHubRepos(repos.collection)
-      }
+    if (user) {
+      setRepos(user.repos);
     }
-
-    if (user.id) {
-      fetchRepos();
-    }
-  }, [dispatch, user]);
+  }, [user, dispatch]);
 
   useEffect(() => {
-    const fetchRepoSkills = async (repo: Repo): Promise<Repo> => {
-      const data = await dispatch(getRepoLanguages(new GitHubRepoQuery(repo.owner.login, repo.id))).unwrap();
-      repo.setSkills(data);
-
-      return repo;
-    };
-
-    const fetchAllRepoSkills = async () => {
-      if (gitHubRepos && gitHubRepos.length > 0) {
-        const fetchedRepos = await Promise.all(
-          gitHubRepos.map(async (repo) => {
-            return await fetchRepoSkills(repo);
-          })
-        );
-
-        setRepoSkills(fetchedRepos);
-      }
-    };
-
-    fetchAllRepoSkills();
-  }, [gitHubRepos, dispatch]);
-
-  useEffect(() => {
-    const fetchRepoContents = async (query: GitHubRepoQuery): Promise<Array<Record<string, any>>> => {
-      const data = await dispatch(getRepoContents(query)).unwrap();
-
-      return data?.contents ?? [];
-    };
-
-    const fetchAllRepoContents = async () => {
-      if (repoSkills && repoSkills.length > 0) {
-        const fetchedRepos = await Promise.all(
-          repoSkills.map(async (repo) => {
-            const contents = await fetchRepoContents(new GitHubRepoQuery(repo.owner.login, repo.id));
-            repo.setContents(contents);
-
-            return repo;
-          })
-        );
-
-        setRepos(fetchedRepos);
-      }
-    };
-
-    fetchAllRepoContents();
-  }, [repoSkills, dispatch]);
-
-  useEffect(() => {
-    if (repos && repos.length > 0) {
-      portfolio.getProjectsFromRepos(repos);
+    if (repos && repos.collection.length > 0) {
+      portfolio.getProjectsFromRepos(repos.collection);
       setPortfolio(portfolio);
     }
   }, [repos, dispatch]);
@@ -249,7 +154,9 @@ const App: React.FC = () => {
   }, [portfolio, dispatch]);
 
   useEffect(() => {
-    if (portfolioObject.length > 0) {
+    if (portfolioObject &&
+      Array.isArray(portfolioObject) &&
+      portfolioObject.length > 0) {
       portfolio.getProjectsFromDB(portfolioObject);
       setPortfolio(portfolio);
     }
@@ -263,7 +170,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Home user={user} portfolio={portfolio} skills={skills} />} />
             <Route path="/about" element={<About user={user} portfolio={portfolio} skills={skills} />} />
-            <Route path="/orgs/:name" element={<OrganizationPage organizations={user.organizations} portfolio={portfolio} skills={skills} />} />
+            <Route path="/orgs/:name" element={<OrganizationPage organizations={organizations} portfolio={portfolio} skills={skills} />} />
             <Route path="/portfolio" element={<PortfolioPage user={user} portfolio={portfolio} skills={skills} />} />
             <Route path="/portfolio/:owner/:projectID" element={<ProjectPage portfolio={portfolio} />} />
             <Route path="/projects/:taxonomy/:term" element={<Search portfolio={portfolio} skills={skills} />} />
@@ -280,7 +187,7 @@ const App: React.FC = () => {
                 <ProjectsEditPage />
               </ProtectedRoute>
             } />
-            <Route path="/admin/update/project/:projectID" element={
+            <Route path="/admin/update/project/:owner/:projectID" element={
               <ProtectedRoute>
                 <ProjectUpdate />
               </ProtectedRoute>

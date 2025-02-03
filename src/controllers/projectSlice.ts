@@ -1,8 +1,4 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  PayloadAction,
-} from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
 import {
   collection,
@@ -16,7 +12,11 @@ import {
 
 import { db } from '../services/firebase/config';
 
-import Repo from '../model/Repo';
+import { getRepoDetails } from './githubSlice';
+
+import Repo from '@/model/Repo';
+import GitHubRepoQuery from '@/model/GitHubRepoQuery';
+import Project from '@/model/Project';
 
 const portfolioCollection: CollectionReference<DocumentData, DocumentData> =
   collection(db, 'portfolio');
@@ -25,29 +25,43 @@ interface ProjectState {
   projectLoading: boolean;
   projectError: Error | null;
   projectErrorMessage: string;
-  projectObject: Record<string, any>;
+  projectObject: Record<string, any> | null;
 }
 
 const initialState: ProjectState = {
   projectLoading: false,
   projectError: null,
   projectErrorMessage: '',
-  projectObject: {},
+  projectObject: null,
 };
 
 export const getProject = createAsyncThunk(
   'project/getProject',
-  async (repo: Repo) => {
+  async (query: GitHubRepoQuery, thunkAPI) => {
     try {
-      const docRef: DocumentReference = doc(portfolioCollection, repo.id);
+      const project = new Project();
+
+      const repoDetailsResponse = await thunkAPI.dispatch(
+        getRepoDetails(query)
+      );
+
+      if (
+        getRepoDetails.fulfilled.match(repoDetailsResponse) &&
+        repoDetailsResponse.payload
+      ) {
+        const repo = new Repo(repoDetailsResponse.payload);
+        project.fromRepo(repo)
+      }
+
+      const docRef: DocumentReference = doc(portfolioCollection, query.repo);
       const docSnap: DocumentSnapshot<DocumentData, DocumentData> =
         await getDoc(docRef);
 
-      if (!docSnap.exists()) {
-        return {};
+      if (docSnap.exists()) {
+        project.fromDocumentData(docSnap.id, docSnap.data())
       }
 
-      return { id: docSnap.id, ...docSnap.data() };
+      return project.toObject();
     } catch (error) {
       const err = error as Error;
       console.error(err);

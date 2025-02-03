@@ -12,7 +12,7 @@ class ProjectDelivery extends Model {
 
     this.checkList = data?.check_list ? this.toArrayTask(data?.check_list) : [];
     this.gallery = data?.gallery ? this.toArrayImage(data.gallery) : [];
-    this.contentURL = data?.content || null;
+    this.contentURL = data?.content_url || null;
   }
 
   toArrayTask(data: Array<Record<string, any>>) {

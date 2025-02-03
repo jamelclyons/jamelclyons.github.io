@@ -5,14 +5,17 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
+import { instance } from '@/services/github/octokit';
 import { Octokit, RestEndpointMethodTypes } from '@octokit/rest';
 import { GetResponseTypeFromEndpointMethod } from '@octokit/types';
 
 import RepoContent from '../model/RepoContent';
-import Organization from '../model/Organization';
-import Repo from '../model/Repo';
 import GitHubRepoQuery from '../model/GitHubRepoQuery';
 import RepoContentQuery from '@/model/RepoContentQuery';
+import Organization from '@/model/Organization';
+
+import { headers } from '@/services/github/octokit';
+import Repo from '@/model/Repo';
 
 type OctokitResponse<T = any, S = number> = {
   data: T;
@@ -24,24 +27,24 @@ type RepoLanguagesQuery =
 type RepoLanguages =
   RestEndpointMethodTypes['repos']['listLanguages']['response'];
 
-const octokit = new Octokit({
-  auth: import.meta.env.VITE_OCTOKIT_AUTH,
-});
+const octokit = instance;
 
 interface GithubState {
   githubLoading: boolean;
   githubStatusCode: number;
   githubError: Error | null;
   githubErrorMessage: string;
-  userObject: Record<string, any>;
+  userObject: Record<string, any> | null;
   organizationObject: Record<string, any>;
   organizationReposObject: Array<Record<string, any>>;
   organizationsObject: Array<Record<string, any>>;
+  organizationDetailsList: Array<Record<string, any>> | null;
   repos: Array<Record<string, any>>;
+  repoDetailsList: Array<Record<string, any>> | null;
   socialAccounts: OctokitResponse | null;
   repoObject: Record<string, any>;
   repoLanguages: Array<Record<string, any>>;
-  contents: Array<Record<string, any>>;
+  contents: Array<Record<string, any>> | null;
   file: string | null;
   contributorsObject: Array<Record<string, any>>;
 }
@@ -51,41 +54,24 @@ const initialState: GithubState = {
   githubStatusCode: 0,
   githubError: null,
   githubErrorMessage: '',
-  userObject: {},
+  userObject: null,
   organizationObject: {},
   organizationReposObject: [],
   organizationsObject: [],
+  organizationDetailsList: null,
   repos: [],
+  repoDetailsList: null,
   socialAccounts: null,
   repoObject: {},
   repoLanguages: [],
-  contents: [],
+  contents: null,
   file: null,
   contributorsObject: [],
 };
 
-export const getUser = createAsyncThunk(
-  'github/getUser',
-  async (username: string) => {
-    try {
-      const { data } = await octokit.request(`GET /users/${username}`, {
-        headers: {
-          'X-GitHub-Api-Version': '2022-11-28',
-        },
-      });
-
-      return data;
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
-    }
-  }
-);
-
-export const getRepos = createAsyncThunk('github/getRepos', async () => {
+export const getAccount = createAsyncThunk('github/getUser', async () => {
   try {
-    const { data } = await octokit.request('/user/repos');
+    const { data } = await octokit.users.getAuthenticated();
 
     return data;
   } catch (error) {
@@ -95,47 +81,18 @@ export const getRepos = createAsyncThunk('github/getRepos', async () => {
   }
 });
 
-export const getOrganization = createAsyncThunk(
-  'github/getOrganization',
-  async (organization: string) => {
+export const getSocialAccounts = createAsyncThunk(
+  'github/getSocialAccounts',
+  async (username: string) => {
     try {
-      const { data } = await octokit.request(`/orgs/${organization}`);
+      const response: OctokitResponse =
+        await octokit.users.listSocialAccountsForUser({ username });
 
-      return data;
+      return response.data;
     } catch (error) {
       const err = error as Error;
       console.error(err);
       throw new Error(err.message);
-    }
-  }
-);
-
-export const getOrganizations = createAsyncThunk(
-  'github/getOrganizations',
-  async () => {
-    try {
-      const { data } = await octokit.request('/user/orgs');
-
-      return data as Array<Record<string, any>>;
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
-    }
-  }
-);
-
-export const getOrganizationsRepos = createAsyncThunk(
-  'github/getOrganizationsRepos',
-  async (organization: string) => {
-    try {
-      const { data } = await octokit.request(`/orgs/${organization}/repos`);
-
-      return data;
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error);
-      }
     }
   }
 );
@@ -153,7 +110,7 @@ export const getRepo = createAsyncThunk(
         repo: query.repo,
       });
 
-      return repo.data;
+      return repo.data as Record<string, any>;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -180,36 +137,10 @@ export const getRepoContents = createAsyncThunk(
         });
       }
 
-      return {
-        status: repoContents.status,
-        contents: contents,
-      };
+      return contents;
     } catch (error) {
       const err = error as Error;
-      console.error(err);
-      // throw new Error(err.message);
-    }
-  }
-);
-
-export const getRepoFile = createAsyncThunk(
-  'github/getRepoFile',
-  async (query: RepoContentQuery) => {
-    try {
-      const { owner, repo, path, branch } = query;
-
-      const response: OctokitResponse = await octokit.repos.getContent({
-        owner: owner,
-        repo: repo,
-        path: path,
-        ref: branch,
-      });
-
-      return atob(response.data.content);
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
+      console.warn(err);
     }
   }
 );
@@ -218,24 +149,20 @@ export const getRepoLanguages = createAsyncThunk(
   'github/getRepoLanguages',
   async (query: GitHubRepoQuery) => {
     try {
-      const repoLanguages: RepoLanguages =
-        await octokit.rest.repos.listLanguages({
-          owner: query.owner,
-          repo: query.repo,
-        });
-
-      let skillsArray: Array<Record<string, any>> = [];
-
-      Object.entries(repoLanguages.data).forEach(([language, usage]) => {
-        let skill = { language: language, usage: usage };
-        skillsArray.push(skill);
+      const repoLanguages = await octokit.rest.repos.listLanguages({
+        owner: query.owner,
+        repo: query.repo,
       });
 
-      return skillsArray;
+      if (!repoLanguages.data) return [];
+
+      return Object.entries(repoLanguages.data).map(([language, usage]) => ({
+        language,
+        usage: usage as number,
+      }));
     } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
+      console.error(error);
+      throw new Error((error as Error).message);
     }
   }
 );
@@ -251,9 +178,14 @@ export const getContributors = createAsyncThunk(
 
       let contributors: Array<Record<string, any>> = [];
 
-      repoContributors.data.forEach((user) => {
-        contributors.push(user);
-      });
+      if (
+        Array.isArray(repoContributors.data) &&
+        repoContributors.data.length > 0
+      ) {
+        repoContributors.data.forEach((user) => {
+          contributors.push(user);
+        });
+      }
 
       return contributors;
     } catch (error) {
@@ -281,19 +213,205 @@ export const getCommits = createAsyncThunk(
   }
 );
 
-export const getSocialAccounts = createAsyncThunk(
-  'github/getSocialAccounts',
-  async (username: string) => {
+export const getRepoFile = createAsyncThunk(
+  'github/getRepoFile',
+  async (query: RepoContentQuery) => {
     try {
-      const response: OctokitResponse = await octokit.request(
-        `users/${username}/social_accounts`
-      );
+      const { owner, repo, path, branch } = query;
 
-      return response;
+      const response: OctokitResponse = await octokit.repos.getContent({
+        owner: owner,
+        repo: repo,
+        path: path,
+        ref: branch,
+      });
+
+      return atob(response.data.content);
     } catch (error) {
       const err = error as Error;
       console.error(err);
       throw new Error(err.message);
+    }
+  }
+);
+
+export const getRepoDetails = createAsyncThunk(
+  'github/getRepoDetails',
+  async (query: GitHubRepoQuery, thunkAPI) => {
+    try {
+      const repoResponse = await thunkAPI.dispatch(getRepo(query));
+
+      if (getRepo.fulfilled.match(repoResponse) && repoResponse.payload) {
+        const repo = new Repo(repoResponse.payload);
+        let skills = null;
+        let contents = null;
+
+        const langResponse = await thunkAPI.dispatch(getRepoLanguages(query));
+
+        if (
+          getRepoLanguages.fulfilled.match(langResponse) &&
+          langResponse.payload
+        ) {
+          skills = repo.setSkills(langResponse.payload);
+        }
+
+        if (repo.size > 0) {
+          const contentsResponse = await thunkAPI.dispatch(
+            getRepoContents(query)
+          );
+
+          if (
+            getRepoContents.fulfilled.match(contentsResponse) &&
+            contentsResponse.payload
+          ) {
+            contents = repo.filterContents(contentsResponse.payload);
+          }
+        }
+
+        return { ...repo.toObject(), skills, contents };
+      }
+
+      return null;
+    } catch (error) {
+      const err = error as Error;
+      console.error('Error fetching repository details:', err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const getRepos = createAsyncThunk('github/getRepos', async () => {
+  try {
+    const { data } = await octokit.request('/user/repos');
+
+    return data;
+  } catch (error) {
+    const err = error as Error;
+    console.error(err);
+    throw new Error(err.message);
+  }
+});
+
+export const getRepoDetailsList = createAsyncThunk(
+  'github/getRepoDetailsList',
+  async (_, thunkAPI) => {
+    try {
+      let repoDetailsList: Array<Record<string, any>> = [];
+
+      const { data: repos } = await octokit.rest.repos.listForAuthenticatedUser(
+        {
+          visibility: 'all',
+          per_page: 100,
+        }
+      );
+
+      if (Array.isArray(repos) && repos.length > 0) {
+        for (const repo of repos) {
+          const query = new GitHubRepoQuery(repo.owner.login, repo.name);
+          const repoDetailsResponse = await thunkAPI.dispatch(
+            getRepoDetails(query)
+          );
+
+          if (
+            getRepoDetails.fulfilled.match(repoDetailsResponse) &&
+            repoDetailsResponse.payload
+          ) {
+            repoDetailsList.push(repoDetailsResponse.payload);
+          }
+        }
+
+        return repoDetailsList;
+      }
+
+      return null;
+    } catch (error) {
+      const err = error as Error;
+      console.error('Error fetching repository details:', err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const getOrganizations = createAsyncThunk(
+  'github/getOrganizations',
+  async () => {
+    try {
+      const { data } = await octokit.request('/user/orgs');
+
+      return data as Array<Record<string, any>>;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const getOrganization = createAsyncThunk(
+  'github/getOrganization',
+  async (organization: string) => {
+    try {
+      const { data } = await octokit.request(`/orgs/${organization}`);
+      const orgDetails = new Organization(data);
+
+      return orgDetails.toObject();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const getOrganizationDetailsList = createAsyncThunk(
+  'github/getOrganizationsDetailsList',
+  async (url: string, thunkAPI) => {
+    try {
+      let organizations: Array<Record<string, any>> = [];
+
+      const organizationDetailsList = await fetch(url, {
+        headers: headers,
+      });
+
+      const orgDetailsList = await organizationDetailsList.json();
+
+      if (Array.isArray(orgDetailsList) && orgDetailsList.length > 0) {
+        for (const organization of orgDetailsList) {
+          const orgResponse = await thunkAPI.dispatch(
+            getOrganization(organization.login)
+          );
+
+          if (
+            getOrganization.fulfilled.match(orgResponse) &&
+            orgResponse.payload
+          ) {
+            organizations.push(orgResponse.payload);
+          }
+        }
+
+        return organizations;
+      }
+
+      return null;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const getOrganizationsRepos = createAsyncThunk(
+  'github/getOrganizationsRepos',
+  async (organization: string) => {
+    try {
+      const { data } = await octokit.request(`/orgs/${organization}/repos`);
+
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error);
+      }
     }
   }
 );
@@ -304,7 +422,7 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getUser.fulfilled, (state, action) => {
+      .addCase(getAccount.fulfilled, (state, action) => {
         state.githubLoading = false;
         state.githubErrorMessage = '';
         state.githubError = null;
@@ -315,6 +433,12 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubErrorMessage = '';
         state.githubError = null;
         state.organizationsObject = action.payload;
+      })
+      .addCase(getOrganizationDetailsList.fulfilled, (state, action) => {
+        state.githubLoading = false;
+        state.githubErrorMessage = '';
+        state.githubError = null;
+        state.organizationDetailsList = action.payload;
       })
       .addCase(getOrganization.fulfilled, (state, action) => {
         state.githubLoading = false;
@@ -328,6 +452,12 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubError = null;
         state.repos = action.payload;
       })
+      .addCase(getRepoDetailsList.fulfilled, (state, action) => {
+        state.githubLoading = false;
+        state.githubErrorMessage = '';
+        state.githubError = null;
+        state.repoDetailsList = action.payload;
+      })
       .addCase(getRepo.fulfilled, (state, action) => {
         state.githubLoading = false;
         state.githubErrorMessage = '';
@@ -338,8 +468,7 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubLoading = false;
         state.githubErrorMessage = '';
         state.githubError = null;
-        state.githubStatusCode = action.payload?.status ?? 0;
-        state.contents = action.payload?.contents ?? [];
+        state.contents = action.payload ?? [];
       })
       .addCase(getRepoFile.fulfilled, (state, action) => {
         state.githubLoading = false;
@@ -362,12 +491,13 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
       })
       .addMatcher(
         isAnyOf(
-          getUser.pending,
+          getAccount.pending,
           getOrganizations.pending,
           getRepos.pending,
           getRepo.pending,
           getRepoContents.pending,
           getRepoLanguages.pending,
+          getRepoDetailsList.pending,
           getSocialAccounts.pending,
           getRepoFile.pending
         ),
@@ -379,12 +509,13 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
       )
       .addMatcher(
         isAnyOf(
-          getUser.rejected,
+          getAccount.rejected,
           getOrganizations.rejected,
           getRepos.rejected,
           getRepo.rejected,
           getRepoContents.rejected,
           getRepoLanguages.rejected,
+          getRepoDetailsList.rejected,
           getSocialAccounts.rejected,
           getRepoFile.rejected
         ),

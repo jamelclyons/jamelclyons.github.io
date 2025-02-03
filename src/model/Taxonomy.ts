@@ -19,7 +19,9 @@ class Taxonomy extends Model {
     this.id = data?.id ? data.id : '';
     this.type = data?.type ? data.type : '';
     this.title = data?.title ? data.title : '';
-    this.path = data?.path ? snakeCaseToPath(data.path) : snakeCaseToPath(this.type);
+    this.path = data?.path
+      ? snakeCaseToPath(data.path)
+      : snakeCaseToPath(this.type);
     this.iconURL = data?.icon_url ? data.icon_url : '';
     this.className = data?.class_name ? data.class_name : '';
     this.usage = data?.usage ? data.usage : '';
@@ -59,6 +61,10 @@ class Taxonomy extends Model {
   setClassName(className: string) {
     this.className = className;
     this.image.className = className;
+  }
+
+  toObject() {
+    return super.toObject();
   }
 }
 

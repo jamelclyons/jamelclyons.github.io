@@ -1,5 +1,6 @@
 import React from 'react'
 
+import Organizations from '@/model/Organizations';
 import Organization from '@/model/Organization';
 
 import DescriptionComponent from './DescriptionComponent';
@@ -7,10 +8,12 @@ import DescriptionComponent from './DescriptionComponent';
 import { spaceToPath } from '@/utilities/String';
 
 interface OrganizationsComponentProps {
-  organizations: Array<Organization>;
+  organizations: Organizations;
 }
 
 const OrganizationsComponent: React.FC<OrganizationsComponentProps> = ({ organizations }) => {
+  const { list } = organizations;
+
   const handleClick = (organization: Organization) => {
     handleOrganizations();
     const name = spaceToPath(organization.name);
@@ -27,15 +30,15 @@ const OrganizationsComponent: React.FC<OrganizationsComponentProps> = ({ organiz
 
   return (
     <>
-      {Array.isArray(organizations) && organizations.length > 0 && (
+      {Array.isArray(list) && list.length > 0 && (
         <div className="organizations">
           <h2 className="title">
-            {organizations.length === 1
+            {list.length === 1
               ? 'Organization'
               : 'Organizations'}
           </h2>
 
-          {organizations.map((organization, index) => (
+          {list.map((organization, index) => (
             <div className="organization" key={index}>
               <button
                 key={index}

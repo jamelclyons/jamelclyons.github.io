@@ -76,7 +76,7 @@ export const getTaxImage = createAsyncThunk(
         collection(db, query.type),
         query.id
       );
-      const images = await getDoc(docRef);
+      const images = (await getDoc(docRef)) as Record<string, any>;
 
       return images;
     } catch (error) {

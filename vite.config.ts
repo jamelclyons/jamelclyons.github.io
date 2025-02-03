@@ -13,7 +13,6 @@ const gulp = (): PluginOption => {
     name: 'run-gulp-tasks',
     apply: 'serve',
     configureServer(server) {
-      // This runs after Vite's dev server is fully initialized
       server.httpServer?.once('listening', () => {
         return new Promise<void>((resolve) => {
           console.log('Starting Gulp watch...');

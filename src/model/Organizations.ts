@@ -3,8 +3,9 @@ import Organization from './Organization';
 
 class Organizations extends Model {
   list: Array<Organization>;
+  count: number;
 
-  constructor(data: Array<Record<string, any>>) {
+  constructor(data?: Array<Record<string, any>>) {
     super();
 
     let organizations: Array<Organization> = [];
@@ -16,6 +17,7 @@ class Organizations extends Model {
     }
 
     this.list = organizations;
+    this.count = organizations.length;
   }
 }
 

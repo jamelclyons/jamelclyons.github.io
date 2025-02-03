@@ -9,6 +9,7 @@ class Owner extends Model {
   email: string;
   avatarURL: string;
   url: string;
+  reposURL: string;
 
   constructor(data: Record<string, any> = {}) {
     super();
@@ -21,6 +22,7 @@ class Owner extends Model {
     this.email = data?.email;
     this.avatarURL = data?.avatar_url;
     this.url = data?.url;
+    this.reposURL = data?.repos_url;
   }
 }
 

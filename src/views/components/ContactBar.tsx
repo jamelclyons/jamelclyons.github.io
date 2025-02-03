@@ -6,10 +6,11 @@ import ContactMethods from '../../model/ContactMethods'
 
 interface ContactBarProps {
     contactMethods: ContactMethods;
+    location: string;
 }
 
-const ContactBar: React.FC<ContactBarProps> = ({ contactMethods }) => {
-    const { email, phone, github, linkedin, instagram, x, website } = contactMethods;
+const ContactBar: React.FC<ContactBarProps> = ({ contactMethods, location }) => {
+    const { hackerrank, email, phone, github, linkedin, instagram, x, website } = contactMethods;
 
     const mailTo = email.value ? `mailto:${email.value}` : '';
     const callNow = phone.value ? `tel:+${phone.value}` : '';
@@ -33,9 +34,15 @@ const ContactBar: React.FC<ContactBarProps> = ({ contactMethods }) => {
             </a>
         }
 
-        {website.image && website.url !== '' &&
+        {location !== 'footer' && website.image && website.url !== '' &&
             <a href={website.url} target="_blank">
                 <ImageComponent image={website.image} />
+            </a>
+        }
+
+        {hackerrank.image && hackerrank.url !== '' &&
+            <a href={hackerrank.url} target="_blank">
+                <ImageComponent image={hackerrank.image} />
             </a>
         }
 

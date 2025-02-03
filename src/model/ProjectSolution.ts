@@ -18,7 +18,7 @@ class ProjectSolution extends Model {
     this.features = data?.features
       ? this.setFeatures(data.features)
       : new Set<Feature>();
-    this.contentURL = data?.content?.url || null;
+    this.contentURL = data?.content_url || null;
     this.currency = data?.currency || 'USD';
     this.price = data?.price || 0;
     this.urlsList = data?.urlsList

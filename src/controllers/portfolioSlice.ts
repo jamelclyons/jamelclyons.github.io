@@ -15,6 +15,9 @@ import {
 
 import { db } from '../services/firebase/config';
 
+import { Framework, Language, ProjectType, Technology } from '@/model/Taxonomy';
+import Image from '@/model/Image';
+
 export type SkillsObject = {
   types: Array<Record<string, any>>;
   languages: Array<Record<string, any>>;
@@ -28,8 +31,8 @@ interface PortfolioState {
   portfolioLoading: boolean;
   portfolioError: Error | null;
   portfolioErrorMessage: string;
-  portfolioObject: Array<Record<string, any>>;
-  projects: Array<Record<string, any>>;
+  portfolioObject: Array<Record<string, any>> | null;
+  projects: Array<Record<string, any>> | null;
   skillsObject: Record<string, any>;
 }
 
@@ -37,8 +40,8 @@ const initialState: PortfolioState = {
   portfolioLoading: false,
   portfolioError: null,
   portfolioErrorMessage: '',
-  portfolioObject: [],
-  projects: [],
+  portfolioObject: null,
+  projects: null,
   skillsObject: {},
 };
 
@@ -48,11 +51,11 @@ export const getPortfolio = createAsyncThunk(
     try {
       const querySnapshot: QuerySnapshot = await getDocs(portfolioCollection);
 
-      if (querySnapshot.empty) {
-        return [];
+      if (querySnapshot.size > 0) {
+        return querySnapshot.docs as Array<Record<string, any>>;
       }
 
-      return querySnapshot.docs as Array<Record<string, any>>;
+      return null;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -91,7 +94,28 @@ export const portfolioSlice = createSlice({
   initialState,
   reducers: {
     setPortfolioSkills: (state, action: PayloadAction<SkillsObject>) => {
-      state.skillsObject = action.payload;
+      const serializeSkills = (skills: SkillsObject): SkillsObject => {
+        return {
+          types: skills.types.map((item) => {
+            const type = new ProjectType(item).toObject();
+            const image = new Image(item.image).toObject();
+
+            type.image = image
+            return type;
+          }),
+          languages: skills.languages.map((item) =>
+            new Language(item).toObject()
+          ),
+          frameworks: skills.frameworks.map((item) =>
+            new Framework(item).toObject()
+          ),
+          technologies: skills.technologies.map((item) =>
+            new Technology(item).toObject()
+          ),
+        };
+      };
+
+      state.skillsObject = serializeSkills(action.payload);
     },
   },
   extraReducers: (builder) => {

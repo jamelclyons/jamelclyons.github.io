@@ -1,19 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import MemberPic from './components/member/MemberPic';
 import SkillsComponent from './components/SkillsComponent';
-
-import { getRepoContents } from '../controllers/githubSlice';
-import { getContent } from '@/controllers/contentSlice';
-
-import type { AppDispatch, RootState } from '../model/store';
-import RepoContent from '../model/RepoContent';
-import User from '../model/User';
-import Skills from '@/model/Skills';
-import RepoContentQuery from '@/model/RepoContentQuery';
 import OrganizationsComponent from './components/OrganizationsComponent';
 import StoryComponent from './components/StoryComponent';
+
+import { getRepoContents } from '@/controllers/githubSlice';
+
+import type { AppDispatch, RootState } from '@/model/store';
+import User from '@/model/User';
+import Skills from '@/model/Skills';
+import RepoContentQuery from '@/model/RepoContentQuery';
 import Portfolio from '@/model/Portfolio';
 
 interface AboutProps {
@@ -27,7 +25,6 @@ const About: React.FC<AboutProps> = ({ user, portfolio, skills }) => {
 
   const { contents } = useSelector((state: RootState) => state.github);
 
-  const [storyContent, setStoryContent] = useState<RepoContent>();
   const [story, setStory] = useState<string>();
 
   useEffect(() => {
@@ -51,23 +48,12 @@ const About: React.FC<AboutProps> = ({ user, portfolio, skills }) => {
       contents.map((content) => {
         if (content.type === 'file') {
           if (content.name === 'story.md') {
-            setStoryContent(new RepoContent(content));
+            setStory(content.download_url);
           }
         }
       });
     }
   }, [contents]);
-
-  useEffect(() => {
-    const fetchStoryContent = async (url: string) => {
-      const storyMarkdown = await dispatch(getContent(url)).unwrap();
-      setStory(storyMarkdown)
-    };
-
-    if (storyContent) {
-      fetchStoryContent(storyContent.downloadURL);
-    }
-  }, [contents, storyContent]);
 
   const handleProjects = () => {
     window.location.href = '/#/portfolio';

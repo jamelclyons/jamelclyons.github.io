@@ -8,7 +8,7 @@ class ProjectProblem extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    this.contentURL = data?.content?.url || null;
+    this.contentURL = data?.content_url || null;
     this.gallery = data?.gallery ? new Gallery(data?.gallery) : new Gallery;
   }
 }

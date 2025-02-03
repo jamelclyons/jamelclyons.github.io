@@ -11,9 +11,9 @@ class Model {
         ((typeof value === 'string' && value.trim() !== '') ||
           (Array.isArray(value) && value.length > 0) ||
           (typeof value === 'object' && value !== null && Object.keys(value).length > 0) ||
-          value instanceof Set || // Check for Set instances
-          value instanceof Map || // Check for Map instances
-          value instanceof Model) // Check if value is an instance of Model or its subclasses
+          value instanceof Set ||
+          value instanceof Map ||
+          value instanceof Model)
       ) {
         return false;
       }
@@ -35,7 +35,11 @@ class Model {
       }
   
       if (value instanceof Set) {
-        object[finalKey] = Array.from(value);
+        object[finalKey] = Array.from(value).map((item) =>
+          item instanceof Model ? item.toObject() : item
+        );
+      } else if (value instanceof Map) {
+        object[finalKey] = Object.fromEntries(value);
       } else if (value instanceof Model) {
         object[finalKey] = value.toObject();
       } else {
