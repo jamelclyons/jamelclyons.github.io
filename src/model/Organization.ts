@@ -18,7 +18,7 @@ class Organization extends Model {
   email: string;
   url: string;
   github: string;
-  contactMethods: ContactMethods = new ContactMethods();
+  contactMethods: ContactMethods;
   reposURL: string;
   repos: Repos;
 
@@ -39,43 +39,54 @@ class Organization extends Model {
     this.location = data?.location;
     this.email = data?.email;
     this.url = data?.url;
-    this.github = data?.html_url;
-
-    const x = data?.x;
-
-    this.contactMethods = new ContactMethods(
-      '',
-      '',
-      x,
-      '',
-      this.github,
-      this.blog,
-      this.email,
-      ''
-    );
-
+    this.github = data?.github;
+    this.contactMethods = new ContactMethods(data?.contact_methods);
+    this.contactMethods.setContactEmail(this.email);
+    this.contactMethods.setContactWebsite(this.blog);
     this.reposURL = data?.repos_url;
     this.repos = data?.repos ? new Repos(data.repos) : new Repos();
   }
 
+  getRepos(data: Array<Record<string, any>>) {
+    const repos = new Repos(data);
+    return repos.collection.map((repo) => {
+      return {
+        ...repo.toObject(),
+        skills: repo.skills.toObject(),
+        contents: {
+          solution: repo.contents.solution?.toObject() || null,
+          design: repo.contents.design?.toObject() || null,
+          development: repo.contents.development?.toObject() || null,
+          delivery: repo.contents.delivery?.toObject() || null,
+          problem: repo.contents.problem?.toObject() || null,
+        },
+        contributors: {
+          users: repo.contributors.users.map((user) => user.toObject()),
+        },
+      };
+    });
+  }
+
   fromGitHub(data: Record<string, any>) {
     this.id = data?.login;
+    this.createdAt = data?.created_at;
+    this.updatedAt = data?.updated_at;
+    this.login = data?.login;
     this.avatarURL = data?.avatar_url;
     this.name = data?.name;
+    this.company = data?.company;
     this.description = data?.description;
     this.email = data?.email;
     this.blog = data?.blog;
+    this.location = data?.location;
     this.reposURL = data?.repos_url;
+    this.url = data?.url;
+    this.github = data?.github;
   }
 
   fromDB(data: Record<string, any>) {
     this.company = data?.company;
     this.avatarURL = data?.avatar_url;
-  }
-
-  setRepos(data: Array<Record<string, any>>) {
-    const repos = new Repos(data);
-    return repos.collection.map((repo) => repo.toObject());
   }
 }
 

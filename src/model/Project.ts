@@ -78,6 +78,7 @@ class Project extends Model {
     this.process.development.skills = repo.skills;
     this.process.delivery.contentURL = repo.contents.delivery ? repo.contents.delivery.downloadURL : null;
     this.problem.contentURL = repo.contents.problem ? repo.contents.problem.downloadURL : null;
+    this.details.teamList = repo.contributors.users;
   }
 
   fromDocumentData(id: string, data: DocumentData) {

@@ -94,7 +94,7 @@ export const getUser = createAsyncThunk('user/getUser', async (_, thunkAPI) => {
       getSocialAccounts.fulfilled.match(contactsResponse) &&
       contactsResponse.payload
     ) {
-      user.setContactMethods(contactsResponse.payload);
+      user.contactMethods.fromGitHub(contactsResponse.payload);
     }
 
     const databaseResponse = await thunkAPI.dispatch(getUserData(user.id));

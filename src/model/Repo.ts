@@ -4,6 +4,8 @@ import RepoContents from './RepoContents';
 import RepoContent from './RepoContent';
 import Skills from './Skills';
 import { Language, Technology } from './Taxonomy';
+import Contributors from './Contributors';
+import User from './User';
 
 class Repo extends Model {
   id: string;
@@ -15,8 +17,10 @@ class Repo extends Model {
   homepage: string;
   description: string;
   repoURL: string;
-  skills: Skills = new Skills();
-  contents: RepoContents = new RepoContents();
+  skills: Skills = new Skills;
+  contents: RepoContents = new RepoContents;
+  contributorsURL: string;
+  contributors: Contributors = new Contributors;
 
   constructor(data: Record<string, any> = {}) {
     super();
@@ -30,7 +34,7 @@ class Repo extends Model {
     this.homepage = data?.homepage ?? '';
     this.description = data?.description ?? '';
     this.repoURL = data?.url ?? data?.repo_url;
-    this.skills = data?.skills ? new Skills(data.skills) : new Skills();
+    this.setSkills(data.skills);
     this.contents = data?.contents
       ? new RepoContents(
           new RepoContent(data.contents.solution),
@@ -40,6 +44,8 @@ class Repo extends Model {
           new RepoContent(data.contents.problem)
         )
       : new RepoContents();
+    this.contributorsURL = data?.contributors_url;
+    this.setContributors(data?.contributors);
   }
 
   getOwner(data: Record<string, any>) {
@@ -54,68 +60,97 @@ class Repo extends Model {
     return '';
   }
 
-  setSkills(repoSkills: Array<Record<string, any>>) {
-    let skills = new Skills();
+  languagesFromGithub(data: Array<Record<string, any>>) {
+    if (Array.isArray(data) && data.length) {
+      let languages: Array<Record<string, any>> = [];
 
-    repoSkills.forEach(({ language, usage }) => {
-      if (language === 'Dockerfile') {
-        skills.technologies.add(
-          new Technology({
+      data.forEach(({ language, usage }) => {
+        let skill: Record<string, any> = {};
+
+        if (language === 'Dockerfile') {
+          skill = {
+            type: 'technology',
             id: 'docker',
             title: 'Docker',
             icon_url: '',
             class_name: '',
             usage: usage,
-          })
-        );
-      }
+          };
+        }
 
-      if (language === 'SCSS') {
-        skills.technologies.add(
-          new Technology({
+        if (language === 'SCSS') {
+          skill = {
+            type: 'technology',
             id: 'sass',
             title: 'Sass',
             icon_url: '',
             class_name: '',
             usage: usage,
-          })
-        );
-      }
+          };
+        }
 
-      if (language === 'hack') {
-        skills.languages.add(
-          new Language({
+        if (language === 'hack') {
+          skill = {
+            type: 'language',
             id: 'hack',
             title: 'Hack',
             icon_url: '',
             class_name: '',
             usage: usage,
-          })
-        );
-      }
+          };
+        }
 
-      if (
-        language !== 'hack' &&
-        language !== 'SCSS' &&
-        language !== 'Dockerfile'
-      )
-        skills.languages.add(
-          new Language({
+        if (
+          language !== 'hack' &&
+          language !== 'SCSS' &&
+          language !== 'Dockerfile'
+        ) {
+          skill = {
+            type: 'language',
             id: language.toLowerCase(),
             title: language.toUpperCase(),
             icon_url: '',
             class_name: '',
             usage: usage,
-          })
-        );
-    });
+          };
+        }
 
-    return {
-      languages: Array.from(skills.languages).map((lang) => lang.toObject()),
-      technologies: Array.from(skills.technologies).map((tech) =>
-        tech.toObject()
-      ),
-    };
+        languages.push(skill);
+      });
+
+      return languages;
+    }
+
+    return [];
+  }
+
+  setSkills(repoSkills: Array<Record<string, any>>) {
+    if (repoSkills && Array.isArray(repoSkills) && repoSkills.length > 0) {
+      repoSkills.forEach((skill) => {
+        if (skill.type === 'technology') {
+          this.skills.technologies.add(
+            new Technology({
+              id: skill.id,
+              title: skill.title,
+              icon_url: skill.icon_url,
+              class_name: skill.class_name,
+              usage: skill.usage,
+            })
+          );
+        }
+
+        if (skill.type === 'language')
+          this.skills.languages.add(
+            new Language({
+              id: skill.id.toLowerCase(),
+              title: skill.title.toUpperCase(),
+              icon_url: skill.icon_url,
+              class_name: skill.class_name,
+              usage: skill.usage,
+            })
+          );
+      });
+    }
   }
 
   setContents(contentsObject: Record<string, any>) {
@@ -154,6 +189,34 @@ class Repo extends Model {
     }
 
     return contents;
+  }
+
+  contributorsFromGitHub(data?: Array<Record<string, any>>) {
+    if (data && Array.isArray(data) && data.length > 0) {
+      const contributors: Array<Record<string, any>> = [];
+
+      data.forEach((contributor) => {
+        const user = new User(contributor).toObject();
+        contributors.push(user);
+      });
+
+      return contributors;
+    }
+
+    return [];
+  }
+
+  setContributors(data?: Array<Record<string, any>>) {
+    if (data && Array.isArray(data) && data.length > 0) {
+      const contributors: Array<User> = [];
+
+      data.forEach((contributor) => {
+        const user = new User(contributor);
+        contributors.push(user);
+      });
+
+      this.contributors = new Contributors(contributors);
+    }
   }
 }
 

@@ -5,8 +5,6 @@ import Organization from '@/model/Organization';
 
 import DescriptionComponent from './DescriptionComponent';
 
-import { spaceToPath } from '@/utilities/String';
-
 interface OrganizationsComponentProps {
   organizations: Organizations;
 }
@@ -16,8 +14,7 @@ const OrganizationsComponent: React.FC<OrganizationsComponentProps> = ({ organiz
 
   const handleClick = (organization: Organization) => {
     handleOrganizations();
-    const name = spaceToPath(organization.name);
-    window.location.href = `/#/orgs/${name}`;
+    window.location.href = `/#/orgs/${organization.login}`;
   };
 
   const handleOrganizations = () => {

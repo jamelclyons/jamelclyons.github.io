@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
-
-import type { RootState } from '../model/store';
-import Portfolio from '../model/Portfolio';
-import Skills from '@/model/Skills';
-import Organization from '@/model/Organization';
 
 import ProjectsComponent from './components/portfolio/ProjectsComponent';
 import SkillsComponent from './components/SkillsComponent';
 import HeaderOrganizationComponent from './components/HeaderOrganizationComponent';
 import ContactBar from './components/ContactBar';
+import StatusBarComponent from './components/StatusBarComponent';
+
+import { setMessage, setMessageType, setShowStatusBar } from '../controllers/messageSlice';
+import { getOrganization } from '@/controllers/organizationSlice';
+
 import { pathToSpace } from '@/utilities/String';
+
+import type { AppDispatch, RootState } from '../model/store';
 import Organizations from '@/model/Organizations';
+import Portfolio from '../model/Portfolio';
+import Skills from '@/model/Skills';
+import Organization from '@/model/Organization';
 
 interface OrganizationPageProps {
     organizations: Organizations;
@@ -21,28 +26,22 @@ interface OrganizationPageProps {
 }
 
 const OrganizationPage: React.FC<OrganizationPageProps> = ({ organizations, portfolio, skills }) => {
-    const { name } = useParams<string>();
+    const dispatch = useDispatch<AppDispatch>();
+
+    const { login } = useParams<string>();
 
     const { list } = organizations;
     const { projects } = portfolio;
 
     const { organizationObject } = useSelector(
-        (state: RootState) => state.github);
+        (state: RootState) => state.organization);
 
-    const [organization, setOrganization] = useState<Organization>(new Organization(organizationObject));
-    const [organizationName, setOrganizationName] = useState<string>();
-
-    useEffect(() => {
-        if (name) {
-            const orgName = pathToSpace(name);
-            setOrganizationName(orgName);
-        }
-    }, [name]);
+    const [organization, setOrganization] = useState<Organization>();
 
     useEffect(() => {
         if (Array.isArray(list) && list.length > 0) {
             list.forEach((org) => {
-                if (org.name === organizationName) {
+                if (org.login === login) {
                     setOrganization(org);
                 }
             });
@@ -50,21 +49,34 @@ const OrganizationPage: React.FC<OrganizationPageProps> = ({ organizations, port
     }, [organizations]);
 
     useEffect(() => {
-        document.title = organization.name
-    }, []);
+        if (portfolio.projects.size === 0 && login) {
+            dispatch(getOrganization(login));
+        }
+    }, [dispatch, portfolio]);
+
+    useEffect(() => {
+        if (organizationObject) {
+            setOrganization(new Organization(organizationObject));
+        }
+    }, [organizationObject]);
+
+    useEffect(() => {
+        if (organization) {
+            document.title = organization.name
+        }
+    }, [organization]);
 
     return (
         <section className='organization' id='top'>
             <>
-                <HeaderOrganizationComponent organization={organization} />
+                {organization && <HeaderOrganizationComponent organization={organization} />}
 
-                <ContactBar contactMethods={organization.contactMethods} location='' />
+                {organization && <ContactBar contactMethods={organization.contactMethods} location='' />}
 
                 {
-                    projects &&
+                    organization &&
                     projects.size > 0 &&
-                    name &&
-                    <ProjectsComponent projects={portfolio.filterProjectsByLogin(name)} />
+                    <ProjectsComponent projects={portfolio.filterProjectsByLogin(organization.login)} />
                 }
 
                 {skills && <SkillsComponent skills={skills} />}

@@ -16,6 +16,7 @@ import Organization from '@/model/Organization';
 
 import { headers } from '@/services/github/octokit';
 import Repo from '@/model/Repo';
+import User from '@/model/User';
 
 type OctokitResponse<T = any, S = number> = {
   data: T;
@@ -69,7 +70,7 @@ const initialState: GithubState = {
   contributorsObject: [],
 };
 
-export const getAccount = createAsyncThunk('github/getUser', async () => {
+export const getAccount = createAsyncThunk('github/getAccount', async () => {
   try {
     const { data } = await octokit.users.getAuthenticated();
 
@@ -239,36 +240,56 @@ export const getRepoDetails = createAsyncThunk(
   'github/getRepoDetails',
   async (query: GitHubRepoQuery, thunkAPI) => {
     try {
-      const repoResponse = await thunkAPI.dispatch(getRepo(query));
+      const repoResponse = await thunkAPI.dispatch(getRepo(query)).unwrap();
 
-      if (getRepo.fulfilled.match(repoResponse) && repoResponse.payload) {
-        const repo = new Repo(repoResponse.payload);
-        let skills = null;
-        let contents = null;
+      if (repoResponse) {
+        const repo = new Repo(repoResponse);
+        let skills: Array<Record<string, any>> = [];
+        let contents: Record<string, any> = {};
+        let contributors: Array<Record<string, any>> = [];
 
-        const langResponse = await thunkAPI.dispatch(getRepoLanguages(query));
+        const langResponse = await thunkAPI
+          .dispatch(getRepoLanguages(query))
+          .unwrap();
 
-        if (
-          getRepoLanguages.fulfilled.match(langResponse) &&
-          langResponse.payload
-        ) {
-          skills = repo.setSkills(langResponse.payload);
+        if (langResponse) {
+          skills = repo.languagesFromGithub(langResponse);
         }
 
-        if (repo.size > 0) {
-          const contentsResponse = await thunkAPI.dispatch(
-            getRepoContents(query)
-          );
+        if (Number.isInteger(repo.size) && repo.size > 0) {
+          const contentsResponse = await thunkAPI
+            .dispatch(getRepoContents(query))
+            .unwrap();
 
-          if (
-            getRepoContents.fulfilled.match(contentsResponse) &&
-            contentsResponse.payload
-          ) {
-            contents = repo.filterContents(contentsResponse.payload);
+          if (contentsResponse) {
+            contents = repo.filterContents(contentsResponse);
           }
         }
 
-        return { ...repo.toObject(), skills, contents };
+        const contributorsResponse = await fetch(repo.contributorsURL, {
+          headers: headers,
+        });
+
+        if (contributorsResponse.status === 200) {
+          const contributorsJson = await contributorsResponse.json();
+
+          if (Array.isArray(contributorsJson) && contributorsJson.length > 0) {
+            const contributorsArray: Array<Record<string, any>> = [];
+
+            contributorsJson.forEach((contributor) => {
+              contributorsArray.push(new User(contributor).toObject());
+            });
+
+            contributors = repo.contributorsFromGitHub(contributorsArray);
+          }
+        }
+
+        return {
+          ...repo.toObject(),
+          skills: skills,
+          contents: contents,
+          contributors: contributors,
+        };
       }
 
       return null;
@@ -332,6 +353,62 @@ export const getRepoDetailsList = createAsyncThunk(
   }
 );
 
+export const getUser = createAsyncThunk(
+  'github/getUser',
+  async (username: string, thunkAPI) => {
+    try {
+      const user = new User();
+
+      const { data } = await octokit.users.getByUsername({ username });
+
+      if (data) {
+        user.fromGitHub(data);
+
+        if (user.organizationsURL) {
+          const orgResponse = await thunkAPI.dispatch(
+            getOrganizationDetailsList(user.organizationsURL)
+          );
+
+          if (
+            getOrganizationDetailsList.fulfilled.match(orgResponse) &&
+            orgResponse.payload
+          ) {
+            user.setOrganizations(orgResponse.payload);
+          }
+        }
+
+        const repoResponse = await thunkAPI.dispatch(getRepoDetailsList());
+
+        if (
+          getRepoDetailsList.fulfilled.match(repoResponse) &&
+          repoResponse.payload
+        ) {
+          user.setRepos(repoResponse.payload);
+        }
+
+        const contactsResponse = await thunkAPI.dispatch(
+          getSocialAccounts(user.id)
+        );
+
+        if (
+          getSocialAccounts.fulfilled.match(contactsResponse) &&
+          contactsResponse.payload
+        ) {
+          user.contactMethods.fromGitHub(contactsResponse.payload);
+        }
+
+        return user.toObject();
+      }
+
+      return null;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
 export const getOrganizations = createAsyncThunk(
   'github/getOrganizations',
   async () => {
@@ -347,14 +424,82 @@ export const getOrganizations = createAsyncThunk(
   }
 );
 
-export const getOrganization = createAsyncThunk(
+export const getOrganizationAccount = createAsyncThunk(
   'github/getOrganization',
   async (organization: string) => {
     try {
       const { data } = await octokit.request(`/orgs/${organization}`);
-      const orgDetails = new Organization(data);
+      const org = new Organization(data);
 
-      return orgDetails.toObject();
+      return org.toObject();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const getOrganizationDetails = createAsyncThunk(
+  'github/getOrganizationsDetails',
+  async (login: string, thunkAPI) => {
+    try {
+      const orgResponse = await thunkAPI.dispatch(
+        getOrganizationAccount(login)
+      );
+
+      if (
+        getOrganizationAccount.fulfilled.match(orgResponse) &&
+        orgResponse.payload
+      ) {
+        const organization = new Organization();
+        let repos: Array<Record<string, any>> = [];
+        let contactMethods: Record<string, any> = {};
+
+        organization.fromGitHub(orgResponse.payload);
+
+        if (new URL(organization.reposURL)) {
+          const reposResponse = await fetch(organization.reposURL, {
+            headers: headers,
+          });
+
+          if (reposResponse.status === 200) {
+            const reposJson = await reposResponse.json();
+            repos = organization.getRepos(reposJson);
+          }
+        }
+
+        const contactsResponse = await thunkAPI.dispatch(
+          getSocialAccounts(organization.id)
+        );
+
+        if (
+          getSocialAccounts.fulfilled.match(contactsResponse) &&
+          contactsResponse.payload
+        ) {
+          const contactMethodsObject = organization.contactMethods.fromGitHub(
+            contactsResponse.payload
+          );
+
+          contactMethods = {
+            ...contactMethodsObject,
+            website: organization.contactMethods.setContactWebsite(
+              organization.blog
+            ),
+            email: organization.contactMethods.setContactEmail(
+              organization.email
+            ),
+          };
+        }
+
+        return {
+          ...organization.toObject(),
+          repos: repos,
+          contact_methods: contactMethods,
+        };
+      }
+
+      return null;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -378,11 +523,11 @@ export const getOrganizationDetailsList = createAsyncThunk(
       if (Array.isArray(orgDetailsList) && orgDetailsList.length > 0) {
         for (const organization of orgDetailsList) {
           const orgResponse = await thunkAPI.dispatch(
-            getOrganization(organization.login)
+            getOrganizationDetails(organization.login)
           );
 
           if (
-            getOrganization.fulfilled.match(orgResponse) &&
+            getOrganizationDetails.fulfilled.match(orgResponse) &&
             orgResponse.payload
           ) {
             organizations.push(orgResponse.payload);
@@ -440,7 +585,7 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubError = null;
         state.organizationDetailsList = action.payload;
       })
-      .addCase(getOrganization.fulfilled, (state, action) => {
+      .addCase(getOrganizationAccount.fulfilled, (state, action) => {
         state.githubLoading = false;
         state.githubErrorMessage = '';
         state.githubError = null;
@@ -510,6 +655,7 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
       .addMatcher(
         isAnyOf(
           getAccount.rejected,
+          getOrganizationAccount.rejected,
           getOrganizations.rejected,
           getRepos.rejected,
           getRepo.rejected,

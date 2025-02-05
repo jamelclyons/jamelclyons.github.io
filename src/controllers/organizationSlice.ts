@@ -5,12 +5,7 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
-import {
-  getAccount,
-  getOrganizationDetailsList,
-  getRepoDetailsList,
-  getSocialAccounts,
-} from '@/controllers/githubSlice';
+import { getOrganizationDetails } from '@/controllers/githubSlice';
 import { getOrganizationData } from '@/controllers/databaseSlice';
 
 import Organization from '@/model/Organization';
@@ -20,7 +15,7 @@ interface OrganizationState {
   organizationStatusCode: string;
   organizationError: Error | null;
   organizationErrorMessage: string;
-  organizationDataObject: Record<string, any> | null;
+  organizationObject: Record<string, any> | null;
 }
 
 const initialState: OrganizationState = {
@@ -28,55 +23,38 @@ const initialState: OrganizationState = {
   organizationStatusCode: '',
   organizationError: null,
   organizationErrorMessage: '',
-  organizationDataObject: null,
+  organizationObject: null,
 };
 
 export const getOrganization = createAsyncThunk(
-  'user/getUser',
-  async (url: string, thunkAPI) => {
+  'organization/getOrganization',
+  async (login: string, thunkAPI) => {
     try {
-      const organization = new Organization();
-
-      let repos = null;
-
       const organizationResponse = await thunkAPI.dispatch(
-        getOrganizationDetailsList(url)
+        getOrganizationDetails(login)
       );
 
-      if (getOrganizationDetailsList.fulfilled.match(organizationResponse) && organizationResponse.payload) {
-        organization.fromGitHub(organizationResponse.payload);
-      }
-
-      const repoResponse = await thunkAPI.dispatch(getRepoDetailsList());
-
       if (
-        getRepoDetailsList.fulfilled.match(repoResponse) &&
-        repoResponse.payload
+        getOrganizationDetails.fulfilled.match(organizationResponse) &&
+        organizationResponse.payload
       ) {
-        repos = repoResponse.payload;
+        const organization = new Organization(organizationResponse.payload);
+
+        const databaseResponse = await thunkAPI.dispatch(
+          getOrganizationData(organization.id)
+        );
+
+        if (
+          getOrganizationData.fulfilled.match(databaseResponse) &&
+          databaseResponse.payload
+        ) {
+          organization.fromDB(databaseResponse.payload);
+        }
+
+        return organization.toObject();
       }
 
-    //   const contactsResponse = await thunkAPI.dispatch(
-    //     getSocialAccounts(organization.id)
-    //   );
-
-    //   if (
-    //     getSocialAccounts.fulfilled.match(contactsResponse) &&
-    //     contactsResponse.payload
-    //   ) {
-    //     organization.setContactMethods(contactsResponse.payload);
-    //   }
-
-      const databaseResponse = await thunkAPI.dispatch(getOrganizationData(organization.id));
-
-      if (
-        getOrganizationData.fulfilled.match(databaseResponse) &&
-        databaseResponse.payload
-      ) {
-        organization.fromDB(databaseResponse.payload);
-      }
-
-      return { ...organization.toObject(), repos };
+      return null;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -95,7 +73,7 @@ const organizationSliceOptions: CreateSliceOptions<OrganizationState> = {
         state.organizationLoading = false;
         state.organizationErrorMessage = '';
         state.organizationError = null;
-        state.organizationDataObject = action.payload;
+        state.organizationObject = action.payload;
       })
       .addMatcher(isAnyOf(getOrganization.pending), (state) => {
         state.organizationLoading = true;

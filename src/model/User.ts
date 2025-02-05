@@ -41,25 +41,24 @@ class User extends Model {
     this.phone = data?.phone || phone;
     this.resume = data?.resume || resume;
     this.website = data?.website || website;
-    this.contactMethods = new ContactMethods(
-      hacker_rank,
-      linkedIn,
-      x,
-      instagram,
-      gitHub,
-      website,
-      email,
-      phone
-    );
+    this.contactMethods = new ContactMethods(data?.contact_methods);
     this.images = data?.images || '';
     this.organizationsURL = data?.organizations_url;
     this.organizations = data?.organizations
       ? new Organizations(data.organizations)
       : new Organizations();
     this.reposURL = data?.repos_url;
-    this.repos = data?.repos
-      ? new Repos(data?.repos)
-      : new Repos();
+    this.repos = data?.repos ? new Repos(data?.repos) : new Repos();
+  }
+
+  setRepos(data: Array<Record<string, any>>) {
+    const repos = new Repos(data);
+    return repos.collection.map((repo) => repo.toObject());
+  }
+
+  setOrganizations(organizations: Array<Record<string, any>>) {
+    const orgs = new Organizations(organizations);
+    return orgs.list.map((org) => org.toObject());
   }
 
   fromGitHub(data: Record<string, any>) {
@@ -73,61 +72,15 @@ class User extends Model {
     this.reposURL = data?.repos_url;
   }
 
-  setRepos(data: Array<Record<string, any>>) {
-    const repos = new Repos(data);
-    return repos.collection.map((repo) => repo.toObject());
-  }
-
-  setOrganizations(organizations: Array<Record<string, any>>) {
-    const orgs = new Organizations(organizations);
-    return orgs.list.map((org) => org.toObject());
-  }
-
-  setContactMethods(data: Array<Record<string, any>>) {
-    let hackerrank = this.contactMethods.hackerrank.url;
-    let linkedin = this.contactMethods.linkedin.url;
-    let instagram = this.contactMethods.instagram.url;
-    let x = this.contactMethods.x.url;
-
-    if (Array.isArray(data) && data.length > 0) {
-      data.forEach((contact) => {
-        const url = new URL(contact.url);
-
-        if (url.host === 'www.hackerrank.com') {
-          hackerrank = url.href;
-        }
-
-        if (url.host === 'www.linkedin.com') {
-          linkedin = url.href;
-        }
-
-        if (url.host === 'x.com') {
-          x = url.href;
-        }
-
-        if (url.host === 'www.instagram.com') {
-          instagram = url.href;
-        }
-      });
-    }
-
-    this.contactMethods = new ContactMethods(
-      hackerrank,
-      linkedin,
-      x,
-      instagram,
-      this.contactMethods.github.url,
-      this.website,
-      this.email,
-      this.phone
-    );
-  }
-
   fromDB(data: Record<string, any>) {
     this.title = data?.title || this.title;
 
-    const resume = new URL(data?.resume);
-    this.resume = resume ? resume.href : this.resume;
+    try {
+      const resume = new URL(data?.resume);
+      this.resume = resume ? resume.href : this.resume;
+    } catch (error) {
+      console.error(`Invalid URL: ${data?.resume}`, error);
+    }
 
     this.images = data?.images || '';
   }

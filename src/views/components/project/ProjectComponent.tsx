@@ -8,14 +8,12 @@ import TheProblem from './TheProblem';
 import TheProcess from './TheProcess';
 
 import Project from '@/model/Project';
-import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 
 interface ProjectComponentProps {
   project: Project;
-  repoQuery: GitHubRepoQuery;
 }
 
-const ProjectComponent: React.FC<ProjectComponentProps> = ({ project, repoQuery }) => {
+const ProjectComponent: React.FC<ProjectComponentProps> = ({ project }) => {
   const {
     owner, title, description, solution, process, problem, details
   } = project;
@@ -23,7 +21,7 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ project, repoQuery 
   return (
     <>
       <main className="project">
-       <h1 className="title">{title}</h1>
+        <h1 className="title">{title}</h1>
 
         <DescriptionComponent description={description} />
 
@@ -34,7 +32,7 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ project, repoQuery 
         <TheProblem problem={problem} />
 
         {/* Project details is for clients only */}
-        {owner.type !== 'User' && <Details details={details} owner={owner} contributorsQuery={repoQuery} />}
+        {owner.type !== 'User' && <Details details={details} />}
       </main>
     </>
   );

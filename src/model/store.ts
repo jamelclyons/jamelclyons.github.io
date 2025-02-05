@@ -13,6 +13,7 @@ import { messageSlice } from '../controllers/messageSlice.js';
 import { updateSlice } from '../controllers/updateSlice.js';
 import { authSlice } from '../controllers/authSlice.js';
 import { databaseSlice } from '../controllers/databaseSlice.js';
+import { organizationSlice } from '@/controllers/organizationSlice.js';
 
 const store = configureStore({
   reducer: {
@@ -29,6 +30,7 @@ const store = configureStore({
     user: userSlice.reducer,
     auth: authSlice.reducer,
     database: databaseSlice.reducer,
+    organization: organizationSlice.reducer,
   },
 });
 

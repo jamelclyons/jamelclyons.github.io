@@ -3,7 +3,7 @@ import Contact from './Contact';
 import Image from './Image';
 
 class ContactMethods extends Model {
-  hackerrank: Contact;
+  hackerRank: Contact;
   linkedin: Contact;
   x: Contact;
   instagram: Contact;
@@ -12,26 +12,17 @@ class ContactMethods extends Model {
   email: Contact;
   phone: Contact;
 
-  constructor(
-    hackerrank?: string,
-    linkedin?: string,
-    x?: string,
-    instagram?: string,
-    github?: string,
-    website?: string,
-    email?: string,
-    phone?: string
-  ) {
+  constructor(data: Record<string, any>) {
     super();
-
-    this.hackerrank = this.setContactHackerRank(hackerrank);
-    this.linkedin = this.setContactLinkedIn(linkedin);
-    this.instagram = this.setContactInstagram(instagram);
-    this.x = this.setContactX(x);
-    this.github = this.setContactGitHub(github);
-    this.website = this.setContactWebsite(website);
-    this.email = this.setContactEmail(email);
-    this.phone = this.setContactPhone(phone);
+    
+    this.hackerRank = this.setContactHackerRank(data?.hacker_rank?.url);
+    this.linkedin = this.setContactLinkedIn(data?.linkedin?.url);
+    this.x = this.setContactX(data?.x?.url);
+    this.instagram = this.setContactInstagram(data?.instagram?.url);
+    this.github = this.setContactGitHub(data?.github?.url);
+    this.website = this.setContactWebsite(data?.website?.url);
+    this.email = this.setContactEmail(data?.email?.value);
+    this.phone = this.setContactPhone(data?.phone?.value);
   }
 
   setContact(data: Record<string, any>) {
@@ -190,6 +181,52 @@ class ContactMethods extends Model {
       image: image,
       value: value,
     });
+  }
+
+  fromGitHub(data: Array<Record<string, any>>) {
+    if (Array.isArray(data) && data.length > 0) {
+      const contactMethods: Record<string,any> = {};
+
+      data.forEach((contact) => {
+        try {
+          if (!contact?.url) return;
+
+          const url = new URL(contact.url);
+
+          if (url.host === 'www.hackerrank.com') {
+            contactMethods.hackerRank = this.setContactHackerRank(url.href).toObject();
+          }
+
+          if (url.host === 'www.linkedin.com') {
+            contactMethods.linkedin = this.setContactLinkedIn(url.href).toObject();
+          }
+
+          if (url.host === 'x.com') {
+            contactMethods.x = this.setContactX(url.href).toObject();
+          }
+
+          if (url.host === 'www.instagram.com') {
+            contactMethods.instagram = this.setContactInstagram(url.href).toObject();
+          }
+        } catch (error) {
+          console.error(`Invalid URL: ${contact.url}`, error);
+        }
+      });
+
+      return contactMethods;
+    }
+
+    return {};
+  }
+
+  fromDB(data: Record<string, any>) {
+    if (data?.id === 'email') {
+      this.email = this.setContactEmail(data.value);
+    }
+
+    if (data?.id === 'phone') {
+      this.phone = this.setContactPhone(data.value);
+    }
   }
 }
 

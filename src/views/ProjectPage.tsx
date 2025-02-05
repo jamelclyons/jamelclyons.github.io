@@ -76,8 +76,8 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
   return (
     <section className="project">
       <>
-        {project && repoQuery &&
-          <ProjectComponent project={project} repoQuery={repoQuery} />
+        {project &&
+          <ProjectComponent project={project} />
         }
       </>
     </section>

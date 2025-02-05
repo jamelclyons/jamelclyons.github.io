@@ -170,7 +170,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Home user={user} portfolio={portfolio} skills={skills} />} />
             <Route path="/about" element={<About user={user} portfolio={portfolio} skills={skills} />} />
-            <Route path="/orgs/:name" element={<OrganizationPage organizations={organizations} portfolio={portfolio} skills={skills} />} />
+            <Route path="/orgs/:login" element={<OrganizationPage organizations={organizations} portfolio={portfolio} skills={skills} />} />
             <Route path="/portfolio" element={<PortfolioPage user={user} portfolio={portfolio} skills={skills} />} />
             <Route path="/portfolio/:owner/:projectID" element={<ProjectPage portfolio={portfolio} />} />
             <Route path="/projects/:taxonomy/:term" element={<Search portfolio={portfolio} skills={skills} />} />
