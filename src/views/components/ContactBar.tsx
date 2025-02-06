@@ -2,7 +2,7 @@ import React from 'react'
 
 import ImageComponent from './ImageComponent';
 
-import ContactMethods from '../../model/ContactMethods'
+import ContactMethods from '@/model/ContactMethods'
 
 interface ContactBarProps {
     contactMethods: ContactMethods;
@@ -11,7 +11,7 @@ interface ContactBarProps {
 
 const ContactBar: React.FC<ContactBarProps> = ({ contactMethods, location }) => {
     const { hackerRank, email, phone, github, linkedin, instagram, x, website } = contactMethods;
-console.log(contactMethods)
+
     const mailTo = email.value ? `mailto:${email.value}` : '';
     const callNow = phone.value ? `tel:+${phone.value}` : '';
 

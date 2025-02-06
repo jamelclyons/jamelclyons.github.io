@@ -9,6 +9,7 @@ import user from '../../user.json';
 
 class User extends Model {
   id: string;
+  login: string;
   avatarURL: string;
   name: string;
   title: string;
@@ -33,6 +34,7 @@ class User extends Model {
       contact;
 
     this.id = data?.id;
+    this.login = data?.login;
     this.avatarURL = data?.avatar_url || '';
     this.name = data?.name || name;
     this.title = data?.title || title;
@@ -48,7 +50,7 @@ class User extends Model {
       ? new Organizations(data.organizations)
       : new Organizations();
     this.reposURL = data?.repos_url;
-    this.repos = data?.repos ? new Repos(data?.repos) : new Repos();
+    this.repos = data?.repos ? new Repos(data.repos) : new Repos();
   }
 
   setRepos(data: Array<Record<string, any>>) {
@@ -70,6 +72,7 @@ class User extends Model {
     this.website = data?.blog;
     this.organizationsURL = data?.organizations_url;
     this.reposURL = data?.repos_url;
+    this.login = data?.login;
   }
 
   fromDB(data: Record<string, any>) {

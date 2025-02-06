@@ -194,7 +194,7 @@ class ContactMethods extends Model {
           const url = new URL(contact.url);
 
           if (url.host === 'www.hackerrank.com') {
-            contactMethods.hackerRank = this.setContactHackerRank(url.href).toObject();
+            contactMethods.hacker_rank = this.setContactHackerRank(url.href).toObject();
           }
 
           if (url.host === 'www.linkedin.com') {

@@ -18,6 +18,7 @@ const ProjectsEditPage = lazy(() => import('./views/ProjectsEditPage'));
 const NotFound = lazy(() => import('./views/NotFound'));
 const ProjectUpdate = lazy(() => import('./views/ProjectUpdate'));
 const LoginPage = lazy(() => import('./views/LoginPage'));
+const UserPage = lazy(() => import('./views/UserPage'));
 
 import ProtectedRoute from './ProtectedRoute';
 
@@ -29,8 +30,8 @@ import {
   getTechnologies,
 } from './controllers/taxonomiesSlice';
 import {
-  getUser,
-} from './controllers/userSlice';
+  getAccount,
+} from './controllers/accountSlice';
 
 import type { AppDispatch, RootState } from './model/store';
 import Repos from './model/Repos';
@@ -45,31 +46,31 @@ import Dashboard from './views/Dashboard';
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { userObject } = useSelector((state: RootState) => state.user);
+  const { accountObject } = useSelector((state: RootState) => state.account);
   const { portfolioObject, skillsObject } = useSelector((state: RootState) => state.portfolio);
   const { projectTypesObject, languagesObject, frameworksObject, technologiesObject } = useSelector(
     (state: RootState) => state.taxonomies
   );
 
-  const [user, setUser] = useState<User>(new User(userObject));
+  const [user, setUser] = useState<User>(new User());
   const [organizations, setOrganizations] = useState<Organizations>(new Organizations);
   const [repos, setRepos] = useState<Repos>();
   const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio);
   const [skills, setSkills] = useState<Skills>(new Skills(skillsObject));
 
   useEffect(() => {
-    dispatch(getUser());
+    dispatch(getAccount());
   }, [dispatch]);
 
   useEffect(() => {
-    if (userObject) {
-      setUser(new User(userObject));
+    if (accountObject) {
+      setUser(new User(accountObject));
     }
-  }, [userObject]);
+  }, [accountObject]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setOrganizations(user.organizations);
-  },[user]);
+  }, [user]);
 
   useEffect(() => {
     if (user) {
@@ -170,7 +171,8 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Home user={user} portfolio={portfolio} skills={skills} />} />
             <Route path="/about" element={<About user={user} portfolio={portfolio} skills={skills} />} />
-            <Route path="/orgs/:login" element={<OrganizationPage organizations={organizations} portfolio={portfolio} skills={skills} />} />
+            <Route path="/organization/:login" element={<OrganizationPage organizations={organizations} portfolio={portfolio} skills={skills} />} />
+            <Route path="/user/:login" element={<UserPage />} />
             <Route path="/portfolio" element={<PortfolioPage user={user} portfolio={portfolio} skills={skills} />} />
             <Route path="/portfolio/:owner/:projectID" element={<ProjectPage portfolio={portfolio} />} />
             <Route path="/projects/:taxonomy/:term" element={<Search portfolio={portfolio} skills={skills} />} />

@@ -1,8 +1,8 @@
 import React from 'react';
 
-import User from '../../../model/User';
+import User from '@/model/User';
 
-import MemberPic from './MemberPic';
+import UserComponent from './UserComponent';
 
 interface MemberProps {
   user: User
@@ -28,9 +28,8 @@ const MemberCard: React.FC<MemberProps> = ({ user }) => {
       <button
         className="user-button"
         onClick={() => handleClick()}>
-        <div className="author-card card">
-          <MemberPic user={user} />
-          <h3 className="title">{user.title}</h3>
+        <div className="user-card card">
+          <UserComponent user={user} />
         </div>
       </button>
     </>

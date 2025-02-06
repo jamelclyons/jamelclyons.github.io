@@ -5,12 +5,12 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
-import { getUserAccount } from '@/controllers/githubSlice';
+import { getAuthenticatedAccount } from '@/controllers/githubSlice';
 import { getUserData } from '@/controllers/databaseSlice';
 
 import User from '@/model/User';
 
-interface UserState {
+interface AccountState {
   userLoading: boolean;
   userStatusCode: string;
   userError: Error | null;
@@ -22,13 +22,13 @@ interface UserState {
   bio: string;
   resume: string;
   content: Array<string> | null;
-  userObject: Record<string, any> | null;
+  accountObject: Record<string, any> | null;
   organizations: [];
   repos: [];
   socialAccounts: [];
 }
 
-const initialState: UserState = {
+const initialState: AccountState = {
   userLoading: false,
   userStatusCode: '',
   userError: null,
@@ -40,23 +40,38 @@ const initialState: UserState = {
   bio: '',
   resume: '',
   content: null,
-  userObject: {},
+  accountObject: null,
   organizations: [],
   repos: [],
   socialAccounts: [],
 };
 
-export const getUser = createAsyncThunk(
-  'user/getUser',
-  async (login: string, thunkAPI) => {
+export const getAccount = createAsyncThunk(
+  'account/getAccount',
+  async (_, thunkAPI) => {
     try {
-      const userResponse = await thunkAPI.dispatch(getUserAccount(login));
+      const accountResponse = await thunkAPI.dispatch(
+        getAuthenticatedAccount()
+      );
 
       if (
-        getUserAccount.fulfilled.match(userResponse) &&
-        userResponse.payload
+        getAuthenticatedAccount.fulfilled.match(accountResponse) &&
+        accountResponse.payload
       ) {
-        const user = new User(userResponse.payload);
+        const user = new User();
+        let contact_methods = null;
+        let repos = null;
+
+        user.fromGitHub(accountResponse.payload);
+
+        if (accountResponse.payload.contact_methods) {
+          contact_methods = accountResponse.payload.contact_methods;
+        }
+
+        if (accountResponse.payload.repos) {
+          repos = user.setRepos(accountResponse.payload.repos);
+        }
+
         const databaseResponse = await thunkAPI.dispatch(getUserData(user.id));
 
         if (
@@ -65,8 +80,12 @@ export const getUser = createAsyncThunk(
         ) {
           user.fromDB(databaseResponse.payload);
         }
-
-        return user.toObject();
+        
+        return {
+          ...user.toObject(),
+          repos: repos,
+          contact_methods: contact_methods,
+        };
       }
 
       return null;
@@ -78,24 +97,24 @@ export const getUser = createAsyncThunk(
   }
 );
 
-const userSliceOptions: CreateSliceOptions<UserState> = {
-  name: 'user',
+const accountSliceOptions: CreateSliceOptions<AccountState> = {
+  name: 'account',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getUser.fulfilled, (state, action) => {
+      .addCase(getAccount.fulfilled, (state, action) => {
         state.userLoading = false;
         state.userErrorMessage = '';
         state.userError = null;
-        state.userObject = action.payload;
+        state.accountObject = action.payload;
       })
-      .addMatcher(isAnyOf(getUser.pending), (state) => {
+      .addMatcher(isAnyOf(getAccount.pending), (state) => {
         state.userLoading = true;
         state.userErrorMessage = '';
         state.userError = null;
       })
-      .addMatcher(isAnyOf(getUser.rejected), (state, action) => {
+      .addMatcher(isAnyOf(getAccount.rejected), (state, action) => {
         state.userLoading = false;
         state.userErrorMessage = action.error.message || '';
         state.userError = action.error as Error;
@@ -103,6 +122,6 @@ const userSliceOptions: CreateSliceOptions<UserState> = {
   },
 };
 
-export const userSlice = createSlice(userSliceOptions);
+export const accountSlice = createSlice(accountSliceOptions);
 
-export default userSlice;
+export default accountSlice;
