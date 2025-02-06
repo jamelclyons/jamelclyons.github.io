@@ -23,12 +23,7 @@ const UserPage = lazy(() => import('./views/UserPage'));
 import ProtectedRoute from './ProtectedRoute';
 
 import { getPortfolio, setPortfolioSkills, SkillsObject } from './controllers/portfolioSlice';
-import {
-  getLanguages,
-  getProjectTypes,
-  getFrameworks,
-  getTechnologies,
-} from './controllers/taxonomiesSlice';
+
 import {
   getAccount,
 } from './controllers/accountSlice';
@@ -42,21 +37,21 @@ import Organizations from './model/Organizations';
 
 import OrganizationPage from './views/OrganizationPage';
 import Dashboard from './views/Dashboard';
+import Account from './model/Account';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { accountObject } = useSelector((state: RootState) => state.account);
-  const { portfolioObject, skillsObject } = useSelector((state: RootState) => state.portfolio);
+  const { accountLoading, accountObject } = useSelector((state: RootState) => state.account);
+  const { skillsObject } = useSelector((state: RootState) => state.portfolio);
   const { projectTypesObject, languagesObject, frameworksObject, technologiesObject } = useSelector(
     (state: RootState) => state.taxonomies
   );
 
-  const [user, setUser] = useState<User>(new User());
-  const [organizations, setOrganizations] = useState<Organizations>(new Organizations);
-  const [repos, setRepos] = useState<Repos>();
-  const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio);
-  const [skills, setSkills] = useState<Skills>(new Skills(skillsObject));
+  const [account, setAccount] = useState<Account>(new Account());
+
+  const { user, skills, portfolio } = account;
+  const { name, avatarURL, organizations, contactMethods } = user;
 
   useEffect(() => {
     dispatch(getAccount());
@@ -64,16 +59,12 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (accountObject) {
-      setUser(new User(accountObject));
+      setAccount(new Account(accountObject));
     }
   }, [accountObject]);
 
   useEffect(() => {
-    setOrganizations(user.organizations);
-  }, [user]);
-
-  useEffect(() => {
-    if (user) {
+    if (avatarURL) {
       let favicon = document.getElementById("favicon");
 
       if (!favicon) {
@@ -84,88 +75,19 @@ const App: React.FC = () => {
         document.head.appendChild(favicon);
       }
 
-      if (user.avatarURL) {
-        favicon.setAttribute("href", user.avatarURL);
+      if (avatarURL) {
+        favicon.setAttribute("href", avatarURL);
       }
     }
-  }, [user]);
+  }, [avatarURL]);
 
-  useEffect(() => {
-    dispatch(getProjectTypes());
-  }, [dispatch, user]);
-
-  useEffect(() => {
-    dispatch(getLanguages());
-  }, [dispatch, user]);
-
-  useEffect(() => {
-    dispatch(getFrameworks());
-  }, [dispatch, user]);
-
-  useEffect(() => {
-    dispatch(getTechnologies());
-  }, [dispatch, user]);
-
-  useEffect(() => {
-    if (
-      projectTypesObject &&
-      languagesObject &&
-      frameworksObject &&
-      technologiesObject
-    ) {
-      const skillsPayload: SkillsObject = {
-        types: projectTypesObject,
-        languages: languagesObject,
-        frameworks: frameworksObject,
-        technologies: technologiesObject
-      }
-
-      dispatch(setPortfolioSkills(skillsPayload));
-    }
-  }, [
-    projectTypesObject,
-    languagesObject,
-    frameworksObject,
-    technologiesObject
-  ]);
-
-  useEffect(() => {
-    if (skillsObject) {
-      setSkills(new Skills(skillsObject));
-    }
-  }, [skillsObject]);
-
-  useEffect(() => {
-    if (user) {
-      setRepos(user.repos);
-    }
-  }, [user, dispatch]);
-
-  useEffect(() => {
-    if (repos && repos.collection.length > 0) {
-      portfolio.getProjectsFromRepos(repos.collection);
-      setPortfolio(portfolio);
-    }
-  }, [repos, dispatch]);
-
-  useEffect(() => {
-    if (portfolio.projects.size > 0) {
-      dispatch(getPortfolio());
-    }
-  }, [portfolio, dispatch]);
-
-  useEffect(() => {
-    if (portfolioObject &&
-      Array.isArray(portfolioObject) &&
-      portfolioObject.length > 0) {
-      portfolio.getProjectsFromDB(portfolioObject);
-      setPortfolio(portfolio);
-    }
-  }, [portfolioObject]);
+  if (accountLoading) {
+    return <LoadingComponent />;
+  }
 
   return (
     <>
-      <HeaderComponent name={user.name} />
+      <HeaderComponent name={name} />
       <Router>
         <Suspense fallback={<LoadingComponent />}>
           <Routes>
@@ -207,7 +129,7 @@ const App: React.FC = () => {
         </Suspense>
       </Router >
       <FooterComponent
-        contactMethods={user.contactMethods}
+        contactMethods={contactMethods}
       />
     </>
   );

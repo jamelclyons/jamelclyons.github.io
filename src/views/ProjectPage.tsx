@@ -44,7 +44,7 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
   }, [owner, projectID]);
 
   useEffect(() => {
-    if (portfolio.projects.size === 0 && repoQuery) {
+    if (repoQuery) {
       dispatch(getProject(repoQuery));
     }
   }, [dispatch, repoQuery]);

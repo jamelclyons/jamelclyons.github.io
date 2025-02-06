@@ -7,11 +7,19 @@ import {
 
 import { getAuthenticatedAccount } from '@/controllers/githubSlice';
 import { getUserData } from '@/controllers/databaseSlice';
+import {
+  getLanguages,
+  getProjectTypes,
+  getFrameworks,
+  getTechnologies,
+} from '@/controllers/taxonomiesSlice';
 
 import User from '@/model/User';
+import Repos from '@/model/Repos';
+import Portfolio from '@/model/Portfolio';
 
 interface AccountState {
-  userLoading: boolean;
+  accountLoading: boolean;
   userStatusCode: string;
   userError: Error | null;
   userErrorMessage: string;
@@ -29,7 +37,7 @@ interface AccountState {
 }
 
 const initialState: AccountState = {
-  userLoading: false,
+  accountLoading: false,
   userStatusCode: '',
   userError: null,
   userErrorMessage: '',
@@ -80,11 +88,68 @@ export const getAccount = createAsyncThunk(
         ) {
           user.fromDB(databaseResponse.payload);
         }
-        
+
+        let types: Array<Record<string, any>> = [];
+        let languages: Array<Record<string, any>> = [];
+        let frameworks: Array<Record<string, any>> = [];
+        let technologies: Array<Record<string, any>> = [];
+
+        const typesResponse = await thunkAPI.dispatch(getProjectTypes());
+
+        if (
+          getProjectTypes.fulfilled.match(typesResponse) &&
+          typesResponse.payload
+        ) {
+          types = typesResponse.payload;
+        }
+
+        const languagesResponse = await thunkAPI.dispatch(getLanguages());
+
+        if (
+          getLanguages.fulfilled.match(languagesResponse) &&
+          languagesResponse.payload
+        ) {
+          languages = languagesResponse.payload;
+        }
+
+        const frameworksResponse = await thunkAPI.dispatch(getFrameworks());
+
+        if (
+          getFrameworks.fulfilled.match(frameworksResponse) &&
+          frameworksResponse.payload
+        ) {
+          frameworks = frameworksResponse.payload;
+        }
+
+        const technologiesResponse = await thunkAPI.dispatch(getTechnologies());
+
+        if (
+          getTechnologies.fulfilled.match(technologiesResponse) &&
+          technologiesResponse.payload
+        ) {
+          technologies = technologiesResponse.payload;
+        }
+
+        const portfolio = new Portfolio();
+        let projects = null;
+
+        if (repos) {
+          projects = portfolio.getProjectsFromRepos(new Repos(repos));
+        }
+
         return {
-          ...user.toObject(),
-          repos: repos,
-          contact_methods: contact_methods,
+          user: {
+            ...user.toObject(),
+            repos: repos,
+            contact_methods: contact_methods,
+          },
+          skills: {
+            types: types,
+            languages: languages,
+            frameworks: frameworks,
+            technologies: technologies,
+          },
+          projects: projects,
         };
       }
 
@@ -104,18 +169,18 @@ const accountSliceOptions: CreateSliceOptions<AccountState> = {
   extraReducers: (builder) => {
     builder
       .addCase(getAccount.fulfilled, (state, action) => {
-        state.userLoading = false;
+        state.accountLoading = false;
         state.userErrorMessage = '';
         state.userError = null;
         state.accountObject = action.payload;
       })
       .addMatcher(isAnyOf(getAccount.pending), (state) => {
-        state.userLoading = true;
+        state.accountLoading = true;
         state.userErrorMessage = '';
         state.userError = null;
       })
       .addMatcher(isAnyOf(getAccount.rejected), (state, action) => {
-        state.userLoading = false;
+        state.accountLoading = false;
         state.userErrorMessage = action.error.message || '';
         state.userError = action.error as Error;
       });

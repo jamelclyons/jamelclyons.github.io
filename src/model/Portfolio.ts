@@ -1,6 +1,7 @@
 import Model from '../model/Model';
 import Project from './Project';
 import Repo from './Repo';
+import Repos from './Repos';
 
 class Portfolio extends Model {
   projects: Set<Project>;
@@ -23,22 +24,22 @@ class Portfolio extends Model {
     return projects;
   }
 
-  getCount(){
+  getCount() {
     return this.projects.size;
   }
 
-  getProjectsFromRepos(repos: Array<Repo>) {
-    let repoProjects: Set<Project> = new Set();
+  getProjectsFromRepos(repos: Repos) {
+    let repoProjectsObject: Array<Record<string, any>> = [];
 
-    if (repos.length > 0) {
-      repos.forEach((repo) => {
+    if (repos.count > 0) {
+      repos.collection.forEach((repo) => {
         let project = new Project();
         project.fromRepo(repo);
-        repoProjects.add(project);
+        repoProjectsObject.push(project.toObject());
       });
     }
 
-    this.projects = repoProjects;
+    return repoProjectsObject;
   }
 
   getProjectsFromDB(docs: Array<Record<string, any>>) {
