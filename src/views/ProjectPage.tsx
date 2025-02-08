@@ -70,14 +70,19 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
   }, [dispatch, projectErrorMessage]);
 
   if (projectLoading) {
-    return <LoadingComponent />;
+    return (
+      <section className="project">
+        <>
+          <LoadingComponent />
+        </>
+      </section>);
   }
 
   return (
     <section className="project">
       <>
-        {project &&
-          <ProjectComponent project={project} />
+        {project ?
+          <ProjectComponent project={project} /> : <LoadingComponent />
         }
       </>
     </section>

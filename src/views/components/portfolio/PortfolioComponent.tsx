@@ -11,21 +11,20 @@ import Skills from '@/model/Skills';
 
 interface PortfolioComponentProps {
   portfolio: Portfolio;
-  skills: Skills;
 }
 
-const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ portfolio, skills }) => {
+const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ portfolio }) => {
   const { projects } = portfolio;
 
   return (
     <>
-      {projects.size > 0 && skills && (
+      {projects.size > 0 && (
         <main className="portfolio">
           <h1 className="title">portfolio</h1>
 
           <ProjectsComponent projects={projects} />
 
-          {skills && <SkillsComponent skills={skills} />}
+          <SkillsComponent skillsUsed={null} />
         </main>
       )}
     </>

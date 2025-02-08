@@ -11,23 +11,15 @@ class Skills extends Model {
   languages: Set<Language>;
   frameworks: Set<Framework>;
   technologies: Set<Technology>;
-  count: number = 0;
+  count: number;
 
   constructor(data: Record<string, any> = []) {
     super();
 
-    this.types = Array.isArray(data?.types)
-      ? this.getProjectTypes(data.types)
-      : new Set();
-    this.languages = Array.isArray(data?.languages)
-      ? this.getLanguages(data.languages)
-      : new Set();
-    this.frameworks = Array.isArray(data?.frameworks)
-      ? this.getFrameworks(data.frameworks)
-      : new Set();
-    this.technologies = Array.isArray(data?.technologies)
-      ? this.getTechnologies(data.technologies)
-      : new Set();
+    this.types = this.getProjectTypes(data.types || []);
+    this.languages = this.getLanguages(data.languages || []);
+    this.frameworks = this.getFrameworks(data.frameworks || []);
+    this.technologies = this.getTechnologies(data.technologies || []);
 
     this.count = this.getCount();
   }
@@ -108,7 +100,57 @@ class Skills extends Model {
     return new Taxonomy();
   }
 
-  getCount() {
+  show(skillsUsed: Skills) {
+    const filteredSkills: Skills = new Skills();
+
+    if (skillsUsed.count > 0) {
+      if (skillsUsed.types.size > 0) {
+        skillsUsed.types.forEach((typeUsed) => {
+          this.types.forEach((type) => {
+            if (typeUsed.id === type.id) {
+              filteredSkills.types.add(type);
+            }
+          });
+        });
+      }
+
+      if (skillsUsed.languages.size > 0) {
+        skillsUsed.languages.forEach((languageUsed) => {
+          this.languages.forEach((language) => {
+            if (languageUsed.id === language.id) {
+              filteredSkills.languages.add(language);
+            }
+          });
+        });
+      }
+
+      if (skillsUsed.frameworks.size > 0) {
+        skillsUsed.frameworks.forEach((frameworkUsed) => {
+          this.frameworks.forEach((framework) => {
+            if (frameworkUsed.id === framework.id) {
+              filteredSkills.frameworks.add(framework);
+            }
+          });
+        });
+      }
+
+      if (skillsUsed.technologies.size > 0) {
+        skillsUsed.technologies.forEach((technologyUsed) => {
+          this.technologies.forEach((technology) => {
+            if (technologyUsed.id === technology.id) {
+              filteredSkills.technologies.add(technology);
+            }
+          });
+        });
+      }
+
+      return filteredSkills;
+    }
+
+    return this;
+  }
+
+  getCount(): number {
     return (
       this.types.size +
       this.languages.size +

@@ -30,7 +30,7 @@ const Home: React.FC<HomeProps> = ({ user, portfolio, skills }) => {
 
         <MemberKnowledgeComponent skills={skills} />
 
-        <PortfolioComponent portfolio={portfolio} skills={skills} />
+        <PortfolioComponent portfolio={portfolio} />
 
         <ContactComponent user={user} />
       </section>

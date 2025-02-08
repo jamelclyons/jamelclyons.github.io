@@ -7,7 +7,7 @@ interface MemberPicProps {
 
 const MemberPic: React.FC<MemberPicProps> = ({ user }) => {
     return (
-        <div className="author-pic">
+        <div className="user-pic">
             <img src={user?.avatarURL} alt="" />
         </div>
     )

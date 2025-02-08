@@ -65,7 +65,7 @@ const Search: React.FC<SearchProps> = ({ portfolio, skills }) => {
           <ProjectsComponent projects={portfolio.filterProjects(taxonomy, term)} />
         }
 
-        {skills && <SkillsComponent skills={skills} />}
+        {skills && <SkillsComponent skillsUsed={skills} />}
       </>
     </section>
   );

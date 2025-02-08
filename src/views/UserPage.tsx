@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
+import LoadingComponent from './components/LoadingComponent';
 import UserComponent from './components/user/UserComponent';
 
 import type { AppDispatch, RootState } from '@/model/store';
@@ -16,7 +17,7 @@ const UserPage: React.FC = () => {
 
   const { login } = useParams<string>();
 
-  const { userObject } = useSelector((state: RootState) => state.user);
+  const { userLoading, userObject } = useSelector((state: RootState) => state.user);
 
   const [user, setUser] = useState<User>(new User());
 
@@ -32,10 +33,19 @@ const UserPage: React.FC = () => {
     }
   }, [userObject]);
 
+  if (userLoading) {
+    return (
+      <section className='user'>
+        <>
+          <LoadingComponent />
+        </>
+      </section>);
+  }
+
   return (
     <section className='user' id='top'>
       <>
-        <UserComponent user={user} />
+        {user ? <UserComponent user={user} /> : <LoadingComponent />}
       </>
     </section>
   );

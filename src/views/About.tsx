@@ -120,7 +120,7 @@ const About: React.FC<AboutProps> = ({ user, portfolio, skills }) => {
           </div>
         </div>
 
-        <SkillsComponent skills={skills} />
+        <SkillsComponent skillsUsed={null} />
 
         {story && <StoryComponent story={story} />}
 

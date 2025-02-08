@@ -56,6 +56,7 @@ export const getUser = createAsyncThunk(
         getUserAccount.fulfilled.match(userResponse) &&
         userResponse.payload
       ) {
+        console.log(userResponse.payload)
         const user = new User(userResponse.payload);
         const databaseResponse = await thunkAPI.dispatch(getUserData(user.id));
 

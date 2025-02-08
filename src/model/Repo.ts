@@ -17,10 +17,10 @@ class Repo extends Model {
   homepage: string;
   description: string;
   repoURL: string;
-  skills: Skills = new Skills;
-  contents: RepoContents = new RepoContents;
+  skills: Skills = new Skills();
+  contents: RepoContents = new RepoContents();
   contributorsURL: string;
-  contributors: Contributors = new Contributors;
+  contributors: Contributors = new Contributors();
 
   constructor(data: Record<string, any> = {}) {
     super();
@@ -34,7 +34,7 @@ class Repo extends Model {
     this.homepage = data?.homepage ?? '';
     this.description = data?.description ?? '';
     this.repoURL = data?.url ?? data?.repo_url;
-    this.setSkills(data.skills);
+    this.skills = this.getSkills(data.skills);
     this.contents = data?.contents
       ? new RepoContents(
           new RepoContent(data.contents.solution),
@@ -124,33 +124,48 @@ class Repo extends Model {
     return [];
   }
 
-  setSkills(repoSkills: Array<Record<string, any>>) {
+  getSkills(repoSkills: Array<Record<string, any>>) {
     if (repoSkills && Array.isArray(repoSkills) && repoSkills.length > 0) {
+      let types: Array<Record<string, any>> = [];
+      let languages: Array<Record<string, any>> = [];
+      let frameworks: Array<Record<string, any>> = [];
+      let technologies: Array<Record<string, any>> = [];
+
       repoSkills.forEach((skill) => {
         if (skill.type === 'technology') {
-          this.skills.technologies.add(
+          technologies.push(
             new Technology({
               id: skill.id,
               title: skill.title,
               icon_url: skill.icon_url,
               class_name: skill.class_name,
               usage: skill.usage,
-            })
+            }).toObject()
           );
         }
 
-        if (skill.type === 'language')
-          this.skills.languages.add(
+        if (skill.type === 'language') {
+          languages.push(
             new Language({
               id: skill.id.toLowerCase(),
               title: skill.title.toUpperCase(),
               icon_url: skill.icon_url,
               class_name: skill.class_name,
               usage: skill.usage,
-            })
+            }).toObject()
           );
+        }
+      });
+
+      return new Skills({
+        types: types,
+        languages: languages,
+        frameworks: frameworks,
+        technologies: technologies,
       });
     }
+
+    return new Skills();
   }
 
   setContents(contentsObject: Record<string, any>) {

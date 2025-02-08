@@ -22,18 +22,13 @@ const UserPage = lazy(() => import('./views/UserPage'));
 
 import ProtectedRoute from './ProtectedRoute';
 
-import { getPortfolio, setPortfolioSkills, SkillsObject } from './controllers/portfolioSlice';
+import { setPortfolioSkills } from './controllers/portfolioSlice';
 
 import {
   getAccount,
 } from './controllers/accountSlice';
 
 import type { AppDispatch, RootState } from './model/store';
-import Repos from './model/Repos';
-import User from './model/User';
-import Portfolio from './model/Portfolio';
-import Skills from './model/Skills';
-import Organizations from './model/Organizations';
 
 import OrganizationPage from './views/OrganizationPage';
 import Dashboard from './views/Dashboard';
@@ -43,10 +38,6 @@ const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { accountLoading, accountObject } = useSelector((state: RootState) => state.account);
-  const { skillsObject } = useSelector((state: RootState) => state.portfolio);
-  const { projectTypesObject, languagesObject, frameworksObject, technologiesObject } = useSelector(
-    (state: RootState) => state.taxonomies
-  );
 
   const [account, setAccount] = useState<Account>(new Account());
 
@@ -62,6 +53,12 @@ const App: React.FC = () => {
       setAccount(new Account(accountObject));
     }
   }, [accountObject]);
+
+  useEffect(() => {
+    if (skills.count > 0) {
+      dispatch(setPortfolioSkills(skills.toObject()))
+    }
+  }, [skills, dispatch]);
 
   useEffect(() => {
     if (avatarURL) {
@@ -82,7 +79,13 @@ const App: React.FC = () => {
   }, [avatarURL]);
 
   if (accountLoading) {
-    return <LoadingComponent />;
+    return (
+      <section>
+        <>
+          <LoadingComponent />
+        </>
+      </section>
+    );
   }
 
   return (

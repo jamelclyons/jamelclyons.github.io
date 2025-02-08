@@ -79,7 +79,7 @@ const OrganizationPage: React.FC<OrganizationPageProps> = ({ organizations, port
                     <ProjectsComponent projects={portfolio.filterProjectsByLogin(organization.login)} />
                 }
 
-                {skills && <SkillsComponent skills={skills} />}
+                {skills && <SkillsComponent skillsUsed={skills} />}
             </>
         </section>
     )

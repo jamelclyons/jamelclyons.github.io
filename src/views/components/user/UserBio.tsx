@@ -10,7 +10,7 @@ const UserBio: React.FC<UserBioProps> = ({ bio }) => {
             {bio !== '' && (
                 <div className="user-bio-card card">
                     <h3 className="user-bio">
-                        <q>{bio}</q>
+                        {bio}
                     </h3>
                 </div>
             )}

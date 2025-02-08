@@ -5,7 +5,16 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
-import { doc, getDoc, Timestamp } from 'firebase/firestore';
+import {
+  doc,
+  getDoc,
+  Timestamp,
+  collection,
+  CollectionReference,
+  DocumentReference,
+  DocumentSnapshot,
+  DocumentData,
+} from 'firebase/firestore';
 
 import { db } from '../services/firebase/config';
 
@@ -48,6 +57,9 @@ const initialState: DatabaseState = {
   userDataObject: null,
   organizationDataObject: null,
 };
+
+const portfolioCollection: CollectionReference<DocumentData, DocumentData> =
+  collection(db, 'portfolio');
 
 export const getUserData = createAsyncThunk(
   'database/getUserData',
@@ -94,6 +106,55 @@ export const getOrganizationData = createAsyncThunk(
         });
 
         return data;
+      }
+
+      return null;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const getTaxonomyData = createAsyncThunk(
+  'database/getTaxonomyData',
+  async (organization: string) => {
+    try {
+      const docRef = doc(db, `organization/${organization}`);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        let data = docSnap.data() as Record<string, any>;
+
+        Object.keys(data).forEach((key) => {
+          if (data[key] instanceof Timestamp) {
+            data[key] = data[key].toDate().toISOString();
+          }
+        });
+
+        return data;
+      }
+
+      return null;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const getProjectData = createAsyncThunk(
+  'database/getProjectData',
+  async (projectID: string) => {
+    try {
+      const docRef: DocumentReference = doc(portfolioCollection, projectID);
+      const docSnap: DocumentSnapshot<DocumentData, DocumentData> =
+        await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        return docSnap as Record<string, any>;
       }
 
       return null;

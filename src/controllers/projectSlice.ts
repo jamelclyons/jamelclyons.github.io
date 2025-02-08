@@ -1,25 +1,11 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
-import {
-  collection,
-  doc,
-  getDoc,
-  CollectionReference,
-  DocumentReference,
-  DocumentSnapshot,
-  DocumentData,
-} from 'firebase/firestore';
-
-import { db } from '../services/firebase/config';
-
 import { getRepoDetails } from './githubSlice';
+import { getProjectData } from './databaseSlice';
 
 import Repo from '@/model/Repo';
 import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 import Project from '@/model/Project';
-
-const portfolioCollection: CollectionReference<DocumentData, DocumentData> =
-  collection(db, 'portfolio');
 
 interface ProjectState {
   projectLoading: boolean;
@@ -49,17 +35,19 @@ export const getProject = createAsyncThunk(
         getRepoDetails.fulfilled.match(repoDetailsResponse) &&
         repoDetailsResponse.payload
       ) {
-        const repo = new Repo(repoDetailsResponse.payload);
-        project.fromRepo(repo)
+        project.fromRepo(new Repo(repoDetailsResponse.payload))
       }
 
-      // const docRef: DocumentReference = doc(portfolioCollection, query.repo);
-      // const docSnap: DocumentSnapshot<DocumentData, DocumentData> =
-      //   await getDoc(docRef);
+      const projectDataResponse = await thunkAPI.dispatch(
+        getProjectData(query.repo)
+      );
 
-      // if (docSnap.exists()) {
-      //   project.fromDocumentData(docSnap.id, docSnap.data())
-      // }
+      if (
+        getProjectData.fulfilled.match(projectDataResponse) &&
+        projectDataResponse.payload
+      ) {
+        project.fromDocumentData(projectDataResponse.payload.id, projectDataResponse.payload.data())
+      }
 
       return project.toObject();
     } catch (error) {

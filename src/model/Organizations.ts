@@ -15,7 +15,6 @@ class Organizations extends Model {
         organizations.push(new Organization(organization));
       });
     }
-
     this.list = organizations;
     this.count = organizations.length;
   }

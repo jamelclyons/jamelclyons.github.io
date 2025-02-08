@@ -14,7 +14,7 @@ const OrganizationsComponent: React.FC<OrganizationsComponentProps> = ({ organiz
 
   const handleClick = (organization: Organization) => {
     handleOrganizations();
-    window.location.href = `/#/orgs/${organization.login}`;
+    window.location.href = `/#/organization/${organization.login}`;
   };
 
   const handleOrganizations = () => {

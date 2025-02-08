@@ -55,7 +55,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
         <h4 className="title">development</h4>
 
-        {skills && <SkillsComponent skills={skills} />}
+        {skills && <SkillsComponent skillsUsed={skills} />}
 
         {checkList.length > 0 && <CheckList checkList={checkList} />}
 

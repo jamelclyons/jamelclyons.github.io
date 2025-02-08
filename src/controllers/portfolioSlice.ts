@@ -93,23 +93,23 @@ export const portfolioSlice = createSlice({
   name: 'portfolio',
   initialState,
   reducers: {
-    setPortfolioSkills: (state, action: PayloadAction<SkillsObject>) => {
-      const serializeSkills = (skills: SkillsObject): SkillsObject => {
+    setPortfolioSkills: (state, action: PayloadAction<Record<string, any>>) => {
+      const serializeSkills = (skills: Record<string, any>): SkillsObject => {
         return {
-          types: skills.types.map((item) => {
+          types: skills.types.map((item: Record<string, any>) => {
             const type = new ProjectType(item).toObject();
             const image = new Image(item.image).toObject();
 
-            type.image = image
+            type.image = image;
             return type;
           }),
-          languages: skills.languages.map((item) =>
+          languages: skills.languages.map((item: Record<string, any>) =>
             new Language(item).toObject()
           ),
-          frameworks: skills.frameworks.map((item) =>
+          frameworks: skills.frameworks.map((item: Record<string, any>) =>
             new Framework(item).toObject()
           ),
-          technologies: skills.technologies.map((item) =>
+          technologies: skills.technologies.map((item: Record<string, any>) =>
             new Technology(item).toObject()
           ),
         };

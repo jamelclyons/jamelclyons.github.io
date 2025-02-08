@@ -5,7 +5,10 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
-import { getAuthenticatedAccount } from '@/controllers/githubSlice';
+import {
+  getAuthenticatedAccount,
+  getOrganizationDetailsList,
+} from '@/controllers/githubSlice';
 import { getUserData } from '@/controllers/databaseSlice';
 import {
   getLanguages,
@@ -80,15 +83,6 @@ export const getAccount = createAsyncThunk(
           repos = user.setRepos(accountResponse.payload.repos);
         }
 
-        const databaseResponse = await thunkAPI.dispatch(getUserData(user.id));
-
-        if (
-          getUserData.fulfilled.match(databaseResponse) &&
-          databaseResponse.payload
-        ) {
-          user.fromDB(databaseResponse.payload);
-        }
-
         let types: Array<Record<string, any>> = [];
         let languages: Array<Record<string, any>> = [];
         let frameworks: Array<Record<string, any>> = [];
@@ -130,6 +124,19 @@ export const getAccount = createAsyncThunk(
           technologies = technologiesResponse.payload;
         }
 
+        let organizations: Array<Record<string, any>> = [];
+
+        const organizationsResponse = await thunkAPI.dispatch(
+          getOrganizationDetailsList(user.organizationsURL)
+        );
+
+        if (
+          getOrganizationDetailsList.fulfilled.match(organizationsResponse) &&
+          organizationsResponse.payload
+        ) {
+          organizations = user.setOrganizations(organizationsResponse.payload);
+        }
+
         const portfolio = new Portfolio();
         let projects = null;
 
@@ -137,11 +144,21 @@ export const getAccount = createAsyncThunk(
           projects = portfolio.getProjectsFromRepos(new Repos(repos));
         }
 
+        const databaseResponse = await thunkAPI.dispatch(getUserData(user.id));
+
+        if (
+          getUserData.fulfilled.match(databaseResponse) &&
+          databaseResponse.payload
+        ) {
+          user.fromDB(databaseResponse.payload);
+        }
+
         return {
           user: {
             ...user.toObject(),
             repos: repos,
             contact_methods: contact_methods,
+            organizations: organizations,
           },
           skills: {
             types: types,

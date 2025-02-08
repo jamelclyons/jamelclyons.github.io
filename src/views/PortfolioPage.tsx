@@ -23,7 +23,7 @@ const PortfolioPage: React.FC<PortfolioProps> = ({ user, portfolio, skills }) =>
     <section className="portfolio">
       <>
         {portfolio || skills ? (
-          <PortfolioComponent portfolio={portfolio} skills={skills} />
+          <PortfolioComponent portfolio={portfolio} />
         ) : (
           <StatusBarComponent />
         )}
