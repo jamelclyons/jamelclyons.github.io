@@ -5,21 +5,11 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
-import {
-  getAuthenticatedAccount,
-  getOrganizationDetailsList,
-} from '@/controllers/githubSlice';
-import { getUserData } from '@/controllers/databaseSlice';
-import {
-  getLanguages,
-  getProjectTypes,
-  getFrameworks,
-  getTechnologies,
-} from '@/controllers/taxonomiesSlice';
+import { getAuthenticatedAccount } from '@/controllers/githubSlice';
+import { getSkills } from '@/controllers/taxonomiesSlice';
+import { getPortfolio } from '@/controllers/portfolioSlice';
 
 import User from '@/model/User';
-import Repos from '@/model/Repos';
-import Portfolio from '@/model/Portfolio';
 
 interface AccountState {
   accountLoading: boolean;
@@ -69,103 +59,39 @@ export const getAccount = createAsyncThunk(
         getAuthenticatedAccount.fulfilled.match(accountResponse) &&
         accountResponse.payload
       ) {
-        const user = new User();
-        let contact_methods = null;
-        let repos = null;
+        let skills = null;
 
-        user.fromGitHub(accountResponse.payload);
-
-        if (accountResponse.payload.contact_methods) {
-          contact_methods = accountResponse.payload.contact_methods;
-        }
-
-        if (accountResponse.payload.repos) {
-          repos = user.setRepos(accountResponse.payload.repos);
-        }
-
-        let types: Array<Record<string, any>> = [];
-        let languages: Array<Record<string, any>> = [];
-        let frameworks: Array<Record<string, any>> = [];
-        let technologies: Array<Record<string, any>> = [];
-
-        const typesResponse = await thunkAPI.dispatch(getProjectTypes());
+        const skillsResponse = await thunkAPI.dispatch(getSkills());
 
         if (
-          getProjectTypes.fulfilled.match(typesResponse) &&
-          typesResponse.payload
+          getSkills.fulfilled.match(skillsResponse) &&
+          skillsResponse.payload
         ) {
-          types = typesResponse.payload;
+          skills = skillsResponse.payload;
         }
 
-        const languagesResponse = await thunkAPI.dispatch(getLanguages());
-
-        if (
-          getLanguages.fulfilled.match(languagesResponse) &&
-          languagesResponse.payload
-        ) {
-          languages = languagesResponse.payload;
-        }
-
-        const frameworksResponse = await thunkAPI.dispatch(getFrameworks());
-
-        if (
-          getFrameworks.fulfilled.match(frameworksResponse) &&
-          frameworksResponse.payload
-        ) {
-          frameworks = frameworksResponse.payload;
-        }
-
-        const technologiesResponse = await thunkAPI.dispatch(getTechnologies());
-
-        if (
-          getTechnologies.fulfilled.match(technologiesResponse) &&
-          technologiesResponse.payload
-        ) {
-          technologies = technologiesResponse.payload;
-        }
-
-        let organizations: Array<Record<string, any>> = [];
-
-        const organizationsResponse = await thunkAPI.dispatch(
-          getOrganizationDetailsList(user.organizationsURL)
-        );
-
-        if (
-          getOrganizationDetailsList.fulfilled.match(organizationsResponse) &&
-          organizationsResponse.payload
-        ) {
-          organizations = user.setOrganizations(organizationsResponse.payload);
-        }
-
-        const portfolio = new Portfolio();
         let projects = null;
 
-        if (repos) {
-          projects = portfolio.getProjectsFromRepos(new Repos(repos));
-        }
+        const repoQueries = accountResponse.payload?.repoQueries || null;
 
-        const databaseResponse = await thunkAPI.dispatch(getUserData(user.id));
+        if (Array.isArray(repoQueries) && repoQueries.length > 0) {
+          const portfolioResponse = await thunkAPI.dispatch(
+            getPortfolio(new User().getRepoQueries(repoQueries))
+          );
 
-        if (
-          getUserData.fulfilled.match(databaseResponse) &&
-          databaseResponse.payload
-        ) {
-          user.fromDB(databaseResponse.payload);
+          if (
+            getPortfolio.fulfilled.match(portfolioResponse) &&
+            portfolioResponse.payload
+          ) {
+            projects = portfolioResponse.payload;
+          }
         }
 
         return {
           user: {
-            ...user.toObject(),
-            repos: repos,
-            contact_methods: contact_methods,
-            organizations: organizations,
+            ...accountResponse.payload,
           },
-          skills: {
-            types: types,
-            languages: languages,
-            frameworks: frameworks,
-            technologies: technologies,
-          },
+          skills: skills,
           projects: projects,
         };
       }

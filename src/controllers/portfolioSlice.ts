@@ -5,27 +5,8 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-  QuerySnapshot,
-} from 'firebase/firestore';
-
-import { db } from '../services/firebase/config';
-
-import { Framework, Language, ProjectType, Technology } from '@/model/Taxonomy';
-import Image from '@/model/Image';
-
-export type SkillsObject = {
-  types: Array<Record<string, any>>;
-  languages: Array<Record<string, any>>;
-  frameworks: Array<Record<string, any>>;
-  technologies: Array<Record<string, any>>;
-};
-
-const portfolioCollection = collection(db, 'portfolio');
+import GitHubRepoQuery from '@/model/GitHubRepoQuery';
+import { getProject } from './projectSlice';
 
 interface PortfolioState {
   portfolioLoading: boolean;
@@ -33,7 +14,6 @@ interface PortfolioState {
   portfolioErrorMessage: string;
   portfolioObject: Array<Record<string, any>> | null;
   projects: Array<Record<string, any>> | null;
-  skillsObject: Record<string, any>;
 }
 
 const initialState: PortfolioState = {
@@ -42,49 +22,37 @@ const initialState: PortfolioState = {
   portfolioErrorMessage: '',
   portfolioObject: null,
   projects: null,
-  skillsObject: {},
 };
 
 export const getPortfolio = createAsyncThunk(
   'portfolio/getPortfolio',
-  async () => {
+  async (queries: Array<GitHubRepoQuery>, thunkAPI) => {
     try {
-      const querySnapshot: QuerySnapshot = await getDocs(portfolioCollection);
-
-      if (querySnapshot.size > 0) {
-        return querySnapshot.docs as Array<Record<string, any>>;
+      if (!Array.isArray(queries) || queries.length === 0) {
+        return null;
       }
 
-      return null;
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
-    }
-  }
-);
+      const portfolioPromises = queries.map(async (query) => {
+        const projectResponse = await thunkAPI.dispatch(getProject(query));
 
-interface QueryProjectsParams {
-  taxonomy: string;
-  term: string;
-}
+        if (
+          getProject.fulfilled.match(projectResponse) &&
+          projectResponse.payload
+        ) {
+          return projectResponse.payload;
+        }
 
-export const getProjectsBy = createAsyncThunk(
-  'portfolio/getProjectsBy',
-  async (params: QueryProjectsParams) => {
-    try {
-      const contentCollection = collection(db, 'portfolio');
-      const projectQuery = query(
-        contentCollection,
-        where(params.taxonomy, 'array-contains', params.term)
+        return null;
+      });
+
+      const portfolio = (await Promise.all(portfolioPromises)).filter(
+        (project) => project !== null
       );
-      const querySnapshot = await getDocs(projectQuery);
 
-      return querySnapshot.docs as Array<Record<string, any>>;
+      return portfolio;
     } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
+      console.error(error);
+      throw new Error((error as Error).message);
     }
   }
 );
@@ -92,32 +60,7 @@ export const getProjectsBy = createAsyncThunk(
 export const portfolioSlice = createSlice({
   name: 'portfolio',
   initialState,
-  reducers: {
-    setPortfolioSkills: (state, action: PayloadAction<Record<string, any>>) => {
-      const serializeSkills = (skills: Record<string, any>): SkillsObject => {
-        return {
-          types: skills.types.map((item: Record<string, any>) => {
-            const type = new ProjectType(item).toObject();
-            const image = new Image(item.image).toObject();
-
-            type.image = image;
-            return type;
-          }),
-          languages: skills.languages.map((item: Record<string, any>) =>
-            new Language(item).toObject()
-          ),
-          frameworks: skills.frameworks.map((item: Record<string, any>) =>
-            new Framework(item).toObject()
-          ),
-          technologies: skills.technologies.map((item: Record<string, any>) =>
-            new Technology(item).toObject()
-          ),
-        };
-      };
-
-      state.skillsObject = serializeSkills(action.payload);
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(getPortfolio.fulfilled, (state, action) => {
@@ -126,14 +69,8 @@ export const portfolioSlice = createSlice({
         state.portfolioErrorMessage = '';
         state.portfolioObject = action.payload;
       })
-      .addCase(getProjectsBy.fulfilled, (state, action) => {
-        state.portfolioLoading = false;
-        state.portfolioError = null;
-        state.portfolioErrorMessage = '';
-        state.projects = action.payload;
-      })
       .addMatcher(
-        isAnyOf(getPortfolio.pending, getProjectsBy.pending),
+        isAnyOf(getPortfolio.pending),
         (state) => {
           state.portfolioLoading = true;
           state.portfolioError = null;
@@ -141,7 +78,7 @@ export const portfolioSlice = createSlice({
         }
       )
       .addMatcher(
-        isAnyOf(getPortfolio.rejected, getProjectsBy.rejected),
+        isAnyOf(getPortfolio.rejected),
         (state, action) => {
           state.portfolioLoading = false;
           state.portfolioError = (action.error as Error) || null;
@@ -151,5 +88,4 @@ export const portfolioSlice = createSlice({
   },
 });
 
-export const { setPortfolioSkills } = portfolioSlice.actions;
 export default portfolioSlice;

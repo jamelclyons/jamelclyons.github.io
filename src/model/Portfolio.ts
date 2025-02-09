@@ -33,6 +33,7 @@ class Portfolio extends Model {
 
     if (repos.count > 0) {
       repos.collection.forEach((repo) => {
+        console.log(repo);
         let project = new Project();
         project.fromRepo(repo);
         repoProjectsObject.push(project.toObject());
@@ -74,13 +75,11 @@ class Portfolio extends Model {
         }
 
         if (taxonomy == 'languages') {
-          Array.from(project.process.development.skills.languages).forEach(
-            (language) => {
-              if (language.id === term) {
-                updatedProjects.add(project);
-              }
+          project.process.development.skills.languages.forEach((language) => {
+            if (language.id === term) {
+              updatedProjects.add(project);
             }
-          );
+          });
         }
 
         if (taxonomy === 'frameworks') {

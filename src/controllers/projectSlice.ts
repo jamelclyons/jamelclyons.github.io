@@ -35,7 +35,7 @@ export const getProject = createAsyncThunk(
         getRepoDetails.fulfilled.match(repoDetailsResponse) &&
         repoDetailsResponse.payload
       ) {
-        project.fromRepo(new Repo(repoDetailsResponse.payload))
+        project.fromRepo(new Repo(repoDetailsResponse.payload));
       }
 
       const projectDataResponse = await thunkAPI.dispatch(
@@ -46,10 +46,18 @@ export const getProject = createAsyncThunk(
         getProjectData.fulfilled.match(projectDataResponse) &&
         projectDataResponse.payload
       ) {
-        project.fromDocumentData(projectDataResponse.payload.id, projectDataResponse.payload.data())
+        project.fromDocumentData(
+          projectDataResponse.payload.id,
+          projectDataResponse.payload.data()
+        );
       }
-
-      return project.toObject();
+      return {
+        ...project.toObject(),
+        details: {
+          ...project.details.toObject(),
+          team_list: project.details.teamList.map((user) => user.toObject()),
+        },
+      };
     } catch (error) {
       const err = error as Error;
       console.error(err);

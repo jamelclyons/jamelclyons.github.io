@@ -34,7 +34,7 @@ class Repo extends Model {
     this.homepage = data?.homepage ?? '';
     this.description = data?.description ?? '';
     this.repoURL = data?.url ?? data?.repo_url;
-    this.skills = this.getSkills(data.skills);
+    this.skills = data?.skills ? this.getSkills(data.skills) : new Skills();
     this.contents = data?.contents
       ? new RepoContents(
           new RepoContent(data.contents.solution),

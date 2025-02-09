@@ -16,7 +16,7 @@ class ProjectDetails extends Model {
   constructor(data?: Record<string, any>) {
     super();
 
-    const { author} = packageJson;
+    const { author } = packageJson;
 
     this.privacy = data?.privacy
       ? privacyFromString(data?.privacy)
@@ -26,7 +26,18 @@ class ProjectDetails extends Model {
     this.startDate = data?.start_date || author.company.founded_on;
     this.endDate = data?.end_date || 'Active Development';
     this.content = data?.content || '';
-    this.teamList = data?.team_list || [];
+    this.teamList = data?.team_list ? this.getTeamList(data.team_list) : [];
+  }
+
+  getTeamList(data: Array<Record<string, any>>) {
+    let teamList: Array<User> = [];
+
+    if (Array.isArray(data) && data.length > 0) {
+      data.forEach((user) => {
+        teamList.push(new User(user));
+      });
+    }
+    return teamList;
   }
 }
 

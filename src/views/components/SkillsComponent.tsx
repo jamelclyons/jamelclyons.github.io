@@ -12,7 +12,7 @@ interface SkillsComponentProps {
 }
 
 const SkillsComponent: React.FC<SkillsComponentProps> = ({ skillsUsed }) => {
-    const { skillsObject } = useSelector((state: RootState) => state.portfolio);
+    const { skillsObject } = useSelector((state: RootState) => state.taxonomies);
 
     const [skills, setSkills] = useState<Skills>(new Skills(skillsObject));
 

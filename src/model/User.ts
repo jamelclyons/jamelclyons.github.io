@@ -6,6 +6,7 @@ import Organizations from '@/model/Organizations';
 import Repos from '@/model/Repos';
 
 import user from '../../user.json';
+import GitHubRepoQuery from './GitHubRepoQuery';
 
 class User extends Model {
   id: string;
@@ -24,6 +25,7 @@ class User extends Model {
   organizations: Organizations = new Organizations();
   reposURL: string;
   repos: Repos = new Repos();
+  repoQueries: Array<GitHubRepoQuery>;
 
   constructor(data: Record<string, any> = {}) {
     super();
@@ -51,6 +53,9 @@ class User extends Model {
       : new Organizations();
     this.reposURL = data?.repos_url;
     this.repos = data?.repos ? new Repos(data.repos) : new Repos();
+    this.repoQueries = data?.repoQueries
+      ? this.getRepoQueries(data?.repoQueries)
+      : [];
   }
 
   setRepos(data: Array<Record<string, any>>) {
@@ -58,7 +63,7 @@ class User extends Model {
     return repos.collection.map((repo) => repo.toObject());
   }
 
-  setOrganizations(organizations: Array<Record<string, any>>) {
+  getOrganizations(organizations: Array<Record<string, any>>) {
     const orgs = new Organizations(organizations);
     return orgs.list.map((org) => org.toObject());
   }
@@ -86,6 +91,19 @@ class User extends Model {
     }
 
     this.images = data?.images || '';
+  }
+
+  getRepoQueries(data: Array<Record<string, any>>) {
+    let repoQueries: Array<GitHubRepoQuery> = [];
+
+    if (Array.isArray(data) && data.length > 0) {
+      data.forEach((query) => {
+        const repoQuery = new GitHubRepoQuery(query.owner, query.repo);
+        repoQueries.push(repoQuery);
+      });
+    }
+
+    return repoQueries;
   }
 }
 

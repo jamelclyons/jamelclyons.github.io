@@ -22,7 +22,7 @@ const UserPage = lazy(() => import('./views/UserPage'));
 
 import ProtectedRoute from './ProtectedRoute';
 
-import { setPortfolioSkills } from './controllers/portfolioSlice';
+import { setPortfolioSkills } from '@/controllers/taxonomiesSlice';
 
 import {
   getAccount,

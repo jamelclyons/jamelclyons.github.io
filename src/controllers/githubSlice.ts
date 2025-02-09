@@ -349,6 +349,7 @@ export const getAuthenticatedAccount = createAsyncThunk(
       let contactMethods = null;
       let organizations = null;
       let repos = null;
+      let repoQueries: Array<Record<string, any>> = [];
 
       const { data } = await octokit.users.getAuthenticated();
 
@@ -375,6 +376,12 @@ export const getAuthenticatedAccount = createAsyncThunk(
           repoResponse.payload
         ) {
           repos = repoResponse.payload;
+
+          if (Array.isArray(repos) && repos.length > 0) {
+            repos.forEach((repo) => {
+              repoQueries.push({ owner: repo?.owner?.login, repo: repo?.id });
+            });
+          }
         }
 
         const contactsResponse = await thunkAPI.dispatch(
@@ -388,18 +395,20 @@ export const getAuthenticatedAccount = createAsyncThunk(
           const contactMethodsObject = user.contactMethods.fromGitHub(
             contactsResponse.payload
           );
+          
           contactMethods = {
             ...contactMethodsObject,
-            website: user.contactMethods.setContactWebsite(user.website),
-            email: user.contactMethods.setContactEmail(user.email),
+            website: user.contactMethods.setContactWebsite(user.website).toObject(),
+            email: user.contactMethods.setContactEmail(user.email).toObject(),
           };
         }
 
         return {
           ...user.toObject(),
           contact_methods: contactMethods,
-          organizations,
-          repos,
+          organizations: organizations,
+          repos: repos,
+          repoQueries: repoQueries
         };
       }
 
@@ -559,10 +568,10 @@ export const getOrganizationDetails = createAsyncThunk(
             ...contactMethodsObject,
             website: organization.contactMethods.setContactWebsite(
               organization.blog
-            ),
+            ).toObject(),
             email: organization.contactMethods.setContactEmail(
               organization.email
-            ),
+            ).toObject(),
           };
         }
 

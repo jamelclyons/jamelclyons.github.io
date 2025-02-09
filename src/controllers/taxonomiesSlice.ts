@@ -1,8 +1,9 @@
 import {
+  CreateSliceOptions,
   createSlice,
   createAsyncThunk,
   isAnyOf,
-  CreateSliceOptions,
+  PayloadAction,
 } from '@reduxjs/toolkit';
 
 import {
@@ -18,7 +19,13 @@ import {
 
 import { db } from '../services/firebase/config';
 
-import Taxonomy from '../model/Taxonomy';
+import Taxonomy, {
+  Framework,
+  Language,
+  ProjectType,
+  Technology,
+} from '@/model/Taxonomy';
+import Image from '@/model/Image';
 
 export type TaxImageQuery = {
   id: string;
@@ -38,6 +45,7 @@ interface TaxonomiesState {
   frameworkObject: Record<string, any> | null;
   technologiesObject: Array<Record<string, any>>;
   technologyObject: Record<string, any> | null;
+  skillsObject: Record<string, any>;
 }
 
 const initialState: TaxonomiesState = {
@@ -53,6 +61,14 @@ const initialState: TaxonomiesState = {
   frameworkObject: null,
   technologiesObject: [],
   technologyObject: null,
+  skillsObject: {},
+};
+
+export type SkillsObject = {
+  types: Array<Record<string, any>>;
+  languages: Array<Record<string, any>>;
+  frameworks: Array<Record<string, any>>;
+  technologies: Array<Record<string, any>>;
 };
 
 const getTaxonomy = (type: string, doc: DocumentData) => {
@@ -331,10 +347,94 @@ export const getTechnology = createAsyncThunk(
   }
 );
 
+export const getSkills = createAsyncThunk(
+  'taxonomies/getSkills',
+  async (_, thunkAPI) => {
+    try {
+      let types: Array<Record<string, any>> = [];
+      let languages: Array<Record<string, any>> = [];
+      let frameworks: Array<Record<string, any>> = [];
+      let technologies: Array<Record<string, any>> = [];
+
+      const typesResponse = await thunkAPI.dispatch(getProjectTypes());
+
+      if (
+        getProjectTypes.fulfilled.match(typesResponse) &&
+        typesResponse.payload
+      ) {
+        types = typesResponse.payload;
+      }
+
+      const languagesResponse = await thunkAPI.dispatch(getLanguages());
+
+      if (
+        getLanguages.fulfilled.match(languagesResponse) &&
+        languagesResponse.payload
+      ) {
+        languages = languagesResponse.payload;
+      }
+
+      const frameworksResponse = await thunkAPI.dispatch(getFrameworks());
+
+      if (
+        getFrameworks.fulfilled.match(frameworksResponse) &&
+        frameworksResponse.payload
+      ) {
+        frameworks = frameworksResponse.payload;
+      }
+
+      const technologiesResponse = await thunkAPI.dispatch(getTechnologies());
+
+      if (
+        getTechnologies.fulfilled.match(technologiesResponse) &&
+        technologiesResponse.payload
+      ) {
+        technologies = technologiesResponse.payload;
+      }
+
+      return {
+        types: types,
+        languages: languages,
+        frameworks: frameworks,
+        technologies: technologies,
+      };
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
 const taxonomiesSliceOptions: CreateSliceOptions<TaxonomiesState> = {
   name: 'taxonomies',
   initialState,
-  reducers: {},
+  reducers: {
+    setPortfolioSkills: (state, action: PayloadAction<Record<string, any>>) => {
+      const serializeSkills = (skills: Record<string, any>): SkillsObject => {
+        return {
+          types: skills.types.map((item: Record<string, any>) => {
+            const type = new ProjectType(item).toObject();
+            const image = new Image(item.image).toObject();
+
+            type.image = image;
+            return type;
+          }),
+          languages: skills.languages.map((item: Record<string, any>) =>
+            new Language(item).toObject()
+          ),
+          frameworks: skills.frameworks.map((item: Record<string, any>) =>
+            new Framework(item).toObject()
+          ),
+          technologies: skills.technologies.map((item: Record<string, any>) =>
+            new Technology(item).toObject()
+          ),
+        };
+      };
+
+      state.skillsObject = serializeSkills(action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getProjectTypes.fulfilled, (state, action) => {
@@ -423,5 +523,6 @@ const taxonomiesSliceOptions: CreateSliceOptions<TaxonomiesState> = {
 };
 
 export const taxonomiesSlice = createSlice(taxonomiesSliceOptions);
+export const { setPortfolioSkills } = taxonomiesSlice.actions;
 
 export default taxonomiesSlice;
