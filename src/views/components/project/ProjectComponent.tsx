@@ -8,12 +8,14 @@ import TheProblem from './TheProblem';
 import TheProcess from './TheProcess';
 
 import Project from '@/model/Project';
+import User from '@/model/User';
 
 interface ProjectComponentProps {
+  user: User;
   project: Project;
 }
 
-const ProjectComponent: React.FC<ProjectComponentProps> = ({ project }) => {
+const ProjectComponent: React.FC<ProjectComponentProps> = ({ user, project }) => {
   const {
     owner, title, description, solution, process, problem, details
   } = project;
@@ -32,7 +34,7 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ project }) => {
         <TheProblem problem={problem} />
 
         {/* Project details is for clients only */}
-        {owner.type !== 'User' && <Details details={details} />}
+        {owner.type !== 'User' && <Details user={user} details={details} />}
       </main>
     </>
   );

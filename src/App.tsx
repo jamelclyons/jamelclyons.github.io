@@ -23,7 +23,6 @@ const UserPage = lazy(() => import('./views/UserPage'));
 import ProtectedRoute from './ProtectedRoute';
 
 import { setPortfolioSkills } from '@/controllers/taxonomiesSlice';
-
 import {
   getAccount,
 } from './controllers/accountSlice';
@@ -37,7 +36,7 @@ import Account from './model/Account';
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { accountLoading, accountObject } = useSelector((state: RootState) => state.account);
+  const { accountObject } = useSelector((state: RootState) => state.account);
 
   const [account, setAccount] = useState<Account>(new Account());
 
@@ -45,7 +44,7 @@ const App: React.FC = () => {
   const { name, avatarURL, organizations, contactMethods } = user;
 
   useEffect(() => {
-    dispatch(getAccount());
+      dispatch(getAccount());
   }, [dispatch]);
 
   useEffect(() => {
@@ -78,28 +77,18 @@ const App: React.FC = () => {
     }
   }, [avatarURL]);
 
-  if (accountLoading) {
-    return (
-      <section>
-        <>
-          <LoadingComponent />
-        </>
-      </section>
-    );
-  }
-
   return (
     <>
       <HeaderComponent name={name} />
       <Router>
         <Suspense fallback={<LoadingComponent />}>
           <Routes>
-            <Route path="/" element={<Home user={user} portfolio={portfolio} skills={skills} />} />
+            <Route path="/" element={<Home account={account} />} />
             <Route path="/about" element={<About user={user} portfolio={portfolio} skills={skills} />} />
             <Route path="/organization/:login" element={<OrganizationPage organizations={organizations} portfolio={portfolio} skills={skills} />} />
             <Route path="/user/:login" element={<UserPage />} />
             <Route path="/portfolio" element={<PortfolioPage user={user} portfolio={portfolio} skills={skills} />} />
-            <Route path="/portfolio/:owner/:projectID" element={<ProjectPage portfolio={portfolio} />} />
+            <Route path="/portfolio/:owner/:projectID" element={<ProjectPage user={user} portfolio={portfolio} />} />
             <Route path="/projects/:taxonomy/:term" element={<Search portfolio={portfolio} skills={skills} />} />
             <Route path="/resume" element={<Resume user={user} />} />
             <Route path="/contact" element={<Contact user={user} />} />

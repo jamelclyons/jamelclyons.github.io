@@ -3,12 +3,14 @@ import React from 'react';
 import ProjectDetails from '../../../model/ProjectDetails';
 
 import ProjectTeamComponent from './ProjectTeam';
+import User from '@/model/User';
 
 interface ProjectDetailsProps {
+  user: User;
   details: ProjectDetails;
 }
 
-const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ details }) => {
+const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ user, details }) => {
   const { clientName, privacy, clientID, startDate, endDate, teamList } = details;
 
   return (
@@ -45,7 +47,7 @@ const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ details }) => 
           </table>
 
           {teamList &&
-            <ProjectTeamComponent projectTeam={teamList} />
+            <ProjectTeamComponent user={user} projectTeam={teamList} />
           }
         </div>
       )}

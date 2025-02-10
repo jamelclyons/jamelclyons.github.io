@@ -5,14 +5,19 @@ import User from '../../../model/User';
 import MemberPic from './MemberPic';
 
 interface MemberProps {
-  user: User
+  user: User,
+  member: User
 }
 
-const MemberCard: React.FC<MemberProps> = ({ user }) => {
+const MemberCard: React.FC<MemberProps> = ({ user, member }) => {
 
   const handleClick = () => {
     handleUsers();
-    window.location.href = `/#/user/${user.login}`;
+    if (user.login === member.login) {
+      window.location.href = '/#/about'
+    } else {
+      window.location.href = `/#/user/${member.login}`
+    };
   };
 
   const handleUsers = () => {

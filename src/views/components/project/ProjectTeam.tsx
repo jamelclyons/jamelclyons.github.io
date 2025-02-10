@@ -5,10 +5,11 @@ import Member from '../member/MemberCard';
 import User from '../../../model/User';
 
 interface ProjectTeamComponentProps {
+  user: User;
   projectTeam: Array<User>
 }
 
-const ProjectTeamComponent: React.FC<ProjectTeamComponentProps> = ({ projectTeam }) => {
+const ProjectTeamComponent: React.FC<ProjectTeamComponentProps> = ({ user, projectTeam }) => {
 
   return (
     <>
@@ -18,7 +19,7 @@ const ProjectTeamComponent: React.FC<ProjectTeamComponentProps> = ({ projectTeam
 
           <div className="project-team-list">
             {projectTeam.map((team_member, index) => (
-              <Member key={index} user={team_member} />
+              <Member key={index} user={user} member={team_member}/>
             ))}
           </div>
         </div>

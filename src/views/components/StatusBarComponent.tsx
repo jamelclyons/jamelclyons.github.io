@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import type { RootState } from '../../model/store';
+import type { RootState } from '@/model/store';
+
+import StatusBar from './StatusBar';
 
 const StatusBarComponent: React.FC = () => {
-  const { message, messageType, showStatusBar } = useSelector(
+  const { message, messageType, visibility } = useSelector(
     (state: RootState) => state.message
   );
 
-  const [show, setShow] = useState('hide');
+  const [show, setShow] = useState<string>(visibility);
+  const [statusMessage, setStatusMessage] = useState<string>(message);
+  const [statusMessageType, setStatusMessageType] = useState<string>(messageType)
 
   useEffect(() => {
-    if (showStatusBar) {
+    if (visibility) {
       setShow('show');
 
       const timer = setTimeout(() => {
@@ -20,30 +24,22 @@ const StatusBarComponent: React.FC = () => {
 
       return () => clearTimeout(timer);
     }
-  }, [showStatusBar]);
+  }, [visibility]);
 
-  const minimize = () => {
-    if (show == 'show') {
-      setShow('hide');
+  useEffect(() => {
+    if (message) {
+      setStatusMessage(message);
     }
-  };
+  }, [message]);
+
+  useEffect(() => {
+    if (messageType) {
+      setStatusMessageType(messageType);
+    }
+  }, [messageType]);
 
   return (
-    message && (
-      <span className={`modal-overlay ${show}`}>
-        <div className="status">
-          <div className="close">
-            <button onClick={minimize}>
-              <i className="fa-solid fa-circle-xmark"></i>
-            </button>
-          </div>
-
-          <div className={`status-bar card ${messageType}`} id="status_bar">
-            <span>{message}</span>
-          </div>
-        </div>
-      </span>
-    )
+    <StatusBar show={show} message={statusMessage} messageType={statusMessageType} />
   );
 }
 

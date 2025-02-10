@@ -11,6 +11,8 @@ import { getPortfolio } from '@/controllers/portfolioSlice';
 
 import User from '@/model/User';
 
+import { setMessage } from './messageSlice';
+
 interface AccountState {
   accountLoading: boolean;
   userStatusCode: string;
@@ -60,7 +62,9 @@ export const getAccount = createAsyncThunk(
         accountResponse.payload
       ) {
         let skills = null;
-
+        await thunkAPI.dispatch(
+          setMessage('Now Loading Skills')
+        );
         const skillsResponse = await thunkAPI.dispatch(getSkills());
 
         if (
@@ -75,6 +79,10 @@ export const getAccount = createAsyncThunk(
         const repoQueries = accountResponse.payload?.repoQueries || null;
 
         if (Array.isArray(repoQueries) && repoQueries.length > 0) {
+          await thunkAPI.dispatch(
+            setMessage('Now Loading Portfolio')
+          );
+
           const portfolioResponse = await thunkAPI.dispatch(
             getPortfolio(new User().getRepoQueries(repoQueries))
           );

@@ -12,6 +12,8 @@ import {
   getUser,
 } from '@/controllers/userSlice';
 
+import { setMessage, setMessageType, setShowStatusBar } from '@/controllers/messageSlice';
+
 const UserPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -19,7 +21,7 @@ const UserPage: React.FC = () => {
 
   const { userLoading, userObject } = useSelector((state: RootState) => state.user);
 
-  const [user, setUser] = useState<User>(new User());
+  const [user, setUser] = useState<User>();
 
   useEffect(() => {
     if (login) {
@@ -33,14 +35,13 @@ const UserPage: React.FC = () => {
     }
   }, [userObject]);
 
-  if (userLoading) {
-    return (
-      <section className='user'>
-        <>
-          <LoadingComponent />
-        </>
-      </section>);
-  }
+    useEffect(() => {
+      if (userLoading) {
+        dispatch(setShowStatusBar('show'));
+        dispatch(setMessageType('info'));
+        dispatch(setMessage(`Now Loading User ${login}`));
+      }
+    }, [userLoading]);
 
   return (
     <section className='user' id='top'>

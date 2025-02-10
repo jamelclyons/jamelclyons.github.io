@@ -1,15 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import MessageCardComponent from './MessageCardComponent';
-import StatusBarComponent from '../StatusBarComponent';
+import StatusBar from '../StatusBar';
 
-import { ContactPage, getContactPageContent } from '../../../controllers/contactSlice';
-import { setMessage, setMessageType } from '../../../controllers/messageSlice';
+import { getContactPageContent } from '@/controllers/contactSlice';
 
-import User from '../../../model/User';
-
-import type { AppDispatch, RootState } from '../../../model/store';
+import type { AppDispatch, RootState } from '@/model/store';
+import User from '@/model/User';
 
 interface ContactProps {
   user: User;
@@ -21,14 +19,17 @@ const ContactComponent: React.FC<ContactProps> = ({ user }) => {
   const { contactErrorMessage, contactSuccessMessage, contactPage } =
     useSelector((state: RootState) => state.contact);
 
+  const [messageType, setMessageType] = useState<string>('info');
+  const [message, setMessage] = useState<string>(contactPage?.message ?? '');
+
   useEffect(() => {
     dispatch(getContactPageContent());
   }, [dispatch]);
 
   useEffect(() => {
     if (contactSuccessMessage) {
-      dispatch(setMessageType('success'));
-      dispatch(setMessage(contactSuccessMessage));
+      setMessageType('success');
+      setMessage(contactSuccessMessage);
 
       setTimeout(() => {
         window.location.href = `/`;
@@ -38,14 +39,14 @@ const ContactComponent: React.FC<ContactProps> = ({ user }) => {
 
   useEffect(() => {
     if (contactErrorMessage) {
-      dispatch(setMessageType('error'));
-      dispatch(setMessage(contactErrorMessage));
+      setMessageType('error');
+      setMessage(contactErrorMessage);
     }
   }, [contactErrorMessage]);
 
   useEffect(() => {
     if (contactPage?.message) {
-      dispatch(setMessage(contactPage.message));
+      setMessage(contactPage.message);
     }
   }, [contactPage]);
 
@@ -57,7 +58,7 @@ const ContactComponent: React.FC<ContactProps> = ({ user }) => {
         <MessageCardComponent page={'/contact'} />
       </div>
 
-      <StatusBarComponent />
+      <StatusBar show='hide' messageType={messageType} message={message} />
     </main>
   );
 }

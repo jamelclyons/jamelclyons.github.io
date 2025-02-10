@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import LoadingComponent from './components/LoadingComponent';
 import ProjectComponent from './components/project/ProjectComponent';
-import StatusBarComponent from './components/StatusBarComponent';
 
 import { setMessage, setMessageType, setShowStatusBar } from '../controllers/messageSlice';
 import { getProject } from '@/controllers/projectSlice';
@@ -13,17 +12,19 @@ import type { AppDispatch, RootState } from '../model/store';
 import Project from '../model/Project';
 import GitHubRepoQuery from '../model/GitHubRepoQuery';
 import Portfolio from '@/model/Portfolio';
+import User from '@/model/User';
 
 interface ProjectPageProps {
+  user: User;
   portfolio: Portfolio;
 }
 
-const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
+const ProjectPage: React.FC<ProjectPageProps> = ({ user, portfolio }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { owner, projectID } = useParams<string>();
 
-  const { projectLoading, projectErrorMessage, projectObject } = useSelector(
+  const { projectPageLoading, projectErrorMessage, projectPageObject } = useSelector(
     (state: RootState) => state.project
   );
 
@@ -50,10 +51,10 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
   }, [dispatch, repoQuery]);
 
   useEffect(() => {
-    if (projectObject) {
-      setProject(new Project(projectObject));
+    if (projectPageObject) {
+      setProject(new Project(projectPageObject));
     }
-  }, [projectObject]);
+  }, [projectPageObject]);
 
   useEffect(() => {
     if (project) {
@@ -69,7 +70,7 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
     }
   }, [dispatch, projectErrorMessage]);
 
-  if (projectLoading) {
+  if (projectPageLoading) {
     return (
       <section className="project">
         <>
@@ -82,7 +83,7 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ portfolio }) => {
     <section className="project">
       <>
         {project ?
-          <ProjectComponent project={project} /> : <LoadingComponent />
+          <ProjectComponent user={user} project={project} /> : <LoadingComponent />
         }
       </>
     </section>

@@ -6,6 +6,8 @@ import {
 } from '@reduxjs/toolkit';
 
 import { instance } from '@/services/github/octokit';
+import { headers } from '@/services/github/octokit';
+
 import { Octokit, RestEndpointMethodTypes } from '@octokit/rest';
 import { GetResponseTypeFromEndpointMethod } from '@octokit/types';
 
@@ -14,9 +16,10 @@ import GitHubRepoQuery from '../model/GitHubRepoQuery';
 import RepoContentQuery from '@/model/RepoContentQuery';
 import Organization from '@/model/Organization';
 
-import { headers } from '@/services/github/octokit';
 import Repo from '@/model/Repo';
 import User from '@/model/User';
+
+import { setMessage } from './messageSlice';
 
 type OctokitResponse<T = any, S = number> = {
   data: T;
@@ -274,6 +277,7 @@ export const getRepoDetails = createAsyncThunk(
 
         return {
           ...repo.toObject(),
+          owner: repo.owner.toObject(),
           skills: skills,
           contents: contents,
           contributors: contributors,
@@ -357,6 +361,10 @@ export const getAuthenticatedAccount = createAsyncThunk(
         user.fromGitHub(data);
 
         if (user.organizationsURL) {
+          await thunkAPI.dispatch(
+            setMessage('Now Loading Organizations')
+          );
+
           const orgResponse = await thunkAPI.dispatch(
             getOrganizationDetailsList(user.organizationsURL)
           );
@@ -368,6 +376,10 @@ export const getAuthenticatedAccount = createAsyncThunk(
             organizations = orgResponse.payload;
           }
         }
+
+        await thunkAPI.dispatch(
+          setMessage('Now Loading Repositories')
+        );
 
         const repoResponse = await thunkAPI.dispatch(getRepoDetailsList());
 
@@ -384,6 +396,10 @@ export const getAuthenticatedAccount = createAsyncThunk(
           }
         }
 
+        await thunkAPI.dispatch(
+          setMessage('Now Loading Contacts')
+        );
+        
         const contactsResponse = await thunkAPI.dispatch(
           getSocialAccounts(user.id)
         );
@@ -470,16 +486,16 @@ export const getUserAccount = createAsyncThunk(
           );
           contactMethods = {
             ...contactMethodsObject,
-            website: user.contactMethods.setContactWebsite(user.website),
-            email: user.contactMethods.setContactEmail(user.email),
+            website: user.contactMethods.setContactWebsite(user.website).toObject(),
+            email: user.contactMethods.setContactEmail(user.email).toObject(),
           };
         }
 
         return {
           ...user.toObject(),
           contact_methods: contactMethods,
-          organizations,
-          repos,
+          organizations: organizations,
+          repos: repos,
         };
       }
 

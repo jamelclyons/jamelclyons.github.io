@@ -6,7 +6,9 @@ import {
 } from '@reduxjs/toolkit';
 
 import GitHubRepoQuery from '@/model/GitHubRepoQuery';
+
 import { getProject } from './projectSlice';
+import { setMessage } from './messageSlice';
 
 interface PortfolioState {
   portfolioLoading: boolean;
@@ -33,6 +35,8 @@ export const getPortfolio = createAsyncThunk(
       }
 
       const portfolioPromises = queries.map(async (query) => {
+        await thunkAPI.dispatch(setMessage(`Now Loading Project by ${query.owner} called ${query.repo}`));
+
         const projectResponse = await thunkAPI.dispatch(getProject(query));
 
         if (
@@ -69,22 +73,16 @@ export const portfolioSlice = createSlice({
         state.portfolioErrorMessage = '';
         state.portfolioObject = action.payload;
       })
-      .addMatcher(
-        isAnyOf(getPortfolio.pending),
-        (state) => {
-          state.portfolioLoading = true;
-          state.portfolioError = null;
-          state.portfolioErrorMessage = '';
-        }
-      )
-      .addMatcher(
-        isAnyOf(getPortfolio.rejected),
-        (state, action) => {
-          state.portfolioLoading = false;
-          state.portfolioError = (action.error as Error) || null;
-          state.portfolioErrorMessage = action.error.message || '';
-        }
-      );
+      .addMatcher(isAnyOf(getPortfolio.pending), (state) => {
+        state.portfolioLoading = true;
+        state.portfolioError = null;
+        state.portfolioErrorMessage = '';
+      })
+      .addMatcher(isAnyOf(getPortfolio.rejected), (state, action) => {
+        state.portfolioLoading = false;
+        state.portfolioError = (action.error as Error) || null;
+        state.portfolioErrorMessage = action.error.message || '';
+      });
   },
 });
 

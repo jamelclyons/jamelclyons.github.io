@@ -51,23 +51,22 @@ export const getUser = createAsyncThunk(
   async (login: string, thunkAPI) => {
     try {
       const userResponse = await thunkAPI.dispatch(getUserAccount(login));
+      let contact_methods = null;
 
       if (
         getUserAccount.fulfilled.match(userResponse) &&
         userResponse.payload
       ) {
-        console.log(userResponse.payload)
-        const user = new User(userResponse.payload);
-        const databaseResponse = await thunkAPI.dispatch(getUserData(user.id));
+        // const databaseResponse = await thunkAPI.dispatch(getUserData(user.id));
 
-        if (
-          getUserData.fulfilled.match(databaseResponse) &&
-          databaseResponse.payload
-        ) {
-          user.fromDB(databaseResponse.payload);
-        }
+        // if (
+        //   getUserData.fulfilled.match(databaseResponse) &&
+        //   databaseResponse.payload
+        // ) {
+        //   user.fromDB(databaseResponse.payload);
+        // }
 
-        return user.toObject();
+        return { ...userResponse.payload };
       }
 
       return null;

@@ -5,6 +5,7 @@ import MemberPic from './components/member/MemberPic';
 import SkillsComponent from './components/SkillsComponent';
 import OrganizationsComponent from './components/OrganizationsComponent';
 import StoryComponent from './components/StoryComponent';
+import LoadingComponent from './components/LoadingComponent';
 
 import { getRepoContents } from '@/controllers/githubSlice';
 
@@ -13,6 +14,8 @@ import User from '@/model/User';
 import Skills from '@/model/Skills';
 import RepoContentQuery from '@/model/RepoContentQuery';
 import Portfolio from '@/model/Portfolio';
+
+import { setMessage, setShowStatusBar } from '@/controllers/messageSlice';
 
 interface AboutProps {
   user: User;
@@ -23,7 +26,7 @@ interface AboutProps {
 const About: React.FC<AboutProps> = ({ user, portfolio, skills }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { contents } = useSelector((state: RootState) => state.github);
+  const { githubLoading, contents } = useSelector((state: RootState) => state.github);
 
   const [story, setStory] = useState<string>();
 
@@ -54,6 +57,13 @@ const About: React.FC<AboutProps> = ({ user, portfolio, skills }) => {
       });
     }
   }, [contents]);
+
+useEffect(()=>{
+  if(githubLoading){
+    dispatch(setMessage('Now Loading story'));
+    dispatch(setShowStatusBar('show'));
+  }
+},[githubLoading]);
 
   const handleProjects = () => {
     window.location.href = '/#/portfolio';
@@ -122,7 +132,7 @@ const About: React.FC<AboutProps> = ({ user, portfolio, skills }) => {
 
         <SkillsComponent skillsUsed={null} />
 
-        {story && <StoryComponent story={story} />}
+        {story ? <StoryComponent story={story} /> : <LoadingComponent />}
 
         <OrganizationsComponent organizations={user.organizations} />
       </section>

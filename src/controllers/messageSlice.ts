@@ -3,13 +3,13 @@ import { createSlice, CreateSliceOptions } from '@reduxjs/toolkit';
 interface MessageState {
   message: string;
   messageType: string;
-  showStatusBar: false;
+  visibility: string;
 }
 
 const initialState: MessageState = {
   message: '',
   messageType: '',
-  showStatusBar: false,
+  visibility: 'hide',
 };
 
 const messageSliceOptions: CreateSliceOptions<MessageState> = {
@@ -23,7 +23,7 @@ const messageSliceOptions: CreateSliceOptions<MessageState> = {
       state.messageType = action.payload;
     },
     setShowStatusBar: (state, action) => {
-      state.showStatusBar = action.payload;
+      state.visibility = action.payload;
     },
   },
 };

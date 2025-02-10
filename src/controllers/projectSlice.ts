@@ -9,16 +9,20 @@ import Project from '@/model/Project';
 
 interface ProjectState {
   projectLoading: boolean;
+  projectPageLoading: boolean;
   projectError: Error | null;
   projectErrorMessage: string;
   projectObject: Record<string, any> | null;
+  projectPageObject: Record<string, any> | null;
 }
 
 const initialState: ProjectState = {
   projectLoading: false,
+  projectPageLoading: false,
   projectError: null,
   projectErrorMessage: '',
   projectObject: null,
+  projectPageObject: null,
 };
 
 export const getProject = createAsyncThunk(
@@ -66,6 +70,28 @@ export const getProject = createAsyncThunk(
   }
 );
 
+export const getProjectPage = createAsyncThunk(
+  'project/getProjectPage',
+  async (query: GitHubRepoQuery, thunkAPI) => {
+    try {
+      const projectResponse = await thunkAPI.dispatch(getProject(query));
+
+      if (
+        getProject.fulfilled.match(projectResponse) &&
+        projectResponse.payload
+      ) {
+        return projectResponse.payload;
+      }
+
+      return null;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
 export const projectSlice = createSlice({
   name: 'project',
   initialState,
@@ -84,6 +110,22 @@ export const projectSlice = createSlice({
         state.projectErrorMessage = '';
       })
       .addCase(getProject.rejected, (state, action) => {
+        state.projectLoading = false;
+        state.projectError = (action.error as Error) || null;
+        state.projectErrorMessage = action.error.message || '';
+      })
+      .addCase(getProjectPage.fulfilled, (state, action: PayloadAction<any>) => {
+        state.projectLoading = false;
+        state.projectError = null;
+        state.projectErrorMessage = '';
+        state.projectPageObject = action.payload;
+      })
+      .addCase(getProjectPage.pending, (state) => {
+        state.projectPageLoading = true;
+        state.projectError = null;
+        state.projectErrorMessage = '';
+      })
+      .addCase(getProjectPage.rejected, (state, action) => {
         state.projectLoading = false;
         state.projectError = (action.error as Error) || null;
         state.projectErrorMessage = action.error.message || '';
