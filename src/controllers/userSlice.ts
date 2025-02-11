@@ -5,7 +5,10 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
-import { getUserAccount } from '@/controllers/githubSlice';
+import {
+  getAuthenticatedAccount,
+  getUserAccount,
+} from '@/controllers/githubSlice';
 import { getUserData } from '@/controllers/databaseSlice';
 
 import User from '@/model/User';
@@ -23,6 +26,7 @@ interface UserState {
   resume: string;
   content: Array<string> | null;
   userObject: Record<string, any> | null;
+  authenticatedUserObject: Record<string, any> | null;
   organizations: [];
   repos: [];
   socialAccounts: [];
@@ -40,18 +44,48 @@ const initialState: UserState = {
   bio: '',
   resume: '',
   content: null,
-  userObject: {},
+  authenticatedUserObject: null,
+  userObject: null,
   organizations: [],
   repos: [],
   socialAccounts: [],
 };
+
+export const getAuthenticatedUserAccount = createAsyncThunk(
+  'user/getAuthenticatedUserAccount',
+  async (_, thunkAPI) => {
+    try {
+      const userResponse = await thunkAPI.dispatch(getAuthenticatedAccount());
+      if (
+        getAuthenticatedAccount.fulfilled.match(userResponse) &&
+        userResponse.payload
+      ) {
+        // const databaseResponse = await thunkAPI.dispatch(getUserData(user.id));
+
+        // if (
+        //   getUserData.fulfilled.match(databaseResponse) &&
+        //   databaseResponse.payload
+        // ) {
+        //   user.fromDB(databaseResponse.payload);
+        // }
+
+        return { ...userResponse.payload };
+      }
+
+      return null;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
 
 export const getUser = createAsyncThunk(
   'user/getUser',
   async (login: string, thunkAPI) => {
     try {
       const userResponse = await thunkAPI.dispatch(getUserAccount(login));
-      let contact_methods = null;
 
       if (
         getUserAccount.fulfilled.match(userResponse) &&
@@ -84,22 +118,34 @@ const userSliceOptions: CreateSliceOptions<UserState> = {
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(getAuthenticatedUserAccount.fulfilled, (state, action) => {
+        state.userLoading = false;
+        state.userErrorMessage = '';
+        state.userError = null;
+        state.authenticatedUserObject = action.payload;
+      })
       .addCase(getUser.fulfilled, (state, action) => {
         state.userLoading = false;
         state.userErrorMessage = '';
         state.userError = null;
         state.userObject = action.payload;
       })
-      .addMatcher(isAnyOf(getUser.pending), (state) => {
-        state.userLoading = true;
-        state.userErrorMessage = '';
-        state.userError = null;
-      })
-      .addMatcher(isAnyOf(getUser.rejected), (state, action) => {
-        state.userLoading = false;
-        state.userErrorMessage = action.error.message || '';
-        state.userError = action.error as Error;
-      });
+      .addMatcher(
+        isAnyOf(getUser.pending, getAuthenticatedUserAccount.pending),
+        (state) => {
+          state.userLoading = true;
+          state.userErrorMessage = '';
+          state.userError = null;
+        }
+      )
+      .addMatcher(
+        isAnyOf(getUser.rejected, getAuthenticatedUserAccount.rejected),
+        (state, action) => {
+          state.userLoading = false;
+          state.userErrorMessage = action.error.message || '';
+          state.userError = action.error as Error;
+        }
+      );
   },
 };
 

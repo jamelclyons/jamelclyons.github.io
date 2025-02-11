@@ -45,7 +45,7 @@ interface TaxonomiesState {
   frameworkObject: Record<string, any> | null;
   technologiesObject: Array<Record<string, any>>;
   technologyObject: Record<string, any> | null;
-  skillsObject: Record<string, any>;
+  skillsObject: Record<string, any> | null;
 }
 
 const initialState: TaxonomiesState = {
@@ -61,7 +61,7 @@ const initialState: TaxonomiesState = {
   frameworkObject: null,
   technologiesObject: [],
   technologyObject: null,
-  skillsObject: {},
+  skillsObject: null,
 };
 
 export type SkillsObject = {
@@ -485,6 +485,12 @@ const taxonomiesSliceOptions: CreateSliceOptions<TaxonomiesState> = {
         state.taxonomiesErrorMessage = '';
         state.technologyObject = action.payload;
       })
+      .addCase(getSkills.fulfilled, (state, action) => {
+        state.taxonomiesLoading = false;
+        state.taxonomiesError = null;
+        state.taxonomiesErrorMessage = '';
+        state.skillsObject = action.payload;
+      })
       .addMatcher(
         isAnyOf(
           getProjectTypes.pending,
@@ -493,7 +499,8 @@ const taxonomiesSliceOptions: CreateSliceOptions<TaxonomiesState> = {
           getProjectType.pending,
           getLanguage.pending,
           getFramework.pending,
-          getTechnology.pending
+          getTechnology.pending,
+          getSkills.pending
         ),
         (state) => {
           state.taxonomiesLoading = true;
@@ -510,7 +517,8 @@ const taxonomiesSliceOptions: CreateSliceOptions<TaxonomiesState> = {
           getProjectType.rejected,
           getLanguage.rejected,
           getFramework.rejected,
-          getTechnology.rejected
+          getTechnology.rejected,
+          getSkills.rejected
         ),
         (state, action) => {
           state.taxonomiesLoading = false;

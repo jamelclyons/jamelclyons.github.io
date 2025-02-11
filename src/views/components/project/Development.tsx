@@ -14,8 +14,8 @@ import SkillsComponent from '../SkillsComponent';
 import {
   signInWithGitHubPopup
 } from '@/controllers/authSlice';
-import StatusBarComponent from '../StatusBarComponent';
-import { setMessage, setMessageType, setShowStatusBar } from '@/controllers/messageSlice';
+import StatusBar from '../StatusBar';
+import Skills from '@/model/Skills';
 
 interface DevelopmentProps {
   development: ProjectDevelopment;
@@ -24,17 +24,40 @@ interface DevelopmentProps {
 const Development: React.FC<DevelopmentProps> = ({ development }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { checkList, contentURL, repoURL, versionsList, skills } = development;
+  const { checkList, contentURL, repoURL, versionsList } = development;
   const { isAuthenticated } = useSelector(
     (state: RootState) => state.auth
   );
 
+  const [showStatusBar, setShowStatusBar] = useState<string>('hide');
+  const [messageType, setMessageType] = useState<string>('info');
+  const [message, setMessage] = useState<string>('Click Log in with GitHub to gain access to the code.');
+  const [skills, setSkills] = useState<Skills>(development.skills);
+
   useEffect(() => {
     if (!isAuthenticated) {
-      dispatch(setMessage('Click Log in with GitHub to gain access to the code and/or obtain administrator privileges.'));
-      dispatch(setMessageType('info'));
+      setMessage('Click Log in with GitHub to gain access to the code.');
+      setMessageType('info');
     }
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      setMessage('Gain access to the source code on GitHub.');
+      setMessageType('info');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setMessage('Click Log in with GitHub to gain access to the code.');
+      setMessageType('info');
+    }
+  }, []);
+
+  useEffect(() => {
+      setSkills(development.skills);
+  }, [development]);
 
   const handleSeeCode = () => {
     if (isAuthenticated) {
@@ -71,7 +94,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
           }</h3>
         </button>
 
-        {!isAuthenticated && <StatusBarComponent />}
+        <StatusBar show={showStatusBar} messageType={messageType} message={message} />
       </div>
     }
     </>

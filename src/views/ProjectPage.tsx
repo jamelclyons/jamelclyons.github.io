@@ -6,7 +6,8 @@ import LoadingComponent from './components/LoadingComponent';
 import ProjectComponent from './components/project/ProjectComponent';
 
 import { setMessage, setMessageType, setShowStatusBar } from '../controllers/messageSlice';
-import { getProject } from '@/controllers/projectSlice';
+import { getProjectPage } from '@/controllers/projectSlice';
+import { getAuthenticatedUserAccount } from '@/controllers/userSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
 import Project from '../model/Project';
@@ -24,9 +25,10 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user, portfolio }) => {
 
   const { owner, projectID } = useParams<string>();
 
-  const { projectPageLoading, projectErrorMessage, projectPageObject } = useSelector(
+  const { projectErrorMessage, projectPageObject } = useSelector(
     (state: RootState) => state.project
   );
+  const { authenticatedUserObject } = useSelector((state: RootState) => state.user);
 
   const [project, setProject] = useState<Project>();
   const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>();
@@ -46,7 +48,7 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user, portfolio }) => {
 
   useEffect(() => {
     if (repoQuery) {
-      dispatch(getProject(repoQuery));
+      dispatch(getProjectPage(repoQuery));
     }
   }, [dispatch, repoQuery]);
 
@@ -70,14 +72,11 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user, portfolio }) => {
     }
   }, [dispatch, projectErrorMessage]);
 
-  if (projectPageLoading) {
-    return (
-      <section className="project">
-        <>
-          <LoadingComponent />
-        </>
-      </section>);
-  }
+  useEffect(() => {
+    if (authenticatedUserObject === null) {
+      dispatch(getAuthenticatedUserAccount());
+    }
+  }, [authenticatedUserObject, dispatch]);
 
   return (
     <section className="project">

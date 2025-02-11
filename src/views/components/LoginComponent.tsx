@@ -6,13 +6,8 @@ import type { AppDispatch, RootState } from '@/model/store';
 import {
   signInWithGitHubPopup
 } from '../../controllers/authSlice';
-import {
-  setMessage,
-  setMessageType,
-  setShowStatusBar,
-} from '../../controllers/messageSlice';
 
-import StatusBarComponent from './StatusBarComponent';
+import StatusBar from './StatusBar';
 import ImageComponent from './ImageComponent';
 
 import Image from '@/model/Image';
@@ -27,31 +22,29 @@ function LoginComponent() {
     isAuthenticated
   } = useSelector((state: RootState) => state.auth);
 
-  useEffect(() => {
-    dispatch(setMessage('Click Log in with GitHub to gain access to the code and/or obtain administrator privileges.'));
-    dispatch(setMessageType('info'));
-    dispatch(setShowStatusBar(Date.now()));
-  }, []);
+  const [showStatusBar, setShowStatusBar] = useState<string>('show');
+  const [messageType, setMessageType] = useState<string>('info');
+  const [message, setMessage] = useState<string>('Click Log in with GitHub to gain access to the code and/or obtain administrator privileges.');
 
   useEffect(() => {
     if (authLoading) {
-      dispatch(setShowStatusBar(Date.now()));
+      setShowStatusBar('show');
     }
   }, [authLoading]);
 
   useEffect(() => {
     if (authSuccessMessage) {
-      dispatch(setMessage(authSuccessMessage));
-      dispatch(setMessageType('success'));
-      dispatch(setShowStatusBar(Date.now()));
+      setMessage(authSuccessMessage);
+      setMessageType('success');
+      setShowStatusBar('show');
     }
   }, [authSuccessMessage]);
 
   useEffect(() => {
     if (authErrorMessage) {
-      dispatch(setMessage(authErrorMessage));
-      dispatch(setMessageType('error'));
-      dispatch(setShowStatusBar(Date.now()));
+      setMessage(authErrorMessage);
+      setMessageType('error');
+      setShowStatusBar('show');
     }
   }, [authErrorMessage]);
 
@@ -72,7 +65,7 @@ function LoginComponent() {
         </button>
       </div>
 
-      <StatusBarComponent />
+      <StatusBar show={showStatusBar} messageType={messageType} message={message} />
     </>
   );
 }

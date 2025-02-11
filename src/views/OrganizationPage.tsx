@@ -6,53 +6,36 @@ import ProjectsComponent from './components/portfolio/ProjectsComponent';
 import SkillsComponent from './components/SkillsComponent';
 import HeaderOrganizationComponent from './components/HeaderOrganizationComponent';
 import ContactBar from './components/ContactBar';
-import StatusBarComponent from './components/StatusBarComponent';
 
-import { setMessage, setMessageType, setShowStatusBar } from '../controllers/messageSlice';
+import { setMessage, setMessageType } from '../controllers/messageSlice';
 import { getOrganization } from '@/controllers/organizationSlice';
-
-import { pathToSpace } from '@/utilities/String';
+import { getPortfolio } from '@/controllers/portfolioSlice';
+import { getAuthenticatedUserAccount } from '@/controllers/userSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
-import Organizations from '@/model/Organizations';
 import Portfolio from '../model/Portfolio';
-import Skills from '@/model/Skills';
 import Organization from '@/model/Organization';
 
-interface OrganizationPageProps {
-    organizations: Organizations;
-    portfolio: Portfolio;
-    skills: Skills;
-}
-
-const OrganizationPage: React.FC<OrganizationPageProps> = ({ organizations, portfolio, skills }) => {
+const OrganizationPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
 
     const { login } = useParams<string>();
 
-    const { list } = organizations;
-    const { projects } = portfolio;
-
     const { organizationObject } = useSelector(
         (state: RootState) => state.organization);
+    const { portfolioLoading, portfolioObject } = useSelector((state: RootState) => state.portfolio);
+    const { authenticatedUserObject } = useSelector((state: RootState) => state.user);
 
     const [organization, setOrganization] = useState<Organization>();
+    const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio);
+
+    const { projects } = portfolio;
 
     useEffect(() => {
-        if (Array.isArray(list) && list.length > 0) {
-            list.forEach((org) => {
-                if (org.login === login) {
-                    setOrganization(org);
-                }
-            });
-        }
-    }, [organizations]);
-
-    useEffect(() => {
-        if (portfolio.projects.size === 0 && login) {
+        if (organizationObject === null && login) {
             dispatch(getOrganization(login));
         }
-    }, [dispatch, portfolio]);
+    }, [dispatch, login, organizationObject]);
 
     useEffect(() => {
         if (organizationObject) {
@@ -66,6 +49,31 @@ const OrganizationPage: React.FC<OrganizationPageProps> = ({ organizations, port
         }
     }, [organization]);
 
+    useEffect(() => {
+        if (organization) {
+            dispatch(getPortfolio(organization.repoQueries));
+        }
+    }, [organization, dispatch]);
+
+    useEffect(() => {
+        if (portfolioLoading) {
+            dispatch(setMessageType('info'));
+            dispatch(setMessage('Now Loading Portfolio'));
+        }
+    }, [portfolioLoading, dispatch]);
+
+    useEffect(() => {
+        if (portfolioObject) {
+            setPortfolio(new Portfolio(portfolioObject));
+        }
+    }, [portfolioObject]);
+
+    useEffect(() => {
+        if (authenticatedUserObject === null) {
+            dispatch(getAuthenticatedUserAccount());
+        }
+    }, [authenticatedUserObject]);
+
     return (
         <section className='organization' id='top'>
             <>
@@ -76,10 +84,10 @@ const OrganizationPage: React.FC<OrganizationPageProps> = ({ organizations, port
                 {
                     organization &&
                     projects.size > 0 &&
-                    <ProjectsComponent projects={portfolio.filterProjectsByLogin(organization.login)} />
+                    <ProjectsComponent projects={projects} />
                 }
 
-                {skills && <SkillsComponent skillsUsed={skills} />}
+                <SkillsComponent skillsUsed={null} />
             </>
         </section>
     )

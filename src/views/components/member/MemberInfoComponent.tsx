@@ -10,7 +10,6 @@ interface MemberInfoProps {
 }
 
 const MemberInfoComponent: React.FC<MemberInfoProps> = ({ user }) => {
-
   return (
     <>
       <div className="author-info">

@@ -1,6 +1,6 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import LoadingComponent from './views/components/LoadingComponent';
 import HeaderComponent from './views/components/HeaderComponent';
@@ -22,42 +22,42 @@ const UserPage = lazy(() => import('./views/UserPage'));
 
 import ProtectedRoute from './ProtectedRoute';
 
-import { setPortfolioSkills } from '@/controllers/taxonomiesSlice';
-import {
-  getAccount,
-} from './controllers/accountSlice';
-
-import type { AppDispatch, RootState } from './model/store';
+import type { RootState } from './model/store';
+import Skills from './model/Skills';
+import Portfolio from './model/Portfolio';
+import User from './model/User';
 
 import OrganizationPage from './views/OrganizationPage';
 import Dashboard from './views/Dashboard';
-import Account from './model/Account';
 
 const App: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const { authenticatedUserObject } = useSelector((state: RootState) => state.user);
+  const { skillsObject } = useSelector((state: RootState) => state.taxonomies);
+  const { portfolioObject } = useSelector((state: RootState) => state.portfolio);
 
-  const { accountObject } = useSelector((state: RootState) => state.account);
+  const [user, setUser] = useState<User>(new User(authenticatedUserObject ?? {}));
+  const [skills, setSkills] = useState<Skills>(new Skills());
+  const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject ?? []));
 
-  const [account, setAccount] = useState<Account>(new Account());
-
-  const { user, skills, portfolio } = account;
   const { name, avatarURL, organizations, contactMethods } = user;
 
   useEffect(() => {
-      dispatch(getAccount());
-  }, [dispatch]);
+    if (authenticatedUserObject) {
+      setUser(new User(authenticatedUserObject));
+    }
+  }, [authenticatedUserObject]);
 
   useEffect(() => {
-    if (accountObject) {
-      setAccount(new Account(accountObject));
+    if (skillsObject) {
+      setSkills(new Skills(skillsObject));
     }
-  }, [accountObject]);
+  }, [skillsObject]);
 
   useEffect(() => {
-    if (skills.count > 0) {
-      dispatch(setPortfolioSkills(skills.toObject()))
+    if (portfolioObject) {
+      setPortfolio(new Portfolio(portfolioObject));
     }
-  }, [skills, dispatch]);
+  }, [portfolioObject]);
 
   useEffect(() => {
     if (avatarURL) {
@@ -83,13 +83,13 @@ const App: React.FC = () => {
       <Router>
         <Suspense fallback={<LoadingComponent />}>
           <Routes>
-            <Route path="/" element={<Home account={account} />} />
+            <Route path="/" element={<Home user={user} skills={skills} portfolio={portfolio} />} />
             <Route path="/about" element={<About user={user} portfolio={portfolio} skills={skills} />} />
-            <Route path="/organization/:login" element={<OrganizationPage organizations={organizations} portfolio={portfolio} skills={skills} />} />
+            <Route path="/organization/:login" element={<OrganizationPage />} />
             <Route path="/user/:login" element={<UserPage />} />
             <Route path="/portfolio" element={<PortfolioPage user={user} portfolio={portfolio} skills={skills} />} />
             <Route path="/portfolio/:owner/:projectID" element={<ProjectPage user={user} portfolio={portfolio} />} />
-            <Route path="/projects/:taxonomy/:term" element={<Search portfolio={portfolio} skills={skills} />} />
+            <Route path="/projects/:taxonomy/:term" element={<Search user={user} portfolio={portfolio} skills={skills} />} />
             <Route path="/resume" element={<Resume user={user} />} />
             <Route path="/contact" element={<Contact user={user} />} />
 

@@ -20,6 +20,7 @@ import Repo from '@/model/Repo';
 import User from '@/model/User';
 
 import { setMessage } from './messageSlice';
+import Repos from '@/model/Repos';
 
 type OctokitResponse<T = any, S = number> = {
   data: T;
@@ -231,10 +232,10 @@ export const getRepoDetails = createAsyncThunk(
   'github/getRepoDetails',
   async (query: GitHubRepoQuery, thunkAPI) => {
     try {
-      const repoResponse = await thunkAPI.dispatch(getRepo(query)).unwrap();
+      const repoResponse = await thunkAPI.dispatch(getRepo(query));
 
-      if (repoResponse) {
-        const repo = new Repo(repoResponse);
+      if (getRepo.fulfilled.match(repoResponse) && repoResponse.payload) {
+        const repo = new Repo(repoResponse.payload);
         let skills: Array<Record<string, any>> = [];
         let contents: Record<string, any> = {};
         let contributors: Array<Record<string, any>> = [];
@@ -361,9 +362,7 @@ export const getAuthenticatedAccount = createAsyncThunk(
         user.fromGitHub(data);
 
         if (user.organizationsURL) {
-          await thunkAPI.dispatch(
-            setMessage('Now Loading Organizations')
-          );
+          await thunkAPI.dispatch(setMessage('Now Loading Organizations'));
 
           const orgResponse = await thunkAPI.dispatch(
             getOrganizationDetailsList(user.organizationsURL)
@@ -377,9 +376,7 @@ export const getAuthenticatedAccount = createAsyncThunk(
           }
         }
 
-        await thunkAPI.dispatch(
-          setMessage('Now Loading Repositories')
-        );
+        await thunkAPI.dispatch(setMessage('Now Loading Repositories'));
 
         const repoResponse = await thunkAPI.dispatch(getRepoDetailsList());
 
@@ -396,10 +393,8 @@ export const getAuthenticatedAccount = createAsyncThunk(
           }
         }
 
-        await thunkAPI.dispatch(
-          setMessage('Now Loading Contacts')
-        );
-        
+        await thunkAPI.dispatch(setMessage('Now Loading Contacts'));
+
         const contactsResponse = await thunkAPI.dispatch(
           getSocialAccounts(user.id)
         );
@@ -411,10 +406,12 @@ export const getAuthenticatedAccount = createAsyncThunk(
           const contactMethodsObject = user.contactMethods.fromGitHub(
             contactsResponse.payload
           );
-          
+
           contactMethods = {
             ...contactMethodsObject,
-            website: user.contactMethods.setContactWebsite(user.website).toObject(),
+            website: user.contactMethods
+              .setContactWebsite(user.website)
+              .toObject(),
             email: user.contactMethods.setContactEmail(user.email).toObject(),
           };
         }
@@ -424,7 +421,7 @@ export const getAuthenticatedAccount = createAsyncThunk(
           contact_methods: contactMethods,
           organizations: organizations,
           repos: repos,
-          repoQueries: repoQueries
+          repoQueries: repoQueries,
         };
       }
 
@@ -486,7 +483,9 @@ export const getUserAccount = createAsyncThunk(
           );
           contactMethods = {
             ...contactMethodsObject,
-            website: user.contactMethods.setContactWebsite(user.website).toObject(),
+            website: user.contactMethods
+              .setContactWebsite(user.website)
+              .toObject(),
             email: user.contactMethods.setContactEmail(user.email).toObject(),
           };
         }
@@ -582,12 +581,12 @@ export const getOrganizationDetails = createAsyncThunk(
 
           contactMethods = {
             ...contactMethodsObject,
-            website: organization.contactMethods.setContactWebsite(
-              organization.blog
-            ).toObject(),
-            email: organization.contactMethods.setContactEmail(
-              organization.email
-            ).toObject(),
+            website: organization.contactMethods
+              .setContactWebsite(organization.blog)
+              .toObject(),
+            email: organization.contactMethods
+              .setContactEmail(organization.email)
+              .toObject(),
           };
         }
 

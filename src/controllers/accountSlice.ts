@@ -5,7 +5,7 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
-import { getAuthenticatedAccount } from '@/controllers/githubSlice';
+import { getAuthenticatedUserAccount } from '@/controllers/userSlice';
 import { getSkills } from '@/controllers/taxonomiesSlice';
 import { getPortfolio } from '@/controllers/portfolioSlice';
 
@@ -54,11 +54,11 @@ export const getAccount = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const accountResponse = await thunkAPI.dispatch(
-        getAuthenticatedAccount()
+        getAuthenticatedUserAccount()
       );
 
       if (
-        getAuthenticatedAccount.fulfilled.match(accountResponse) &&
+        getAuthenticatedUserAccount.fulfilled.match(accountResponse) &&
         accountResponse.payload
       ) {
         let skills = null;

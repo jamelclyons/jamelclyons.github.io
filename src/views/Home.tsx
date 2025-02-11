@@ -8,36 +8,67 @@ import MemberKnowledgeComponent from './components/member/MemberKnowledgeCompone
 import LoadingComponent from './components/LoadingComponent';
 
 import type { AppDispatch, RootState } from '@/model/store';
-import Account from '@/model/Account';
+import User from '@/model/User';
+import Skills from '@/model/Skills';
+import Portfolio from '@/model/Portfolio';
 
-import { setMessage, setMessageType, setShowStatusBar } from '@/controllers/messageSlice';
+import { setMessage, setMessageType } from '@/controllers/messageSlice';
+import { getAuthenticatedUserAccount } from '@/controllers/userSlice';
+import { getPortfolio } from '@/controllers/portfolioSlice';
 
 interface HomeProps {
-  account: Account;
+  user: User;
+  skills: Skills;
+  portfolio: Portfolio;
 }
 
-const Home: React.FC<HomeProps> = ({ account }) => {
-  const { user, skills, portfolio } = account;
-
+const Home: React.FC<HomeProps> = ({ user, skills, portfolio }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { accountLoading } = useSelector((state: RootState) => state.account);
+  const { userLoading, authenticatedUserObject } = useSelector((state: RootState) => state.user);
+  const { portfolioLoading } = useSelector((state: RootState) => state.portfolio);
 
   useEffect(() => {
-    document.title = user.name;
+    if (user) {
+      document.title = user.name;
+    }
   }, []);
 
   useEffect(() => {
     if (accountLoading) {
-      dispatch(setShowStatusBar('show'));
       dispatch(setMessageType('info'));
-      dispatch(setMessage('Now loading home page'));
+      dispatch(setMessage('Now Loading Home Page'));
     }
   }, [accountLoading]);
 
+  useEffect(() => {
+    if (authenticatedUserObject === null) {
+      dispatch(getAuthenticatedUserAccount());
+    }
+  }, [authenticatedUserObject, dispatch]);
+
+  useEffect(() => {
+    if (userLoading) {
+      dispatch(setMessageType('info'));
+      dispatch(setMessage('Now Loading User'));
+    }
+  }, [userLoading]);
+
+  useEffect(() => {
+    dispatch(getPortfolio(user.repoQueries));
+  }, [user]);
+
+  useEffect(() => {
+    if (portfolioLoading) {
+      dispatch(setMessageType('info'));
+      dispatch(setMessage('Now Loading Portfolio'));
+    }
+  }, [portfolioLoading]);
+
   return (
     <>
-      {<section className="home">
+      <section className="home">
         <MemberIntroductionComponent
           user={user}
         />
@@ -47,7 +78,7 @@ const Home: React.FC<HomeProps> = ({ account }) => {
         {portfolio.size > 0 ? <PortfolioComponent portfolio={portfolio} /> : <LoadingComponent />}
 
         <ContactComponent user={user} />
-      </section>}
+      </section>
     </>
   );
 }

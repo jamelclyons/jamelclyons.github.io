@@ -10,7 +10,6 @@ interface ProjectTeamComponentProps {
 }
 
 const ProjectTeamComponent: React.FC<ProjectTeamComponentProps> = ({ user, projectTeam }) => {
-
   return (
     <>
       {Array.isArray(projectTeam) && projectTeam.length > 0 && (

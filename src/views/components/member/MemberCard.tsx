@@ -34,8 +34,8 @@ const MemberCard: React.FC<MemberProps> = ({ user, member }) => {
         className="user-button"
         onClick={() => handleClick()}>
         <div className="author-card card">
-          <MemberPic user={user} />
-          <h3 className="title">{user.title}</h3>
+          <MemberPic user={member} />
+          <h3 className="title">{member.title}</h3>
         </div>
       </button>
     </>

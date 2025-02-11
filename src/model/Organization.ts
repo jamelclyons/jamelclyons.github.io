@@ -4,6 +4,8 @@ import Repos from './Repos';
 
 import user from '../../user.json';
 
+import GitHubRepoQuery from './GitHubRepoQuery';
+
 class Organization extends Model {
   id: string;
   createdAt: string;
@@ -21,6 +23,7 @@ class Organization extends Model {
   contactMethods: ContactMethods;
   reposURL: string;
   repos: Repos;
+  repoQueries: Array<GitHubRepoQuery>;
 
   constructor(data: Record<string, any> = {}) {
     super();
@@ -45,6 +48,7 @@ class Organization extends Model {
     this.contactMethods.setContactWebsite(this.blog);
     this.reposURL = data?.repos_url;
     this.repos = data?.repos ? new Repos(data.repos) : new Repos();
+    this.repoQueries = data?.repo_queries;
   }
 
   getRepos(data: Array<Record<string, any>>) {
@@ -87,6 +91,41 @@ class Organization extends Model {
   fromDB(data: Record<string, any>) {
     this.company = data?.company;
     this.avatarURL = data?.avatar_url;
+  }
+
+  getRepoQueries() {
+    if (
+      Array.isArray(this.repos.collection) &&
+      this.repos.collection.length > 0
+    ) {
+      let repoQueries: Array<GitHubRepoQuery> = [];
+
+      this.repos.collection.forEach((repo) => {
+        const repoQuery = new GitHubRepoQuery(repo.owner.login, repo.id);
+
+        repoQueries.push(repoQuery);
+      });
+
+      return repoQueries;
+    }
+
+    return [];
+  }
+
+  setRepoQueries(data: Array<Record<string, any>>) {
+    if (Array.isArray(data) && data.length > 0) {
+      let repoQueries: Array<GitHubRepoQuery> = [];
+
+      data.forEach((repo) => {
+        const repoQuery = new GitHubRepoQuery(repo.owner.login, repo.id);
+
+        repoQueries.push(repoQuery);
+      });
+
+      return repoQueries;
+    }
+
+    return [];
   }
 }
 

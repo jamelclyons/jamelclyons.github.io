@@ -1,6 +1,7 @@
 import RepoContent from './RepoContent';
+import Model from './Model';
 
-class RepoContents {
+class RepoContents extends Model {
   solution: RepoContent | null;
   design: RepoContent | null;
   development: RepoContent | null;
@@ -14,6 +15,8 @@ class RepoContents {
     delivery?: RepoContent,
     problem?: RepoContent
   ) {
+    super();
+
     this.solution = solution ?? null;
     this.design = design ?? null;
     this.development = development ?? null;

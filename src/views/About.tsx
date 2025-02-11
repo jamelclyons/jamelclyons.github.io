@@ -8,6 +8,7 @@ import StoryComponent from './components/StoryComponent';
 import LoadingComponent from './components/LoadingComponent';
 
 import { getRepoContents } from '@/controllers/githubSlice';
+import { getAuthenticatedUserAccount } from '@/controllers/userSlice';
 
 import type { AppDispatch, RootState } from '@/model/store';
 import User from '@/model/User';
@@ -27,8 +28,15 @@ const About: React.FC<AboutProps> = ({ user, portfolio, skills }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { githubLoading, contents } = useSelector((state: RootState) => state.github);
+  const { userLoading, authenticatedUserObject } = useSelector((state: RootState) => state.user);
 
   const [story, setStory] = useState<string>();
+
+  useEffect(() => {
+    if (authenticatedUserObject === null) {
+      dispatch(getAuthenticatedUserAccount());
+    }
+  }, [authenticatedUserObject, dispatch]);
 
   useEffect(() => {
     document.title = `About - ${user.name}`;
@@ -58,12 +66,12 @@ const About: React.FC<AboutProps> = ({ user, portfolio, skills }) => {
     }
   }, [contents]);
 
-useEffect(()=>{
-  if(githubLoading){
-    dispatch(setMessage('Now Loading story'));
-    dispatch(setShowStatusBar('show'));
-  }
-},[githubLoading]);
+  useEffect(() => {
+    if (githubLoading) {
+      dispatch(setMessage('Now Loading story'));
+      dispatch(setShowStatusBar('show'));
+    }
+  }, [githubLoading]);
 
   const handleProjects = () => {
     window.location.href = '/#/portfolio';
