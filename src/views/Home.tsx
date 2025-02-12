@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import PortfolioComponent from './components/portfolio/PortfolioComponent';
@@ -13,21 +13,21 @@ import Skills from '@/model/Skills';
 import Portfolio from '@/model/Portfolio';
 
 import { setMessage, setMessageType } from '@/controllers/messageSlice';
-import { getAuthenticatedUserAccount } from '@/controllers/userSlice';
 import { getPortfolio } from '@/controllers/portfolioSlice';
 
 interface HomeProps {
   user: User;
   skills: Skills;
-  portfolio: Portfolio;
 }
 
-const Home: React.FC<HomeProps> = ({ user, skills, portfolio }) => {
+const Home: React.FC<HomeProps> = ({ user, skills }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { accountLoading } = useSelector((state: RootState) => state.account);
-  const { userLoading, authenticatedUserObject } = useSelector((state: RootState) => state.user);
-  const { portfolioLoading } = useSelector((state: RootState) => state.portfolio);
+  const { userLoading } = useSelector((state: RootState) => state.user);
+  const { portfolioLoading, portfolioObject } = useSelector((state: RootState) => state.portfolio);
+
+  const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject ?? []));
 
   useEffect(() => {
     if (user) {
@@ -40,24 +40,20 @@ const Home: React.FC<HomeProps> = ({ user, skills, portfolio }) => {
       dispatch(setMessageType('info'));
       dispatch(setMessage('Now Loading Home Page'));
     }
-  }, [accountLoading]);
-
-  useEffect(() => {
-    if (authenticatedUserObject === null) {
-      dispatch(getAuthenticatedUserAccount());
-    }
-  }, [authenticatedUserObject, dispatch]);
+  }, [accountLoading, dispatch]);
 
   useEffect(() => {
     if (userLoading) {
       dispatch(setMessageType('info'));
       dispatch(setMessage('Now Loading User'));
     }
-  }, [userLoading]);
+  }, [userLoading, dispatch]);
 
   useEffect(() => {
-    dispatch(getPortfolio(user.repoQueries));
-  }, [user]);
+    if (portfolioObject === null) {
+      dispatch(getPortfolio(user.repoQueries));
+    }
+  }, [portfolioObject, user, dispatch]);
 
   useEffect(() => {
     if (portfolioLoading) {
@@ -65,6 +61,12 @@ const Home: React.FC<HomeProps> = ({ user, skills, portfolio }) => {
       dispatch(setMessage('Now Loading Portfolio'));
     }
   }, [portfolioLoading]);
+
+  useEffect(() => {
+    if (portfolioObject) {
+      setPortfolio(new Portfolio(portfolioObject));
+    }
+  }, [portfolioObject]);
 
   return (
     <>
@@ -75,7 +77,7 @@ const Home: React.FC<HomeProps> = ({ user, skills, portfolio }) => {
 
         <MemberKnowledgeComponent skills={skills} />
 
-        {portfolio.size > 0 ? <PortfolioComponent portfolio={portfolio} /> : <LoadingComponent />}
+        {portfolio.size > 0 ? <PortfolioComponent account={user} /> : <LoadingComponent />}
 
         <ContactComponent user={user} />
       </section>

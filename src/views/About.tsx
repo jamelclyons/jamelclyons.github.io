@@ -8,7 +8,6 @@ import StoryComponent from './components/StoryComponent';
 import LoadingComponent from './components/LoadingComponent';
 
 import { getRepoContents } from '@/controllers/githubSlice';
-import { getAuthenticatedUserAccount } from '@/controllers/userSlice';
 
 import type { AppDispatch, RootState } from '@/model/store';
 import User from '@/model/User';
@@ -16,27 +15,22 @@ import Skills from '@/model/Skills';
 import RepoContentQuery from '@/model/RepoContentQuery';
 import Portfolio from '@/model/Portfolio';
 
-import { setMessage, setShowStatusBar } from '@/controllers/messageSlice';
+import { setMessage, setMessageType, setShowStatusBar } from '@/controllers/messageSlice';
+import { getPortfolio } from '@/controllers/portfolioSlice';
 
 interface AboutProps {
   user: User;
-  portfolio: Portfolio;
   skills: Skills;
 }
 
-const About: React.FC<AboutProps> = ({ user, portfolio, skills }) => {
+const About: React.FC<AboutProps> = ({ user, skills }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { githubLoading, contents } = useSelector((state: RootState) => state.github);
-  const { userLoading, authenticatedUserObject } = useSelector((state: RootState) => state.user);
+  const { portfolioLoading, portfolioObject, portfolioErrorMessage } = useSelector((state: RootState) => state.portfolio);
 
   const [story, setStory] = useState<string>();
-
-  useEffect(() => {
-    if (authenticatedUserObject === null) {
-      dispatch(getAuthenticatedUserAccount());
-    }
-  }, [authenticatedUserObject, dispatch]);
+  const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject ?? []));
 
   useEffect(() => {
     document.title = `About - ${user.name}`;
@@ -72,6 +66,33 @@ const About: React.FC<AboutProps> = ({ user, portfolio, skills }) => {
       dispatch(setShowStatusBar('show'));
     }
   }, [githubLoading]);
+
+  useEffect(() => {
+    if (portfolioObject === null) {
+      dispatch(getPortfolio(user.repoQueries));
+    }
+  }, [portfolioObject, user, dispatch]);
+
+  useEffect(() => {
+    if (portfolioLoading) {
+      dispatch(setMessageType('info'));
+      dispatch(setMessage('Now Loading Portfolio'));
+    }
+  }, [portfolioLoading]);
+
+  useEffect(() => {
+    if (portfolioErrorMessage) {
+      dispatch(setMessage(portfolioErrorMessage));
+      dispatch(setMessageType('error'));
+      dispatch(setShowStatusBar(Date.now()));
+    }
+  }, [portfolioErrorMessage]);
+
+  useEffect(() => {
+    if (portfolioObject) {
+      setPortfolio(new Portfolio(portfolioObject));
+    }
+  }, [portfolioObject]);
 
   const handleProjects = () => {
     window.location.href = '/#/portfolio';

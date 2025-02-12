@@ -48,11 +48,33 @@ class Organization extends Model {
     this.contactMethods.setContactWebsite(this.blog);
     this.reposURL = data?.repos_url;
     this.repos = data?.repos ? new Repos(data.repos) : new Repos();
-    this.repoQueries = data?.repo_queries;
+    this.repoQueries = this.getRepoQueries(data?.repo_queries);
   }
 
   getRepos(data: Array<Record<string, any>>) {
     const repos = new Repos(data);
+    return repos.collection.map((repo) => {
+      return {
+        ...repo.toObject(),
+        skills: repo.skills.toObject(),
+        contents: {
+          solution: repo.contents.solution?.toObject() || null,
+          design: repo.contents.design?.toObject() || null,
+          development: repo.contents.development?.toObject() || null,
+          delivery: repo.contents.delivery?.toObject() || null,
+          problem: repo.contents.problem?.toObject() || null,
+        },
+        contributors: {
+          users: repo.contributors.users.map((user) => user.toObject()),
+        },
+      };
+    });
+  }
+
+
+  getReposFromGitHub(data: Array<Record<string, any>>) {
+    const repos = new Repos();
+    repos.fromGitHub(data);
     return repos.collection.map((repo) => {
       return {
         ...repo.toObject(),
@@ -93,39 +115,19 @@ class Organization extends Model {
     this.avatarURL = data?.avatar_url;
   }
 
-  getRepoQueries() {
-    if (
-      Array.isArray(this.repos.collection) &&
-      this.repos.collection.length > 0
-    ) {
-      let repoQueries: Array<GitHubRepoQuery> = [];
+  getRepoQueries(data: Array<Record<string, any>>) {
+    let repoQueries: Array<GitHubRepoQuery> = [];
 
-      this.repos.collection.forEach((repo) => {
-        const repoQuery = new GitHubRepoQuery(repo.owner.login, repo.id);
-
-        repoQueries.push(repoQuery);
-      });
-
-      return repoQueries;
-    }
-
-    return [];
-  }
-
-  setRepoQueries(data: Array<Record<string, any>>) {
     if (Array.isArray(data) && data.length > 0) {
-      let repoQueries: Array<GitHubRepoQuery> = [];
-
-      data.forEach((repo) => {
-        const repoQuery = new GitHubRepoQuery(repo.owner.login, repo.id);
-
+      data.forEach((query) => {
+        console.log(query.owner.login)
+        const repoQuery = new GitHubRepoQuery(query.owner.login, query.id);
+        console.log(repoQuery)
         repoQueries.push(repoQuery);
       });
-
-      return repoQueries;
     }
 
-    return [];
+    return repoQueries;
   }
 }
 

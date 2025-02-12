@@ -17,10 +17,9 @@ import User from '@/model/User';
 
 interface ProjectPageProps {
   user: User;
-  portfolio: Portfolio;
 }
 
-const ProjectPage: React.FC<ProjectPageProps> = ({ user, portfolio }) => {
+const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { owner, projectID } = useParams<string>();
@@ -28,10 +27,20 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user, portfolio }) => {
   const { projectErrorMessage, projectPageObject } = useSelector(
     (state: RootState) => state.project
   );
+  const { portfolioObject } = useSelector(
+    (state: RootState) => state.portfolio
+  );
   const { authenticatedUserObject } = useSelector((state: RootState) => state.user);
 
   const [project, setProject] = useState<Project>();
   const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>();
+  const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject ?? []));
+
+  useEffect(() => {
+    if (portfolioObject) {
+      setPortfolio(new Portfolio(portfolioObject));
+    }
+  }, [portfolioObject]);
 
   useEffect(() => {
     if (projectID) {

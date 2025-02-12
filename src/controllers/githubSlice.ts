@@ -235,7 +235,9 @@ export const getRepoDetails = createAsyncThunk(
       const repoResponse = await thunkAPI.dispatch(getRepo(query));
 
       if (getRepo.fulfilled.match(repoResponse) && repoResponse.payload) {
-        const repo = new Repo(repoResponse.payload);
+        const repo = new Repo();
+        repo.fromGitHub(repoResponse.payload);
+
         let skills: Array<Record<string, any>> = [];
         let contents: Record<string, any> = {};
         let contributors: Array<Record<string, any>> = [];
@@ -528,8 +530,11 @@ export const getOrganizationAccount = createAsyncThunk(
     try {
       const { data } = await octokit.request(`/orgs/${organization}`);
       const org = new Organization(data);
+      const repoQueries = org.getRepoQueries(
+        org.repos.collection.map((repo) => repo.toObject())
+      );
 
-      return org.toObject();
+      return { ...org.toObject(), repo_queries: repoQueries };
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -563,7 +568,8 @@ export const getOrganizationDetails = createAsyncThunk(
 
           if (reposResponse.status === 200) {
             const reposJson = await reposResponse.json();
-            repos = organization.getRepos(reposJson);
+            repos = organization.getReposFromGitHub(reposJson);
+            console.log(repos)
           }
         }
 

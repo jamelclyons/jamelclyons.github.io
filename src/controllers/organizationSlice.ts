@@ -43,7 +43,7 @@ export const getOrganization = createAsyncThunk(
           repo.toObject()
         );
         const repoQueries = organization
-          .getRepoQueries()
+          .getRepoQueries(repos)
           .map((query) => query.toObject());
 
         const databaseResponse = await thunkAPI.dispatch(

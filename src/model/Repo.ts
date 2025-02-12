@@ -25,15 +25,15 @@ class Repo extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    this.id = data?.name ?? data?.id ?? '';
-    this.privacy = data?.private ?? '';
-    this.size = data?.size ?? 0;
+    this.id = data?.id;
+    this.privacy = data?.privacy;
+    this.size = data?.size;
     this.owner = data?.owner ? new Owner(data.owner) : new Owner();
-    this.createdAt = data?.created_at ?? '';
-    this.updatedAt = data?.updated_at ?? '';
-    this.homepage = data?.homepage ?? '';
-    this.description = data?.description ?? '';
-    this.repoURL = data?.html_url ?? data?.repo_url;
+    this.createdAt = data?.created_at;
+    this.updatedAt = data?.updated_at;
+    this.homepage = data?.homepage;
+    this.description = data?.description;
+    this.repoURL = data?.repo_url;
     this.skills = data?.skills ? this.getSkills(data.skills) : new Skills();
     this.contents = data?.contents
       ? new RepoContents(
@@ -46,6 +46,19 @@ class Repo extends Model {
       : new RepoContents();
     this.contributorsURL = data?.contributors_url;
     this.setContributors(data?.contributors);
+  }
+
+  fromGitHub(data: Record<string, any>) {
+    this.id = data?.name;
+    this.privacy = data?.private;
+    this.size = data?.size;
+    this.owner = data?.owner ? new Owner(data.owner) : new Owner();
+    this.createdAt = data?.created_at;
+    this.updatedAt = data?.pushed_at;
+    this.homepage = data?.homepage;
+    this.description = data?.description;
+    this.repoURL = data?.html_url;
+    this.contributorsURL = data?.contributors_url;
   }
 
   getOwner(data: Record<string, any>) {

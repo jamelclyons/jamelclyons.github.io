@@ -8,18 +8,23 @@ import SkillsComponent from '../SkillsComponent';
 import type { AppDispatch, RootState } from '@/model/store';
 import Portfolio from '@/model/Portfolio';
 
-import { setMessage, setShowStatusBar } from '@/controllers/messageSlice';
 import Project from '@/model/Project';
+import User from '@/model/User';
+
+import { setMessage, setMessageType, setShowStatusBar } from '@/controllers/messageSlice';
+import { getPortfolio, getOrganizationPortfolio } from '@/controllers/portfolioSlice';
+import Organization from '@/model/Organization';
 
 interface PortfolioComponentProps {
-  portfolio: Portfolio;
+  account: User | Organization;
 }
 
-const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ portfolio }) => {
+const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ account }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { portfolioLoading } = useSelector((state: RootState) => state.portfolio);
+  const { portfolioLoading, portfolioObject, organizationPortfolioObject, portfolioErrorMessage } = useSelector((state: RootState) => state.portfolio);
 
+  const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject ?? []));
   const [projects, setProjects] = useState<Set<Project>>();
 
   useEffect(() => {
@@ -28,6 +33,45 @@ const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ portfolio }) =>
       dispatch(setShowStatusBar('show'));
     }
   }, [portfolioLoading]);
+
+  useEffect(() => {
+    if (account instanceof User && portfolioObject === null) {
+      dispatch(getPortfolio(account.repoQueries));
+    }
+  }, [portfolioObject, account, dispatch]);
+
+  useEffect(() => {
+    if (account instanceof Organization && organizationPortfolioObject === null) {
+      dispatch(getOrganizationPortfolio(account.repoQueries));
+    }
+  }, [organizationPortfolioObject, account, dispatch]);
+
+  useEffect(() => {
+    if (portfolioLoading) {
+      dispatch(setMessageType('info'));
+      dispatch(setMessage('Now Loading Portfolio'));
+    }
+  }, [portfolioLoading]);
+
+  useEffect(() => {
+    if (portfolioErrorMessage) {
+      dispatch(setMessage(portfolioErrorMessage));
+      dispatch(setMessageType('error'));
+      dispatch(setShowStatusBar(Date.now()));
+    }
+  }, [portfolioErrorMessage]);
+
+  useEffect(() => {
+    if (account instanceof User && portfolioObject) {
+      setPortfolio(new Portfolio(portfolioObject));
+    }
+  }, [account, portfolioObject]);
+
+  useEffect(() => {
+    if (account instanceof Organization && organizationPortfolioObject) {
+      setPortfolio(new Portfolio(organizationPortfolioObject));
+    }
+  }, [account, organizationPortfolioObject]);
 
   useEffect(() => {
     if (portfolio.projects instanceof Set && portfolio.projects.size > 0) {

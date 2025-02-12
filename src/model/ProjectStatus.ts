@@ -11,7 +11,7 @@ class ProjectStatus extends Model {
     super();
 
     this.createdAt = data?.created_at ? formatTime(data.created_at) : '';
-    this.updatedAt = data?.updated_at ? formatTime(data.created_at) : '';
+    this.updatedAt = data?.updated_at ? formatTime(data.updated_at) : '';
     this.progress = data?.progress || '0';
   }
 }

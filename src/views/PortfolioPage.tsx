@@ -2,34 +2,28 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import PortfolioComponent from './components/portfolio/PortfolioComponent';
-import StatusBarComponent from './components/StatusBarComponent';
 
 import type { AppDispatch, RootState } from '@/model/store';
 import User from '../model/User';
-import Portfolio from '../model/Portfolio';
-import Skills from '@/model/Skills';
 
 import { setMessage, setMessageType, setShowStatusBar } from '@/controllers/messageSlice';
-import { getAuthenticatedUserAccount } from '@/controllers/userSlice';
 import { getPortfolio } from '@/controllers/portfolioSlice';
 
 interface PortfolioProps {
   user: User;
-  portfolio: Portfolio;
-  skills: Skills;
 }
 
-const PortfolioPage: React.FC<PortfolioProps> = ({ user, portfolio, skills }) => {
+const PortfolioPage: React.FC<PortfolioProps> = ({ user }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { authenticatedUserObject } = useSelector((state: RootState) => state.user);
-  const { portfolioLoading, portfolioErrorMessage, portfolioObject } = useSelector((state: RootState) => state.portfolio);
+  const { portfolioLoading, portfolioObject, portfolioErrorMessage } = useSelector((state: RootState) => state.portfolio);
 
   useEffect(() => {
-    if (authenticatedUserObject === null) {
-      dispatch(getAuthenticatedUserAccount());
+    if (portfolioLoading) {
+      dispatch(setMessage('Now Loading Portfolio'));
+      dispatch(setShowStatusBar('show'));
     }
-  }, [authenticatedUserObject, dispatch]);
+  }, [portfolioLoading]);
 
   useEffect(() => {
     if (portfolioObject === null) {
@@ -42,7 +36,7 @@ const PortfolioPage: React.FC<PortfolioProps> = ({ user, portfolio, skills }) =>
       dispatch(setMessageType('info'));
       dispatch(setMessage('Now Loading Portfolio'));
     }
-  }, [portfolioLoading, dispatch]);
+  }, [portfolioLoading]);
 
   useEffect(() => {
     if (portfolioErrorMessage) {
@@ -53,23 +47,13 @@ const PortfolioPage: React.FC<PortfolioProps> = ({ user, portfolio, skills }) =>
   }, [portfolioErrorMessage]);
 
   useEffect(() => {
-    if (authenticatedUserObject === null) {
-      dispatch(getAuthenticatedUserAccount());
-    }
-  }, [authenticatedUserObject, dispatch]);
-
-  useEffect(() => {
     document.title = `Portfolio - ${user.name}`;
   }, []);
 
   return (
     <section className="portfolio">
       <>
-        {portfolio || skills ? (
-          <PortfolioComponent portfolio={portfolio} />
-        ) : (
-          <StatusBarComponent />
-        )}
+        <PortfolioComponent account={user} />
       </>
     </section>
   );
