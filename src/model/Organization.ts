@@ -48,7 +48,7 @@ class Organization extends Model {
     this.contactMethods.setContactWebsite(this.blog);
     this.reposURL = data?.repos_url;
     this.repos = data?.repos ? new Repos(data.repos) : new Repos();
-    this.repoQueries = this.getRepoQueries(data?.repo_queries);
+    this.repoQueries = this.setRepoQueries(data?.repo_queries);
   }
 
   getRepos(data: Array<Record<string, any>>) {
@@ -120,9 +120,20 @@ class Organization extends Model {
 
     if (Array.isArray(data) && data.length > 0) {
       data.forEach((query) => {
-        console.log(query.owner.login)
         const repoQuery = new GitHubRepoQuery(query.owner.login, query.id);
-        console.log(repoQuery)
+        repoQueries.push(repoQuery);
+      });
+    }
+
+    return repoQueries;
+  }
+
+  setRepoQueries(data: Array<Record<string, any>>) {
+    let repoQueries: Array<GitHubRepoQuery> = [];
+
+    if (Array.isArray(data) && data.length > 0) {
+      data.forEach((query) => {
+        const repoQuery = new GitHubRepoQuery(query.owner, query.repo);
         repoQueries.push(repoQuery);
       });
     }

@@ -569,7 +569,6 @@ export const getOrganizationDetails = createAsyncThunk(
           if (reposResponse.status === 200) {
             const reposJson = await reposResponse.json();
             repos = organization.getReposFromGitHub(reposJson);
-            console.log(repos)
           }
         }
 

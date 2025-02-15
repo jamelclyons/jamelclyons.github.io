@@ -38,7 +38,7 @@ const OrganizationPage: React.FC = () => {
             document.title = organization.name
         }
     }, [organization]);
-console.log(organization)
+
     return (
         <section className='organization' id='top'>
             <>
