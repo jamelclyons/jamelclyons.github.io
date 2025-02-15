@@ -19,6 +19,7 @@ import ProjectSolution from '../model/ProjectSolution';
 import ProjectProcess from '../model/ProjectProcess';
 import ProjectProblem from '../model/ProjectProblem';
 import ProjectDetails from '../model/ProjectDetails';
+import DBProject from '@/model/DBProject';
 
 interface UpdateState {
   updateLoading: boolean;
@@ -49,9 +50,9 @@ const projectCollection: CollectionReference<DocumentData, DocumentData> =
 
 export const updateProject = createAsyncThunk(
   'update/updateProject',
-  async (data: Record<string, any>) => {
+  async (data: DBProject) => {
     try {
-      await updateDoc(doc(projectCollection, data.id), data);
+      await updateDoc(doc(projectCollection, data.id), data.toObject());
 
       return `Project with the #ID: ${data.id} was updated.`;
     } catch (error) {

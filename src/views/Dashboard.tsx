@@ -16,7 +16,7 @@ const Dashboard: React.FC = () => {
     };
 
     const handleUpdateProject = () => {
-        navigate('/admin/update/projects');
+        navigate('/admin/update/portfolio');
     };
 
     const handleLogout = async () => {

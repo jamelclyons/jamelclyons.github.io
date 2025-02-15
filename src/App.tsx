@@ -99,9 +99,9 @@ const App: React.FC = () => {
                 <Dashboard />
               </ProtectedRoute>
             } />
-            <Route path="/admin/update/projects" element={
+            <Route path="/admin/update/portfolio" element={
               <ProtectedRoute>
-                <ProjectsEditPage />
+                <ProjectsEditPage user={user} />
               </ProtectedRoute>
             } />
             <Route path="/admin/update/project/:owner/:projectID" element={

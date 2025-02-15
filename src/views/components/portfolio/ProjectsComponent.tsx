@@ -1,8 +1,6 @@
 import React from 'react';
 
-import StatusBarComponent from '../StatusBarComponent';
-
-import Project from '../../../model/Project';
+import Project from '@/model/Project';
 import PortfolioProject from './PortfolioProject';
 
 interface ProjectsComponentProps {

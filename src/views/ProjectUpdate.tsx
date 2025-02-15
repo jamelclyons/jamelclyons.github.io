@@ -1,17 +1,15 @@
 import React, { useEffect, useState, MouseEvent, ChangeEvent } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import type { AppDispatch, RootState } from '../model/store';
-import Repo from '../model/Repo';
 
-import { getProject } from '../controllers/projectSlice';
-import { updateProject } from '../controllers/updateSlice';
+import { getProjectPage } from '@/controllers/projectSlice';
+import { updateProject } from '@/controllers/updateSlice';
 import {
     setMessage,
     setMessageType,
     setShowStatusBar,
-} from '../controllers/messageSlice';
+} from '@/controllers/messageSlice';
 
 import UpdateDetails from './components/update/UpdateDetails';
 import UpdateProcess from './components/update/UpdateProcess';
@@ -19,8 +17,10 @@ import UpdateSolution from './components/update/UpdateSolution';
 import UpdateProblem from './components/update/UpdateProblem';
 import StatusBarComponent from './components/StatusBarComponent';
 
-import Project from '../model/Project';
+import type { AppDispatch, RootState } from '@/model/store';
+import Project from '@/model/Project';
 import GitHubRepoQuery from '@/model/GitHubRepoQuery';
+import DBProject from '@/model/DBProject';
 
 const ProjectUpdate: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -29,29 +29,42 @@ const ProjectUpdate: React.FC = () => {
     const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
         (state: RootState) => state.update
     );
-    const { projectObject } = useSelector(
+    const { projectPageObject, projectErrorMessage } = useSelector(
         (state: RootState) => state.project
     );
 
     const [project, setProject] = useState<Project>(new Project());
+    const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>();
 
-    const { solution, process, problem, details } = project;
+    const { id, title, solution, process, problem, details } = project;
 
-    const [title, setTitle] = useState<string>(project.title);
-    const [repoURL, setRepoURL] = useState<string>(project.process.development.repoURL);
+    const [updatedTitle, setUpdatedTitle] = useState<string>(title);
 
     useEffect(() => {
         if (owner && projectID) {
-            const query = new GitHubRepoQuery(owner, projectID);
-            dispatch(getProject(query));
+            setRepoQuery(new GitHubRepoQuery(owner, projectID))
         }
     }, [owner, projectID]);
 
     useEffect(() => {
-        if (projectObject) {
-            setProject(new Project(projectObject));
+        if (repoQuery) {
+            dispatch(getProjectPage(repoQuery));
         }
-    }, [projectID]);
+    }, [dispatch, repoQuery]);
+
+    useEffect(() => {
+        if (projectPageObject) {
+            setProject(new Project(projectPageObject));
+        }
+    }, [projectPageObject]);
+
+    useEffect(() => {
+        if (projectErrorMessage) {
+            dispatch(setMessageType('error'));
+            dispatch(setMessage(projectErrorMessage));
+            dispatch(setShowStatusBar(true));
+        }
+    }, [dispatch, projectErrorMessage]);
 
     useEffect(() => {
         if (updateLoading) {
@@ -80,10 +93,8 @@ const ProjectUpdate: React.FC = () => {
 
             const { name, value } = target;
 
-            if (name === 'repo_url') {
-                setRepoURL(value);
-            } else if (name === 'title') {
-                setTitle(value);
+            if (name === 'title') {
+                setUpdatedTitle(value);
             }
         } catch (error) {
             const err = error as Error;
@@ -97,17 +108,13 @@ const ProjectUpdate: React.FC = () => {
 
         try {
 
-            if (!repoURL) {
-                throw new Error('A valid repo url is required.');
-            }
-
             if (!title) {
                 throw new Error('A valid project title is required.');
             }
 
-            project.create(repoURL, title);
+            const updatedProject = new DBProject({ id: id, title: updatedTitle });
 
-            dispatch(updateProject(project.toObject())).unwrap().then((response) => {
+            dispatch(updateProject(updatedProject)).unwrap().then((response) => {
                 dispatch(setMessageType('success'));
                 dispatch(setMessage(response));
             });
@@ -126,17 +133,9 @@ const ProjectUpdate: React.FC = () => {
             <form action="" id="add_project">
                 <input
                     type="text"
-                    name="repo_url"
-                    placeholder="Repo URL"
-                    value={repoURL}
-                    onChange={handleChange}
-                />
-
-                <input
-                    type="text"
                     name="title"
                     placeholder="Title"
-                    value={title}
+                    value={updatedTitle}
                     onChange={handleChange}
                 />
 

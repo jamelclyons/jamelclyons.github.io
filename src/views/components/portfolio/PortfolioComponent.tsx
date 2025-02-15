@@ -7,13 +7,12 @@ import SkillsComponent from '../SkillsComponent';
 
 import type { AppDispatch, RootState } from '@/model/store';
 import Portfolio from '@/model/Portfolio';
-
 import Project from '@/model/Project';
 import User from '@/model/User';
+import Organization from '@/model/Organization';
 
 import { setMessage, setMessageType, setShowStatusBar } from '@/controllers/messageSlice';
 import { getPortfolio, getOrganizationPortfolio } from '@/controllers/portfolioSlice';
-import Organization from '@/model/Organization';
 
 interface PortfolioComponentProps {
   account: User | Organization;

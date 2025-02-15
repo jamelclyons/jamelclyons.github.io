@@ -4,22 +4,22 @@ import ProjectVersions from './ProjectVersions';
 import Skills from './Skills';
 
 class ProjectDevelopment extends Model {
-  contentURL: string | null;
-  checkList: Array<Task>;
   repoURL: string;
-  versionsList: ProjectVersions;
+  contentURL: string | null;
   skills: Skills;
+  checkList: Array<Task>;
+  versionsList: ProjectVersions;
 
   constructor(data: Record<string, any> = {}) {
     super();
 
     this.repoURL = data?.repo_url || '';
+    this.contentURL = data?.content_url || null;
+    this.skills = data?.skills ? new Skills(data.skills) : new Skills;
     this.checkList = data?.check_list ? this.toArrayTask(data.check_list) : [];
     this.versionsList = data?.versions_list
       ? new ProjectVersions(data.versions_list)
       : new ProjectVersions();
-    this.skills = data?.skills ? new Skills(data.skills) : new Skills;
-    this.contentURL = data?.content_url || null;
   }
 
   toArrayTask(data: Array<Record<string, any>>) {
