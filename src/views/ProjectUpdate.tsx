@@ -2,7 +2,6 @@ import React, { useEffect, useState, MouseEvent, ChangeEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-
 import { getProjectPage } from '@/controllers/projectSlice';
 import { updateProject } from '@/controllers/updateSlice';
 import {
@@ -59,6 +58,12 @@ const ProjectUpdate: React.FC = () => {
     }, [projectPageObject]);
 
     useEffect(() => {
+        if (title) {
+            setUpdatedTitle(title);
+        }
+    }, [title]);
+
+    useEffect(() => {
         if (projectErrorMessage) {
             dispatch(setMessageType('error'));
             dispatch(setMessage(projectErrorMessage));
@@ -108,7 +113,7 @@ const ProjectUpdate: React.FC = () => {
 
         try {
 
-            if (!title) {
+            if (!updatedTitle) {
                 throw new Error('A valid project title is required.');
             }
 

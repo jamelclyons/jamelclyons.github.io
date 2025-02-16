@@ -4,9 +4,6 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
-
-import { db } from '../services/firebase/config';
 import { headers } from '@/services/github/octokit';
 
 interface ContentState {

@@ -21,6 +21,8 @@ import ProjectProblem from '../model/ProjectProblem';
 import ProjectDetails from '../model/ProjectDetails';
 import DBProject from '@/model/DBProject';
 
+import { addSecureHeaders } from '@/utilities/Headers';
+
 interface UpdateState {
   updateLoading: boolean;
   updateSuccessMessage: string;
@@ -45,16 +47,26 @@ const initialState: UpdateState = {
   details: null,
 };
 
+const api = 'http://127.0.0.1:5001/portfolio-bec7d/us-central1/default';
+
 const projectCollection: CollectionReference<DocumentData, DocumentData> =
   collection(db, 'portfolio');
 
 export const updateProject = createAsyncThunk(
   'update/updateProject',
-  async (data: DBProject) => {
+  async (project: DBProject) => {
     try {
-      await updateDoc(doc(projectCollection, data.id), data.toObject());
+      const request = await fetch(`${api}/project/${project.id}`, {
+        method: 'POST',
+        headers: await addSecureHeaders(),
+        body: JSON.stringify(project.toObject()),
+      });
+      
+      if (request.status === 200) {
+        return await request.json();
+      }
 
-      return `Project with the #ID: ${data.id} was updated.`;
+      return null;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -207,6 +219,7 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
     builder
       .addMatcher(
         isAnyOf(
+          updateProject.fulfilled,
           updateSolution.fulfilled,
           updateProcess.fulfilled,
           updateProblem.fulfilled,
@@ -214,11 +227,12 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
         ),
         (state, action) => {
           state.updateLoading = false;
-          state.updateSuccessMessage = action.payload;
+          state.updateSuccessMessage = action.payload.success_message;
         }
       )
       .addMatcher(
         isAnyOf(
+          updateProject.pending,
           updateSolution.pending,
           updateProcess.pending,
           updateProblem.pending,
@@ -232,6 +246,7 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
       )
       .addMatcher(
         isAnyOf(
+          updateProject.rejected,
           updateSolution.rejected,
           updateProcess.rejected,
           updateProblem.rejected,

@@ -56,20 +56,56 @@ export const getAuthenticatedUserAccount = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const userResponse = await thunkAPI.dispatch(getAuthenticatedAccount());
+
       if (
         getAuthenticatedAccount.fulfilled.match(userResponse) &&
         userResponse.payload
       ) {
-        // const databaseResponse = await thunkAPI.dispatch(getUserData(user.id));
+        const user = new User(userResponse.payload);
+        let organizations = [];
+        let repos = [];
 
-        // if (
-        //   getUserData.fulfilled.match(databaseResponse) &&
-        //   databaseResponse.payload
-        // ) {
-        //   user.fromDB(databaseResponse.payload);
-        // }
+        const databaseResponse = await thunkAPI.dispatch(getUserData(user.id));
 
-        return { ...userResponse.payload };
+        if (
+          getUserData.fulfilled.match(databaseResponse) &&
+          databaseResponse.payload
+        ) {
+          user.fromDB(databaseResponse.payload);
+        }
+
+        organizations = user.organizations.list.map((organization) => ({
+          ...organization.toObject(),
+          repos: organization.repos.collection.map((repo) => repo.toObject()),
+          contributors: organization.repos.collection.map((repo) =>
+            repo.contributors.toObject()
+          ),
+        }));
+
+        repos =
+          Array.isArray(user.repos.collection) &&
+          user.repos.collection.length > 0
+            ? user.repos.collection?.map((repo) => ({
+                ...repo.toObject(),
+                contributors:
+                  Array.isArray(repo.contributors.users) &&
+                  repo.contributors.users.length > 0
+                    ? repo.contributors.users?.map((contributor) => {
+                        contributor.toObject();
+                      })
+                    : [],
+              }))
+            : [];
+
+        return {
+          ...user.toObject(),
+          organizations: organizations,
+          repos: repos,
+          repo_queries:
+            Array.isArray(repos) && repos.length > 0
+              ? user.getRepoQueries(repos)
+              : [],
+        };
       }
 
       return null;

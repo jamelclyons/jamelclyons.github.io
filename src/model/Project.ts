@@ -29,7 +29,7 @@ class Project extends Model {
 
     this.id = data?.id;
     this.owner = new Owner(data?.owner);
-    this.title = data?.title ? this.getTitle(data?.id) : '';
+    this.title = data?.title ? data.title : this.getTitle(data?.id);
     this.description = data?.description ?? 'No Description Provided.';
     this.solution = new ProjectSolution(data?.solution);
     this.process = new ProjectProcess(data?.process);
@@ -69,15 +69,25 @@ class Project extends Model {
     this.description =
       repo.description !== '' ? repo.description : 'No Description Provided.';
     this.solution.urlsList.homepage.url = repo.homepage;
-    this.solution.contentURL = repo.contents.solution ? repo.contents.solution.downloadURL : null;
+    this.solution.contentURL = repo.contents.solution
+      ? repo.contents.solution.downloadURL
+      : null;
     this.process.status.createdAt = repo.createdAt;
     this.process.status.updatedAt = repo.updatedAt;
-    this.process.design.contentURL = repo.contents.design ? repo.contents.design.downloadURL : null;
-    this.process.development.contentURL = repo.contents.development ? repo.contents.development.downloadURL : null;
+    this.process.design.contentURL = repo.contents.design
+      ? repo.contents.design.downloadURL
+      : null;
+    this.process.development.contentURL = repo.contents.development
+      ? repo.contents.development.downloadURL
+      : null;
     this.process.development.repoURL = repo.repoURL;
     this.process.development.skills = repo.skills;
-    this.process.delivery.contentURL = repo.contents.delivery ? repo.contents.delivery.downloadURL : null;
-    this.problem.contentURL = repo.contents.problem ? repo.contents.problem.downloadURL : null;
+    this.process.delivery.contentURL = repo.contents.delivery
+      ? repo.contents.delivery.downloadURL
+      : null;
+    this.problem.contentURL = repo.contents.problem
+      ? repo.contents.problem.downloadURL
+      : null;
     this.details.teamList = repo.contributors.users;
   }
 
@@ -87,8 +97,14 @@ class Project extends Model {
     this.solution.gallery = data?.solution?.gallery
       ? new Gallery(data.solution.gallery)
       : new Gallery();
-    this.solution.currency = data?.solution?.currency ? data.solution.currency : 'USD';
-    this.solution.features = Array.isArray(data?.solution?.features) && data?.solution?.features.length > 0 ? this.setFeatures(data.solution.features) : new Set();
+    this.solution.currency = data?.solution?.currency
+      ? data.solution.currency
+      : 'USD';
+    this.solution.features =
+      Array.isArray(data?.solution?.features) &&
+      data?.solution?.features.length > 0
+        ? this.setFeatures(data.solution.features)
+        : new Set();
     this.solution.price = data?.solution?.price ? data.solution.price : 0;
     this.solution.urlsList = data?.solution?.urlsList
       ? new ProjectURLs(data.solution.urlsList)
@@ -111,10 +127,10 @@ class Project extends Model {
       : new ProjectDetails();
   }
 
-  setFeatures(featuresObject: Array<Record<string,any>>){
+  setFeatures(featuresObject: Array<Record<string, any>>) {
     const features = new Set<Feature>();
 
-    if(Array.isArray(featuresObject) && featuresObject.length > 0){
+    if (Array.isArray(featuresObject) && featuresObject.length > 0) {
       featuresObject.map((feature) => {
         features.add(new Feature(feature));
       });

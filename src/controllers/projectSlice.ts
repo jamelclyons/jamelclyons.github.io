@@ -52,9 +52,10 @@ export const getProject = createAsyncThunk(
       ) {
         project.fromDocumentData(
           projectDataResponse.payload.id,
-          projectDataResponse.payload.data()
+          projectDataResponse.payload
         );
       }
+
       return {
         ...project.toObject(),
         details: {

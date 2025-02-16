@@ -53,8 +53,8 @@ class User extends Model {
       : new Organizations();
     this.reposURL = data?.repos_url;
     this.repos = data?.repos ? new Repos(data.repos) : new Repos();
-    this.repoQueries = data?.repoQueries
-      ? this.getRepoQueries(data?.repoQueries)
+    this.repoQueries = data?.repo_queries
+      ? this.setRepoQueries(data.repo_queries)
       : [];
   }
 
@@ -94,6 +94,19 @@ class User extends Model {
   }
 
   getRepoQueries(data: Array<Record<string, any>>) {
+    let repoQueries: Array<Record<string,any>> = [];
+
+    if (Array.isArray(data) && data.length > 0) {
+      data.forEach((query) => {
+        const repoQuery = new GitHubRepoQuery(query.owner.login, query.id).toObject();
+        repoQueries.push(repoQuery);
+      });
+    }
+
+    return repoQueries;
+  }
+
+  setRepoQueries(data: Array<Record<string, any>>) {
     let repoQueries: Array<GitHubRepoQuery> = [];
 
     if (Array.isArray(data) && data.length > 0) {

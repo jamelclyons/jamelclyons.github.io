@@ -5,19 +5,6 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
-import {
-  doc,
-  getDoc,
-  Timestamp,
-  collection,
-  CollectionReference,
-  DocumentReference,
-  DocumentSnapshot,
-  DocumentData,
-} from 'firebase/firestore';
-
-import { db } from '../services/firebase/config';
-
 interface DatabaseState {
   databaseLoading: boolean;
   databaseStatusCode: string;
@@ -58,29 +45,25 @@ const initialState: DatabaseState = {
   organizationDataObject: null,
 };
 
-const portfolioCollection: CollectionReference<DocumentData, DocumentData> =
-  collection(db, 'portfolio');
+const api = import.meta.env.VITE_FIREBASE_API_URL ?? 'http://127.0.0.1:5001/portfolio-bec7d/us-central1/default';
 
 export const getUserData = createAsyncThunk(
   'database/getUserData',
   async (username: string) => {
     try {
-      const docRef = doc(db, `user/${username}`);
-      const docSnap = await getDoc(docRef);
+      const response = await fetch(`${api}/user/${username}`, {
+        method: 'GET',
+      });
 
-      if (docSnap.exists()) {
-        let data = docSnap.data() as Record<string, any>;
+      const text = await response.text();
 
-        Object.keys(data).forEach((key) => {
-          if (data[key] instanceof Timestamp) {
-            data[key] = data[key].toDate().toISOString();
-          }
-        });
-
-        return data;
+      if (!text) {
+        return null;
       }
 
-      return null;
+      const data = JSON.parse(text); // Parse JSON manually
+
+      return data;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -93,50 +76,23 @@ export const getOrganizationData = createAsyncThunk(
   'database/getOrganizationData',
   async (organization: string) => {
     try {
-      const docRef = doc(db, `organization/${organization}`);
-      const docSnap = await getDoc(docRef);
+      const response = await fetch(`${api}/organization/${organization}`, {
+        method: 'GET',
+      });
 
-      if (docSnap.exists()) {
-        let data = docSnap.data() as Record<string, any>;
-
-        Object.keys(data).forEach((key) => {
-          if (data[key] instanceof Timestamp) {
-            data[key] = data[key].toDate().toISOString();
-          }
-        });
-
-        return data;
+      if (!response.ok) {
+        throw new Error(`Failed to fetch project data: ${response.statusText}`);
       }
 
-      return null;
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
-    }
-  }
-);
+      const text = await response.text();
 
-export const getTaxonomyData = createAsyncThunk(
-  'database/getTaxonomyData',
-  async (organization: string) => {
-    try {
-      const docRef = doc(db, `organization/${organization}`);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        let data = docSnap.data() as Record<string, any>;
-
-        Object.keys(data).forEach((key) => {
-          if (data[key] instanceof Timestamp) {
-            data[key] = data[key].toDate().toISOString();
-          }
-        });
-
-        return data;
+      if (!text) {
+        return null;
       }
 
-      return null;
+      const data = JSON.parse(text); // Parse JSON manually
+
+      return data;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -149,15 +105,23 @@ export const getProjectData = createAsyncThunk(
   'database/getProjectData',
   async (projectID: string) => {
     try {
-      const docRef: DocumentReference = doc(portfolioCollection, projectID);
-      const docSnap: DocumentSnapshot<DocumentData, DocumentData> =
-        await getDoc(docRef);
+      const response = await fetch(`${api}/project/${projectID}`, {
+        method: 'GET',
+      });
 
-      if (docSnap.exists()) {
-        return docSnap as Record<string, any>;
+      if (!response.ok) {
+        throw new Error(`Failed to fetch project data: ${response.statusText}`);
       }
 
-      return null;
+      const text = await response.text();
+
+      if (!text) {
+        return null;
+      }
+
+      const data = JSON.parse(text); // Parse JSON manually
+
+      return data;
     } catch (error) {
       const err = error as Error;
       console.error(err);

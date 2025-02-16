@@ -32,6 +32,7 @@ export const getPortfolio = createAsyncThunk(
   'portfolio/getPortfolio',
   async (queries: Array<GitHubRepoQuery>, thunkAPI) => {
     try {
+
       if (!Array.isArray(queries) || queries.length === 0) {
         return null;
       }

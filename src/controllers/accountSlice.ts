@@ -62,9 +62,7 @@ export const getAccount = createAsyncThunk(
         accountResponse.payload
       ) {
         let skills = null;
-        await thunkAPI.dispatch(
-          setMessage('Now Loading Skills')
-        );
+        await thunkAPI.dispatch(setMessage('Now Loading Skills'));
         const skillsResponse = await thunkAPI.dispatch(getSkills());
 
         if (
@@ -76,15 +74,14 @@ export const getAccount = createAsyncThunk(
 
         let projects = null;
 
-        const repoQueries = accountResponse.payload?.repoQueries || null;
+        const repos = accountResponse.payload?.repos || null;
 
-        if (Array.isArray(repoQueries) && repoQueries.length > 0) {
-          await thunkAPI.dispatch(
-            setMessage('Now Loading Portfolio')
-          );
-
+        if (Array.isArray(repos) && repos.length > 0) {
+          await thunkAPI.dispatch(setMessage('Now Loading Portfolio'));
+          const user = new User(accountResponse.payload);
+console.log(user)
           const portfolioResponse = await thunkAPI.dispatch(
-            getPortfolio(new User().getRepoQueries(repoQueries))
+            getPortfolio(user.repoQueries)
           );
 
           if (

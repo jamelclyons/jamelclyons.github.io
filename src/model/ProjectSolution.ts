@@ -22,7 +22,7 @@ class ProjectSolution extends Model {
     this.currency = data?.currency || 'USD';
     this.price = data?.price || 0;
     this.urlsList = data?.urlsList
-      ? new ProjectURLs(data?.urlsList)
+      ? new ProjectURLs(data.urlsList)
       : new ProjectURLs();
   }
 
