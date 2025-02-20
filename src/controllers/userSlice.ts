@@ -69,9 +69,9 @@ export const getAuthenticatedUserAccount = createAsyncThunk(
 
         if (
           getUserData.fulfilled.match(databaseResponse) &&
-          databaseResponse.payload
+          databaseResponse.payload?.data
         ) {
-          user.fromDB(databaseResponse.payload);
+          user.fromDB(databaseResponse.payload.data);
         }
 
         organizations = user.organizations.list.map((organization) => ({

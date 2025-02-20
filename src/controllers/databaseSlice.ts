@@ -5,6 +5,8 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
+import { api } from '@/services/firebase/config';
+
 interface DatabaseState {
   databaseLoading: boolean;
   databaseStatusCode: string;
@@ -23,6 +25,7 @@ interface DatabaseState {
   socialAccounts: [];
   userDataObject: Record<string, any> | null;
   organizationDataObject: Record<string, any> | null;
+  projectDataObject: Record<string, any> | null;
 }
 
 const initialState: DatabaseState = {
@@ -43,9 +46,9 @@ const initialState: DatabaseState = {
   socialAccounts: [],
   userDataObject: null,
   organizationDataObject: null,
+  projectDataObject: null,
 };
 
-const api = import.meta.env.VITE_FIREBASE_API_URL ?? 'http://127.0.0.1:5001/portfolio-bec7d/us-central1/default';
 
 export const getUserData = createAsyncThunk(
   'database/getUserData',
@@ -57,13 +60,13 @@ export const getUserData = createAsyncThunk(
 
       const text = await response.text();
 
-      if (!text) {
-        return null;
+      if (text) {
+        const data = JSON.parse(text);
+
+        return data;
       }
 
-      const data = JSON.parse(text); // Parse JSON manually
-
-      return data;
+      return null;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -80,19 +83,15 @@ export const getOrganizationData = createAsyncThunk(
         method: 'GET',
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch project data: ${response.statusText}`);
-      }
-
       const text = await response.text();
 
-      if (!text) {
-        return null;
+      if (text) {
+        const data = JSON.parse(text);
+
+        return data;
       }
 
-      const data = JSON.parse(text); // Parse JSON manually
-
-      return data;
+      return null;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -109,19 +108,15 @@ export const getProjectData = createAsyncThunk(
         method: 'GET',
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch project data: ${response.statusText}`);
-      }
-
       const text = await response.text();
 
-      if (!text) {
-        return null;
+      if (text) {
+        const data = JSON.parse(text);
+
+        return data;
       }
 
-      const data = JSON.parse(text); // Parse JSON manually
-
-      return data;
+      return null;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -147,6 +142,13 @@ const databaseSliceOptions: CreateSliceOptions<DatabaseState> = {
         state.databaseErrorMessage = '';
         state.databaseError = null;
         state.organizationDataObject = action.payload;
+      })
+      .addCase(getProjectData.fulfilled, (state, action) => {
+        state.databaseLoading = false;
+        state.databaseErrorMessage = action.payload?.error_message ?? '';
+        state.databaseError = null;
+        state.databaseStatusCode = action.payload?.status_code ?? '';
+        state.projectDataObject = action.payload?.data ?? null;
       })
       .addMatcher(
         isAnyOf(getUserData.pending, getOrganizationData.pending),

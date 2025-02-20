@@ -1,6 +1,7 @@
 import { getLocation } from './Location';
 
 import Coordinates from '@/model/Coordinates';
+import SecureHeaders from '@/model/SecureHeaders';
 
 export const addHeaders = async () => {
   const headers = new Headers();
@@ -14,35 +15,41 @@ export const addHeaders = async () => {
   return headers;
 };
 
-export const addSecureHeaders = async () => {
+export const checkHeaders = (): Boolean => {
   try {
     const accessToken = localStorage.getItem('access_token');
     const refreshToken = localStorage.getItem('refresh_token');
 
-    const headers = new Headers();
-
-    if (accessToken) {
-      headers.append('Authorization', 'Bearer ' + accessToken);
-    } else {
-      throw new Error('Access Token could not be found');
+    if (!accessToken && !refreshToken) {
+      return false;
     }
 
-    if (refreshToken) {
-      headers.append('Refresh-Token', refreshToken);
-    } else {
-      throw new Error('Refresh Token could not be found');
+    return true;
+  } catch (error) {
+    const err = error as Error;
+    throw new Error(`Error in addSecureHeaders: ${err.message}`);
+  }
+};
+
+export const addSecureHeaders = async (): Promise<SecureHeaders> => {
+  try {
+    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
+
+    const headers = new SecureHeaders(
+      accessToken,
+      refreshToken,
+      'application/json',
+      navigator.userAgent
+    );
+
+    if (headers.errorMessage) {
+      throw new Error(headers.errorMessage);
     }
-
-    headers.append('Content-Type', 'application/json');
-    headers.append('User-Agent', navigator.userAgent);
-
-    const coordinates = await getLocation();
-    headers.append('X-Longitude', coordinates.longitude.toString());
-    headers.append('X-Latitude', coordinates.latitude.toString());
 
     return headers;
   } catch (error) {
     const err = error as Error;
-    console.error(err.message);
+    throw new Error(`Error in addSecureHeaders: ${err.message}`);
   }
 };

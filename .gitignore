@@ -1,9 +1,9 @@
 # Ignore node_modules
 /node_modules/
 
-dist/
+*dist/
 
-package-lock.json
+*-lock.json
 
 *.pem
 
@@ -36,4 +36,4 @@ Thumbs.db
 # Ignore the GitHub Pages branch (if not using `gh-pages` or similar)
 .git/
 
-src/services/firebase/serviceAccount.json
+src/services/firebase/functions/serviceAccount.json

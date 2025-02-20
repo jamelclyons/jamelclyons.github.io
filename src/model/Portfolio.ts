@@ -51,7 +51,7 @@ class Portfolio extends Model {
         const matchingDoc = docs.find((doc) => doc.id === project.id);
 
         if (matchingDoc) {
-          project.fromDocumentData(matchingDoc.id, matchingDoc.data());
+          project.fromDocumentData(matchingDoc.data());
         }
 
         projects.add(project);

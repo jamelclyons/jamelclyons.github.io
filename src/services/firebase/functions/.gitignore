@@ -1,2 +1,7 @@
-node_modules/
+/node_modules/
 *.local
+*dist/
+*.log
+*-lock.json
+.env
+serviceAccount.json

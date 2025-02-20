@@ -58,7 +58,7 @@ export default defineConfig({
     cors: true,
     open: true,
     watch: {
-      ignored: ['**/node_modules/**'],
+      ignored: ['**/node_modules/**', './src/services/firebase/functions'],
       usePolling: true,
       interval: 300,
     },

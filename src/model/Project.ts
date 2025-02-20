@@ -91,9 +91,9 @@ class Project extends Model {
     this.details.teamList = repo.contributors.users;
   }
 
-  fromDocumentData(id: string, data: DocumentData) {
-    this.id = id;
-    this.title = data?.title ? data.title : this.getTitle(id);
+  fromDocumentData(data: DocumentData) {
+    this.id = data?.id ? data.id : this.id;
+    this.title = data?.title ? data.title : this.id;
     this.solution.gallery = data?.solution?.gallery
       ? new Gallery(data.solution.gallery)
       : new Gallery();

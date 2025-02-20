@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -7,9 +7,17 @@ import type { AppDispatch, RootState } from '@/model/store';
 import { logout } from '@/controllers/authSlice';
 import { setMessage, setMessageType, setShowStatusBar } from '@/controllers/messageSlice';
 
+import { checkHeaders } from '@/utilities/Headers';
+
 const Dashboard: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
+
+    useEffect(() => {
+        if (!checkHeaders()) {
+            navigate('/login');
+        }
+    }, []);
 
     const handleSkillAdd = () => {
         navigate('/admin/add/skill');

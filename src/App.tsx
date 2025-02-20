@@ -50,7 +50,6 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (authenticatedUserObject) {
-      console.log(authenticatedUserObject)
       setUser(new User(authenticatedUserObject));
     }
   }, [authenticatedUserObject]);

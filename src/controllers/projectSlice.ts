@@ -48,12 +48,9 @@ export const getProject = createAsyncThunk(
 
       if (
         getProjectData.fulfilled.match(projectDataResponse) &&
-        projectDataResponse.payload
+        projectDataResponse.payload?.data
       ) {
-        project.fromDocumentData(
-          projectDataResponse.payload.id,
-          projectDataResponse.payload
-        );
+        project.fromDocumentData(projectDataResponse.payload.data);
       }
 
       return {
@@ -115,12 +112,15 @@ export const projectSlice = createSlice({
         state.projectError = (action.error as Error) || null;
         state.projectErrorMessage = action.error.message || '';
       })
-      .addCase(getProjectPage.fulfilled, (state, action: PayloadAction<any>) => {
-        state.projectLoading = false;
-        state.projectError = null;
-        state.projectErrorMessage = '';
-        state.projectPageObject = action.payload;
-      })
+      .addCase(
+        getProjectPage.fulfilled,
+        (state, action: PayloadAction<any>) => {
+          state.projectLoading = false;
+          state.projectError = null;
+          state.projectErrorMessage = '';
+          state.projectPageObject = action.payload;
+        }
+      )
       .addCase(getProjectPage.pending, (state) => {
         state.projectPageLoading = true;
         state.projectError = null;

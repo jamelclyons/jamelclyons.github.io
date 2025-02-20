@@ -1,8 +1,17 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-import { signInWithPopup, GithubAuthProvider } from 'firebase/auth';
+import {
+  signInWithPopup,
+  GithubAuthProvider,
+  UserCredential,
+  User,
+} from 'firebase/auth';
 
-import { auth } from '@/services/firebase/config';
+import { auth, api } from '@/services/firebase/config';
+
+import SecureHeaders from '@/model/SecureHeaders';
+
+import { addSecureHeaders } from '@/utilities/Headers';
 
 interface loginState {
   authLoading: boolean;
@@ -39,6 +48,36 @@ const initialState: loginState = {
   accessToken: localStorage.getItem('access_token'),
   refreshToken: localStorage.getItem('refresh_token'),
 };
+
+export const checkAdmin = createAsyncThunk('auth/checkAdmin', async () => {
+  try {
+    const headers: SecureHeaders = await addSecureHeaders();
+
+    if (headers.errorMessage) {
+      return headers;
+    }
+
+    const response = await fetch(`${api}/auth/check`, {
+      method: 'GET',
+      headers:
+        headers instanceof SecureHeaders ? new Headers(headers.toObject()) : {},
+    });
+
+    const text = await response.text();
+
+    if (text) {
+      const data = JSON.parse(text);
+
+      return data;
+    }
+
+    return null;
+  } catch (error) {
+    const err = error as Error;
+    console.error(err);
+    throw new Error(err.message);
+  }
+});
 
 export const updateIsAuthenticated = (authenticated: boolean) => {
   return {
@@ -79,8 +118,6 @@ export const setIsAdmin = createAsyncThunk('login/setIsAdmin', async () => {
     try {
       const token = await user.getIdTokenResult();
       isAdmin = Boolean(token.claims?.isAdmin);
-
-      console.log('Admin status:', isAdmin);
 
       updateIsAdmin(isAdmin);
 
@@ -133,38 +170,43 @@ export const updateRefreshToken = (refresh_token: string) => {
   };
 };
 
-export const signInWithGitHubPopup = createAsyncThunk(
-  'auth/signInWithGitHubPopup',
-  async (_, { dispatch }) => {
+export const updateAuthenticatedUser = createAsyncThunk(
+  'auth/updateAuthenticatedUser',
+  async (user: User, { dispatch }) => {
     try {
-      const github = new GithubAuthProvider();
-
-      const response = await signInWithPopup(auth, github);
-
-      const user = response.user;
+      const id = user.uid;
       const accessToken = await user.getIdToken();
       const token = await user.getIdTokenResult();
       const refreshToken = user.refreshToken;
-      const username = user.displayName ?? '';
-      const email = user.email ?? '';
-      const profileImage = user.photoURL ?? '';
-      const phoneNumber = user.phoneNumber ?? '';
+      const username = user.displayName;
+      const email = user.email;
+      const profileImage = user.photoURL;
+      const phoneNumber = user.phoneNumber;
       const isAuthenticated = Boolean(accessToken && refreshToken);
-      const isAdmin = Boolean(token.claims?.isAdmin);
+      const isAdmin = Boolean(token?.claims.isAdmin);
 
       dispatch(updateIsAuthenticated(isAuthenticated));
       dispatch(updateIsAdmin(isAdmin));
       dispatch(updateAccessToken(accessToken));
-      dispatch(updateRefreshToken(user.refreshToken));
-      dispatch(updateAccountID(user.uid));
-      dispatch(updateEmail(email));
-      dispatch(updateUsername(username));
-      dispatch(updateProfileImage(profileImage));
+      dispatch(updateRefreshToken(refreshToken));
+      dispatch(updateAccountID(id));
+
+      if (email) {
+        dispatch(updateEmail(email));
+      }
+
+      if (username) {
+        dispatch(updateUsername(username));
+      }
+
+      if (profileImage) {
+        dispatch(updateProfileImage(profileImage));
+      }
 
       return {
-        id: user.uid,
+        id: id,
         access_token: accessToken,
-        refresh_token: user.refreshToken,
+        refresh_token: refreshToken,
         username: username,
         email: email,
         phone_number: phoneNumber,
@@ -180,19 +222,36 @@ export const signInWithGitHubPopup = createAsyncThunk(
   }
 );
 
+export const signInWithGitHubPopup = createAsyncThunk(
+  'auth/signInWithGitHubPopup',
+  async (_, { dispatch }) => {
+    try {
+      const github = new GithubAuthProvider();
+
+      const response = await signInWithPopup(auth, github);
+
+      return dispatch(updateAuthenticatedUser(response.user)).unwrap();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
 export const logout = createAsyncThunk('auth/logout', async () => {
   try {
     await auth.signOut();
-    
-      localStorage.removeItem('is_authenticated');
-      localStorage.removeItem('is_admin');
-      localStorage.removeItem('id');
-      localStorage.removeItem('username');
-      localStorage.removeItem('email');
-      localStorage.removeItem('phone_number');
-      localStorage.removeItem('profile_image');
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
+
+    localStorage.removeItem('is_authenticated');
+    localStorage.removeItem('is_admin');
+    localStorage.removeItem('id');
+    localStorage.removeItem('username');
+    localStorage.removeItem('email');
+    localStorage.removeItem('phone_number');
+    localStorage.removeItem('profile_image');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
 
     return 'You have been logged out successfully.';
   } catch (error) {
@@ -240,6 +299,19 @@ export const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(checkAdmin.fulfilled, (state, action) => {
+      state.authLoading = false;
+      state.authErrorMessage = '';
+      state.authError = null;
+      state.user = action.payload;
+      state.id = action.payload.id;
+      state.accessToken = action.payload.access_token;
+      state.refreshToken = action.payload.refresh_token;
+      state.email = action.payload.email;
+      state.phoneNumber = action.payload.phone_number;
+      state.username = action.payload.username;
+      state.isAuthenticated = action.payload.authenticated;
+    });
     builder.addCase(signInWithGitHubPopup.fulfilled, (state, action) => {
       state.authLoading = false;
       state.authErrorMessage = '';

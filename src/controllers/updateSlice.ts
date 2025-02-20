@@ -13,22 +13,23 @@ import {
   DocumentData,
 } from 'firebase/firestore';
 
-import { db } from '../services/firebase/config';
+import { db, api } from '../services/firebase/config';
 
 import ProjectSolution from '../model/ProjectSolution';
 import ProjectProcess from '../model/ProjectProcess';
 import ProjectProblem from '../model/ProjectProblem';
 import ProjectDetails from '../model/ProjectDetails';
 import DBProject from '@/model/DBProject';
+import SecureHeaders from '@/model/SecureHeaders';
 
 import { addSecureHeaders } from '@/utilities/Headers';
 
 interface UpdateState {
   updateLoading: boolean;
-  updateSuccessMessage: string;
+  updateSuccessMessage: string | null;
   updateError: Error | null;
-  updateErrorMessage: string;
-  updateStatusCode: string;
+  updateErrorMessage: string| null;
+  updateStatusCode: number | null;
   solution: ProjectSolution | null;
   process: ProjectProcess | null;
   problem: ProjectProblem | null;
@@ -37,17 +38,15 @@ interface UpdateState {
 
 const initialState: UpdateState = {
   updateLoading: false,
-  updateSuccessMessage: '',
+  updateSuccessMessage: null,
   updateError: null,
-  updateErrorMessage: '',
-  updateStatusCode: '',
+  updateErrorMessage: null,
+  updateStatusCode: null,
   solution: null,
   process: null,
   problem: null,
   details: null,
 };
-
-const api = 'http://127.0.0.1:5001/portfolio-bec7d/us-central1/default';
 
 const projectCollection: CollectionReference<DocumentData, DocumentData> =
   collection(db, 'portfolio');
@@ -56,20 +55,24 @@ export const updateProject = createAsyncThunk(
   'update/updateProject',
   async (project: DBProject) => {
     try {
-      const request = await fetch(`${api}/project/${project.id}`, {
-        method: 'POST',
-        headers: await addSecureHeaders(),
-        body: JSON.stringify(project.toObject()),
-      });
-      
-      if (request.status === 200) {
-        return await request.json();
+      const headers: SecureHeaders
+        = await addSecureHeaders();
+
+      if (headers.errorMessage) {
+        return headers;
       }
 
-      return null;
+      const response = await fetch(`${api}/project/${project.id}`, {
+        method: 'POST',
+        headers: headers instanceof SecureHeaders ? new Headers(headers.toObject()) : {},
+        body: JSON.stringify(project.toObject()),
+      });
+
+      return await response.json();
     } catch (error) {
       const err = error as Error;
       console.error(err);
+      err.stack
       throw new Error(err.message);
     }
   }
@@ -227,7 +230,9 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
         ),
         (state, action) => {
           state.updateLoading = false;
-          state.updateSuccessMessage = action.payload.success_message;
+          state.updateStatusCode = action.payload?.status_code ?? null;
+          state.updateErrorMessage = action.payload?.error_message ?? null;
+          state.updateSuccessMessage = action.payload?.success_message ?? null;
         }
       )
       .addMatcher(

@@ -18,3 +18,5 @@ const app: FirebaseApp = initializeApp(firebaseConfig);
 
 export const db: Firestore = getFirestore(app);
 export const auth: Auth = getAuth(app);
+
+export const api = import.meta.env.VITE_API_URL;

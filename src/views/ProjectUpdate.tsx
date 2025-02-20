@@ -1,5 +1,5 @@
 import React, { useEffect, useState, MouseEvent, ChangeEvent } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { getProjectPage } from '@/controllers/projectSlice';
@@ -21,11 +21,16 @@ import Project from '@/model/Project';
 import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 import DBProject from '@/model/DBProject';
 
+import { checkHeaders } from '@/utilities/Headers';
+import { checkAdmin } from '@/controllers/authSlice';
+
 const ProjectUpdate: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
+
     const { owner, projectID } = useParams();
 
-    const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
+    const { updateLoading, updateErrorMessage, updateSuccessMessage, updateStatusCode } = useSelector(
         (state: RootState) => state.update
     );
     const { projectPageObject, projectErrorMessage } = useSelector(
@@ -34,10 +39,21 @@ const ProjectUpdate: React.FC = () => {
 
     const [project, setProject] = useState<Project>(new Project());
     const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>();
+    const [showLogin, setShowLogin] = useState<boolean>(false);
 
     const { id, title, solution, process, problem, details } = project;
 
     const [updatedTitle, setUpdatedTitle] = useState<string>(title);
+
+    useEffect(()=>{
+        dispatch(checkAdmin());
+    },[dispatch]);
+
+    useEffect(() => {
+        if (!checkHeaders()) {
+            navigate('/login');
+        }
+    }, []);
 
     useEffect(() => {
         if (owner && projectID) {
@@ -67,7 +83,7 @@ const ProjectUpdate: React.FC = () => {
         if (projectErrorMessage) {
             dispatch(setMessageType('error'));
             dispatch(setMessage(projectErrorMessage));
-            dispatch(setShowStatusBar(true));
+            dispatch(setShowStatusBar(Date.now));
         }
     }, [dispatch, projectErrorMessage]);
 
@@ -82,6 +98,8 @@ const ProjectUpdate: React.FC = () => {
         if (updateErrorMessage) {
             dispatch(setMessage(updateErrorMessage));
             dispatch(setMessageType('error'));
+            dispatch(setShowStatusBar(Date.now()));
+
         }
     }, [updateErrorMessage, dispatch]);
 
@@ -89,8 +107,15 @@ const ProjectUpdate: React.FC = () => {
         if (updateSuccessMessage) {
             dispatch(setMessage(updateSuccessMessage));
             dispatch(setMessageType('success'));
+            dispatch(setShowStatusBar(true));
         }
     }, [updateSuccessMessage, dispatch]);
+
+    useEffect(() => {
+        if (updateStatusCode === 403) {
+            navigate('/login');
+        }
+    }, [updateStatusCode]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         try {
@@ -119,10 +144,7 @@ const ProjectUpdate: React.FC = () => {
 
             const updatedProject = new DBProject({ id: id, title: updatedTitle });
 
-            dispatch(updateProject(updatedProject)).unwrap().then((response) => {
-                dispatch(setMessageType('success'));
-                dispatch(setMessage(response));
-            });
+            dispatch(updateProject(updatedProject));
         } catch (error) {
             const err = error as Error;
             dispatch(setMessageType('error'));
