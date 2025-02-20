@@ -6,8 +6,7 @@ const postData = async (collection, docID, data) => {
     try {
         const docSnap = await config_1.db.collection(collection).doc(docID);
         const res = await docSnap.set(data);
-        console.log(res);
-        return res;
+        return res.writeTime.toDate();
     }
     catch (error) {
         const err = error;
@@ -17,15 +16,12 @@ const postData = async (collection, docID, data) => {
 exports.postData = postData;
 const getData = async (collection, docID) => {
     try {
-        const docSnap = await config_1.db
-            .collection(collection)
-            .doc(docID)
-            .get();
+        const docSnap = await config_1.db.collection(collection).doc(docID).get();
         const data = await docSnap.data();
-        if (data) {
-            return data;
+        if (data === null) {
+            return null;
         }
-        return null;
+        return data;
     }
     catch (error) {
         const err = error;

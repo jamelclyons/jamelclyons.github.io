@@ -12,12 +12,10 @@ const saveProject = async (req, res) => {
         const id = req.params.projectID;
         const data = await (0, database_1.postData)('portfolio', id, req.body);
         if (!data) {
-            res.json({
-                error_message: `Project with the #ID: ${id} could not be updated.`,
-            });
+            throw new ResponseError_1.default(`Project with the #ID: ${id} could not be updated.`, 400);
         }
         res.json({
-            success_message: `Project with the #ID: ${id} was updated.`,
+            success_message: `Project with the #ID: ${id} was updated at ${data}.`,
         });
     }
     catch (error) {
