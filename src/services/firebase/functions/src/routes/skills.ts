@@ -2,6 +2,8 @@ import Express from 'express';
 
 import { getDataCollection } from '../controllers/database';
 
+import ResponseError from '../model/ResponseError';
+
 const skillsRoutes = Express.Router();
 
 const getSkills: Express.RequestHandler = async (
@@ -14,8 +16,12 @@ const getSkills: Express.RequestHandler = async (
 
     res.json(data);
   } catch (error) {
-    next(error);
-  }
+    const err = error as ResponseError;
+
+    res.json({
+      error_message: err.message,
+      status_code: err.statusCode,
+    });  }
 };
 
 skillsRoutes.get('/:collection', getSkills);

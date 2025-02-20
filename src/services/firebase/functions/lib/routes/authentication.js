@@ -25,7 +25,10 @@ const authCheck = async (req, res) => {
     }
     catch (error) {
         const err = error;
-        res.json({ error_message: err.message, status_code: 403 });
+        res.json({
+            error_message: err.message,
+            status_code: err.statusCode,
+        });
     }
 };
 authRoutes.get('/check', authCheck);

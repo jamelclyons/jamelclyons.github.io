@@ -12,6 +12,7 @@ const project_1 = __importDefault(require("./routes/project"));
 const authentication_1 = __importDefault(require("./routes/authentication"));
 const error_1 = __importDefault(require("./middleware/error"));
 const config_1 = require("./config");
+console.log(`Server is now accepting request from ${config_1.origin}`);
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({ origin: config_1.origin }));

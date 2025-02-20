@@ -11,6 +11,8 @@ import handler from './middleware/error';
 
 import { origin } from './config';
 
+console.log(`Server is now accepting request from ${origin}`)
+
 const app = express();
 
 app.use(express.json());

@@ -5,8 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const database_1 = require("../controllers/database");
+const ResponseError_1 = __importDefault(require("../model/ResponseError"));
 const projectRoutes = express_1.default.Router();
-const saveProject = async (req, res, next) => {
+const saveProject = async (req, res) => {
     try {
         const id = req.params.projectID;
         const data = await (0, database_1.postData)('portfolio', id, req.body);
@@ -20,23 +21,28 @@ const saveProject = async (req, res, next) => {
         });
     }
     catch (error) {
-        next(error);
+        const err = error;
+        res.json({
+            error_message: err.message,
+            status_code: err.statusCode,
+        });
     }
 };
-const getProject = async (req, res, next) => {
+const getProject = async (req, res) => {
     try {
         const projectID = req.params.projectID;
         const data = await (0, database_1.getData)('portfolio', projectID);
-        if (!data) {
-            res.json({
-                error_message: `${projectID} could not be found.`,
-                status_code: 404,
-            });
+        if (data === null) {
+            throw new ResponseError_1.default(`${projectID} could not be found.`, 404);
         }
         res.json({ data: data });
     }
     catch (error) {
-        next(error);
+        const err = error;
+        res.json({
+            error_message: err.message,
+            status_code: err.statusCode,
+        });
     }
 };
 projectRoutes.post('/:projectID', saveProject);

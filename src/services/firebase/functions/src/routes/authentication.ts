@@ -2,6 +2,8 @@ import Express from 'express';
 
 import checkToken from '../middleware/token';
 
+import ResponseError from '../model/ResponseError';
+
 const authRoutes = Express.Router();
 
 const authCheck: Express.RequestHandler = async (
@@ -25,8 +27,12 @@ console.log(req)
     }
     res.json({ success_message: 'Token is valid.' });
   } catch (error) {
-    const err = error as Error;
-    res.json({ error_message: err.message, status_code: 403 });
+    const err = error as ResponseError;
+
+    res.json({
+      error_message: err.message,
+      status_code: err.statusCode,
+    });
   }
 };
 

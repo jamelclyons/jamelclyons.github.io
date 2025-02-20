@@ -6,7 +6,7 @@ import {
 } from '@reduxjs/toolkit';
 
 import { api } from '@/services/firebase/config';
-
+console.log(api)
 interface DatabaseState {
   databaseLoading: boolean;
   databaseStatusCode: string;

@@ -4,50 +4,58 @@ import { getData, postData } from '../controllers/database';
 
 import checkAdmin from '../middleware/admin';
 
+import ResponseError from '../model/ResponseError';
+
 const projectRoutes = Express.Router();
 
 const saveProject: Express.RequestHandler = async (
   req: Express.Request,
-  res: Express.Response,
-  next: Express.NextFunction
+  res: Express.Response
 ): Promise<void> => {
   try {
     const id = req.params.projectID;
     const data = await postData('portfolio', id, req.body);
 
     if (!data) {
-      res.json({
-        error_message: `Project with the #ID: ${id} could not be updated.`,
-      });
+      throw new ResponseError(
+        `Project with the #ID: ${id} could not be updated.`,
+        400
+      );
     }
 
     res.json({
-      success_message: `Project with the #ID: ${id} was updated.`,
+      success_message: `Project with the #ID: ${id} was updated at ${data}.`,
     });
   } catch (error) {
-    next(error);
+    const err = error as ResponseError;
+
+    res.json({
+      error_message: err.message,
+      status_code: err.statusCode,
+    });
   }
 };
 
 const getProject: Express.RequestHandler = async (
   req: Express.Request,
-  res: Express.Response,
-  next: Express.NextFunction
+  res: Express.Response
 ): Promise<void> => {
   try {
     const projectID = req.params.projectID;
     const data = await getData('portfolio', projectID);
 
-    if (!data) {
-      res.json({
-        error_message: `${projectID} could not be found.`,
-        status_code: 404,
-      });
+    if (data === null) {
+      throw new ResponseError(`${projectID} could not be found.`, 404);
     }
 
     res.json({ data: data });
   } catch (error) {
-    next(error);
+    const err = error as ResponseError;
+
+    res.json({
+      error_message: err.message,
+      status_code: err.statusCode,
+    });
   }
 };
 

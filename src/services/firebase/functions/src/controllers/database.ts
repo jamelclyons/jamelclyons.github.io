@@ -6,13 +6,13 @@ export const postData = async (
   collection: string,
   docID: string,
   data: Record<string, unknown>
-) => {
+): Promise<Date> => {
   try {
     const docSnap = await db.collection(collection).doc(docID);
 
     const res: WriteResult = await docSnap.set(data);
-    console.log(res);
-    return res;
+
+    return res.writeTime.toDate();
   } catch (error) {
     const err = error as Error;
     throw new Error(err.message);
@@ -21,18 +21,15 @@ export const postData = async (
 
 export const getData = async (collection: string, docID: string) => {
   try {
-    const docSnap = await db
-      .collection(collection)
-      .doc(docID)
-      .get();
+    const docSnap = await db.collection(collection).doc(docID).get();
 
     const data = await docSnap.data();
 
-    if (data) {
-      return data;
+    if (data === null) {
+      return null;
     }
-
-    return null;
+    
+    return data;
   } catch (error) {
     const err = error as Error;
     throw new Error(err.message);
