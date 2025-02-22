@@ -34,7 +34,7 @@ const ContentComponent: React.FC<ContentComponentProps> = ({ title, url }) => {
         const contentObject = await dispatch(getRepoFile(query)).unwrap();
 
         if (isMounted) {
-          const htmlContent = marked.parse(contentObject).valueOf();
+          const htmlContent = marked.parse(contentObject);
           setHTML(htmlContent);
         }
       } catch (error) {

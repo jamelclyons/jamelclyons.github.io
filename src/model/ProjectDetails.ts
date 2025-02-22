@@ -16,16 +16,14 @@ class ProjectDetails extends Model {
   constructor(data?: Record<string, any>) {
     super();
 
-    const { author } = packageJson;
-
     this.privacy = data?.privacy
       ? privacyFromString(data?.privacy)
       : Privacy.Public;
-    this.clientID = data?.client_id || '0';
-    this.clientName = data?.client_name || author.company.name;
-    this.startDate = data?.start_date || author.company.founded_on;
-    this.endDate = data?.end_date || 'Active Development';
-    this.content = data?.content || '';
+    this.clientID = data?.client_id ? data.client_id : null;
+    this.clientName = data?.client_name ? data.client_name : null;
+    this.startDate = data?.start_date ? data.start_date : null;
+    this.endDate = data?.end_date ? data.end_date : null;
+    this.content = data?.content ? data.content : null;
     this.teamList = data?.team_list ? this.getTeamList(data.team_list) : [];
   }
 

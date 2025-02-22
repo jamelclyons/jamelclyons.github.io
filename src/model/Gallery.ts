@@ -1,5 +1,12 @@
-import Model from './Model';
 import Image from './Image';
+import Model from './Model';
+
+export type GalleryObject = {
+  logos: Array<Record<string, any>>;
+  icons: Array<Record<string, any>>;
+  animations: Array<Record<string, any>>;
+  uml_diagrams: Array<Record<string, any>>;
+};
 
 class Gallery extends Model {
   logos: Array<Image>;
@@ -9,12 +16,20 @@ class Gallery extends Model {
   images: Array<Image>;
 
   constructor(data: Record<string, any> = {}) {
-    super();
-
-    this.logos = Array.isArray(data?.logos) ? this.toArrayImage(data.logos) : [];
-    this.icons = Array.isArray(data?.icons) ? this.toArrayImage(data.icons) : [];
-    this.animations = Array.isArray(data?.animations) ? this.toArrayImage(data.animations) : [];
-    this.umlDiagrams = Array.isArray(data?.umlDiagrams) ? this.toArrayImage(data.umlDiagrams) : [];
+    super()
+    
+    this.logos = Array.isArray(data?.logos)
+      ? this.toArrayImage(data.logos)
+      : [];
+    this.icons = Array.isArray(data?.icons)
+      ? this.toArrayImage(data.icons)
+      : [];
+    this.animations = Array.isArray(data?.animations)
+      ? this.toArrayImage(data.animations)
+      : [];
+    this.umlDiagrams = Array.isArray(data?.uml_diagrams)
+      ? this.toArrayImage(data.uml_diagrams)
+      : [];
     this.images = [
       ...this.logos,
       ...this.icons,
@@ -31,6 +46,27 @@ class Gallery extends Model {
     });
 
     return images;
+  }
+
+  toObject(): Record<string, any> {
+    return {
+      logos:
+        Array.isArray(this.logos) && this.logos.length > 0
+          ? this.logos.map((logo) => logo.toObject())
+          : [],
+      icons:
+        Array.isArray(this.icons) && this.icons.length > 0
+          ? this.icons.map((icon) => icon.toObject())
+          : [],
+      animations:
+        Array.isArray(this.animations) && this.animations.length > 0
+          ? this.animations.map((animation) => animation.toObject())
+          : [],
+      uml_diagrams:
+        Array.isArray(this.umlDiagrams) && this.umlDiagrams.length > 0
+          ? this.umlDiagrams.map((umlDiagram) => umlDiagram.toObject())
+          : [],
+    };
   }
 }
 

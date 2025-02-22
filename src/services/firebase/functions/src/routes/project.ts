@@ -2,8 +2,6 @@ import Express from 'express';
 
 import { getData, postData } from '../controllers/database';
 
-import checkAdmin from '../middleware/admin';
-
 import ResponseError from '../model/ResponseError';
 
 const projectRoutes = Express.Router();

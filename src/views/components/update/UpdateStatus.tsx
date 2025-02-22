@@ -44,7 +44,7 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectID, status }) => {
         }
     }, [updateSuccessMessage, dispatch]);
 
-    const [progress, setProgress] = useState(status?.progress);
+    const [progress, setProgress] = useState(status.progress);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         try {
@@ -77,7 +77,9 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectID, status }) => {
 
             let data: Record<string, any> = {
                 id: projectID,
-                status: statusData
+                process: {
+                    status: statusData
+                }    
             };
 
             dispatch(updateStatus(data));
@@ -93,7 +95,7 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectID, status }) => {
         <h2 className="title">status</h2>
 
         <form action="" id='update_status'>
-            <input type="number" value={progress} placeholder="Progress # 0-100" onChange={handleChange} id='progress' />
+            <input type="number" value={progress} placeholder="Progress # 0-100" onChange={handleChange} id='progress' name='progress' />
 
             <button onClick={handleUpdateStatus}>
                 <h3>update</h3>

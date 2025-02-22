@@ -5,6 +5,8 @@ import {
   GithubAuthProvider,
   UserCredential,
   User,
+  getAuth,
+  signInWithCustomToken
 } from 'firebase/auth';
 
 import { auth, api } from '@/services/firebase/config';

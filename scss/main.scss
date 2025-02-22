@@ -41,7 +41,9 @@
 @use './_options.scss';
 
 @use './_loading.scss';
-
+@use './form';
+@use './update';
+@use './line';
 @use './_header.scss';
 
 @use './_home.scss';

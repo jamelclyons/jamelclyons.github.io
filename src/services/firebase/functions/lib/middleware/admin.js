@@ -1,19 +1,24 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const token_1 = __importDefault(require("./token"));
 const checkAdmin = async (req, res, next) => {
     try {
-        if (!req.rawHeaders || !req.rawHeaders) {
-            return res.status(200).json({
-                error_message: 'Access denied. Admins only.',
-                status_code: 403,
-            });
+        const idToken = await (0, token_1.default)(req);
+        if (!idToken || typeof idToken !== "string") {
+            throw new Error("Unauthorized: Invalid token");
         }
+        req.headers.authorization = `Bearer ${idToken}`;
         next();
-        return;
     }
     catch (error) {
-        const err = error;
-        return res.status(200).json({ error_message: err, status_code: 403 });
+        console.error("Auth Error:", error);
+        res.status(403).json({
+            error_message: error.message || "Unauthorized",
+            status_code: 403,
+        });
     }
 };
 exports.default = checkAdmin;

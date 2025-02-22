@@ -6,25 +6,18 @@ import ResponseError from '../model/ResponseError';
 
 const authRoutes = Express.Router();
 
+
+// export const signInWithCustomToken = async (customToken: string): Promise<string> => {
+  
+// };
+
 const authCheck: Express.RequestHandler = async (
   req: Express.Request,
   res: Express.Response
 ): Promise<void> => {
   try {
-    const idToken = await checkToken(req);
-console.log(req)
-    if (!idToken) {
-      res.status(200).json({
-        error_message: 'Unauthorized: No authentication token provided.',
-        status_code: 403,
-      });
-    }
+    await checkToken(req);  
 
-    if (typeof idToken === 'object') {
-      if (idToken && idToken?.isAdmin && idToken.isAdmin === true) {
-        res.set('Authorization', 'new Token');
-      }
-    }
     res.json({ success_message: 'Token is valid.' });
   } catch (error) {
     const err = error as ResponseError;
@@ -36,6 +29,6 @@ console.log(req)
   }
 };
 
-authRoutes.get('/check', authCheck);
+authRoutes.post('/check', authCheck);
 
 export default authRoutes;

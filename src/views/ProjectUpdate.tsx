@@ -2,7 +2,7 @@ import React, { useEffect, useState, MouseEvent, ChangeEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { getProjectPage } from '@/controllers/projectSlice';
+import { getProjectData } from '@/controllers/databaseSlice';
 import { updateProject } from '@/controllers/updateSlice';
 import {
     setMessage,
@@ -33,45 +33,27 @@ const ProjectUpdate: React.FC = () => {
     const { updateLoading, updateErrorMessage, updateSuccessMessage, updateStatusCode } = useSelector(
         (state: RootState) => state.update
     );
-    const { projectPageObject, projectErrorMessage } = useSelector(
-        (state: RootState) => state.project
+    const { databaseLoading, databaseStatusCode, databaseErrorMessage, projectDataObject } = useSelector(
+        (state: RootState) => state.database
     );
 
     const [project, setProject] = useState<Project>(new Project());
-    const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>();
-    const [showLogin, setShowLogin] = useState<boolean>(false);
 
     const { id, title, solution, process, problem, details } = project;
 
     const [updatedTitle, setUpdatedTitle] = useState<string>(title);
 
-    useEffect(()=>{
-        dispatch(checkAdmin());
-    },[dispatch]);
+    useEffect(() => {
+        if (projectID) {
+            dispatch(getProjectData(projectID));
+        }
+    }, [dispatch, projectID]);
 
     useEffect(() => {
-        if (!checkHeaders()) {
-            navigate('/login');
+        if (projectDataObject) {
+            setProject(new Project(projectDataObject));
         }
-    }, []);
-
-    useEffect(() => {
-        if (owner && projectID) {
-            setRepoQuery(new GitHubRepoQuery(owner, projectID))
-        }
-    }, [owner, projectID]);
-
-    useEffect(() => {
-        if (repoQuery) {
-            dispatch(getProjectPage(repoQuery));
-        }
-    }, [dispatch, repoQuery]);
-
-    useEffect(() => {
-        if (projectPageObject) {
-            setProject(new Project(projectPageObject));
-        }
-    }, [projectPageObject]);
+    }, [projectDataObject]);
 
     useEffect(() => {
         if (title) {
@@ -80,12 +62,12 @@ const ProjectUpdate: React.FC = () => {
     }, [title]);
 
     useEffect(() => {
-        if (projectErrorMessage) {
+        if (databaseErrorMessage) {
             dispatch(setMessageType('error'));
-            dispatch(setMessage(projectErrorMessage));
+            dispatch(setMessage(databaseErrorMessage));
             dispatch(setShowStatusBar(Date.now));
         }
-    }, [dispatch, projectErrorMessage]);
+    }, [dispatch, databaseErrorMessage]);
 
     useEffect(() => {
         if (updateLoading) {
@@ -111,11 +93,11 @@ const ProjectUpdate: React.FC = () => {
         }
     }, [updateSuccessMessage, dispatch]);
 
-    useEffect(() => {
-        if (updateStatusCode === 403) {
-            navigate('/login');
-        }
-    }, [updateStatusCode]);
+    // useEffect(() => {
+    //     if (updateStatusCode === 403) {
+    //         navigate('/login');
+    //     }
+    // }, [updateStatusCode]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         try {
@@ -175,9 +157,9 @@ const ProjectUpdate: React.FC = () => {
 
             {projectID && <UpdateProcess projectID={projectID} process={process} />}
 
-            {projectID && <UpdateProblem projectID={projectID} problem={problem} />}
+            {projectID && projectDataObject && <UpdateProblem projectID={projectID} projectDataObject={projectDataObject} />}
 
-            {projectID && <UpdateDetails projectID={projectID} details={details} />}
+            {/* {projectID && projectDataObject && <UpdateDetails projectID={projectID} projectDataObject={projectDataObject} />} */}
 
             <StatusBarComponent />
         </section>

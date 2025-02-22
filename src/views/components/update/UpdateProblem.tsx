@@ -1,30 +1,35 @@
-import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } from 'react';
+import React, { useEffect, useState, MouseEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-import type { AppDispatch, RootState } from '../../../model/store';
-import ProjectProblem from '../../../model/ProjectProblem';
+import type { AppDispatch, RootState } from '@/model/store';
 
 import {
   setMessage,
   setMessageType,
   setShowStatusBar,
-} from '../../../controllers/messageSlice';
+} from '@/controllers/messageSlice';
+import { updateProblem } from '@/controllers/updateSlice';
+
+import Gallery from '@/model/Gallery';
+
+import UpdateGallery from './UpdateGallery';
 
 interface UpdateProblemProps {
   projectID: string;
-  problem: ProjectProblem;
+  projectDataObject: Record<string, any>;
 }
 
-const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectID, problem }) => {
+const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectDataObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
+  const { updateLoading, updateErrorMessage, updateSuccessMessage, updatedGallery } = useSelector(
     (state: RootState) => state.update
   );
 
+  const [gallery, setGallery] = useState<Gallery>(new Gallery(projectDataObject?.problem?.gallery));
+
   useEffect(() => {
     if (updateLoading) {
-      dispatch(setMessage('Standbye while an attempt to update the problem section of your project is made.'));
+      dispatch(setMessage('Attempting to update the problem section of your project...'));
       dispatch(setMessageType('info'));
     }
   }, [updateLoading, dispatch]);
@@ -43,62 +48,46 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectID, problem }) => 
     }
   }, [updateSuccessMessage, dispatch]);
 
-  const [problemGallery, setProblemGallery] = useState(problem?.gallery);
+  useEffect(() => {
+    if (updatedGallery) {
+      setGallery(new Gallery(updatedGallery));
+    }
+  }, [updatedGallery, setGallery]);
 
-  // const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   try {
-  //     const target = e.target as HTMLInputElement;
-
-  //     const { name, value } = target;
-
-  //     if (name === 'progress') {
-  //       setProgress(value.toString());
-  //     }
-  //   } catch (error) {
-  //     const err = error as Error;
-  //     dispatch(setMessage(err.message));
-  //     dispatch(setMessageType('error'));
-  //   }
-  // };
-
-  const handleUpdateSolution = async (e: MouseEvent<HTMLButtonElement>) => {
+  const handleUpdateProblem = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     try {
-      const form = document.getElementById('update_problem') as HTMLFormElement;
-      const formData = new FormData(form);
+      const projectObject = {
+        ...projectDataObject,
+        problem: { gallery: gallery.toObject() },
+      };
 
-      let status: Record<string, any> = {};
-
-      formData.forEach((value, key) => {
-        status[key] = value;
-      });
-
-      // dispatch(addProject(project));
-
-      dispatch(setMessageType('info'));
-      dispatch(setMessage('Standbye while an attempt to log you is made.'));
+      dispatch(updateProblem(projectObject));
     } catch (error) {
       const err = error as Error;
-      dispatch(setMessageType('error'));
       dispatch(setMessage(err.message));
+      dispatch(setMessageType('error'));
       dispatch(setShowStatusBar(Date.now()));
     }
   };
 
   return (
     <>
-      <h2 className="title">problem</h2>
+      <h2 className="title">Problem</h2>
 
-      <form action="" id='update_problem'>
-        {/* <input type="number" value={status} placeholder="Progress # 0-100" onChange={handleChange} /> */}
+      <div className="update" id="update_problem">
 
-        <button onClick={handleUpdateSolution}>
-          <h3>update</h3>
+        <UpdateGallery gallery={gallery} />
+
+        <hr />
+
+        <button onClick={handleUpdateProblem}>
+          <h3>Update Problem</h3>
         </button>
-      </form>
+      </div>
     </>
-  )
-}
+  );
+};
 
-export default UpdateProblem
+export default UpdateProblem;

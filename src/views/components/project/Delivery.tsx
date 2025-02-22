@@ -23,7 +23,9 @@ const Delivery: React.FC<DeliveryProps> = ({ delivery }) => {
         <h4 className="title">delivery</h4>
 
         {checkList.length > 0 && <CheckList checkList={checkList} />}
+
         {gallery.length > 0 && <Gallery gallery={gallery} title="" />}
+        
         {contentURL && <ContentComponent title={null} url={contentURL} />}
       </div>
     )

@@ -6,21 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const token_1 = __importDefault(require("../middleware/token"));
 const authRoutes = express_1.default.Router();
+// export const signInWithCustomToken = async (customToken: string): Promise<string> => {
+// };
 const authCheck = async (req, res) => {
     try {
-        const idToken = await (0, token_1.default)(req);
-        console.log(req);
-        if (!idToken) {
-            res.status(200).json({
-                error_message: 'Unauthorized: No authentication token provided.',
-                status_code: 403,
-            });
-        }
-        if (typeof idToken === 'object') {
-            if (idToken && idToken?.isAdmin && idToken.isAdmin === true) {
-                res.set('Authorization', 'new Token');
-            }
-        }
+        await (0, token_1.default)(req);
         res.json({ success_message: 'Token is valid.' });
     }
     catch (error) {
@@ -31,5 +21,5 @@ const authCheck = async (req, res) => {
         });
     }
 };
-authRoutes.get('/check', authCheck);
+authRoutes.post('/check', authCheck);
 exports.default = authRoutes;

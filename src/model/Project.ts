@@ -62,6 +62,18 @@ class Project extends Model {
       : '';
   }
 
+  setFeatures(featuresObject: Array<Record<string, any>>) {
+    const features = new Set<Feature>();
+
+    if (Array.isArray(featuresObject) && featuresObject.length > 0) {
+      featuresObject.map((feature) => {
+        features.add(new Feature(feature));
+      });
+    }
+
+    return features;
+  }
+  
   fromRepo(repo: Repo) {
     this.id = repo.id;
     this.owner = repo.owner;
@@ -125,18 +137,6 @@ class Project extends Model {
     this.details = data?.details
       ? new ProjectDetails(data.details)
       : new ProjectDetails();
-  }
-
-  setFeatures(featuresObject: Array<Record<string, any>>) {
-    const features = new Set<Feature>();
-
-    if (Array.isArray(featuresObject) && featuresObject.length > 0) {
-      featuresObject.map((feature) => {
-        features.add(new Feature(feature));
-      });
-    }
-
-    return features;
   }
 }
 

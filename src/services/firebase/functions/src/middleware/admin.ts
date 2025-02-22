@@ -1,24 +1,30 @@
 import Express from 'express';
+import { Request, Response, NextFunction } from "express";
 
-const checkAdmin = async (
-  req: Express.Request,
-  res: Express.Response,
-  next: Express.NextFunction
-) => {
+import checkToken from './token';
+
+const checkAdmin: Express.RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    if (!req.rawHeaders || !req.rawHeaders) {
-      return res.status(200).json({
-        error_message: 'Access denied. Admins only.',
-        status_code: 403,
-      });
+    const idToken = await checkToken(req);
+
+    if (!idToken || typeof idToken !== "string") {
+      throw new Error("Unauthorized: Invalid token");
     }
 
+    req.headers.authorization = `Bearer ${idToken}`;
+
     next();
-    
-    return;
   } catch (error) {
-    const err = error as Error;
-    return res.status(200).json({ error_message: err, status_code: 403 });
+    console.error("Auth Error:", error);
+
+    res.status(403).json({
+      error_message: (error as Error).message || "Unauthorized",
+      status_code: 403,
+    });
   }
 };
 

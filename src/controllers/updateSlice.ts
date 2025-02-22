@@ -5,22 +5,11 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
-import {
-  collection,
-  updateDoc,
-  doc,
-  CollectionReference,
-  DocumentData,
-} from 'firebase/firestore';
+import { api } from '@/services/firebase/config';
 
-import { db, api } from '../services/firebase/config';
-
-import ProjectSolution from '../model/ProjectSolution';
-import ProjectProcess from '../model/ProjectProcess';
-import ProjectProblem from '../model/ProjectProblem';
-import ProjectDetails from '../model/ProjectDetails';
 import DBProject from '@/model/DBProject';
 import SecureHeaders from '@/model/SecureHeaders';
+import Gallery from '@/model/Gallery';
 
 import { addSecureHeaders } from '@/utilities/Headers';
 
@@ -28,12 +17,9 @@ interface UpdateState {
   updateLoading: boolean;
   updateSuccessMessage: string | null;
   updateError: Error | null;
-  updateErrorMessage: string| null;
+  updateErrorMessage: string | null;
   updateStatusCode: number | null;
-  solution: ProjectSolution | null;
-  process: ProjectProcess | null;
-  problem: ProjectProblem | null;
-  details: ProjectDetails | null;
+  updatedGallery: Record<string, any> | null;
 }
 
 const initialState: UpdateState = {
@@ -42,21 +28,14 @@ const initialState: UpdateState = {
   updateError: null,
   updateErrorMessage: null,
   updateStatusCode: null,
-  solution: null,
-  process: null,
-  problem: null,
-  details: null,
+  updatedGallery: null,
 };
-
-const projectCollection: CollectionReference<DocumentData, DocumentData> =
-  collection(db, 'portfolio');
 
 export const updateProject = createAsyncThunk(
   'update/updateProject',
   async (project: DBProject) => {
     try {
-      const headers: SecureHeaders
-        = await addSecureHeaders();
+      const headers: SecureHeaders = await addSecureHeaders();
 
       if (headers.errorMessage) {
         return headers;
@@ -64,7 +43,10 @@ export const updateProject = createAsyncThunk(
 
       const response = await fetch(`${api}/project/${project.id}`, {
         method: 'POST',
-        headers: headers instanceof SecureHeaders ? new Headers(headers.toObject()) : {},
+        headers:
+          headers instanceof SecureHeaders
+            ? new Headers(headers.toObject())
+            : {},
         body: JSON.stringify(project.toObject()),
       });
 
@@ -72,7 +54,7 @@ export const updateProject = createAsyncThunk(
     } catch (error) {
       const err = error as Error;
       console.error(err);
-      err.stack
+      err.stack;
       throw new Error(err.message);
     }
   }
@@ -82,11 +64,22 @@ export const updateSolution = createAsyncThunk(
   'update/updateSolution',
   async (data: Record<string, any>) => {
     try {
-      await updateDoc(doc(projectCollection, data.id), {
-        solution: data.solution,
+      const headers: SecureHeaders = await addSecureHeaders();
+
+      if (headers.errorMessage) {
+        return headers;
+      }
+
+      const response = await fetch(`${api}/project/${data?.id}`, {
+        method: 'POST',
+        headers:
+          headers instanceof SecureHeaders
+            ? new Headers(headers.toObject())
+            : {},
+        body: JSON.stringify(data),
       });
 
-      return `Project with the #ID: ${data.id} was updated.`;
+      return await response.json();
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -99,11 +92,22 @@ export const updateProcess = createAsyncThunk(
   'update/updateProcess',
   async (data: Record<string, any>) => {
     try {
-      await updateDoc(doc(projectCollection, data.id), {
-        process: data.process,
+      const headers: SecureHeaders = await addSecureHeaders();
+
+      if (headers.errorMessage) {
+        return headers;
+      }
+
+      const response = await fetch(`${api}/project/${data?.id}`, {
+        method: 'POST',
+        headers:
+          headers instanceof SecureHeaders
+            ? new Headers(headers.toObject())
+            : {},
+        body: JSON.stringify(data),
       });
 
-      return `Project with the #ID: ${data.id} was updated.`;
+      return await response.json();
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -116,11 +120,22 @@ export const updateStatus = createAsyncThunk(
   'update/updateStatus',
   async (data: Record<string, any>) => {
     try {
-      await updateDoc(doc(projectCollection, data.id), {
-        status: data.status,
+      const headers: SecureHeaders = await addSecureHeaders();
+
+      if (headers.errorMessage) {
+        return headers;
+      }
+
+      const response = await fetch(`${api}/project/${data?.id}`, {
+        method: 'POST',
+        headers:
+          headers instanceof SecureHeaders
+            ? new Headers(headers.toObject())
+            : {},
+        body: JSON.stringify(data),
       });
 
-      return `Project with the #ID: ${data.id} was updated.`;
+      return await response.json();
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -133,11 +148,22 @@ export const updateDesign = createAsyncThunk(
   'update/updateDesign',
   async (data: Record<string, any>) => {
     try {
-      await updateDoc(doc(projectCollection, data.id), {
-        design: data.design,
+      const headers: SecureHeaders = await addSecureHeaders();
+
+      if (headers.errorMessage) {
+        return headers;
+      }
+
+      const response = await fetch(`${api}/project/${data?.id}`, {
+        method: 'POST',
+        headers:
+          headers instanceof SecureHeaders
+            ? new Headers(headers.toObject())
+            : {},
+        body: JSON.stringify(data),
       });
 
-      return `Project with the #ID: ${data.id} was updated.`;
+      return await response.json();
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -150,11 +176,22 @@ export const updateDevelopment = createAsyncThunk(
   'update/updateDevelopment',
   async (data: Record<string, any>) => {
     try {
-      await updateDoc(doc(projectCollection, data.id), {
-        development: data.development,
+      const headers: SecureHeaders = await addSecureHeaders();
+
+      if (headers.errorMessage) {
+        return headers;
+      }
+
+      const response = await fetch(`${api}/project/${data?.id}`, {
+        method: 'POST',
+        headers:
+          headers instanceof SecureHeaders
+            ? new Headers(headers.toObject())
+            : {},
+        body: JSON.stringify(data),
       });
 
-      return `Project with the #ID: ${data.id} was updated.`;
+      return await response.json();
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -167,11 +204,22 @@ export const updateDelivery = createAsyncThunk(
   'update/updateDelivery',
   async (data: Record<string, any>) => {
     try {
-      await updateDoc(doc(projectCollection, data.id), {
-        delivery: data.delivery,
+      const headers: SecureHeaders = await addSecureHeaders();
+
+      if (headers.errorMessage) {
+        return headers;
+      }
+
+      const response = await fetch(`${api}/project/${data?.id}`, {
+        method: 'POST',
+        headers:
+          headers instanceof SecureHeaders
+            ? new Headers(headers.toObject())
+            : {},
+        body: JSON.stringify(data),
       });
 
-      return `Project with the #ID: ${data.id} was updated.`;
+      return await response.json();
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -184,11 +232,22 @@ export const updateProblem = createAsyncThunk(
   'update/updateProblem',
   async (data: Record<string, any>) => {
     try {
-      await updateDoc(doc(projectCollection, data.id), {
-        problem: data.problem,
+      const headers: SecureHeaders = await addSecureHeaders();
+
+      if (headers.errorMessage) {
+        return headers;
+      }
+
+      const response = await fetch(`${api}/project/${data?.id}`, {
+        method: 'POST',
+        headers:
+          headers instanceof SecureHeaders
+            ? new Headers(headers.toObject())
+            : {},
+        body: JSON.stringify(data),
       });
 
-      return `Project with the #ID: ${data.id} was updated.`;
+      return await response.json();
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -201,11 +260,35 @@ export const updateDetails = createAsyncThunk(
   'update/updateDetails',
   async (data: Record<string, any>) => {
     try {
-      await updateDoc(doc(projectCollection, data.id), {
-        details: data.details,
+      const headers: SecureHeaders = await addSecureHeaders();
+
+      if (headers.errorMessage) {
+        return headers;
+      }
+
+      const response = await fetch(`${api}/project/${data?.id}`, {
+        method: 'POST',
+        headers:
+          headers instanceof SecureHeaders
+            ? new Headers(headers.toObject())
+            : {},
+        body: JSON.stringify(data),
       });
 
-      return `Project with the #ID: ${data.id} was updated.`;
+      return await response.json();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const updateGallery = createAsyncThunk(
+  'update/updateGallery',
+  async (gallery: Gallery) => {
+    try {
+      return gallery.toObject();
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -220,6 +303,10 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(updateGallery.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updatedGallery = action.payload;
+      })
       .addMatcher(
         isAnyOf(
           updateProject.fulfilled,
@@ -237,6 +324,7 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
       )
       .addMatcher(
         isAnyOf(
+          updateGallery.pending,
           updateProject.pending,
           updateSolution.pending,
           updateProcess.pending,
@@ -251,6 +339,7 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
       )
       .addMatcher(
         isAnyOf(
+          updateGallery.rejected,
           updateProject.rejected,
           updateSolution.rejected,
           updateProcess.rejected,

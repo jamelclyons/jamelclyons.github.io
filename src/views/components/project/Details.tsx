@@ -12,6 +12,7 @@ interface ProjectDetailsProps {
 
 const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ user, details }) => {
   const { clientName, privacy, clientID, startDate, endDate, teamList } = details;
+
   return (
     <>
       {(privacy === 'public' || clientID === '0') && (

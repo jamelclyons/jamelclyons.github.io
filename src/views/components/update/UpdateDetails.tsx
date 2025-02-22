@@ -1,8 +1,9 @@
 import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import type { AppDispatch, RootState } from '../../../model/store';
-import ProjectDetails from '../../../model/ProjectDetails';
+import type { AppDispatch, RootState } from '@/model/store';
+import Project from '@/model/Project';
+import ProjectDetails from '@/model/ProjectDetails';
 
 import {
   setMessage,
@@ -10,19 +11,23 @@ import {
   setShowStatusBar,
 } from '../../../controllers/messageSlice';
 import { updateDetails } from '../../../controllers/updateSlice';
+
 import { Privacy, privacyFromString } from '../../../model/enum/Enums';
 
 interface UpdateDetailsProps {
   projectID: string;
-  details: ProjectDetails;
+  projectDataObject: Record<string, any>;
 }
 
-const UpdateDetails: React.FC<UpdateDetailsProps> = ({ projectID, details }) => {
+const UpdateDetails: React.FC<UpdateDetailsProps> = ({ projectDataObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
     (state: RootState) => state.update
   );
+
+  const [project, setProject] = useState<Project>(new Project);
+const [details, setDetails] = useState<ProjectDetails>(new ProjectDetails);
 
   useEffect(() => {
     if (updateLoading) {
@@ -50,7 +55,6 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ projectID, details }) => 
   const [clientName, setClientName] = useState(details.clientName);
   const [startDate, setStartDate] = useState(details.startDate);
   const [endDate, setEndDate] = useState(details.endDate);
-  const [teamList, setTeamList] = useState(details.teamList);
 
   const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
     try {
@@ -110,13 +114,12 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ projectID, details }) => 
 
       const details = new ProjectDetails(detailsData);
 
-      let data: Record<string, any> = {
-        id: projectID,
+      let projectObject: Record<string, any> = {
+        ...projectDataObject,
         details: details.toObject()
-      };
+      }
 
-      console.log(data)
-      // dispatch(updateDetails(data));
+      dispatch(updateDetails(projectObject));
     } catch (error) {
       const err = error as Error;
       dispatch(setMessageType('error'));

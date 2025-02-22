@@ -25,7 +25,8 @@ const getOrganization: Express.RequestHandler = async (
     res.json({
       error_message: err.message,
       status_code: err.statusCode,
-    });  }
+    });
+  }
 };
 organizationRoutes.get('/:id', getOrganization);
 

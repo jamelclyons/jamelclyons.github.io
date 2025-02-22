@@ -33,8 +33,7 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ user, project }) =>
 
         <TheProblem problem={problem} />
 
-        {/* Project details is for clients only */}
-        {owner.type !== 'User' && <Details user={user} details={details} />}
+        <Details user={user} details={details} />
       </main>
     </>
   );

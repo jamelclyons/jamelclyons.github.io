@@ -9,7 +9,7 @@ class ProjectProblem extends Model {
     super();
 
     this.contentURL = data?.content_url || null;
-    this.gallery = data?.gallery ? new Gallery(data?.gallery) : new Gallery;
+    this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery;
   }
 }
 
