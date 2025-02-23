@@ -1,6 +1,7 @@
 import Model from './Model';
 import Contact from './Contact';
 import Image from './Image';
+import * as user from '../../user.json';
 
 class ContactMethods extends Model {
   hackerRank: Contact;
@@ -8,21 +9,39 @@ class ContactMethods extends Model {
   x: Contact;
   instagram: Contact;
   github: Contact;
+  youtube: Contact;
   website: Contact;
   email: Contact;
   phone: Contact;
 
   constructor(data: Record<string, any>) {
     super();
-    
-    this.hackerRank = this.setContactHackerRank(data?.hacker_rank?.url);
-    this.linkedin = this.setContactLinkedIn(data?.linkedin?.url);
-    this.x = this.setContactX(data?.x?.url);
-    this.instagram = this.setContactInstagram(data?.instagram?.url);
-    this.github = this.setContactGitHub(data?.github?.url);
-    this.website = this.setContactWebsite(data?.website?.url);
-    this.email = this.setContactEmail(data?.email?.value);
-    this.phone = this.setContactPhone(data?.phone?.value);
+
+    const { website } = user;
+    const {
+      hacker_rank,
+      linkedIn,
+      x,
+      instagram,
+      gitHub,
+      youtube,
+      email,
+      phone,
+    } = user.contact;
+
+    this.hackerRank = this.setContactHackerRank(
+      data?.hacker_rank?.url ?? hacker_rank
+    );
+    this.linkedin = this.setContactLinkedIn(data?.linkedin?.url ?? linkedIn);
+    this.x = this.setContactX(data?.x?.url ?? x);
+    this.instagram = this.setContactInstagram(
+      data?.instagram?.url ?? instagram
+    );
+    this.github = this.setContactGitHub(data?.github?.url ?? gitHub);
+    this.youtube = this.setContactYoutube(data?.youtube?.url ?? youtube);
+    this.website = this.setContactWebsite(data?.website?.url ?? website);
+    this.email = this.setContactEmail(data?.email?.value ?? email);
+    this.phone = this.setContactPhone(data?.phone?.value ?? phone);
   }
 
   setContact(data: Record<string, any>) {
@@ -129,6 +148,24 @@ class ContactMethods extends Model {
     });
   }
 
+  setContactYoutube(url?: string) {
+    const id = 'youtube';
+    const title = 'Youtube';
+    const className = 'fa-brands fa-youtube';
+    const image = new Image({
+      id: id,
+      title: title,
+      class_name: className,
+    }).toObject();
+
+    return this.setContact({
+      id: id,
+      title: title,
+      image: image,
+      url: url,
+    });
+  }
+
   setContactWebsite(url?: string) {
     const id = 'website';
     const title = 'Website';
@@ -185,7 +222,7 @@ class ContactMethods extends Model {
 
   fromGitHub(data: Array<Record<string, any>>) {
     if (Array.isArray(data) && data.length > 0) {
-      const contactMethods: Record<string,any> = {};
+      const contactMethods: Record<string, any> = {};
 
       data.forEach((contact) => {
         try {
@@ -194,11 +231,15 @@ class ContactMethods extends Model {
           const url = new URL(contact.url);
 
           if (url.host === 'www.hackerrank.com') {
-            contactMethods.hacker_rank = this.setContactHackerRank(url.href).toObject();
+            contactMethods.hacker_rank = this.setContactHackerRank(
+              url.href
+            ).toObject();
           }
 
           if (url.host === 'www.linkedin.com') {
-            contactMethods.linkedin = this.setContactLinkedIn(url.href).toObject();
+            contactMethods.linkedin = this.setContactLinkedIn(
+              url.href
+            ).toObject();
           }
 
           if (url.host === 'x.com') {
@@ -206,7 +247,9 @@ class ContactMethods extends Model {
           }
 
           if (url.host === 'www.instagram.com') {
-            contactMethods.instagram = this.setContactInstagram(url.href).toObject();
+            contactMethods.instagram = this.setContactInstagram(
+              url.href
+            ).toObject();
           }
         } catch (error) {
           console.error(`Invalid URL: ${contact.url}`, error);

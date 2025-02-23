@@ -16,40 +16,17 @@ import Gallery from '../../../model/Gallery';
 
 interface UpdateDesignProps {
   projectID: string;
-  design: ProjectDesign;
+  projectDataObject: Record<string,any>;
 }
 
-const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectID, design }) => {
+const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectID, projectDataObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
-    (state: RootState) => state.update
-  );
+  const [design, setDesign] = useState<ProjectDesign>(new ProjectDesign(projectDataObject?.design));
 
-  useEffect(() => {
-    if (updateLoading) {
-      dispatch(setMessage('Standbye while an attempt to update the design section of your project is made.'));
-      dispatch(setMessageType('info'));
-    }
-  }, [updateLoading, dispatch]);
-
-  useEffect(() => {
-    if (updateErrorMessage) {
-      dispatch(setMessage(updateErrorMessage));
-      dispatch(setMessageType('error'));
-    }
-  }, [updateErrorMessage, dispatch]);
-
-  useEffect(() => {
-    if (updateSuccessMessage) {
-      dispatch(setMessage(updateSuccessMessage));
-      dispatch(setMessageType('success'));
-    }
-  }, [updateSuccessMessage, dispatch]);
-
-  const [gallery, setGallery] = useState(design?.gallery);
-  const [colorsList, setColorsList] = useState(design?.colorsList);
-  const [checkList, setCheckList] = useState(design?.checkList);
+  const [gallery, setGallery] = useState(design.gallery);
+  const [colorsList, setColorsList] = useState(design.colorsList);
+  const [checkList, setCheckList] = useState(design.checkList);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     try {

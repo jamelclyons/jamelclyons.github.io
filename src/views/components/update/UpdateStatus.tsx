@@ -13,37 +13,13 @@ import { updateStatus } from '../../../controllers/updateSlice';
 
 interface UpdateStatusProps {
     projectID: string;
-    status: ProjectStatus;
+    projectDataObject: Record<string, any>;
 }
 
-const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectID, status }) => {
+const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectID, projectDataObject }) => {
     const dispatch = useDispatch<AppDispatch>();
-
-    const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
-        (state: RootState) => state.update
-    );
-
-    useEffect(() => {
-        if (updateLoading) {
-            dispatch(setMessage('Standbye while an attempt to update the status information of your project is made.'));
-            dispatch(setMessageType('info'));
-        }
-    }, [updateLoading, dispatch]);
-
-    useEffect(() => {
-        if (updateErrorMessage) {
-            dispatch(setMessage(updateErrorMessage));
-            dispatch(setMessageType('error'));
-        }
-    }, [updateErrorMessage, dispatch]);
-
-    useEffect(() => {
-        if (updateSuccessMessage) {
-            dispatch(setMessage(updateSuccessMessage));
-            dispatch(setMessageType('success'));
-        }
-    }, [updateSuccessMessage, dispatch]);
-
+    
+    const [status, setStatus] = useState<ProjectStatus>(new ProjectStatus(projectDataObject?.process?.status))
     const [progress, setProgress] = useState(status.progress);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +55,7 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectID, status }) => {
                 id: projectID,
                 process: {
                     status: statusData
-                }    
+                }
             };
 
             dispatch(updateStatus(data));

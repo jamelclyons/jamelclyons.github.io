@@ -1,8 +1,8 @@
-import React, { useEffect, useState, ChangeEvent, MouseEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '@/model/store';
+import React, { useState, ChangeEvent, MouseEvent } from 'react';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '@/model/store';
 
-import Gallery from '@/model/Gallery'
+import Gallery, { GalleryObject } from '@/model/Gallery'
 import Image from '@/model/Image';
 
 import {
@@ -13,11 +13,13 @@ import {
 import { updateGallery } from '@/controllers/updateSlice';
 
 interface UpdateGalleryProps {
-    gallery: Gallery;
+    projectDataObject: Record<string, any>;
 }
 
-const UpdateGallery: React.FC<UpdateGalleryProps> = ({ gallery }) => {
+const UpdateGallery: React.FC<UpdateGalleryProps> = ({ projectDataObject }) => {
     const dispatch = useDispatch<AppDispatch>();
+
+    const [gallery, setGallery] = useState<Gallery>(new Gallery(projectDataObject?.problem?.gallery));
 
     const [logos, setLogos] = useState<Array<Image>>(gallery.logos);
     const [icons, setIcons] = useState(gallery.icons ?? []);
@@ -97,7 +99,7 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ gallery }) => {
         e.preventDefault();
 
         try {
-            const galleryObject = {
+            const galleryObject: GalleryObject = {
                 logos: logos.map((logo) => logo.toObject()),
                 icons: icons.map((icon) => icon.toObject()),
                 animations: animations.map((animation) => animation.toObject()),

@@ -4,8 +4,18 @@ import Model from './Model';
 import User from './User';
 import packageJson from '../../package.json';
 
+export type ProjectDetailsObject = {
+  privacy: string;
+  client_id: string;
+  client_name: string;
+  start_date: string;
+  end_date: string;
+  content: string;
+  team_list: Array<Record<string, any>>;
+};
+
 class ProjectDetails extends Model {
-  privacy: Privacy;
+  privacy: string;
   clientID: string;
   clientName: string;
   startDate: string;
@@ -13,12 +23,10 @@ class ProjectDetails extends Model {
   content: string;
   teamList: Array<User>;
 
-  constructor(data?: Record<string, any>) {
+  constructor(data: Record<string, any> | ProjectDetailsObject = {}) {
     super();
 
-    this.privacy = data?.privacy
-      ? privacyFromString(data?.privacy)
-      : Privacy.Public;
+    this.privacy = data?.privacy ? data.privacy : 'public';
     this.clientID = data?.client_id ? data.client_id : null;
     this.clientName = data?.client_name ? data.client_name : null;
     this.startDate = data?.start_date ? data.start_date : null;

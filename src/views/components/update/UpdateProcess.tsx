@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import ProjectProcess from '../../../model/ProjectProcess';
 import UpdateStatus from './UpdateStatus';
@@ -8,23 +8,22 @@ import UpdateDelivery from '../update/UpdateDelivery';
 
 interface UpdateProcessProps {
     projectID: string;
-    process: ProjectProcess;
+    projectDataObject: Record<string, any>;
 }
 
-const UpdateProcess: React.FC<UpdateProcessProps> = ({ projectID, process }) => {
-    const { status, design, development, delivery } = process;
-
+const UpdateProcess: React.FC<UpdateProcessProps> = ({ projectID, projectDataObject }) => {
+    
     return (
         <>
             <h1 className='title'>process</h1>
 
-            <UpdateStatus projectID={projectID} status={status} />
+            <UpdateStatus projectID={projectID} projectDataObject={projectDataObject} />
 
-            <UpdateDesign projectID={projectID} design={design} />
+            <UpdateDesign projectID={projectID} projectDataObject={projectDataObject} />
 
-            <UpdateDevelopment projectID={projectID} development={development} />
+            <UpdateDevelopment projectID={projectID} projectDataObject={projectDataObject} />
 
-            <UpdateDelivery projectID={projectID} delivery={delivery} />
+            <UpdateDelivery projectID={projectID} projectDataObject={projectDataObject} />
         </>)
 }
 

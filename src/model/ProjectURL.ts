@@ -1,12 +1,18 @@
 import Model from './Model';
-import Image from './Image';
+import Image, { ImageObject } from './Image';
+
+export type ProjectURLObject = {
+  name: string;
+  url: string;
+  image: ImageObject;
+};
 
 class ProjectURL extends Model {
   name: string;
   url: string;
   image: Image;
 
-  constructor(data: Record<string, any> = {}) {
+  constructor(data: Record<string, any> | ProjectURLObject = {}) {
     super();
 
     this.name = data?.name;

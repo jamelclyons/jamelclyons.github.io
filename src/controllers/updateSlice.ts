@@ -7,14 +7,15 @@ import {
 
 import { api } from '@/services/firebase/config';
 
-import DBProject from '@/model/DBProject';
 import SecureHeaders from '@/model/SecureHeaders';
 import Gallery from '@/model/Gallery';
+import Project from '@/model/Project';
 
 import { addSecureHeaders } from '@/utilities/Headers';
 
 interface UpdateState {
   updateLoading: boolean;
+  updateLoadingMessage: string | null;
   updateSuccessMessage: string | null;
   updateError: Error | null;
   updateErrorMessage: string | null;
@@ -24,6 +25,7 @@ interface UpdateState {
 
 const initialState: UpdateState = {
   updateLoading: false,
+  updateLoadingMessage: null,
   updateSuccessMessage: null,
   updateError: null,
   updateErrorMessage: null,
@@ -33,7 +35,7 @@ const initialState: UpdateState = {
 
 export const updateProject = createAsyncThunk(
   'update/updateProject',
-  async (project: DBProject) => {
+  async (project: Project) => {
     try {
       const headers: SecureHeaders = await addSecureHeaders();
 
@@ -303,9 +305,48 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(updateGallery.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateErrorMessage = '';
+        state.updateLoadingMessage = 'Gallery updated';
+      })
       .addCase(updateGallery.fulfilled, (state, action) => {
         state.updateLoading = false;
         state.updatedGallery = action.payload;
+      })
+      .addCase(updateProject.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateErrorMessage = '';
+        state.updateLoadingMessage = 'Attempting to update the your project...';
+      })
+      .addCase(updateSolution.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateErrorMessage = '';
+        state.updateLoadingMessage =
+          'Attempting to update the solution section of your project...';
+      })
+      .addCase(updateProcess.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateErrorMessage = '';
+        state.updateLoadingMessage =
+          'Attempting to update the process section of your project...';
+      })
+      .addCase(updateProblem.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateErrorMessage = '';
+        state.updateLoadingMessage =
+          'Attempting to update the problem section of your project...';
+      })
+      .addCase(updateDetails.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateErrorMessage = '';
+        state.updateLoadingMessage = 'Attempting to update the details section of your project...';
       })
       .addMatcher(
         isAnyOf(
@@ -320,21 +361,6 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
           state.updateStatusCode = action.payload?.status_code ?? null;
           state.updateErrorMessage = action.payload?.error_message ?? null;
           state.updateSuccessMessage = action.payload?.success_message ?? null;
-        }
-      )
-      .addMatcher(
-        isAnyOf(
-          updateGallery.pending,
-          updateProject.pending,
-          updateSolution.pending,
-          updateProcess.pending,
-          updateProblem.pending,
-          updateDetails.pending
-        ),
-        (state) => {
-          state.updateLoading = true;
-          state.updateError = null;
-          state.updateErrorMessage = '';
         }
       )
       .addMatcher(

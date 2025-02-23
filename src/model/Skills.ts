@@ -5,6 +5,7 @@ import Taxonomy, {
   ProjectType,
   Technology,
 } from './Taxonomy';
+import * as skills from '../../skills.json';
 
 class Skills extends Model {
   types: Set<ProjectType>;
@@ -16,10 +17,12 @@ class Skills extends Model {
   constructor(data: Record<string, any> = []) {
     super();
 
-    this.types = this.getProjectTypes(data.types || []);
-    this.languages = this.getLanguages(data.languages || []);
-    this.frameworks = this.getFrameworks(data.frameworks || []);
-    this.technologies = this.getTechnologies(data.technologies || []);
+    const { types, languages, frameworks, technologies } = skills;
+
+    this.types = this.getProjectTypes(data.types || types);
+    this.languages = this.getLanguages(data.languages || languages);
+    this.frameworks = this.getFrameworks(data.frameworks || frameworks);
+    this.technologies = this.getTechnologies(data.technologies || technologies);
 
     this.count = this.getCount();
   }

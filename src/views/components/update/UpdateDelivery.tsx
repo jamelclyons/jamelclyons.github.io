@@ -1,50 +1,26 @@
 import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import type { AppDispatch, RootState } from '../../../model/store';
-import ProjectDelivery from '../../../model/ProjectDelivery';
+import type { AppDispatch, RootState } from '@/model/store';
+import ProjectDelivery from '@/model/ProjectDelivery';
 
 import {
   setMessage,
   setMessageType,
   setShowStatusBar,
-} from '../../../controllers/messageSlice';
+} from '@/controllers/messageSlice';
 
-import { updateDelivery } from '../../../controllers/updateSlice';
+import { updateDelivery } from '@/controllers/updateSlice';
 
 interface UpdateDeliveryProps {
   projectID: string;
-  delivery: ProjectDelivery;
+  projectDataObject: Record<string, any>;
 }
 
-const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectID, delivery }) => {
+const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectID, projectDataObject }) => {
   const dispatch = useDispatch<AppDispatch>();
-
-  const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
-    (state: RootState) => state.update
-  );
-
-  useEffect(() => {
-    if (updateLoading) {
-      dispatch(setMessage('Standbye while an attempt to update the delivery section of your project is made.'));
-      dispatch(setMessageType('info'));
-    }
-  }, [updateLoading, dispatch]);
-
-  useEffect(() => {
-    if (updateErrorMessage) {
-      dispatch(setMessage(updateErrorMessage));
-      dispatch(setMessageType('error'));
-    }
-  }, [updateErrorMessage, dispatch]);
-
-  useEffect(() => {
-    if (updateSuccessMessage) {
-      dispatch(setMessage(updateSuccessMessage));
-      dispatch(setMessageType('success'));
-    }
-  }, [updateSuccessMessage, dispatch]);
-
+  
+  const [delivery, setDelivery] = useState<ProjectDelivery>(new ProjectDelivery(projectDataObject?.delivery));
   const [gallery, setGallery] = useState(delivery.gallery);
   const [checkList, setCheckList] = useState(delivery?.checkList);
   // const [content, setContent] = useState(delivery?.checkList);
@@ -113,7 +89,7 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectID, delivery }) 
       <form action="" id='update_delivery'>
 
         <button onClick={handleUpdateDelivery}>
-          <h3>update</h3>
+          <h3>Update Delivery</h3>
         </button>
       </form>
     </>

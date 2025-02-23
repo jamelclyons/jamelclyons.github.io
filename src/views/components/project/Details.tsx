@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ProjectDetails from '../../../model/ProjectDetails';
+import ProjectDetails from '@/model/ProjectDetails';
 
 import ProjectTeamComponent from './ProjectTeam';
 import User from '@/model/User';
@@ -15,7 +15,7 @@ const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ user, details 
 
   return (
     <>
-      {(privacy === 'public' || clientID === '0') && (
+      {(privacy === 'public' || clientID !== '0') && (
         <div className="project-details">
           <h3 className="title">the details</h3>
 

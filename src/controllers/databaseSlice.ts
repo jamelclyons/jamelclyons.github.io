@@ -9,7 +9,8 @@ import { api } from '@/services/firebase/config';
 
 interface DatabaseState {
   databaseLoading: boolean;
-  databaseStatusCode: string;
+  databaseLoadingMessage: string | null;
+  databaseStatusCode: number | null;
   databaseError: Error | null;
   databaseErrorMessage: string;
   title: string;
@@ -30,7 +31,8 @@ interface DatabaseState {
 
 const initialState: DatabaseState = {
   databaseLoading: false,
-  databaseStatusCode: '',
+  databaseLoadingMessage: null,
+  databaseStatusCode: null,
   databaseError: null,
   databaseErrorMessage: '',
   title: '',
@@ -48,7 +50,6 @@ const initialState: DatabaseState = {
   organizationDataObject: null,
   projectDataObject: null,
 };
-
 
 export const getUserData = createAsyncThunk(
   'database/getUserData',
@@ -131,6 +132,27 @@ const databaseSliceOptions: CreateSliceOptions<DatabaseState> = {
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(getUserData.pending, (state) => {
+        state.databaseLoading = true;
+        state.databaseErrorMessage = '';
+        state.databaseError = null;
+        state.databaseLoadingMessage =
+          'Standbye while user data is retrieved from the database.';
+      })
+      .addCase(getOrganizationData.pending, (state) => {
+        state.databaseLoading = true;
+        state.databaseErrorMessage = '';
+        state.databaseError = null;
+        state.databaseLoadingMessage =
+          'Standbye while organization data is retrieved from the database.';
+      })
+      .addCase(getProjectData.pending, (state) => {
+        state.databaseLoading = true;
+        state.databaseErrorMessage = '';
+        state.databaseError = null;
+        state.databaseLoadingMessage =
+          'Standbye while project data is retrieved from the database.';
+      })
       .addCase(getUserData.fulfilled, (state, action) => {
         state.databaseLoading = false;
         state.databaseErrorMessage = '';

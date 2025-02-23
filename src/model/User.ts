@@ -30,14 +30,13 @@ class User extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    const { name, title, website, contact, resume } = user;
+    const { name, title, website, contact, resume, avatar_url } = user;
 
-    const { hacker_rank, gitHub, instagram, linkedIn, x, email, phone } =
-      contact;
+    const { email, phone } = contact;
 
     this.id = data?.id;
     this.login = data?.login;
-    this.avatarURL = data?.avatar_url || '';
+    this.avatarURL = data?.avatar_url || avatar_url;
     this.name = data?.name || name;
     this.title = data?.title || title;
     this.bio = data?.bio;
@@ -45,7 +44,7 @@ class User extends Model {
     this.phone = data?.phone || phone;
     this.resume = data?.resume || resume;
     this.website = data?.website || website;
-    this.contactMethods = new ContactMethods(data?.contact_methods);
+    this.contactMethods = new ContactMethods(data?.contact_methods ?? contact);
     this.images = data?.images || '';
     this.organizationsURL = data?.organizations_url;
     this.organizations = data?.organizations
@@ -94,11 +93,14 @@ class User extends Model {
   }
 
   getRepoQueries(data: Array<Record<string, any>>) {
-    let repoQueries: Array<Record<string,any>> = [];
+    let repoQueries: Array<Record<string, any>> = [];
 
     if (Array.isArray(data) && data.length > 0) {
       data.forEach((query) => {
-        const repoQuery = new GitHubRepoQuery(query.owner.login, query.id).toObject();
+        const repoQuery = new GitHubRepoQuery(
+          query.owner.login,
+          query.id
+        ).toObject();
         repoQueries.push(repoQuery);
       });
     }

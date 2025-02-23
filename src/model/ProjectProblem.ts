@@ -1,5 +1,10 @@
 import Model from './Model';
-import Gallery from './Gallery';
+import Gallery, { GalleryObject } from './Gallery';
+
+export type ProjectProblemObject = {
+  contentURL: string;
+  gallery: GalleryObject;
+}
 
 class ProjectProblem extends Model {
   contentURL: string | null;

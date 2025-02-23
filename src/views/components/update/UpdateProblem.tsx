@@ -29,7 +29,7 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectDataObject }) => {
 
   useEffect(() => {
     if (updateLoading) {
-      dispatch(setMessage('Attempting to update the problem section of your project...'));
+      dispatch(setMessage(''));
       dispatch(setMessageType('info'));
     }
   }, [updateLoading, dispatch]);
@@ -78,7 +78,7 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectDataObject }) => {
 
       <div className="update" id="update_problem">
 
-        <UpdateGallery gallery={gallery} />
+        <UpdateGallery projectDataObject={projectDataObject} />
 
         <hr />
 

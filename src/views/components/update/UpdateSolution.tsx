@@ -14,36 +14,13 @@ import ProjectSolution from '../../../model/ProjectSolution';
 
 interface UpdateSolutionProps {
   projectID: string;
-  solution: ProjectSolution;
+  projectDataObject: Record<string, any>;
 }
 
-const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectID, solution }) => {
+const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectID, projectDataObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
-    (state: RootState) => state.update
-  );
-
-  useEffect(() => {
-    if (updateLoading) {
-      dispatch(setMessage('Standbye while an attempt to update the solution section of your project is made.'));
-      dispatch(setMessageType('info'));
-    }
-  }, [updateLoading, dispatch]);
-
-  useEffect(() => {
-    if (updateErrorMessage) {
-      dispatch(setMessage(updateErrorMessage));
-      dispatch(setMessageType('error'));
-    }
-  }, [updateErrorMessage, dispatch]);
-
-  useEffect(() => {
-    if (updateSuccessMessage) {
-      dispatch(setMessage(updateSuccessMessage));
-      dispatch(setMessageType('success'));
-    }
-  }, [updateSuccessMessage, dispatch]);
+  const [solution, setSolution] = useState<ProjectSolution>(new ProjectSolution(projectDataObject?.solution));
 
   const [gallery, setGallery] = useState<Record<string, any>>([]);
   const [features, setFeatures] = useState([]);
@@ -91,9 +68,6 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectID, solution }) 
       });
 
       // dispatch(addProject(project));
-
-      dispatch(setMessageType('info'));
-      dispatch(setMessage('Standbye while an attempt to log you is made.'));
     } catch (error) {
       const err = error as Error;
       dispatch(setMessageType('error'));
@@ -116,7 +90,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectID, solution }) 
         <input type="text" id="android" value={android} placeholder='Link to iOS Application' />
 
         <button onClick={handleUpdateSolution}>
-          <h3>update</h3>
+          <h3>Update Solution</h3>
         </button>
       </form>
     </>

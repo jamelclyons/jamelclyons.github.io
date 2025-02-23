@@ -5,14 +5,25 @@ import ProjectProcess from './ProjectProcess';
 import ProjectDesign from './ProjectDesign';
 import ProjectDevelopment from './ProjectDevelopment';
 import ProjectDelivery from './ProjectDelivery';
-import ProjectProblem from './ProjectProblem';
-import ProjectDetails from './ProjectDetails';
+import ProjectProblem, { ProjectProblemObject } from './ProjectProblem';
+import ProjectDetails, { ProjectDetailsObject } from './ProjectDetails';
 import Repo from './Repo';
 import Gallery from './Gallery';
 import Owner from './Owner';
 import Feature from './Feature';
 
 import { DocumentData } from 'firebase/firestore';
+
+export type ProjectObject = {
+  id: string;
+  owner: Record<string, any>;
+  title: string;
+  description: string;
+  solution: Record<string, any>;
+  process: Record<string, any>;
+  problem: ProjectProblemObject;
+  details: ProjectDetailsObject;
+}
 
 class Project extends Model {
   id: string;
@@ -24,7 +35,7 @@ class Project extends Model {
   problem: ProjectProblem;
   details: ProjectDetails;
 
-  constructor(data: Record<string, any> = {}) {
+  constructor(data: Record<string, any> | ProjectObject = {}) {
     super();
 
     this.id = data?.id;
@@ -73,7 +84,7 @@ class Project extends Model {
 
     return features;
   }
-  
+
   fromRepo(repo: Repo) {
     this.id = repo.id;
     this.owner = repo.owner;
@@ -137,6 +148,19 @@ class Project extends Model {
     this.details = data?.details
       ? new ProjectDetails(data.details)
       : new ProjectDetails();
+  }
+
+  toObject(): Record<string, any> {
+    return {
+      id: this.id,
+      owner: this.owner.toObject(),
+      title: this.title,
+      description: this.description,
+      solution: this.solution.toObject(),
+      process: this.process.toObject(),
+      problem: this.problem.toObject(),
+      details: this.details.toObject()
+    };
   }
 }
 

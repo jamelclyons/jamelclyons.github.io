@@ -104,7 +104,7 @@ const App: React.FC = () => {
                 <ProjectsEditPage user={user} />
               </ProtectedRoute>
             } />
-            <Route path="/admin/update/project/:owner/:projectID" element={
+            <Route path="/admin/update/project/:login/:projectID" element={
               <ProtectedRoute>
                 <ProjectUpdate />
               </ProtectedRoute>

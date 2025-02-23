@@ -22,39 +22,18 @@ import Taxonomy from '@/model/Taxonomy';
 
 interface UpdateDevelopmentProps {
   projectID: string;
-  development: ProjectDevelopment;
+  projectDataObject: Record<string, any>;
 }
 
-const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, development }) => {
+const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, projectDataObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
-    (state: RootState) => state.update
-  );
+
   const { projectTypesObject, languagesObject, frameworksObject, technologiesObject } = useSelector(
     (state: RootState) => state.taxonomies
   );
   
-  useEffect(() => {
-    if (updateLoading) {
-      dispatch(setMessage('Standbye while an attempt to update the development section of your project is made.'));
-      dispatch(setMessageType('info'));
-    }
-  }, [updateLoading, dispatch]);
-
-  useEffect(() => {
-    if (updateErrorMessage) {
-      dispatch(setMessage(updateErrorMessage));
-      dispatch(setMessageType('error'));
-    }
-  }, [updateErrorMessage, dispatch]);
-
-  useEffect(() => {
-    if (updateSuccessMessage) {
-      dispatch(setMessage(updateSuccessMessage));
-      dispatch(setMessageType('success'));
-    }
-  }, [updateSuccessMessage, dispatch]);
+  
 
   useEffect(() => {
     dispatch(getProjectTypes());
@@ -72,6 +51,7 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, develo
     dispatch(getTechnologies());
   }, []);
 
+  const [development, setDevelopment] = useState<ProjectDevelopment>(new ProjectDevelopment(projectDataObject?.process?.development))
   const [checkList, setCheckList] = useState<Array<Task>>(development.checkList);
   const [versionsList, setVersionsList] = useState<ProjectVersions>(development.versionsList);
   const [selectedProjectTypes, setSelectedProjectTypes] = useState<Set<Taxonomy>>(new Set(development.skills.types));

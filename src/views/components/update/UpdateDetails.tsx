@@ -2,59 +2,43 @@ import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } f
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '@/model/store';
-import Project from '@/model/Project';
-import ProjectDetails from '@/model/ProjectDetails';
+import Project, { ProjectObject } from '@/model/Project';
+import ProjectDetails, { ProjectDetailsObject } from '@/model/ProjectDetails';
 
 import {
   setMessage,
   setMessageType,
   setShowStatusBar,
-} from '../../../controllers/messageSlice';
-import { updateDetails } from '../../../controllers/updateSlice';
+} from '@/controllers/messageSlice';
+import { updateProject } from '@/controllers/updateSlice';
 
-import { Privacy, privacyFromString } from '../../../model/enum/Enums';
+import { Privacy, privacyFromString } from '@/model/enum/Enums';
 
 interface UpdateDetailsProps {
   projectID: string;
-  projectDataObject: Record<string, any>;
+  projectObject: ProjectObject;
 }
 
-const UpdateDetails: React.FC<UpdateDetailsProps> = ({ projectDataObject }) => {
+const UpdateDetails: React.FC<UpdateDetailsProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { updateLoading, updateErrorMessage, updateSuccessMessage } = useSelector(
-    (state: RootState) => state.update
-  );
-
-  const [project, setProject] = useState<Project>(new Project);
-const [details, setDetails] = useState<ProjectDetails>(new ProjectDetails);
-
-  useEffect(() => {
-    if (updateLoading) {
-      dispatch(setMessage('Standbye while an attempt to update the details section of your project is made.'));
-      dispatch(setMessageType('info'));
-    }
-  }, [updateLoading, dispatch]);
+  const [detailsObject, setDetailsObject] = useState<ProjectDetailsObject>(projectObject.details);
+  const [privacy, setPrivacy] = useState<string>(detailsObject.privacy);
+  const [clientID, setClientID] = useState<string>(detailsObject.client_id);
+  const [clientName, setClientName] = useState<string>(detailsObject.client_name);
+  const [startDate, setStartDate] = useState<string>(detailsObject.start_date);
+  const [endDate, setEndDate] = useState<string>(detailsObject.end_date);
 
   useEffect(() => {
-    if (updateErrorMessage) {
-      dispatch(setMessage(updateErrorMessage));
-      dispatch(setMessageType('error'));
+    if (projectObject.details) {
+      setDetailsObject(projectObject.details);
+      setPrivacy(projectObject.details.privacy)
+      setClientID(projectObject.details.client_id)
+      setClientName(projectObject.details.client_name)
+      setStartDate(projectObject.details.start_date)
+      setEndDate(projectObject.details.end_date)
     }
-  }, [updateErrorMessage, dispatch]);
-
-  useEffect(() => {
-    if (updateSuccessMessage) {
-      dispatch(setMessage(updateSuccessMessage));
-      dispatch(setMessageType('success'));
-    }
-  }, [updateSuccessMessage, dispatch]);
-
-  const [privacy, setPrivacy] = useState(details.privacy);
-  const [clientID, setClientID] = useState(details.clientID);
-  const [clientName, setClientName] = useState(details.clientName);
-  const [startDate, setStartDate] = useState(details.startDate);
-  const [endDate, setEndDate] = useState(details.endDate);
+  }, [projectObject.details, setDetailsObject]);
 
   const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
     try {
@@ -65,6 +49,8 @@ const [details, setDetails] = useState<ProjectDetails>(new ProjectDetails);
       if (name === 'privacy') {
         setPrivacy(privacyFromString(value));
       }
+
+      setDetailsObject({ ...detailsObject, privacy: privacy });
     } catch (error) {
       const err = error as Error;
       dispatch(setMessage(err.message));
@@ -92,6 +78,14 @@ const [details, setDetails] = useState<ProjectDetails>(new ProjectDetails);
       if (name === 'end_date') {
         setEndDate(value);
       }
+
+      setDetailsObject({
+        ...detailsObject,
+        client_id: clientID,
+        client_name: clientName,
+        start_date: startDate,
+        end_date: endDate
+      });
     } catch (error) {
       const err = error as Error;
       dispatch(setMessage(err.message));
@@ -103,23 +97,22 @@ const [details, setDetails] = useState<ProjectDetails>(new ProjectDetails);
     e.preventDefault();
 
     try {
-      const form = document.getElementById('update_details') as HTMLFormElement;
-      const formData = new FormData(form);
+      const detailsObject: ProjectDetailsObject = {
+        privacy: privacy,
+        client_id: clientID,
+        client_name: clientName,
+        start_date: startDate,
+        end_date: endDate,
+        content: '',
+        team_list: []
+      };
 
-      let detailsData: Record<string, any> = {};
-
-      formData.forEach((value, key) => {
-        detailsData[key] = value;
-      });
-
-      const details = new ProjectDetails(detailsData);
-
-      let projectObject: Record<string, any> = {
-        ...projectDataObject,
-        details: details.toObject()
+      const updatedProjectObject: ProjectObject = {
+        ...projectObject,
+        details: detailsObject
       }
 
-      dispatch(updateDetails(projectObject));
+      dispatch(updateProject(new Project(updatedProjectObject)));
     } catch (error) {
       const err = error as Error;
       dispatch(setMessageType('error'));
@@ -141,19 +134,19 @@ const [details, setDetails] = useState<ProjectDetails>(new ProjectDetails);
         </select>
 
         <label htmlFor="client_id">Client ID:</label>
-        <input type="text" id='client_id' name='client_id' value={clientID} onChange={handleChange} />
+        <input type="text" id='client_id' name='client_id' value={clientID ?? ''} onChange={handleChange} />
 
         <label htmlFor="client_name">Client Name:</label>
-        <input type="text" id='client_name' name='client_name' value={clientName} onChange={handleChange} />
+        <input type="text" id='client_name' name='client_name' value={clientName ?? ''} onChange={handleChange} />
 
         <label htmlFor="start_date">Start Date:</label>
-        <input type="date" id="start_date" name="start_date" value={startDate} min="2010-06-16" onChange={handleChange} />
+        <input type="date" id="start_date" name="start_date" value={startDate ?? ''} min="2010-06-16" onChange={handleChange} />
 
         <label htmlFor="end_date">End Date:</label>
-        <input type="date" id="end_date" name="end_date" value={endDate} min="2010-06-16" onChange={handleChange} />
+        <input type="date" id="end_date" name="end_date" value={endDate ?? ''} min="2010-06-16" onChange={handleChange} />
 
         <button onClick={handleUpdateDetails}>
-          <h3>update</h3>
+          <h3>Update Details</h3>
         </button>
       </form>
     </>

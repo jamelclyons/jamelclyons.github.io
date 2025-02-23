@@ -10,7 +10,7 @@ interface ContactBarProps {
 }
 
 const ContactBar: React.FC<ContactBarProps> = ({ contactMethods, location }) => {
-    const { hackerRank, email, phone, github, linkedin, instagram, x, website } = contactMethods;
+    const { hackerRank, email, phone, github, linkedin, youtube, instagram, x, website } = contactMethods;
 
     const mailTo = email.value ? `mailto:${email.value}` : '';
     const callNow = phone.value ? `tel:+${phone.value}` : '';
@@ -43,6 +43,12 @@ const ContactBar: React.FC<ContactBarProps> = ({ contactMethods, location }) => 
         {hackerRank.image && hackerRank.url !== '' &&
             <a href={hackerRank.url} target="_blank">
                 <ImageComponent image={hackerRank.image} />
+            </a>
+        }
+
+        {youtube.image && youtube.url !== '' &&
+            <a href={youtube.url} target="_blank">
+                <ImageComponent image={youtube.image} />
             </a>
         }
 

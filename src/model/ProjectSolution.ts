@@ -1,7 +1,16 @@
 import Model from './Model';
 import Feature from './Feature';
-import ProjectURLs from './ProjectURLs';
-import Gallery from './Gallery';
+import ProjectURLs, { ProjectURLsObject } from './ProjectURLs';
+import Gallery, { GalleryObject } from './Gallery';
+
+export type ProjectSolutionObject = {
+  gallery: GalleryObject;
+  features: Set<Feature>;
+  contentURL: string;
+  currency: string;
+  price: number;
+  urlsList: ProjectURLsObject;
+};
 
 class ProjectSolution extends Model {
   gallery: Gallery;
