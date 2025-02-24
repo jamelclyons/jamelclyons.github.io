@@ -1,5 +1,9 @@
 import Model from './Model';
 
+export type FeatureObject = {
+  name: string;
+}
+
 class Feature extends Model {
   name: string;
 

@@ -1,35 +1,42 @@
-import React, { useState, ChangeEvent, MouseEvent } from 'react';
+import React, { useEffect, useState, ChangeEvent, MouseEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '@/model/store';
 
 import Gallery, { GalleryObject } from '@/model/Gallery'
-import Image from '@/model/Image';
+import { ImageObject } from '@/model/Image';
+import Project, { ProjectObject } from '@/model/Project';
 
 import {
     setMessage,
     setMessageType,
     setShowStatusBar,
 } from '@/controllers/messageSlice';
-import { updateGallery } from '@/controllers/updateSlice';
+import { updateGallery, updateProject } from '@/controllers/updateSlice';
 
 interface UpdateGalleryProps {
-    projectDataObject: Record<string, any>;
+    gallery: GalleryObject;
 }
 
-const UpdateGallery: React.FC<UpdateGalleryProps> = ({ projectDataObject }) => {
+const UpdateGallery: React.FC<UpdateGalleryProps> = ({ gallery }) => {
     const dispatch = useDispatch<AppDispatch>();
 
-    const [gallery, setGallery] = useState<Gallery>(new Gallery(projectDataObject?.problem?.gallery));
+    const [galleryObject, setGalleryObject] = useState<GalleryObject>(gallery);
 
-    const [logos, setLogos] = useState<Array<Image>>(gallery.logos);
-    const [icons, setIcons] = useState(gallery.icons ?? []);
-    const [animations, setAnimations] = useState(gallery.animations ?? []);
-    const [umlDiagrams, setUmlDiagrams] = useState(gallery.umlDiagrams ?? []);
+    const [logos, setLogos] = useState<Array<ImageObject>>(galleryObject.logos);
+    const [icons, setIcons] = useState<Array<ImageObject>>(galleryObject.icons);
+    const [animations, setAnimations] = useState<Array<ImageObject>>(galleryObject.animations);
+    const [umlDiagrams, setUmlDiagrams] = useState<Array<ImageObject>>(galleryObject.uml_diagrams);
 
-    const [newLogo, setNewLogo] = useState({ title: '', url: '', class_name: '' });
-    const [newIcon, setNewIcon] = useState({ title: '', url: '', class_name: '' });
-    const [newAnimation, setNewAnimation] = useState({ title: '', url: '', class_name: '' });
-    const [newUmlDiagram, setNewUmlDiagram] = useState({ title: '', url: '', class_name: '' });
+    const [newLogo, setNewLogo] = useState<ImageObject>({ id: '', title: '', url: '', class_name: '' });
+    const [newIcon, setNewIcon] = useState<ImageObject>({ id: '', title: '', url: '', class_name: '' });
+    const [newAnimation, setNewAnimation] = useState<ImageObject>({ id: '', title: '', url: '', class_name: '' });
+    const [newUmlDiagram, setNewUmlDiagram] = useState<ImageObject>({ id: '', title: '', url: '', class_name: '' });
+
+    useEffect(() => {
+        if (gallery) {
+            setGalleryObject(gallery);
+        }
+    }, [gallery, setGalleryObject]);
 
     const handleNewLogo = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -38,8 +45,8 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ projectDataObject }) => {
 
     const handleAddNewLogo = () => {
         if (newLogo.title && (newLogo.url || newLogo.class_name)) {
-            setLogos((prev: Array<Image>) => [...prev, new Image({ id: Date.now().toString(), ...newLogo })]);
-            setNewLogo({ title: '', url: '', class_name: '' });
+            setLogos((prev: Array<ImageObject>) => [...prev, { ...newLogo }]);
+            setNewLogo({ id: '', title: '', url: '', class_name: '' });
         };
     }
 
@@ -50,8 +57,8 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ projectDataObject }) => {
 
     const handleAddNewIcon = () => {
         if (newIcon.title && (newIcon.url || newIcon.class_name)) {
-            setIcons((prev: Array<Image>) => [...prev, new Image({ id: Date.now().toString(), ...newIcon })]);
-            setNewIcon({ title: '', url: '', class_name: '' });
+            setIcons((prev: Array<ImageObject>) => [...prev, { ...newIcon }]);
+            setNewIcon({ id: '', title: '', url: '', class_name: '' });
         };
     }
 
@@ -62,8 +69,8 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ projectDataObject }) => {
 
     const handleAddNewAnimation = () => {
         if (newAnimation.title && (newAnimation.url || newAnimation.class_name)) {
-            setAnimations((prev: Array<Image>) => [...prev, new Image({ id: Date.now().toString(), ...newAnimation })]);
-            setNewAnimation({ title: '', url: '', class_name: '' });
+            setAnimations((prev: Array<ImageObject>) => [...prev, { ...newAnimation }]);
+            setNewAnimation({ id: '', title: '', url: '', class_name: '' });
         };
     }
 
@@ -74,8 +81,8 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ projectDataObject }) => {
 
     const handleAddNewUmlDiagram = () => {
         if (newUmlDiagram.title && (newUmlDiagram.url || newUmlDiagram.class_name)) {
-            setUmlDiagrams((prev: Array<Image>) => [...prev, new Image({ id: Date.now().toString(), ...newUmlDiagram })]);
-            setNewUmlDiagram({ title: '', url: '', class_name: '' });
+            setUmlDiagrams((prev: Array<ImageObject>) => [...prev, { ...newUmlDiagram }]);
+            setNewUmlDiagram({ id: '', title: '', url: '', class_name: '' });
         };
     }
 
@@ -95,20 +102,18 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ projectDataObject }) => {
         setState(updatedState);
     };
 
-    const handleUpdateProblem = async (e: MouseEvent<HTMLButtonElement>) => {
+    const handleUpdateGallery = async (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         try {
             const galleryObject: GalleryObject = {
-                logos: logos.map((logo) => logo.toObject()),
-                icons: icons.map((icon) => icon.toObject()),
-                animations: animations.map((animation) => animation.toObject()),
-                uml_diagrams: umlDiagrams.map((umlDiagram) => umlDiagram.toObject())
+                logos: logos,
+                icons: icons,
+                animations: animations,
+                uml_diagrams: umlDiagrams
             };
 
-            const updatedGallery = new Gallery(galleryObject)
-
-            dispatch(updateGallery(updatedGallery));
+            dispatch(updateGallery(new Gallery(galleryObject)));
         } catch (error) {
             const err = error as Error;
             dispatch(setMessage(err.message));
@@ -125,39 +130,54 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ projectDataObject }) => {
                     <>
                         <h3>Logos</h3>
 
-                        {logos.map((item: Image, index: number) => (
+                        {logos.map((item: ImageObject, index: number) => (
                             <div className="form-item" key={item.id}>
-                                <input
-                                    type="text"
-                                    placeholder="ID"
-                                    value={item.id ?? ""}
-                                    name="id"
-                                    disabled
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Title"
-                                    value={item.title ?? ""}
-                                    name="title"
-                                    data-index={index}
-                                    onChange={(e) => handleChange(e, logos, setLogos)}
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="URL"
-                                    value={item.url ?? ""}
-                                    name="url"
-                                    data-index={index}
-                                    onChange={(e) => handleChange(e, logos, setLogos)}
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Class Name"
-                                    value={item.className ?? ""}
-                                    name="class_name"
-                                    data-index={index}
-                                    onChange={(e) => handleChange(e, logos, setLogos)}
-                                />
+                                <div className="form-item-flex">
+                                    <label htmlFor="id">ID:</label>
+                                    <input
+                                        type="text"
+                                        placeholder="ID"
+                                        value={item.id ?? ""}
+                                        name="id"
+                                        disabled
+                                    />
+                                </div>
+
+                                <div className="form-item-flex">
+                                    <label htmlFor="title">Title:</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Title"
+                                        value={item.title ?? ""}
+                                        name="title"
+                                        data-index={index}
+                                        onChange={(e) => handleChange(e, logos, setLogos)}
+                                    />
+                                </div>
+
+                                <div className="form-item-flex">
+                                    <label htmlFor="url">URL:</label>
+                                    <input
+                                        type="text"
+                                        placeholder="URL"
+                                        value={item.url ?? ""}
+                                        name="url"
+                                        data-index={index}
+                                        onChange={(e) => handleChange(e, logos, setLogos)}
+                                    />
+                                </div>
+
+                                <div className="form-item-flex">
+                                    <label htmlFor="class_name">Class Name:</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Class Name"
+                                        value={item.class_name ?? ""}
+                                        name="class_name"
+                                        data-index={index}
+                                        onChange={(e) => handleChange(e, logos, setLogos)}
+                                    />
+                                </div>
                             </div>
                         ))}
                     </>
@@ -174,7 +194,7 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ projectDataObject }) => {
                     <button type="button" onClick={handleAddNewLogo}><h3>Add Logo</h3></button>
                 </div>
 
-                <button type="button" onClick={handleUpdateProblem}>
+                <button type="button" onClick={handleUpdateGallery}>
                     <h3>Update Logos</h3>
                 </button>
             </form>
@@ -184,39 +204,54 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ projectDataObject }) => {
                     <>
                         <h3>Icons</h3>
 
-                        {icons.map((item: Image, index: number) => (
+                        {icons.map((item: ImageObject, index: number) => (
                             <div className="form-item" key={item.id}>
-                                <input
-                                    type="text"
-                                    placeholder="ID"
-                                    value={item.id ?? ""}
-                                    name="id"
-                                    disabled
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Title"
-                                    value={item.title ?? ""}
-                                    name="title"
-                                    data-index={index}
-                                    onChange={(e) => handleChange(e, icons, setIcons)}
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="URL"
-                                    value={item.url ?? ""}
-                                    name="url"
-                                    data-index={index}
-                                    onChange={(e) => handleChange(e, icons, setIcons)}
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Class Name"
-                                    value={item.className ?? ""}
-                                    name="class_name"
-                                    data-index={index}
-                                    onChange={(e) => handleChange(e, icons, setIcons)}
-                                />
+                                <div className="form-item-flex">
+                                    <label htmlFor="id">ID:</label>
+                                    <input
+                                        type="text"
+                                        placeholder="ID"
+                                        value={item.id ?? ""}
+                                        name="id"
+                                        disabled
+                                    />
+                                </div>
+
+                                <div className="form-item-flex">
+                                    <label htmlFor="title">Title:</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Title"
+                                        value={item.title ?? ""}
+                                        name="title"
+                                        data-index={index}
+                                        onChange={(e) => handleChange(e, icons, setIcons)}
+                                    />
+                                </div>
+
+                                <div className="form-item-flex">
+                                    <label htmlFor="url">URL:</label>
+                                    <input
+                                        type="text"
+                                        placeholder="URL"
+                                        value={item.url ?? ""}
+                                        name="url"
+                                        data-index={index}
+                                        onChange={(e) => handleChange(e, icons, setIcons)}
+                                    />
+                                </div>
+
+                                <div className="form-item-flex">
+                                    <label htmlFor="class_name">Class Name:</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Class Name"
+                                        value={item.class_name ?? ""}
+                                        name="class_name"
+                                        data-index={index}
+                                        onChange={(e) => handleChange(e, icons, setIcons)}
+                                    />
+                                </div>
                             </div>
                         ))}
                     </>
@@ -233,7 +268,7 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ projectDataObject }) => {
                     <button type="button" onClick={handleAddNewIcon}><h3>Add Icon</h3></button>
                 </div>
 
-                <button type="button" onClick={handleUpdateProblem}>
+                <button type="button" onClick={handleUpdateGallery}>
                     <h3>Update Icons</h3>
                 </button>
             </form>
@@ -243,39 +278,54 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ projectDataObject }) => {
                     <>
                         <h3>Animations</h3>
 
-                        {animations.map((item: Image, index: number) => (
+                        {animations.map((item: ImageObject, index: number) => (
                             <div className="form-item" key={item.id}>
-                                <input
-                                    type="text"
-                                    placeholder="ID"
-                                    value={item.id ?? ""}
-                                    name="id"
-                                    disabled
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Title"
-                                    value={item.title ?? ""}
-                                    name="title"
-                                    data-index={index}
-                                    onChange={(e) => handleChange(e, animations, setAnimations)}
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="URL"
-                                    value={item.url ?? ""}
-                                    name="url"
-                                    data-index={index}
-                                    onChange={(e) => handleChange(e, animations, setAnimations)}
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Class Name"
-                                    value={item.className ?? ""}
-                                    name="class_name"
-                                    data-index={index}
-                                    onChange={(e) => handleChange(e, animations, setAnimations)}
-                                />
+                                <div className="form-item-flex">
+                                    <label htmlFor="id">ID:</label>
+                                    <input
+                                        type="text"
+                                        placeholder="ID"
+                                        value={item.id ?? ""}
+                                        name="id"
+                                        disabled
+                                    />
+                                </div>
+
+                                <div className="form-item-flex">
+                                    <label htmlFor="title">Title:</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Title"
+                                        value={item.title ?? ""}
+                                        name="title"
+                                        data-index={index}
+                                        onChange={(e) => handleChange(e, animations, setAnimations)}
+                                    />
+                                </div>
+
+                                <div className="form-item-flex">
+                                    <label htmlFor="url">URL:</label>
+                                    <input
+                                        type="text"
+                                        placeholder="URL"
+                                        value={item.url ?? ""}
+                                        name="url"
+                                        data-index={index}
+                                        onChange={(e) => handleChange(e, animations, setAnimations)}
+                                    />
+                                </div>
+
+                                <div className="form-item-flex">
+                                    <label htmlFor="class_name">Class Name:</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Class Name"
+                                        value={item.class_name ?? ""}
+                                        name="class_name"
+                                        data-index={index}
+                                        onChange={(e) => handleChange(e, animations, setAnimations)}
+                                    />
+                                </div>
                             </div>
                         ))}
                     </>
@@ -292,7 +342,7 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ projectDataObject }) => {
                     <button type="button" onClick={handleAddNewAnimation}><h3>Add Animation</h3></button>
                 </div>
 
-                <button type="button" onClick={handleUpdateProblem}>
+                <button type="button" onClick={handleUpdateGallery}>
                     <h3>Update Animations</h3>
                 </button>
             </form>
@@ -302,39 +352,54 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ projectDataObject }) => {
                     <>
                         <h3>UML Diagrams</h3>
 
-                        {umlDiagrams.map((item: Image, index: number) => (
+                        {umlDiagrams.map((item: ImageObject, index: number) => (
                             <div className="form-item" key={item.id}>
-                                <input
-                                    type="text"
-                                    placeholder="ID"
-                                    value={item.id ?? ""}
-                                    name="id"
-                                    disabled
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Title"
-                                    value={item.title ?? ""}
-                                    name="title"
-                                    data-index={index}
-                                    onChange={(e) => handleChange(e, umlDiagrams, setUmlDiagrams)}
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="URL"
-                                    value={item.url ?? ""}
-                                    name="url"
-                                    data-index={index}
-                                    onChange={(e) => handleChange(e, umlDiagrams, setUmlDiagrams)}
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Class Name"
-                                    value={item.className ?? ""}
-                                    name="class_name"
-                                    data-index={index}
-                                    onChange={(e) => handleChange(e, umlDiagrams, setUmlDiagrams)}
-                                />
+                                <div className="form-item-flex">
+                                    <label htmlFor="id">ID:</label>
+                                    <input
+                                        type="text"
+                                        placeholder="ID"
+                                        value={item.id ?? ""}
+                                        name="id"
+                                        disabled
+                                    />
+                                </div>
+
+                                <div className="form-item-flex">
+                                    <label htmlFor="title">Title:</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Title"
+                                        value={item.title ?? ""}
+                                        name="title"
+                                        data-index={index}
+                                        onChange={(e) => handleChange(e, umlDiagrams, setUmlDiagrams)}
+                                    />
+                                </div>
+
+                                <div className="form-item-flex">
+                                    <label htmlFor="url">URL:</label>
+                                    <input
+                                        type="text"
+                                        placeholder="URL"
+                                        value={item.url ?? ""}
+                                        name="url"
+                                        data-index={index}
+                                        onChange={(e) => handleChange(e, umlDiagrams, setUmlDiagrams)}
+                                    />
+                                </div>
+
+                                <div className="form-item-flex">
+                                    <label htmlFor="class_name">Class Name:</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Class Name"
+                                        value={item.class_name ?? ""}
+                                        name="class_name"
+                                        data-index={index}
+                                        onChange={(e) => handleChange(e, umlDiagrams, setUmlDiagrams)}
+                                    />
+                                </div>
                             </div>
                         ))}
                     </>
@@ -351,7 +416,7 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ projectDataObject }) => {
                     <button type="button" onClick={handleAddNewUmlDiagram}><h3>Add UML Diagram</h3></button>
                 </div>
 
-                <button type="button" onClick={handleUpdateProblem}>
+                <button type="button" onClick={handleUpdateGallery}>
                     <h3>Update UML Diagrams</h3>
                 </button>
             </form>

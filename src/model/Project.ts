@@ -1,7 +1,7 @@
 import Model from './Model';
-import ProjectSolution from './ProjectSolution';
+import ProjectSolution, { ProjectSolutionObject } from './ProjectSolution';
 import ProjectURLs from './ProjectURLs';
-import ProjectProcess from './ProjectProcess';
+import ProjectProcess,{ProjectProcessObject} from './ProjectProcess';
 import ProjectDesign from './ProjectDesign';
 import ProjectDevelopment from './ProjectDevelopment';
 import ProjectDelivery from './ProjectDelivery';
@@ -19,8 +19,8 @@ export type ProjectObject = {
   owner: Record<string, any>;
   title: string;
   description: string;
-  solution: Record<string, any>;
-  process: Record<string, any>;
+  solution: ProjectSolutionObject;
+  process: ProjectProcessObject;
   problem: ProjectProblemObject;
   details: ProjectDetailsObject;
 }
@@ -102,7 +102,7 @@ class Project extends Model {
       : null;
     this.process.development.contentURL = repo.contents.development
       ? repo.contents.development.downloadURL
-      : null;
+      : '';
     this.process.development.repoURL = repo.repoURL;
     this.process.development.skills = repo.skills;
     this.process.delivery.contentURL = repo.contents.delivery

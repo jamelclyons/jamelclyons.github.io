@@ -2,7 +2,8 @@ import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } f
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '@/model/store';
-import ProjectDelivery from '@/model/ProjectDelivery';
+import ProjectDelivery, { ProjectDeliveryObject } from '@/model/ProjectDelivery';
+import Project, { ProjectObject } from '@/model/Project';
 
 import {
   setMessage,
@@ -10,70 +11,39 @@ import {
   setShowStatusBar,
 } from '@/controllers/messageSlice';
 
-import { updateDelivery } from '@/controllers/updateSlice';
+import { updateProject } from '@/controllers/updateSlice';
 
 interface UpdateDeliveryProps {
-  projectID: string;
-  projectDataObject: Record<string, any>;
+  projectObject: ProjectObject;
 }
 
-const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectID, projectDataObject }) => {
+const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
-  
-  const [delivery, setDelivery] = useState<ProjectDelivery>(new ProjectDelivery(projectDataObject?.delivery));
+
+  const [delivery, setDelivery] = useState<ProjectDeliveryObject>(projectObject.process.delivery);
   const [gallery, setGallery] = useState(delivery.gallery);
-  const [checkList, setCheckList] = useState(delivery?.checkList);
-  // const [content, setContent] = useState(delivery?.checkList);
-
-  const handleChangeGallery = (e: ChangeEvent<HTMLInputElement>) => {
-    try {
-      setGallery([]);
-    } catch (error) {
-      const err = error as Error;
-      dispatch(setMessage(err.message));
-      dispatch(setMessageType('error'));
-    }
-  };
-
-  const handleChangeCheckList = (e: ChangeEvent<HTMLInputElement>) => {
-    try {
-      setCheckList([]);
-    } catch (error) {
-      const err = error as Error;
-      dispatch(setMessage(err.message));
-      dispatch(setMessageType('error'));
-    }
-  };
-
-  // const handleChangeContent = (e: ChangeEvent<HTMLInputElement>) => {
-  //   try {
-  //     setContent([]);
-  //   } catch (error) {
-  //     const err = error as Error;
-  //     dispatch(setMessage(err.message));
-  //     dispatch(setMessageType('error'));
-  //   }
-  // };
+  const [checkList, setCheckList] = useState(delivery.check_list);
+  const [content, setContent] = useState(delivery.content_url);
 
   const handleUpdateDelivery = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     try {
-      const form = document.getElementById('update_delivery') as HTMLFormElement;
-      const formData = new FormData(form);
-
-      let deliveryData: Record<string, any> = {};
-
-      formData.forEach((value, key) => {
-        deliveryData[key] = value;
-      });
-
-      let data: Record<string, any> = {
-        id: projectID,
-        delivery: deliveryData
+      let updatedDeliveryObject: ProjectDeliveryObject = {
+        check_list: checkList,
+        gallery: gallery,
+        content_url: content
       };
 
-      dispatch(updateDelivery(data));
+      const updatedProjectObject: ProjectObject = {
+        ...projectObject,
+        process: {
+          ...projectObject.process,
+          delivery: updatedDeliveryObject
+        }
+      };
+
+      dispatch(updateProject(new Project(updatedProjectObject)));
     } catch (error) {
       const err = error as Error;
       dispatch(setMessageType('error'));

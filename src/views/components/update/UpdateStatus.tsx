@@ -2,7 +2,8 @@ import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } f
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../model/store';
-import ProjectStatus from '../../../model/ProjectStatus';
+import ProjectStatus, { ProjectStatusObject } from '../../../model/ProjectStatus';
+import { ProjectObject } from '@/model/Project';
 
 import {
     setMessage,
@@ -12,14 +13,13 @@ import {
 import { updateStatus } from '../../../controllers/updateSlice';
 
 interface UpdateStatusProps {
-    projectID: string;
-    projectDataObject: Record<string, any>;
+    projectObject: ProjectObject;
 }
 
-const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectID, projectDataObject }) => {
+const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
     const dispatch = useDispatch<AppDispatch>();
-    
-    const [status, setStatus] = useState<ProjectStatus>(new ProjectStatus(projectDataObject?.process?.status))
+
+    const [status, setStatus] = useState<ProjectStatusObject>(projectObject.process.status);
     const [progress, setProgress] = useState(status.progress);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +52,6 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectID, projectDataObjec
             });
 
             let data: Record<string, any> = {
-                id: projectID,
                 process: {
                     status: statusData
                 }
@@ -71,10 +70,15 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectID, projectDataObjec
         <h2 className="title">status</h2>
 
         <form action="" id='update_status'>
-            <input type="number" value={progress} placeholder="Progress # 0-100" onChange={handleChange} id='progress' name='progress' />
+            <progress value={progress} max="100"></progress>
+
+            <div className="form-item-flex">
+                <label htmlFor="progress">Completed</label>
+                <input type="number" value={progress} placeholder="Progress # 0-100" onChange={handleChange} id='progress' name='progress' />
+            </div>
 
             <button onClick={handleUpdateStatus}>
-                <h3>update</h3>
+                <h3>Update Status</h3>
             </button>
         </form>
     </>

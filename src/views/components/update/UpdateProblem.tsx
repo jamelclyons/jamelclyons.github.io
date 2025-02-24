@@ -7,25 +7,25 @@ import {
   setMessageType,
   setShowStatusBar,
 } from '@/controllers/messageSlice';
-import { updateProblem } from '@/controllers/updateSlice';
+import { updateProblem, updateProject } from '@/controllers/updateSlice';
 
-import Gallery from '@/model/Gallery';
+import Gallery, { GalleryObject } from '@/model/Gallery';
+import Project, { ProjectObject } from '@/model/Project';
 
 import UpdateGallery from './UpdateGallery';
 
 interface UpdateProblemProps {
-  projectID: string;
-  projectDataObject: Record<string, any>;
+  projectObject: ProjectObject;
 }
 
-const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectDataObject }) => {
+const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { updateLoading, updateErrorMessage, updateSuccessMessage, updatedGallery } = useSelector(
     (state: RootState) => state.update
   );
 
-  const [gallery, setGallery] = useState<Gallery>(new Gallery(projectDataObject?.problem?.gallery));
+  const [gallery, setGallery] = useState<GalleryObject>(projectObject.problem.gallery);
 
   useEffect(() => {
     if (updateLoading) {
@@ -50,7 +50,7 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectDataObject }) => {
 
   useEffect(() => {
     if (updatedGallery) {
-      setGallery(new Gallery(updatedGallery));
+      setGallery({ logos: updatedGallery?.logos ?? [], icons: updatedGallery?.logos ?? [], animations: updatedGallery?.animations ?? [], uml_diagrams: updatedGallery?.uml_diagrams ?? [] });
     }
   }, [updatedGallery, setGallery]);
 
@@ -58,12 +58,12 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectDataObject }) => {
     e.preventDefault();
 
     try {
-      const projectObject = {
-        ...projectDataObject,
-        problem: { gallery: gallery.toObject() },
+      const updatedProjectObject: ProjectObject = {
+        ...projectObject,
+        problem: { gallery: gallery, contentURL: '' },
       };
 
-      dispatch(updateProblem(projectObject));
+      dispatch(updateProject(new Project(updatedProjectObject)));
     } catch (error) {
       const err = error as Error;
       dispatch(setMessage(err.message));
@@ -78,7 +78,7 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectDataObject }) => {
 
       <div className="update" id="update_problem">
 
-        <UpdateGallery projectDataObject={projectDataObject} />
+        <UpdateGallery gallery={projectObject.problem.gallery} />
 
         <hr />
 

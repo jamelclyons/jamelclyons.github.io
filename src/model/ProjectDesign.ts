@@ -1,7 +1,14 @@
 import Model from './Model';
-import Gallery from './Gallery';
-import Task from './Task';
-import Color from './Color';
+import Gallery, { GalleryObject } from './Gallery';
+import Task, { TaskObject } from './Task';
+import Color, { ColorObject } from './Color';
+
+export type ProjectDesignObject = {
+  gallery: GalleryObject;
+  checkList: Array<TaskObject>;
+  colorsList: Array<ColorObject>;
+  contentURL: string;
+};
 
 class ProjectDesign extends Model {
   gallery: Gallery;

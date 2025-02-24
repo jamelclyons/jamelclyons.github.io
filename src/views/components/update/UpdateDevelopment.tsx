@@ -2,9 +2,11 @@ import React, { useEffect, useState, MouseEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../model/store';
-import ProjectDevelopment from '../../../model/ProjectDevelopment';
-import Task from '../../../model/Task';
-import ProjectVersions from '../../../model/ProjectVersions';
+import ProjectDevelopment, { ProjectDevelopmentObject } from '@/model/ProjectDevelopment';
+import Task, { TaskObject } from '../../../model/Task';
+import ProjectVersions, { ProjectVersionsObject } from '../../../model/ProjectVersions';
+import { ProjectObject } from '@/model/Project';
+import Taxonomy from '@/model/Taxonomy';
 
 import {
   setMessage,
@@ -16,24 +18,20 @@ import {
   getLanguages,
   getFrameworks,
   getTechnologies,
+  SkillsObject,
 } from '../../../controllers/taxonomiesSlice';
 import { updateDevelopment } from '../../../controllers/updateSlice';
-import Taxonomy from '@/model/Taxonomy';
 
 interface UpdateDevelopmentProps {
-  projectID: string;
-  projectDataObject: Record<string, any>;
+  projectObject: ProjectObject;
 }
 
-const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, projectDataObject }) => {
+const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
-
 
   const { projectTypesObject, languagesObject, frameworksObject, technologiesObject } = useSelector(
     (state: RootState) => state.taxonomies
   );
-  
-  
 
   useEffect(() => {
     dispatch(getProjectTypes());
@@ -51,31 +49,18 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, projec
     dispatch(getTechnologies());
   }, []);
 
-  const [development, setDevelopment] = useState<ProjectDevelopment>(new ProjectDevelopment(projectDataObject?.process?.development))
-  const [checkList, setCheckList] = useState<Array<Task>>(development.checkList);
-  const [versionsList, setVersionsList] = useState<ProjectVersions>(development.versionsList);
-  const [selectedProjectTypes, setSelectedProjectTypes] = useState<Set<Taxonomy>>(new Set(development.skills.types));
-  const [selectedLanguages, setSelectedLanguages] = useState<Set<Taxonomy>>(new Set(development.skills.languages));
-  const [selectedFrameworks, setSelectedFrameworks] = useState<Set<Taxonomy>>(new Set(development.skills.frameworks));
-  const [selectedTechnologies, setSelectedTechnologies] = useState<Set<Taxonomy>>(new Set(development.skills.technologies));
+  const [development, setDevelopment] = useState<ProjectDevelopmentObject>(projectObject.process.development);
+  const [checkList, setCheckList] = useState<Array<TaskObject>>(development.check_list);
+  const [versionsList, setVersionsList] = useState<ProjectVersionsObject>(development.versions_list);
+  const [skills, setSkills] = useState<SkillsObject>(development.skills);
+  const [selectedProjectTypes, setSelectedProjectTypes] = useState(skills.types);
+  const [selectedLanguages, setSelectedLanguages] = useState(development.skills.languages);
+  const [selectedFrameworks, setSelectedFrameworks] = useState(development.skills.frameworks);
+  const [selectedTechnologies, setSelectedTechnologies] = useState(development.skills.technologies);
 
-  const handleProjectTypesCheckboxChange = (id: string) => {
-    setSelectedProjectTypes((prevSelectedIds) => {
-      const updatedSelection = new Set(prevSelectedIds);
-
-      // if (updatedSelection.has(id)) {
-      //   updatedSelection.delete(id);
-      // } else {
-      //   updatedSelection.add(id);
-      // }
-
-      return updatedSelection;
-    });
-  };
-
-  const handleLanguagesCheckboxChange = (id: string) => {
-    setSelectedLanguages((prevSelectedIds) => {
-      const updatedSelection = new Set(prevSelectedIds);
+  // const handleProjectTypesCheckboxChange = (id: string) => {
+  //   setSelectedProjectTypes((prevSelectedIds) => {
+  //     const updatedSelection = new Set(prevSelectedIds);
 
       // if (updatedSelection.has(id)) {
       //   updatedSelection.delete(id);
@@ -83,27 +68,13 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, projec
       //   updatedSelection.add(id);
       // }
 
-      return updatedSelection;
-    });
-  };
+  //     return updatedSelection;
+  //   });
+  // };
 
-  const handleFrameworksCheckboxChange = (id: string) => {
-    setSelectedFrameworks((prevSelectedIds) => {
-      const updatedSelection = new Set(prevSelectedIds);
-
-      // if (updatedSelection.has(id)) {
-      //   updatedSelection.delete(id);
-      // } else {
-      //   updatedSelection.add(id);
-      // }
-
-      return updatedSelection;
-    });
-  };
-
-  const handleTechnologiesCheckboxChange = (id: string) => {
-    setSelectedTechnologies((prevSelectedIds) => {
-      const updatedSelection = new Set(prevSelectedIds);
+  // const handleLanguagesCheckboxChange = (id: string) => {
+  //   setSelectedLanguages((prevSelectedIds) => {
+  //     const updatedSelection = new Set(prevSelectedIds);
 
       // if (updatedSelection.has(id)) {
       //   updatedSelection.delete(id);
@@ -111,9 +82,37 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, projec
       //   updatedSelection.add(id);
       // }
 
-      return updatedSelection;
-    });
-  };
+  //     return updatedSelection;
+  //   });
+  // };
+
+  // const handleFrameworksCheckboxChange = (id: string) => {
+  //   setSelectedFrameworks((prevSelectedIds) => {
+  //     const updatedSelection = new Set(prevSelectedIds);
+
+      // if (updatedSelection.has(id)) {
+      //   updatedSelection.delete(id);
+      // } else {
+      //   updatedSelection.add(id);
+      // }
+
+  //     return updatedSelection;
+  //   });
+  // };
+
+  // const handleTechnologiesCheckboxChange = (id: string) => {
+  //   setSelectedTechnologies((prevSelectedIds) => {
+  //     const updatedSelection = new Set(prevSelectedIds);
+
+      // if (updatedSelection.has(id)) {
+      //   updatedSelection.delete(id);
+      // } else {
+      //   updatedSelection.add(id);
+      // }
+
+  //     return updatedSelection;
+  //   });
+  // };
 
 
   const handleUpdateDelivery = async (e: MouseEvent<HTMLButtonElement>) => {
@@ -130,7 +129,6 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, projec
       });
 
       let data: Record<string, any> = {
-        id: projectID,
         delivery: developmentData
       };
 
@@ -152,13 +150,13 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, projec
 
         {Array.isArray(projectTypesObject) &&
           projectTypesObject.map((item) => (
-            <div className="project-checkbox" key={item.id}>
+            <div className="form-item-flex" key={item.id}>
               <input
                 type="checkbox"
                 id={`checkbox-${item.id}`}
                 value={item.id}
-                checked={selectedProjectTypes.has(item.id)}
-                onChange={() => handleProjectTypesCheckboxChange(item.id)}
+                // checked={selectedProjectTypes.has(item.id)}
+                // onChange={() => handleProjectTypesCheckboxChange(item.id)}
               />
               <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
             </div>
@@ -170,13 +168,13 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, projec
 
         {Array.isArray(languagesObject) &&
           languagesObject.map((item) => (
-            <div className="project-checkbox" key={item.id}>
+            <div className="form-item-flex" key={item.id}>
               <input
                 type="checkbox"
                 id={`checkbox-${item.id}`}
                 value={item.id}
-                checked={selectedLanguages.has(item.id)}
-                onChange={() => handleLanguagesCheckboxChange(item.id)}
+                // checked={selectedLanguages.has(item.id)}
+                // onChange={() => handleLanguagesCheckboxChange(item.id)}
               />
               <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
             </div>
@@ -188,13 +186,13 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, projec
 
         {Array.isArray(frameworksObject) &&
           frameworksObject.map((item) => (
-            <div className="project-checkbox" key={item.id}>
+            <div className="form-item-flex" key={item.id}>
               <input
                 type="checkbox"
                 id={`checkbox-${item.id}`}
                 value={item.id}
-                checked={selectedFrameworks.has(item.id)}
-                onChange={() => handleFrameworksCheckboxChange(item.id)}
+                // checked={selectedFrameworks.has(item.id)}
+                // onChange={() => handleFrameworksCheckboxChange(item.id)}
               />
               <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
             </div>
@@ -206,13 +204,13 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectID, projec
 
         {Array.isArray(technologiesObject) &&
           technologiesObject.map((item) => (
-            <div className="project-checkbox" key={item.id}>
+            <div className="form-item-flex" key={item.id}>
               <input
                 type="checkbox"
                 id={`checkbox-${item.id}`}
                 value={item.id}
-                checked={selectedTechnologies.has(item.id)}
-                onChange={() => handleTechnologiesCheckboxChange(item.id)}
+                // checked={selectedTechnologies.has(item.id)}
+                // onChange={() => handleTechnologiesCheckboxChange(item.id)}
               />
               <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
             </div>

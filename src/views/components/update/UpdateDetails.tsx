@@ -1,9 +1,9 @@
 import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import type { AppDispatch, RootState } from '@/model/store';
+import type { AppDispatch } from '@/model/store';
 import Project, { ProjectObject } from '@/model/Project';
-import ProjectDetails, { ProjectDetailsObject } from '@/model/ProjectDetails';
+import { ProjectDetailsObject } from '@/model/ProjectDetails';
 
 import {
   setMessage,
@@ -15,7 +15,6 @@ import { updateProject } from '@/controllers/updateSlice';
 import { Privacy, privacyFromString } from '@/model/enum/Enums';
 
 interface UpdateDetailsProps {
-  projectID: string;
   projectObject: ProjectObject;
 }
 
@@ -126,24 +125,33 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ projectObject }) => {
       <h2 className='title'>Details</h2>
 
       <form action="" id='update_details'>
-        <label htmlFor="privacy">Privacy:</label>
-        {privacy && <p>Current Privacy Setting: {privacy.toString().charAt(0).toUpperCase() + privacy.toString().slice(1)}</p>}
-        <select id="privacy" name='privacy' value={privacy} onChange={handleChangeSelect}>
-          <option value={Privacy.Private}>Private</option>
-          <option value={Privacy.Public}>Public</option>
-        </select>
+        <div className="form-item-flex">
+          <label htmlFor="privacy">Privacy:</label>
+          <select id="privacy" name='privacy' value={privacy} onChange={handleChangeSelect}>
+            <option value={Privacy.Private}>Private</option>
+            <option value={Privacy.Public}>Public</option>
+          </select>
+        </div>
 
-        <label htmlFor="client_id">Client ID:</label>
-        <input type="text" id='client_id' name='client_id' value={clientID ?? ''} onChange={handleChange} />
+        <div className="form-item-flex">
+          <label htmlFor="client_id">Client ID:</label>
+          <input type="text" id='client_id' name='client_id' value={clientID ?? ''} onChange={handleChange} />
+        </div>
 
-        <label htmlFor="client_name">Client Name:</label>
-        <input type="text" id='client_name' name='client_name' value={clientName ?? ''} onChange={handleChange} />
+        <div className="form-item-flex">
+          <label htmlFor="client_name">Client Name:</label>
+          <input type="text" id='client_name' name='client_name' value={clientName ?? ''} onChange={handleChange} />
+        </div>
 
-        <label htmlFor="start_date">Start Date:</label>
-        <input type="date" id="start_date" name="start_date" value={startDate ?? ''} min="2010-06-16" onChange={handleChange} />
+        <div className="form-item-flex">
+          <label htmlFor="start_date">Start Date:</label>
+          <input type="date" id="start_date" name="start_date" value={startDate ?? ''} min="2010-06-16" onChange={handleChange} />
+        </div>
 
-        <label htmlFor="end_date">End Date:</label>
-        <input type="date" id="end_date" name="end_date" value={endDate ?? ''} min="2010-06-16" onChange={handleChange} />
+        <div className="form-item-flex">
+          <label htmlFor="end_date">End Date:</label>
+          <input type="date" id="end_date" name="end_date" value={endDate ?? ''} min="2010-06-16" onChange={handleChange} />
+        </div>
 
         <button onClick={handleUpdateDetails}>
           <h3>Update Details</h3>

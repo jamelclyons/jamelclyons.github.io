@@ -1,29 +1,29 @@
-import React, { useState } from 'react'
+import React from 'react'
 
-import ProjectProcess from '../../../model/ProjectProcess';
+import { ProjectObject } from '@/model/Project';
+
 import UpdateStatus from './UpdateStatus';
 import UpdateDesign from '../update/UpdateDesign';
 import UpdateDevelopment from '../update/UpdateDevelopment';
 import UpdateDelivery from '../update/UpdateDelivery';
 
 interface UpdateProcessProps {
-    projectID: string;
-    projectDataObject: Record<string, any>;
+    projectObject: ProjectObject;
 }
 
-const UpdateProcess: React.FC<UpdateProcessProps> = ({ projectID, projectDataObject }) => {
-    
+const UpdateProcess: React.FC<UpdateProcessProps> = ({ projectObject }) => {
+
     return (
         <>
             <h1 className='title'>process</h1>
 
-            <UpdateStatus projectID={projectID} projectDataObject={projectDataObject} />
+            <UpdateStatus projectObject={projectObject} />
 
-            <UpdateDesign projectID={projectID} projectDataObject={projectDataObject} />
+            <UpdateDesign projectObject={projectObject} />
 
-            <UpdateDevelopment projectID={projectID} projectDataObject={projectDataObject} />
+            <UpdateDevelopment projectObject={projectObject} />
 
-            <UpdateDelivery projectID={projectID} projectDataObject={projectDataObject} />
+            <UpdateDelivery projectObject={projectObject} />
         </>)
 }
 

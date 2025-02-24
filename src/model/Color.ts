@@ -1,5 +1,10 @@
 import Model from './Model';
 
+export type ColorObject = {
+  name: string;
+  color: string;
+};
+
 class Color extends Model {
   name: string;
   color: string;

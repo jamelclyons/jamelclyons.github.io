@@ -2,7 +2,7 @@ import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } f
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../model/store';
-import Project from '../../../model/Project';
+import Project, { ProjectObject } from '@/model/Project';
 
 import {
   setMessage,
@@ -10,17 +10,16 @@ import {
   setShowStatusBar,
 } from '../../../controllers/messageSlice';
 
-import ProjectSolution from '../../../model/ProjectSolution';
+import ProjectSolution, { ProjectSolutionObject } from '../../../model/ProjectSolution';
 
 interface UpdateSolutionProps {
-  projectID: string;
-  projectDataObject: Record<string, any>;
+  projectObject: ProjectObject;
 }
 
-const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectID, projectDataObject }) => {
+const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const [solution, setSolution] = useState<ProjectSolution>(new ProjectSolution(projectDataObject?.solution));
+  const [solution, setSolution] = useState<ProjectSolutionObject>(projectObject.solution);
 
   const [gallery, setGallery] = useState<Record<string, any>>([]);
   const [features, setFeatures] = useState([]);

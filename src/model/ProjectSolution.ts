@@ -1,11 +1,11 @@
 import Model from './Model';
-import Feature from './Feature';
+import Feature, { FeatureObject } from './Feature';
 import ProjectURLs, { ProjectURLsObject } from './ProjectURLs';
 import Gallery, { GalleryObject } from './Gallery';
 
 export type ProjectSolutionObject = {
   gallery: GalleryObject;
-  features: Set<Feature>;
+  features: Array<FeatureObject>;
   contentURL: string;
   currency: string;
   price: number;

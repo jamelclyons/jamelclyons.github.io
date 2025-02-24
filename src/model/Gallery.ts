@@ -1,11 +1,11 @@
-import Image from './Image';
+import Image, { ImageObject } from './Image';
 import Model from './Model';
 
 export type GalleryObject = {
-  logos: Array<Record<string, any>>;
-  icons: Array<Record<string, any>>;
-  animations: Array<Record<string, any>>;
-  uml_diagrams: Array<Record<string, any>>;
+  logos: Array<ImageObject>;
+  icons: Array<ImageObject>;
+  animations: Array<ImageObject>;
+  uml_diagrams: Array<ImageObject>;
 };
 
 class Gallery extends Model {
@@ -15,7 +15,7 @@ class Gallery extends Model {
   umlDiagrams: Array<Image>;
   images: Array<Image>;
 
-  constructor(data: Record<string, any> = {}) {
+  constructor(data: Record<string, any> | GalleryObject = {}) {
     super()
     
     this.logos = Array.isArray(data?.logos)

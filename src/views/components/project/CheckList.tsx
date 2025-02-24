@@ -1,9 +1,9 @@
 import React from 'react';
 
-import Task from '../../../model/Task';
+import Task, { TaskObject } from '../../../model/Task';
 
 interface CheckListProps{
-  checkList: Array<Task>
+  checkList: Array<TaskObject>
 }
 
 const CheckList: React.FC<CheckListProps> = ({ checkList }) => {

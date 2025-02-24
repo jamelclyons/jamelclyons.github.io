@@ -19,6 +19,7 @@ import StatusBarComponent from './components/StatusBarComponent';
 import type { AppDispatch, RootState } from '@/model/store';
 import Project, { ProjectObject } from '@/model/Project';
 import Owner from '@/model/Owner';
+import { ImageObject } from '@/model/Image';
 
 const ProjectUpdate: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -40,15 +41,100 @@ const ProjectUpdate: React.FC = () => {
         owner: {},
         title: '',
         description: '',
-        solution: {},
-        process: {},
+        solution: {
+            gallery: {
+                logos: projectDataObject?.solution?.gallery?.logos ?? [],
+                icons: projectDataObject?.solution?.gallery?.icons ?? [],
+                animations: projectDataObject?.solution?.gallery?.animations ?? [],
+                uml_diagrams: projectDataObject?.solution?.gallery?.uml_diagrams ?? []
+            },
+            features: [],
+            contentURL: '',
+            currency: '',
+            price: 0,
+            urlsList: {
+                homepage: {
+                    name: '',
+                    url: '',
+                    image: {
+                        id: '',
+                        title: '',
+                        url: '',
+                        class_name: ''
+                    }
+                },
+                ios: {
+                    name: '',
+                    url: '',
+                    image: {
+                        id: '',
+                        title: '',
+                        url: '',
+                        class_name: ''
+                    }
+                },
+                android: {
+                    name: '',
+                    url: '',
+                    image: {
+                        id: '',
+                        title: '',
+                        url: '',
+                        class_name: ''
+                    }
+                }
+            }
+        },
+        process: {
+            status: {
+                created_at: '',
+                updated_at: '',
+                progress: projectDataObject?.process?.status?.progress ?? '0'
+            },
+            design: {
+                gallery: {
+                    logos: [],
+                    icons: [],
+                    animations: [],
+                    uml_diagrams: []
+                },
+                checkList: [],
+                colorsList: [],
+                contentURL: ''
+            },
+            development: {
+                repo_url: '',
+                content_url: '',
+                skills: {
+                    types: [],
+                    languages: [],
+                    frameworks: [],
+                    technologies: []
+                },
+                check_list: [],
+                versions_list: {
+                    current: '',
+                    previous: []
+                }
+            },
+            delivery: {
+                check_list: [],
+                gallery: {
+                    logos: [],
+                    icons: [],
+                    animations: [],
+                    uml_diagrams: []
+                },
+                content_url: ''
+            }
+        },
         problem: {
             contentURL: projectDataObject?.problem?.contentURL ?? '',
             gallery: {
-                logos: projectDataObject?.problem?.logos ?? [],
-                icons: projectDataObject?.problem?.icons ?? [],
-                animations: projectDataObject?.problem?.animations ?? [],
-                uml_diagrams: projectDataObject?.problem?.uml_diagrams ?? []
+                logos: projectDataObject?.problem?.gallery?.logos ?? [],
+                icons: projectDataObject?.problem?.gallery?.icons ?? [],
+                animations: projectDataObject?.problem?.gallery?.animations ?? [],
+                uml_diagrams: projectDataObject?.problem?.gallery?.uml_diagrams ?? []
             }
         },
         details: {
@@ -91,7 +177,49 @@ const ProjectUpdate: React.FC = () => {
                 title: projectDataObject?.title ?? '',
                 description: projectDataObject?.description ?? '',
                 solution: projectDataObject?.solution ?? {},
-                process: projectDataObject?.process ?? {},
+                process: {
+                    status: {
+                        created_at: '',
+                        updated_at: '',
+                        progress: projectDataObject?.process?.status?.progress ?? '0'
+                    },
+                    design: {
+                        gallery: {
+                            logos: [],
+                            icons: [],
+                            animations: [],
+                            uml_diagrams: []
+                        },
+                        checkList: [],
+                        colorsList: [],
+                        contentURL: ''
+                    },
+                    development: {
+                        repo_url: '',
+                        content_url: '',
+                        skills: {
+                            types: [],
+                            languages: [],
+                            frameworks: [],
+                            technologies: []
+                        },
+                        check_list: [],
+                        versions_list: {
+                            current: '',
+                            previous: []
+                        }
+                    },
+                    delivery: {
+                        check_list: [],
+                        gallery: {
+                            logos: [],
+                            icons: [],
+                            animations: [],
+                            uml_diagrams: []
+                        },
+                        content_url: ''
+                    }
+                },
                 problem: {
                     contentURL: projectDataObject?.problem?.contentURL ?? '',
                     gallery: {
@@ -213,13 +341,13 @@ const ProjectUpdate: React.FC = () => {
                 </button>
             </form>
 
-            {projectID && projectDataObject && <UpdateSolution projectID={projectID} projectDataObject={projectDataObject} />}
+            {projectID && projectDataObject && <UpdateSolution projectObject={projectObject} />}
 
-            {projectID && projectDataObject && <UpdateProcess projectID={projectID} projectDataObject={projectDataObject} />}
+            {projectID && projectDataObject && <UpdateProcess projectObject={projectObject} />}
 
-            {projectID && projectDataObject && <UpdateProblem projectID={projectID} projectDataObject={projectDataObject} />}
+            {projectID && projectDataObject && <UpdateProblem projectObject={projectObject} />}
 
-            {projectID && projectDataObject && <UpdateDetails projectID={projectID} projectObject={projectObject} />}
+            {projectID && projectDataObject && <UpdateDetails projectObject={projectObject} />}
 
             <StatusBarComponent />
         </section>

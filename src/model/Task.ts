@@ -1,5 +1,7 @@
 import Model from './Model';
 
+export type TaskObject = { name: string; status: boolean };
+
 class Task extends Model {
   name: string;
   status: boolean;

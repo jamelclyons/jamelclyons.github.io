@@ -1,10 +1,10 @@
 import Model from './Model';
-import ProjectURL from './ProjectURL';
+import ProjectURL, { ProjectURLObject } from './ProjectURL';
 
 export type ProjectURLsObject = {
-  homepage: ProjectURL;
-  ios: ProjectURL;
-  android: ProjectURL;
+  homepage: ProjectURLObject;
+  ios: ProjectURLObject;
+  android: ProjectURLObject;
 };
 
 class ProjectURLs extends Model {

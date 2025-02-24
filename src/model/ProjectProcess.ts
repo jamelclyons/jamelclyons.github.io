@@ -1,8 +1,15 @@
 import Model from './Model';
-import ProjectDesign from './ProjectDesign';
-import ProjectDevelopment from './ProjectDevelopment';
-import ProjectDelivery from './ProjectDelivery';
-import ProjectStatus from './ProjectStatus';
+import ProjectDesign, { ProjectDesignObject } from './ProjectDesign';
+import ProjectDevelopment, { ProjectDevelopmentObject } from './ProjectDevelopment';
+import ProjectDelivery, { ProjectDeliveryObject } from './ProjectDelivery';
+import ProjectStatus, { ProjectStatusObject } from './ProjectStatus';
+
+export type ProjectProcessObject ={
+  status: ProjectStatusObject;
+  design: ProjectDesignObject;
+  development: ProjectDevelopmentObject;
+  delivery: ProjectDeliveryObject;
+}
 
 class ProjectProcess extends Model {
   status: ProjectStatus;

@@ -7,15 +7,15 @@ import ContentComponent from '../content/ContentComponent';
 import ProjectDelivery from '@/model/ProjectDelivery';
 
 interface DeliveryProps {
-  delivery?: ProjectDelivery;
+  delivery: ProjectDelivery;
 }
 
 const Delivery: React.FC<DeliveryProps> = ({ delivery }) => {
   if (!delivery) return null;
 
-  const { checkList = [], gallery = [], contentURL } = delivery;
+  const { checkList, gallery, contentURL } = delivery;
   
-  const hasContent = checkList.length > 0 || gallery.length > 0 || contentURL;
+  const hasContent = checkList.length > 0 || gallery?.images.length > 0 || contentURL;
 
   return (
     hasContent && (
@@ -24,7 +24,7 @@ const Delivery: React.FC<DeliveryProps> = ({ delivery }) => {
 
         {checkList.length > 0 && <CheckList checkList={checkList} />}
 
-        {gallery.length > 0 && <Gallery gallery={gallery} title="" />}
+        {gallery.images.length > 0 && <Gallery gallery={gallery.images} title="" />}
         
         {contentURL && <ContentComponent title={null} url={contentURL} />}
       </div>

@@ -2,6 +2,12 @@ import Model from './Model';
 
 import { formatTime } from '@/utilities/String';
 
+export type ProjectStatusObject = {
+  created_at: string;
+  updated_at: string;
+  progress: string;
+};
+
 class ProjectStatus extends Model {
   createdAt: string;
   updatedAt: string;

@@ -2,7 +2,8 @@ import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } f
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../model/store';
-import ProjectDesign from '../../../model/ProjectDesign';
+import ProjectDesign, { ProjectDesignObject } from '../../../model/ProjectDesign';
+import { ProjectObject } from '@/model/Project';
 
 import {
   setMessage,
@@ -15,28 +16,27 @@ import { updateDesign } from '../../../controllers/updateSlice';
 import Gallery from '../../../model/Gallery';
 
 interface UpdateDesignProps {
-  projectID: string;
-  projectDataObject: Record<string,any>;
+    projectObject: ProjectObject;
 }
 
-const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectID, projectDataObject }) => {
+const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const [design, setDesign] = useState<ProjectDesign>(new ProjectDesign(projectDataObject?.design));
+  const [design, setDesign] = useState<ProjectDesignObject>(projectObject.process.design);
 
   const [gallery, setGallery] = useState(design.gallery);
   const [colorsList, setColorsList] = useState(design.colorsList);
   const [checkList, setCheckList] = useState(design.checkList);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    try {
-      setGallery(new Gallery);
-    } catch (error) {
-      const err = error as Error;
-      dispatch(setMessage(err.message));
-      dispatch(setMessageType('error'));
-    }
-  };
+  // const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   try {
+  //     setGallery(new Gallery);
+  //   } catch (error) {
+  //     const err = error as Error;
+  //     dispatch(setMessage(err.message));
+  //     dispatch(setMessageType('error'));
+  //   }
+  // };
 
   const handleUpdateSolution = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -52,7 +52,6 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectID, projectDataObjec
       });
 
       let data: Record<string, any> = {
-        id: projectID,
         design: designData
       };
 
@@ -69,10 +68,9 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectID, projectDataObjec
     <h2 className="title">design</h2>
 
     <form action="" id='update_design'>
-      <input type="number" value={status} placeholder="Progress # 0-100" onChange={handleChange} />
 
       <button onClick={handleUpdateSolution}>
-        <h3>update</h3>
+        <h3>Update Design</h3>
       </button>
     </form>
   </>
