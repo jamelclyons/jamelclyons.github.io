@@ -328,13 +328,16 @@ const ProjectUpdate: React.FC = () => {
             <h1>Update Project</h1>
 
             <form action="" id="add_project">
-                <input
-                    type="text"
-                    name="title"
-                    placeholder="Title"
-                    value={updatedTitle}
-                    onChange={handleChange}
-                />
+                <div className="form-item-flex">
+                    <label htmlFor="title">Title:</label>
+                    <input
+                        type="text"
+                        name="title"
+                        placeholder="Title"
+                        value={updatedTitle}
+                        onChange={handleChange}
+                    />
+                </div>
 
                 <button onClick={handleUpdateProject}>
                     <h3>Update Title</h3>

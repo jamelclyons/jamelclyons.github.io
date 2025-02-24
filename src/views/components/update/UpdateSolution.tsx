@@ -80,13 +80,25 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
       <h1 className="title">solution</h1>
 
       <form action="">
-        <input type="text" id="currency" value={currency} placeholder='Currency Ex: USD' />
+        <div className="form-item-flex">
+          <label htmlFor="currency">Currency:</label>
+          <input type="text" id="currency" value={currency} placeholder='Currency Ex: USD' name='currency' />
+        </div>
 
-        <input type="text" id="price" value={price} placeholder='0.00' />
+        <div className="form-item-flex">
+          <label htmlFor="currency">Price:</label>
+          <input type="text" id="price" value={price} placeholder='0.00' />
+        </div>
 
-        <input type="text" id="ios" value={ios} placeholder='Link to iOS Application' />
+        <div className="form-item-flex">
+          <label htmlFor="currency">Apple App Store Link:</label>
+          <input type="text" id="ios" value={ios} placeholder='Link to iOS Application' />
+        </div>
 
-        <input type="text" id="android" value={android} placeholder='Link to iOS Application' />
+        <div className="form-item-flex">
+          <label htmlFor="currency">Google Play Link:</label>
+          <input type="text" id="android" value={android} placeholder='Link to Android Application' />
+        </div>
 
         <button onClick={handleUpdateSolution}>
           <h3>Update Solution</h3>

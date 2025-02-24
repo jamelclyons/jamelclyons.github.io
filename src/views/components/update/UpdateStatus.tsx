@@ -1,16 +1,16 @@
 import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import type { AppDispatch, RootState } from '../../../model/store';
-import ProjectStatus, { ProjectStatusObject } from '../../../model/ProjectStatus';
-import { ProjectObject } from '@/model/Project';
+import type { AppDispatch } from '../../../model/store';
+import { ProjectStatusObject } from '../../../model/ProjectStatus';
+import Project, { ProjectObject } from '@/model/Project';
 
 import {
     setMessage,
     setMessageType,
     setShowStatusBar,
 } from '../../../controllers/messageSlice';
-import { updateStatus } from '../../../controllers/updateSlice';
+import { updateProject } from '../../../controllers/updateSlice';
 
 interface UpdateStatusProps {
     projectObject: ProjectObject;
@@ -20,7 +20,15 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
     const dispatch = useDispatch<AppDispatch>();
 
     const [status, setStatus] = useState<ProjectStatusObject>(projectObject.process.status);
-    const [progress, setProgress] = useState(status.progress);
+    const [progress, setProgress] = useState<string>(projectObject.process.status.progress);
+
+    useEffect(() => {
+        setStatus(projectObject.process.status)
+    }, [projectObject.process.status, setStatus]);
+
+    useEffect(() => {
+        setProgress(projectObject.process.status.progress)
+    }, [projectObject.process.status.progress, setProgress]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         try {
@@ -29,8 +37,14 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
             const { name, value } = target;
 
             if (name === 'progress') {
-                setProgress(value.toString());
+                setProgress(value);
             }
+
+            setStatus({
+                created_at: '',
+                updated_at: '',
+                progress: value
+            });
         } catch (error) {
             const err = error as Error;
             dispatch(setMessage(err.message));
@@ -42,22 +56,21 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
         e.preventDefault();
 
         try {
-            const form = document.getElementById('update_status') as HTMLFormElement;
-            const formData = new FormData(form);
+            const updatedProjectStatus: ProjectStatusObject = {
+                created_at: '',
+                updated_at: '',
+                progress: progress
+            }
 
-            let statusData: Record<string, any> = {};
-
-            formData.forEach((value, key) => {
-                statusData[key] = value;
-            });
-
-            let data: Record<string, any> = {
+            const updatedProjectObject: ProjectObject = {
+                ...projectObject,
                 process: {
-                    status: statusData
+                    ...projectObject.process,
+                    status: updatedProjectStatus
                 }
             };
 
-            dispatch(updateStatus(data));
+            dispatch(updateProject(new Project(updatedProjectObject)));
         } catch (error) {
             const err = error as Error;
             dispatch(setMessageType('error'));
