@@ -12,6 +12,7 @@ import Gallery from '@/model/Gallery';
 import Project from '@/model/Project';
 
 import { addSecureHeaders } from '@/utilities/Headers';
+import Skills from '@/model/Skills';
 
 interface UpdateState {
   updateLoading: boolean;
@@ -21,6 +22,7 @@ interface UpdateState {
   updateErrorMessage: string | null;
   updateStatusCode: number | null;
   updatedGallery: Record<string, any> | null;
+  updatedSkills: Record<string, any> | null;
 }
 
 const initialState: UpdateState = {
@@ -31,6 +33,7 @@ const initialState: UpdateState = {
   updateErrorMessage: null,
   updateStatusCode: null,
   updatedGallery: null,
+  updatedSkills: null
 };
 
 export const updateProject = createAsyncThunk(
@@ -299,6 +302,19 @@ export const updateGallery = createAsyncThunk(
   }
 );
 
+export const updateSkills = createAsyncThunk(
+  'update/updateSkills',
+  async (skills: Skills) => {
+    try {
+      return skills.toObject();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
 const updateSliceOptions: CreateSliceOptions<UpdateState> = {
   name: 'update',
   initialState,
@@ -314,6 +330,16 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
       .addCase(updateGallery.fulfilled, (state, action) => {
         state.updateLoading = false;
         state.updatedGallery = action.payload;
+      })
+      .addCase(updateSkills.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateErrorMessage = '';
+        state.updateLoadingMessage = 'Skills updated';
+      })
+      .addCase(updateSkills.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updatedSkills = action.payload;
       })
       .addCase(updateProject.pending, (state) => {
         state.updateLoading = true;
@@ -346,7 +372,8 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
         state.updateLoading = true;
         state.updateError = null;
         state.updateErrorMessage = '';
-        state.updateLoadingMessage = 'Attempting to update the details section of your project...';
+        state.updateLoadingMessage =
+          'Attempting to update the details section of your project...';
       })
       .addMatcher(
         isAnyOf(

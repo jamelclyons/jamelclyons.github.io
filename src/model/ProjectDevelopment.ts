@@ -3,6 +3,7 @@ import Task, { TaskObject } from './Task';
 import ProjectVersions, { ProjectVersionsObject } from './ProjectVersions';
 import Skills from './Skills';
 import { SkillsObject } from '@/controllers/taxonomiesSlice';
+import ProjectSkills from './ProjectSkills';
 
 export type ProjectDevelopmentObject = {
   repo_url: string;
@@ -15,7 +16,7 @@ export type ProjectDevelopmentObject = {
 class ProjectDevelopment extends Model {
   repoURL: string;
   contentURL: string;
-  skills: Skills;
+  skills: ProjectSkills;
   checkList: Array<TaskObject>;
   versionsList: ProjectVersions;
 
@@ -24,7 +25,9 @@ class ProjectDevelopment extends Model {
 
     this.repoURL = data?.repo_url || '';
     this.contentURL = data?.content_url || '';
-    this.skills = data?.skills ? new Skills(data.skills) : new Skills();
+    this.skills = data?.skills
+      ? new ProjectSkills(data.skills)
+      : new ProjectSkills();
     this.checkList = data?.check_list ? this.toArrayTask(data.check_list) : [];
     this.versionsList = data?.versions_list
       ? new ProjectVersions(data.versions_list)
@@ -39,6 +42,10 @@ class ProjectDevelopment extends Model {
     });
 
     return checkList;
+  }
+
+  setSkills(skills: ProjectSkills) {
+    this.skills = skills;
   }
 }
 

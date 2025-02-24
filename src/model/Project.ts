@@ -1,7 +1,7 @@
 import Model from './Model';
 import ProjectSolution, { ProjectSolutionObject } from './ProjectSolution';
 import ProjectURLs from './ProjectURLs';
-import ProjectProcess,{ProjectProcessObject} from './ProjectProcess';
+import ProjectProcess, { ProjectProcessObject } from './ProjectProcess';
 import ProjectDesign from './ProjectDesign';
 import ProjectDevelopment from './ProjectDevelopment';
 import ProjectDelivery from './ProjectDelivery';
@@ -23,7 +23,7 @@ export type ProjectObject = {
   process: ProjectProcessObject;
   problem: ProjectProblemObject;
   details: ProjectDetailsObject;
-}
+};
 
 class Project extends Model {
   id: string;
@@ -104,7 +104,7 @@ class Project extends Model {
       ? repo.contents.development.downloadURL
       : '';
     this.process.development.repoURL = repo.repoURL;
-    this.process.development.skills = repo.skills;
+    this.process.development.setSkills(repo.skills);
     this.process.delivery.contentURL = repo.contents.delivery
       ? repo.contents.delivery.downloadURL
       : null;
@@ -159,7 +159,7 @@ class Project extends Model {
       solution: this.solution.toObject(),
       process: this.process.toObject(),
       problem: this.problem.toObject(),
-      details: this.details.toObject()
+      details: this.details.toObject(),
     };
   }
 }

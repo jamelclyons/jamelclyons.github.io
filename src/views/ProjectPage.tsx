@@ -86,7 +86,7 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
       dispatch(getAuthenticatedUserAccount());
     }
   }, [authenticatedUserObject, dispatch]);
-console.log(project)
+
   return (
     <section className="project">
       <>

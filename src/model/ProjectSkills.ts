@@ -1,35 +1,33 @@
 import Model from './Model';
+import Skills from './Skills';
 import Taxonomy, {
   Framework,
   Language,
   ProjectType,
   Technology,
 } from './Taxonomy';
-import * as skills from '../../skills.json';
 
-export type SkillsObject = {
+export type ProjectSkillsObject = {
   types: Array<Record<string, any>>;
   languages: Array<Record<string, any>>;
   frameworks: Array<Record<string, any>>;
   technologies: Array<Record<string, any>>;
 };
 
-class Skills extends Model {
+class ProjectSkills extends Model {
   types: Set<ProjectType>;
   languages: Set<Language>;
   frameworks: Set<Framework>;
   technologies: Set<Technology>;
   count: number;
 
-  constructor(data: Record<string, any> = []) {
+  constructor(data: Record<string, any> | ProjectSkillsObject = []) {
     super();
 
-    const { types, languages, frameworks, technologies } = skills;
-
-    this.types = this.getProjectTypes(data.types || types);
-    this.languages = this.getLanguages(data.languages || languages);
-    this.frameworks = this.getFrameworks(data.frameworks || frameworks);
-    this.technologies = this.getTechnologies(data.technologies || technologies);
+    this.types = this.getProjectTypes(data.types);
+    this.languages = this.getLanguages(data.languages);
+    this.frameworks = this.getFrameworks(data.frameworks);
+    this.technologies = this.getTechnologies(data.technologies);
 
     this.count = this.getCount();
   }
@@ -110,13 +108,15 @@ class Skills extends Model {
     return new Taxonomy();
   }
 
-  show(skillsUsed: Skills) {
-    const filteredSkills: Skills = new Skills();
+  show(skillsUsed: ProjectSkills): ProjectSkills {
+    const filteredSkills: ProjectSkills = new ProjectSkills();
+    const skills = new Skills();
+    const { types, languages, frameworks, technologies } = skills;
 
     if (skillsUsed.count > 0) {
       if (skillsUsed.types.size > 0) {
         skillsUsed.types.forEach((typeUsed) => {
-          this.types.forEach((type) => {
+          types.forEach((type) => {
             if (typeUsed.id === type.id) {
               filteredSkills.types.add(type);
             }
@@ -126,7 +126,7 @@ class Skills extends Model {
 
       if (skillsUsed.languages.size > 0) {
         skillsUsed.languages.forEach((languageUsed) => {
-          this.languages.forEach((language) => {
+          languages.forEach((language) => {
             if (languageUsed.id === language.id) {
               filteredSkills.languages.add(language);
             }
@@ -136,7 +136,7 @@ class Skills extends Model {
 
       if (skillsUsed.frameworks.size > 0) {
         skillsUsed.frameworks.forEach((frameworkUsed) => {
-          this.frameworks.forEach((framework) => {
+          frameworks.forEach((framework) => {
             if (frameworkUsed.id === framework.id) {
               filteredSkills.frameworks.add(framework);
             }
@@ -146,7 +146,7 @@ class Skills extends Model {
 
       if (skillsUsed.technologies.size > 0) {
         skillsUsed.technologies.forEach((technologyUsed) => {
-          this.technologies.forEach((technology) => {
+          technologies.forEach((technology) => {
             if (technologyUsed.id === technology.id) {
               filteredSkills.technologies.add(technology);
             }
@@ -170,4 +170,4 @@ class Skills extends Model {
   }
 }
 
-export default Skills;
+export default ProjectSkills;

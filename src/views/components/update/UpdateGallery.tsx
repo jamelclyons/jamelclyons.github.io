@@ -4,14 +4,13 @@ import type { AppDispatch } from '@/model/store';
 
 import Gallery, { GalleryObject } from '@/model/Gallery'
 import { ImageObject } from '@/model/Image';
-import Project, { ProjectObject } from '@/model/Project';
 
 import {
     setMessage,
     setMessageType,
     setShowStatusBar,
 } from '@/controllers/messageSlice';
-import { updateGallery, updateProject } from '@/controllers/updateSlice';
+import { updateGallery } from '@/controllers/updateSlice';
 
 interface UpdateGalleryProps {
     gallery: GalleryObject;
@@ -22,10 +21,10 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ gallery }) => {
 
     const [galleryObject, setGalleryObject] = useState<GalleryObject>(gallery);
 
-    const [logos, setLogos] = useState<Array<ImageObject>>(galleryObject.logos);
-    const [icons, setIcons] = useState<Array<ImageObject>>(galleryObject.icons);
-    const [animations, setAnimations] = useState<Array<ImageObject>>(galleryObject.animations);
-    const [umlDiagrams, setUmlDiagrams] = useState<Array<ImageObject>>(galleryObject.uml_diagrams);
+    const [logos, setLogos] = useState<Array<ImageObject>>(gallery.logos);
+    const [icons, setIcons] = useState<Array<ImageObject>>(gallery.icons);
+    const [animations, setAnimations] = useState<Array<ImageObject>>(gallery.animations);
+    const [umlDiagrams, setUmlDiagrams] = useState<Array<ImageObject>>(gallery.uml_diagrams);
 
     const [newLogo, setNewLogo] = useState<ImageObject>({ id: '', title: '', url: '', class_name: '' });
     const [newIcon, setNewIcon] = useState<ImageObject>({ id: '', title: '', url: '', class_name: '' });
@@ -33,9 +32,7 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ gallery }) => {
     const [newUmlDiagram, setNewUmlDiagram] = useState<ImageObject>({ id: '', title: '', url: '', class_name: '' });
 
     useEffect(() => {
-        if (gallery) {
-            setGalleryObject(gallery);
-        }
+        setGalleryObject(gallery);
     }, [gallery, setGalleryObject]);
 
     const handleNewLogo = (e: ChangeEvent<HTMLInputElement>) => {
@@ -106,14 +103,14 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ gallery }) => {
         e.preventDefault();
 
         try {
-            const galleryObject: GalleryObject = {
+            const updatedGalleryObject: GalleryObject = {
                 logos: logos,
                 icons: icons,
                 animations: animations,
                 uml_diagrams: umlDiagrams
             };
 
-            dispatch(updateGallery(new Gallery(galleryObject)));
+            dispatch(updateGallery(new Gallery(updatedGalleryObject)));
         } catch (error) {
             const err = error as Error;
             dispatch(setMessage(err.message));

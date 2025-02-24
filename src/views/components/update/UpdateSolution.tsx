@@ -101,7 +101,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
         </div>
 
         <button onClick={handleUpdateSolution}>
-          <h3>Update Solution</h3>
+          <h3>UPDATE SOLUTION</h3>
         </button>
       </form>
     </>

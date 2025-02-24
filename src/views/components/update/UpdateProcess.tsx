@@ -24,7 +24,12 @@ const UpdateProcess: React.FC<UpdateProcessProps> = ({ projectObject }) => {
             <UpdateDevelopment projectObject={projectObject} />
 
             <UpdateDelivery projectObject={projectObject} />
-        </>)
+
+            <button>
+                <h3>UPDATE PROCESS</h3>
+            </button>
+        </>
+    )
 }
 
 export default UpdateProcess

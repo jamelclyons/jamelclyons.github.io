@@ -2,10 +2,10 @@ import Model from './Model';
 import Owner from './Owner';
 import RepoContents from './RepoContents';
 import RepoContent from './RepoContent';
-import Skills from './Skills';
 import { Language, Technology } from './Taxonomy';
 import Contributors from './Contributors';
 import User from './User';
+import ProjectSkills from './ProjectSkills';
 
 class Repo extends Model {
   id: string;
@@ -17,7 +17,7 @@ class Repo extends Model {
   homepage: string;
   description: string;
   repoURL: string;
-  skills: Skills = new Skills();
+  skills: ProjectSkills = new ProjectSkills();
   contents: RepoContents = new RepoContents();
   contributorsURL: string;
   contributors: Contributors = new Contributors();
@@ -34,7 +34,7 @@ class Repo extends Model {
     this.homepage = data?.homepage;
     this.description = data?.description;
     this.repoURL = data?.repo_url;
-    this.skills = data?.skills ? this.getSkills(data.skills) : new Skills();
+    this.skills = data?.skills ? this.getSkills(data.skills) : new ProjectSkills();
     this.contents = data?.contents
       ? new RepoContents(
           new RepoContent(data.contents.solution),
@@ -170,7 +170,7 @@ class Repo extends Model {
         }
       });
 
-      return new Skills({
+      return new ProjectSkills({
         types: types,
         languages: languages,
         frameworks: frameworks,
@@ -178,7 +178,7 @@ class Repo extends Model {
       });
     }
 
-    return new Skills();
+    return new ProjectSkills();
   }
 
   setContents(contentsObject: Record<string, any>) {

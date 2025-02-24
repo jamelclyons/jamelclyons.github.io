@@ -1,12 +1,11 @@
-import React, { useEffect, useState, MouseEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, MouseEvent, useEffect, ChangeEvent } from 'react';
+import { useDispatch } from 'react-redux';
 
-import type { AppDispatch, RootState } from '../../../model/store';
-import ProjectDevelopment, { ProjectDevelopmentObject } from '@/model/ProjectDevelopment';
-import Task, { TaskObject } from '../../../model/Task';
-import ProjectVersions, { ProjectVersionsObject } from '../../../model/ProjectVersions';
-import { ProjectObject } from '@/model/Project';
-import Taxonomy from '@/model/Taxonomy';
+import type { AppDispatch } from '../../../model/store';
+import { ProjectDevelopmentObject } from '@/model/ProjectDevelopment';
+import { TaskObject } from '../../../model/Task';
+import { ProjectVersionsObject } from '../../../model/ProjectVersions';
+import Project, { ProjectObject } from '@/model/Project';
 
 import {
   setMessage,
@@ -14,13 +13,11 @@ import {
   setShowStatusBar,
 } from '../../../controllers/messageSlice';
 import {
-  getProjectTypes,
-  getLanguages,
-  getFrameworks,
-  getTechnologies,
   SkillsObject,
 } from '../../../controllers/taxonomiesSlice';
-import { updateDevelopment } from '../../../controllers/updateSlice';
+import { updateProject } from '../../../controllers/updateSlice';
+
+import UpdateSkills from './UpdateSkills';
 
 interface UpdateDevelopmentProps {
   projectObject: ProjectObject;
@@ -29,110 +26,86 @@ interface UpdateDevelopmentProps {
 const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { projectTypesObject, languagesObject, frameworksObject, technologiesObject } = useSelector(
-    (state: RootState) => state.taxonomies
-  );
-
-  useEffect(() => {
-    dispatch(getProjectTypes());
-  }, []);
-
-  useEffect(() => {
-    dispatch(getLanguages());
-  }, []);
-
-  useEffect(() => {
-    dispatch(getFrameworks());
-  }, []);
-
-  useEffect(() => {
-    dispatch(getTechnologies());
-  }, []);
-
   const [development, setDevelopment] = useState<ProjectDevelopmentObject>(projectObject.process.development);
-  const [checkList, setCheckList] = useState<Array<TaskObject>>(development.check_list);
-  const [versionsList, setVersionsList] = useState<ProjectVersionsObject>(development.versions_list);
-  const [skills, setSkills] = useState<SkillsObject>(development.skills);
-  const [selectedProjectTypes, setSelectedProjectTypes] = useState(skills.types);
-  const [selectedLanguages, setSelectedLanguages] = useState(development.skills.languages);
-  const [selectedFrameworks, setSelectedFrameworks] = useState(development.skills.frameworks);
-  const [selectedTechnologies, setSelectedTechnologies] = useState(development.skills.technologies);
+  const [checkList, setCheckList] = useState<Array<TaskObject>>(projectObject.process.development.check_list);
+  const [versionsList, setVersionsList] = useState<ProjectVersionsObject>(projectObject.process.development.versions_list);
+  const [skills, setSkills] = useState<SkillsObject>(projectObject.process.development.skills);
+  const [repoURL, setRepoURL] = useState<string>(projectObject.process.development.repo_url);
+  const [contentURL, setContentURL] = useState<string>(projectObject.process.development.content_url);
 
-  // const handleProjectTypesCheckboxChange = (id: string) => {
-  //   setSelectedProjectTypes((prevSelectedIds) => {
-  //     const updatedSelection = new Set(prevSelectedIds);
+  useEffect(() => {
+    setDevelopment(projectObject.process.development)
+  }, [projectObject.process.development, setDevelopment]);
 
-      // if (updatedSelection.has(id)) {
-      //   updatedSelection.delete(id);
-      // } else {
-      //   updatedSelection.add(id);
-      // }
+  useEffect(() => {
+    setCheckList(projectObject.process.development.check_list)
+  }, [development.check_list, setCheckList]);
 
-  //     return updatedSelection;
-  //   });
-  // };
+  useEffect(() => {
+    setVersionsList(projectObject.process.development.versions_list)
+  }, [development.versions_list, setVersionsList]);
 
-  // const handleLanguagesCheckboxChange = (id: string) => {
-  //   setSelectedLanguages((prevSelectedIds) => {
-  //     const updatedSelection = new Set(prevSelectedIds);
+  useEffect(() => {
+    setSkills(projectObject.process.development.skills)
+  }, [development.skills, setSkills]);
 
-      // if (updatedSelection.has(id)) {
-      //   updatedSelection.delete(id);
-      // } else {
-      //   updatedSelection.add(id);
-      // }
+  const handleRepoURLChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
 
-  //     return updatedSelection;
-  //   });
-  // };
+    const { name, value } = target;
 
-  // const handleFrameworksCheckboxChange = (id: string) => {
-  //   setSelectedFrameworks((prevSelectedIds) => {
-  //     const updatedSelection = new Set(prevSelectedIds);
+    if (name === 'repo_url') {
+      setRepoURL(value)
 
-      // if (updatedSelection.has(id)) {
-      //   updatedSelection.delete(id);
-      // } else {
-      //   updatedSelection.add(id);
-      // }
+      setDevelopment({
+        repo_url: value,
+        content_url: contentURL,
+        skills: skills,
+        check_list: checkList,
+        versions_list: versionsList
+      })
+    }
+  }
 
-  //     return updatedSelection;
-  //   });
-  // };
+  const handleContentURLChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
 
-  // const handleTechnologiesCheckboxChange = (id: string) => {
-  //   setSelectedTechnologies((prevSelectedIds) => {
-  //     const updatedSelection = new Set(prevSelectedIds);
+    const { name, value } = target;
 
-      // if (updatedSelection.has(id)) {
-      //   updatedSelection.delete(id);
-      // } else {
-      //   updatedSelection.add(id);
-      // }
+    if (name === 'content_url') {
+      setContentURL(value)
 
-  //     return updatedSelection;
-  //   });
-  // };
+      setDevelopment({
+        repo_url: repoURL,
+        content_url: value,
+        skills: skills,
+        check_list: checkList,
+        versions_list: versionsList
+      })
+    }
+  }
 
-
-  const handleUpdateDelivery = async (e: MouseEvent<HTMLButtonElement>) => {
+  const handleUpdateDevelopment = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     try {
-      const form = document.getElementById('update_delivery') as HTMLFormElement;
-      const formData = new FormData(form);
-
-      let developmentData: Record<string, any> = {};
-
-      formData.forEach((value, key) => {
-        developmentData[key] = value;
-      });
-
-      let data: Record<string, any> = {
-        delivery: developmentData
+      const updatedDevelopment: ProjectDevelopmentObject = {
+        repo_url: repoURL,
+        content_url: contentURL,
+        skills: skills,
+        check_list: checkList,
+        versions_list: versionsList
       };
 
-      dispatch(updateDevelopment(data));
+      const updatedProject: ProjectObject = {
+        ...projectObject,
+        process: {
+          ...projectObject.process,
+          development: updatedDevelopment
+        }
+      }
+
+      dispatch(updateProject(new Project(updatedProject)));
     } catch (error) {
       const err = error as Error;
       dispatch(setMessageType('error'));
@@ -145,77 +118,25 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) 
     <>
       <h2 className="title">development</h2>
 
-      <div className="project-selection">
-        <label htmlFor="options">Choose Project Types:</label>
+      <UpdateSkills skillsObject={skills} />
 
-        {Array.isArray(projectTypesObject) &&
-          projectTypesObject.map((item) => (
-            <div className="form-item-flex" key={item.id}>
-              <input
-                type="checkbox"
-                id={`checkbox-${item.id}`}
-                value={item.id}
-                // checked={selectedProjectTypes.has(item.id)}
-                // onChange={() => handleProjectTypesCheckboxChange(item.id)}
-              />
-              <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
-            </div>
-          ))}
+      {/* check list component */}
+
+      <div className="form-item-flex">
+        <label htmlFor="repo_url">Repo URL:</label>
+        <input type="text" name='repo_url' value={repoURL ?? ''} onChange={handleRepoURLChange} />
       </div>
 
-      <div className="project-selection">
-        <label htmlFor="options">Choose Languages:</label>
-
-        {Array.isArray(languagesObject) &&
-          languagesObject.map((item) => (
-            <div className="form-item-flex" key={item.id}>
-              <input
-                type="checkbox"
-                id={`checkbox-${item.id}`}
-                value={item.id}
-                // checked={selectedLanguages.has(item.id)}
-                // onChange={() => handleLanguagesCheckboxChange(item.id)}
-              />
-              <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
-            </div>
-          ))}
+      <div className="form-item-flex">
+        <label htmlFor="content_url">Content URL:</label>
+        <input type="text" name='content_url' value={contentURL ?? ''} onChange={handleContentURLChange} />
       </div>
 
-      <div className="project-selection">
-        <label htmlFor="options">Choose Frameworks:</label>
-
-        {Array.isArray(frameworksObject) &&
-          frameworksObject.map((item) => (
-            <div className="form-item-flex" key={item.id}>
-              <input
-                type="checkbox"
-                id={`checkbox-${item.id}`}
-                value={item.id}
-                // checked={selectedFrameworks.has(item.id)}
-                // onChange={() => handleFrameworksCheckboxChange(item.id)}
-              />
-              <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
-            </div>
-          ))}
-      </div>
-
-      <div className="project-selection">
-        <label htmlFor="options">Choose Technologies:</label>
-
-        {Array.isArray(technologiesObject) &&
-          technologiesObject.map((item) => (
-            <div className="form-item-flex" key={item.id}>
-              <input
-                type="checkbox"
-                id={`checkbox-${item.id}`}
-                value={item.id}
-                // checked={selectedTechnologies.has(item.id)}
-                // onChange={() => handleTechnologiesCheckboxChange(item.id)}
-              />
-              <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
-            </div>
-          ))}
-      </div> </>)
+      <button onClick={handleUpdateDevelopment}>
+        <h3>Update Development</h3>
+      </button>
+    </>
+  )
 }
 
 export default UpdateDevelopment

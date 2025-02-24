@@ -1,15 +1,15 @@
 import React, { useEffect, useState, MouseEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '@/model/store';
 
 import {
   setMessage,
   setMessageType,
   setShowStatusBar,
 } from '@/controllers/messageSlice';
-import { updateProblem, updateProject } from '@/controllers/updateSlice';
+import { updateProject } from '@/controllers/updateSlice';
 
-import Gallery, { GalleryObject } from '@/model/Gallery';
+import type { AppDispatch, RootState } from '@/model/store';
+import { GalleryObject } from '@/model/Gallery';
 import Project, { ProjectObject } from '@/model/Project';
 
 import UpdateGallery from './UpdateGallery';
@@ -83,7 +83,7 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectObject }) => {
         <hr />
 
         <button onClick={handleUpdateProblem}>
-          <h3>Update Problem</h3>
+          <h3>UPDATE PROBLEM</h3>
         </button>
       </div>
     </>

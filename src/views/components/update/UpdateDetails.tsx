@@ -154,7 +154,7 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ projectObject }) => {
         </div>
 
         <button onClick={handleUpdateDetails}>
-          <h3>Update Details</h3>
+          <h3>UPDATE DETAILS</h3>
         </button>
       </form>
     </>

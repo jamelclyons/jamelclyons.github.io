@@ -79,22 +79,23 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
         }
     };
 
-    return (<>
-        <h2 className="title">status</h2>
+    return (
+        <>
+            <h2 className="title">status</h2>
 
-        <form action="" id='update_status'>
-            <progress value={progress} max="100"></progress>
+            <form action="" id='update_status'>
+                <progress value={progress} max="100"></progress>
 
-            <div className="form-item-flex">
-                <label htmlFor="progress">Completed</label>
-                <input type="number" value={progress} placeholder="Progress # 0-100" onChange={handleChange} id='progress' name='progress' />
-            </div>
+                <div className="form-item-flex">
+                    <label htmlFor="progress">Completed</label>
+                    <input type="number" value={progress} placeholder="Progress # 0-100" onChange={handleChange} id='progress' name='progress' />
+                </div>
 
-            <button onClick={handleUpdateStatus}>
-                <h3>Update Status</h3>
-            </button>
-        </form>
-    </>
+                <button onClick={handleUpdateStatus}>
+                    <h3>Update Status</h3>
+                </button>
+            </form>
+        </>
     )
 }
 

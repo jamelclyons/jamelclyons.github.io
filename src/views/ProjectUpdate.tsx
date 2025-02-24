@@ -325,7 +325,7 @@ const ProjectUpdate: React.FC = () => {
 
     return (
         <section className='update-project'>
-            <h1>Update Project</h1>
+            <h1 className='title'>update project</h1>
 
             <form action="" id="add_project">
                 <div className="form-item-flex">
@@ -344,12 +344,20 @@ const ProjectUpdate: React.FC = () => {
                 </button>
             </form>
 
+            <hr />
+
             {projectID && projectDataObject && <UpdateSolution projectObject={projectObject} />}
+
+            <hr />
 
             {projectID && projectDataObject && <UpdateProcess projectObject={projectObject} />}
 
+            <hr />
+
             {projectID && projectDataObject && <UpdateProblem projectObject={projectObject} />}
 
+            <hr />
+            
             {projectID && projectDataObject && <UpdateDetails projectObject={projectObject} />}
 
             <StatusBarComponent />
