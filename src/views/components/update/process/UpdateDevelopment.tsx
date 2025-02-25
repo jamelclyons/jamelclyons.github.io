@@ -1,23 +1,23 @@
 import React, { useState, MouseEvent, useEffect, ChangeEvent } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import type { AppDispatch } from '../../../model/store';
+import type { AppDispatch, RootState } from '@/model/store';
 import { ProjectDevelopmentObject } from '@/model/ProjectDevelopment';
-import { TaskObject } from '../../../model/Task';
-import { ProjectVersionsObject } from '../../../model/ProjectVersions';
+import { TaskObject } from '../../../../model/Task';
+import { ProjectVersionsObject } from '../../../../model/ProjectVersions';
 import Project, { ProjectObject } from '@/model/Project';
+import { ProjectSkillsObject } from '@/model/ProjectSkills';
 
 import {
   setMessage,
   setMessageType,
   setShowStatusBar,
-} from '../../../controllers/messageSlice';
-import {
-  SkillsObject,
-} from '../../../controllers/taxonomiesSlice';
-import { updateProject } from '../../../controllers/updateSlice';
+} from '../../../../controllers/messageSlice';
+import { updateProject } from '../../../../controllers/updateSlice';
 
-import UpdateSkills from './UpdateSkills';
+import UpdateCheckList from '../components/UpdateCheckList';
+import UpdateSkills from '../components/UpdateSkills';
+import UpdateProjectVersions from '../components/UpdateProjectVersions';
 
 interface UpdateDevelopmentProps {
   projectObject: ProjectObject;
@@ -26,12 +26,16 @@ interface UpdateDevelopmentProps {
 const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
+  const { updatedCheckList, updatedVersionsList, updatedProjectSkills } = useSelector(
+    (state: RootState) => state.update
+  );
+
   const [development, setDevelopment] = useState<ProjectDevelopmentObject>(projectObject.process.development);
   const [checkList, setCheckList] = useState<Array<TaskObject>>(projectObject.process.development.check_list);
-  const [versionsList, setVersionsList] = useState<ProjectVersionsObject>(projectObject.process.development.versions_list);
-  const [skills, setSkills] = useState<SkillsObject>(projectObject.process.development.skills);
+  const [projectSkills, setProjectSkills] = useState<ProjectSkillsObject>(projectObject.process.development.skills);
   const [repoURL, setRepoURL] = useState<string>(projectObject.process.development.repo_url);
   const [contentURL, setContentURL] = useState<string>(projectObject.process.development.content_url);
+  const [projectVersions, setProjectVersions] = useState<ProjectVersionsObject>(projectObject.process.development.versions_list);
 
   useEffect(() => {
     setDevelopment(projectObject.process.development)
@@ -42,12 +46,43 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) 
   }, [development.check_list, setCheckList]);
 
   useEffect(() => {
-    setVersionsList(projectObject.process.development.versions_list)
-  }, [development.versions_list, setVersionsList]);
+    setProjectVersions(projectObject.process.development.versions_list)
+  }, [development.versions_list, setProjectVersions]);
 
   useEffect(() => {
-    setSkills(projectObject.process.development.skills)
-  }, [development.skills, setSkills]);
+    setProjectSkills(projectObject.process.development.skills)
+  }, [development.skills, setProjectSkills]);
+
+  useEffect(() => {
+    if (updatedCheckList) {
+      setCheckList(updatedCheckList.map((task) => {
+        const taskObject: TaskObject = { name: task?.name, status: task?.status }
+        return taskObject
+      }))
+    }
+  }, [updatedCheckList, setCheckList]);
+
+  useEffect(() => {
+    if (updatedVersionsList) {
+      const projectVersionsObject: ProjectVersionsObject = {
+        current: updatedVersionsList?.current,
+        previous: updatedVersionsList?.previous
+      }
+      setProjectVersions(projectVersionsObject)
+    }
+  }, [updatedVersionsList, setProjectVersions]);
+
+  useEffect(() => {
+    if (updatedProjectSkills) {
+      const projectSkillsObject: ProjectSkillsObject = {
+        types: updatedProjectSkills.types,
+        languages: updatedProjectSkills.languages,
+        frameworks: updatedProjectSkills.frameworks,
+        technologies: updatedProjectSkills.technologies
+      }
+      setProjectSkills(projectSkillsObject)
+    }
+  }, [updatedProjectSkills, setProjectSkills]);
 
   const handleRepoURLChange = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
@@ -60,14 +95,14 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) 
       setDevelopment({
         repo_url: value,
         content_url: contentURL,
-        skills: skills,
+        skills: projectSkills,
         check_list: checkList,
-        versions_list: versionsList
+        versions_list: projectVersions
       })
     }
   }
 
-  const handleContentURLChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleDevelopmentContentURLChange = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
 
     const { name, value } = target;
@@ -78,9 +113,9 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) 
       setDevelopment({
         repo_url: repoURL,
         content_url: value,
-        skills: skills,
+        skills: projectSkills,
         check_list: checkList,
-        versions_list: versionsList
+        versions_list: projectVersions
       })
     }
   }
@@ -92,9 +127,9 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) 
       const updatedDevelopment: ProjectDevelopmentObject = {
         repo_url: repoURL,
         content_url: contentURL,
-        skills: skills,
+        skills: projectSkills,
         check_list: checkList,
-        versions_list: versionsList
+        versions_list: projectVersions
       };
 
       const updatedProject: ProjectObject = {
@@ -118,9 +153,9 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) 
     <>
       <h2 className="title">development</h2>
 
-      <UpdateSkills skillsObject={skills} />
+      <UpdateCheckList checkList={checkList} />
 
-      {/* check list component */}
+      <UpdateSkills skillsObject={projectSkills} />
 
       <div className="form-item-flex">
         <label htmlFor="repo_url">Repo URL:</label>
@@ -128,9 +163,11 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) 
       </div>
 
       <div className="form-item-flex">
-        <label htmlFor="content_url">Content URL:</label>
-        <input type="text" name='content_url' value={contentURL ?? ''} onChange={handleContentURLChange} />
+        <label htmlFor="development_content_url">Development Content URL:</label>
+        <input type="text" name='development_content_url' value={contentURL ?? ''} onChange={handleDevelopmentContentURLChange} />
       </div>
+
+      <UpdateProjectVersions projectVersions={projectVersions} />
 
       <button onClick={handleUpdateDevelopment}>
         <h3>Update Development</h3>

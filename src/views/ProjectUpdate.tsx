@@ -11,7 +11,7 @@ import {
 } from '@/controllers/messageSlice';
 
 import UpdateDetails from './components/update/UpdateDetails';
-import UpdateProcess from './components/update/UpdateProcess';
+import UpdateProcess from './components/update/process/UpdateProcess';
 import UpdateSolution from './components/update/UpdateSolution';
 import UpdateProblem from './components/update/UpdateProblem';
 import StatusBarComponent from './components/StatusBarComponent';
@@ -98,9 +98,9 @@ const ProjectUpdate: React.FC = () => {
                     animations: [],
                     uml_diagrams: []
                 },
-                checkList: [],
-                colorsList: [],
-                contentURL: ''
+                check_list: [],
+                colors_list: [],
+                content_url: ''
             },
             development: {
                 repo_url: '',
@@ -190,9 +190,9 @@ const ProjectUpdate: React.FC = () => {
                             animations: [],
                             uml_diagrams: []
                         },
-                        checkList: [],
-                        colorsList: [],
-                        contentURL: ''
+                        check_list: [],
+                        colors_list: [],
+                        content_url: ''
                     },
                     development: {
                         repo_url: '',

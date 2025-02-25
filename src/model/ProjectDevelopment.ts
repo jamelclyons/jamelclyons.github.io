@@ -1,14 +1,14 @@
 import Model from './Model';
 import Task, { TaskObject } from './Task';
 import ProjectVersions, { ProjectVersionsObject } from './ProjectVersions';
-import Skills from './Skills';
-import { SkillsObject } from '@/controllers/taxonomiesSlice';
 import ProjectSkills from './ProjectSkills';
+
+import { ProjectSkillsObject } from './ProjectSkills';
 
 export type ProjectDevelopmentObject = {
   repo_url: string;
   content_url: string;
-  skills: SkillsObject;
+  skills: ProjectSkillsObject;
   check_list: Array<TaskObject>;
   versions_list: ProjectVersionsObject;
 };

@@ -12,7 +12,7 @@ import type { AppDispatch, RootState } from '@/model/store';
 import { GalleryObject } from '@/model/Gallery';
 import Project, { ProjectObject } from '@/model/Project';
 
-import UpdateGallery from './UpdateGallery';
+import UpdateGallery from './components/UpdateGallery';
 
 interface UpdateProblemProps {
   projectObject: ProjectObject;

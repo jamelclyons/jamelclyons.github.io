@@ -12,9 +12,10 @@ import {
 } from '@/controllers/messageSlice';
 import { updateProject } from '@/controllers/updateSlice';
 
-import UpdateGallery from './UpdateGallery';
+import UpdateGallery from '../components/UpdateGallery';
 import { GalleryObject } from '@/model/Gallery';
 import { TaskObject } from '@/model/Task';
+import UpdateCheckList from '../components/UpdateCheckList';
 
 interface UpdateDeliveryProps {
   projectObject: ProjectObject;
@@ -26,8 +27,8 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
   const { updatedGallery } = useSelector((state: RootState) => state.update);
 
   const [delivery, setDelivery] = useState<ProjectDeliveryObject>(projectObject.process.delivery);
-  const [gallery, setGallery] = useState<GalleryObject>(projectObject.process.delivery.gallery);
   const [checkList, setCheckList] = useState<Array<TaskObject>>(projectObject.process.delivery.check_list);
+  const [gallery, setGallery] = useState<GalleryObject>(projectObject.process.delivery.gallery);
   const [content, setContent] = useState<string>(projectObject.process.delivery.content_url);
 
   useEffect(() => {
@@ -83,23 +84,20 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
     <>
       <h2 className="title">delivery</h2>
 
-      <form action="" id='update_delivery'>
+      <UpdateCheckList checkList={checkList} />
 
-        <UpdateGallery gallery={gallery} />
+      <UpdateGallery gallery={gallery} />
 
-        <hr />
+      <div className="form-item-flex">
+        <label htmlFor="delivery_content_url">
+          Delivery Content URL:
+        </label>
+        <input type="text" name='delivery_content_url' value={content ?? ''} />
+      </div>
 
-        <div className="form-item-flex">
-          <label htmlFor="delivery_content_url">
-            Content URL:
-          </label>
-          <input type="text" name='delivery_content_url' value={content ?? ''}/>
-        </div>
-
-        <button onClick={handleUpdateDelivery}>
-          <h3>Update Delivery</h3>
-        </button>
-      </form>
+      <button onClick={handleUpdateDelivery}>
+        <h3>Update Delivery</h3>
+      </button>
     </>
   )
 }

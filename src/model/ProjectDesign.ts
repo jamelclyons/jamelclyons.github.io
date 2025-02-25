@@ -5,9 +5,9 @@ import Color, { ColorObject } from './Color';
 
 export type ProjectDesignObject = {
   gallery: GalleryObject;
-  checkList: Array<TaskObject>;
-  colorsList: Array<ColorObject>;
-  contentURL: string;
+  check_list: Array<TaskObject>;
+  colors_list: Array<ColorObject>;
+  content_url: string;
 };
 
 class ProjectDesign extends Model {

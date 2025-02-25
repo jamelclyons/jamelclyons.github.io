@@ -3,9 +3,9 @@ import React from 'react'
 import { ProjectObject } from '@/model/Project';
 
 import UpdateStatus from './UpdateStatus';
-import UpdateDesign from '../update/UpdateDesign';
-import UpdateDevelopment from '../update/UpdateDevelopment';
-import UpdateDelivery from '../update/UpdateDelivery';
+import UpdateDesign from './UpdateDesign';
+import UpdateDevelopment from './UpdateDevelopment';
+import UpdateDelivery from './UpdateDelivery';
 
 interface UpdateProcessProps {
     projectObject: ProjectObject;

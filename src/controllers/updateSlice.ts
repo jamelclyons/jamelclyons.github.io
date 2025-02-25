@@ -13,6 +13,9 @@ import Project from '@/model/Project';
 
 import { addSecureHeaders } from '@/utilities/Headers';
 import Skills from '@/model/Skills';
+import ProjectSkills from '@/model/ProjectSkills';
+import { TaskObject } from '@/model/Task';
+import ProjectVersions from '@/model/ProjectVersions';
 
 interface UpdateState {
   updateLoading: boolean;
@@ -23,6 +26,9 @@ interface UpdateState {
   updateStatusCode: number | null;
   updatedGallery: Record<string, any> | null;
   updatedSkills: Record<string, any> | null;
+  updatedProjectSkills: Record<string, any> | null;
+  updatedCheckList: Array<Record<string, any>> | null;
+  updatedVersionsList: Record<string, any> | null;
 }
 
 const initialState: UpdateState = {
@@ -33,7 +39,10 @@ const initialState: UpdateState = {
   updateErrorMessage: null,
   updateStatusCode: null,
   updatedGallery: null,
-  updatedSkills: null
+  updatedSkills: null,
+  updatedProjectSkills: null,
+  updatedCheckList: null,
+  updatedVersionsList: null,
 };
 
 export const updateProject = createAsyncThunk(
@@ -315,12 +324,71 @@ export const updateSkills = createAsyncThunk(
   }
 );
 
+export const updateProjectSkills = createAsyncThunk(
+  'update/updateProjectSkills',
+  async (skills: ProjectSkills) => {
+    try {
+      return skills.toObject();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const updateCheckList = createAsyncThunk(
+  'update/updateCheckList',
+  async (list: Array<TaskObject>) => {
+    try {
+      return list as Array<Record<string,any>>;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const updateVersionsList = createAsyncThunk(
+  'update/updateVersionsList',
+  async (versions: ProjectVersions) => {
+    try {
+      return versions.toObject();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
 const updateSliceOptions: CreateSliceOptions<UpdateState> = {
   name: 'update',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(updateCheckList.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateErrorMessage = '';
+        state.updateLoadingMessage = 'Check list updated';
+      })
+      .addCase(updateCheckList.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updatedGallery = action.payload;
+      })
+      .addCase(updateVersionsList.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateErrorMessage = '';
+        state.updateLoadingMessage = 'Version list updated';
+      })
+      .addCase(updateVersionsList.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updatedGallery = action.payload;
+      })
       .addCase(updateGallery.pending, (state) => {
         state.updateLoading = true;
         state.updateError = null;
@@ -331,15 +399,15 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
         state.updateLoading = false;
         state.updatedGallery = action.payload;
       })
-      .addCase(updateSkills.pending, (state) => {
+      .addCase(updateProjectSkills.pending, (state) => {
         state.updateLoading = true;
         state.updateError = null;
         state.updateErrorMessage = '';
         state.updateLoadingMessage = 'Skills updated';
       })
-      .addCase(updateSkills.fulfilled, (state, action) => {
+      .addCase(updateProjectSkills.fulfilled, (state, action) => {
         state.updateLoading = false;
-        state.updatedSkills = action.payload;
+        state.updatedProjectSkills = action.payload;
       })
       .addCase(updateProject.pending, (state) => {
         state.updateLoading = true;

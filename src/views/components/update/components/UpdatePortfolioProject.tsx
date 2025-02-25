@@ -2,7 +2,7 @@ import React from 'react'
 
 import Project from '@/model/Project'
 
-import ProjectCard from '../project/ProjectCard';
+import ProjectCard from '../../project/ProjectCard';
 
 interface UpdatePortfolioProjectProps {
     project: Project

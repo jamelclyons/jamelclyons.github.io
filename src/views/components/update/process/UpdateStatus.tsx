@@ -1,16 +1,16 @@
 import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import type { AppDispatch } from '../../../model/store';
-import { ProjectStatusObject } from '../../../model/ProjectStatus';
+import type { AppDispatch } from '../../../../model/store';
+import { ProjectStatusObject } from '../../../../model/ProjectStatus';
 import Project, { ProjectObject } from '@/model/Project';
 
 import {
     setMessage,
     setMessageType,
     setShowStatusBar,
-} from '../../../controllers/messageSlice';
-import { updateProject } from '../../../controllers/updateSlice';
+} from '../../../../controllers/messageSlice';
+import { updateProject } from '../../../../controllers/updateSlice';
 
 interface UpdateStatusProps {
     projectObject: ProjectObject;
@@ -20,6 +20,8 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
     const dispatch = useDispatch<AppDispatch>();
 
     const [status, setStatus] = useState<ProjectStatusObject>(projectObject.process.status);
+    const [createdAt, setCreatedAt] = useState<string>(projectObject.process.status.created_at);
+    const [updatedAt, setUpdatedAt] = useState<string>(projectObject.process.status.updated_at);
     const [progress, setProgress] = useState<string>(projectObject.process.status.progress);
 
     useEffect(() => {
@@ -27,8 +29,8 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
     }, [projectObject.process.status, setStatus]);
 
     useEffect(() => {
-        setProgress(projectObject.process.status.progress)
-    }, [projectObject.process.status.progress, setProgress]);
+        setProgress(status.progress)
+    }, [status.progress, setProgress]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         try {
@@ -41,8 +43,8 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
             }
 
             setStatus({
-                created_at: '',
-                updated_at: '',
+                created_at: createdAt,
+                updated_at: updatedAt,
                 progress: value
             });
         } catch (error) {
@@ -57,8 +59,8 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
 
         try {
             const updatedProjectStatus: ProjectStatusObject = {
-                created_at: '',
-                updated_at: '',
+                created_at: createdAt,
+                updated_at: updatedAt,
                 progress: progress
             }
 
@@ -84,6 +86,10 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
             <h2 className="title">status</h2>
 
             <form action="" id='update_status'>
+                {/* created at */}
+
+                {/* updated at */}
+                
                 <progress value={progress} max="100"></progress>
 
                 <div className="form-item-flex">

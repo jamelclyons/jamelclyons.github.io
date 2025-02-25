@@ -5,17 +5,17 @@ import {
   setMessage,
   setMessageType,
   setShowStatusBar,
-} from '../../../controllers/messageSlice';
+} from '../../../../controllers/messageSlice';
 import {
   getProjectTypes,
   getLanguages,
   getFrameworks,
   getTechnologies,
   SkillsObject,
-} from '../../../controllers/taxonomiesSlice';
-import { updateSkills } from '../../../controllers/updateSlice';
+} from '../../../../controllers/taxonomiesSlice';
+import { updateSkills } from '../../../../controllers/updateSlice';
 
-import type { AppDispatch, RootState } from '../../../model/store';
+import type { AppDispatch, RootState } from '../../../../model/store';
 import ProjectSkills, { ProjectSkillsObject } from '@/model/ProjectSkills';
 
 interface UpdateSkillsProps {
