@@ -1,4 +1,4 @@
-import React, { useEffect, useState, MouseEvent } from 'react';
+import React, { useEffect, useState, MouseEvent, ChangeEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '@/model/store';
@@ -53,6 +53,28 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
     }
   }, [updatedGallery, setGallery]);
 
+  const handleDeliveryContentURLChange = (e: ChangeEvent<HTMLInputElement>) => {
+    try {
+      const target = e.target as HTMLInputElement;
+
+      const { name, value } = target;
+
+      if (name === 'delivery_content_url') {
+        setContent(value);
+
+        setDelivery({
+          check_list: checkList,
+          gallery: gallery,
+          content_url: content
+        });
+      }
+    } catch (error) {
+      const err = error as Error;
+      dispatch(setMessage(err.message));
+      dispatch(setMessageType('error'));
+    }
+  };
+
   const handleUpdateDelivery = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
@@ -92,7 +114,7 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
         <label htmlFor="delivery_content_url">
           Delivery Content URL:
         </label>
-        <input type="text" name='delivery_content_url' value={content ?? ''} />
+        <input type="text" name='delivery_content_url' value={content ?? ''} onChange={handleDeliveryContentURLChange} />
       </div>
 
       <button onClick={handleUpdateDelivery}>

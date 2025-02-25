@@ -40,13 +40,13 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
 
             if (name === 'progress') {
                 setProgress(value);
-            }
 
-            setStatus({
-                created_at: createdAt,
-                updated_at: updatedAt,
-                progress: value
-            });
+                setStatus({
+                    created_at: createdAt,
+                    updated_at: updatedAt,
+                    progress: value
+                });
+            }
         } catch (error) {
             const err = error as Error;
             dispatch(setMessage(err.message));
@@ -89,7 +89,7 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
                 {/* created at */}
 
                 {/* updated at */}
-                
+
                 <progress value={progress} max="100"></progress>
 
                 <div className="form-item-flex">

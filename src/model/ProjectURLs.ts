@@ -12,16 +12,16 @@ class ProjectURLs extends Model {
   ios: ProjectURL;
   android: ProjectURL;
 
-  constructor(data: Record<string, any> = {}) {
+  constructor(data: Record<string, any> | ProjectURLsObject = {}) {
     super();
 
     this.homepage = data?.homepage
-      ? new ProjectURL(data?.homepage)
-      : new ProjectURL();
-    this.ios = data?.ios ? new ProjectURL(data?.ios) : new ProjectURL();
+      ? new ProjectURL(data.homepage)
+      : new ProjectURL({name: 'Homepage', description: 'Website of the project'});
+    this.ios = data?.ios ? new ProjectURL(data.ios) : new ProjectURL({name: 'Apple App Store Link', description: 'Link to iOS Application'});
     this.android = data?.android
-      ? new ProjectURL(data?.android)
-      : new ProjectURL();
+      ? new ProjectURL(data.android)
+      : new ProjectURL({name: 'Google Play Link', description: 'Link to Android Application'});
   }
 }
 

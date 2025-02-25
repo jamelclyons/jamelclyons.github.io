@@ -13,12 +13,12 @@ interface SolutionProps {
 }
 
 const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
-  const { features, currency, price, urlsList, gallery, contentURL } = solution;
+  const { features, currency, price, projectURLs, gallery, contentURL } = solution;
 
   const hasContent = features.size > 0 ||
     currency ||
     price > 0 ||
-    urlsList.homepage.url === '' || urlsList.ios.url === '' || urlsList.android.url === '' ||
+    projectURLs.homepage.url === '' || projectURLs.ios.url === '' || projectURLs.android.url === '' ||
     gallery.images.length > 0 ||
     contentURL;
 
@@ -32,7 +32,7 @@ const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
 
           {currency && price > 0 && <PricingComponent currency={currency} price={price} />}
 
-          {urlsList && <ProjectURLsComponent projectUrls={urlsList} />}
+          {projectURLs && <ProjectURLsComponent projectUrls={projectURLs} />}
 
           <h3>THE SOLUTION</h3>
 

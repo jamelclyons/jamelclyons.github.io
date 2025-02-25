@@ -16,6 +16,7 @@ import Skills from '@/model/Skills';
 import ProjectSkills from '@/model/ProjectSkills';
 import { TaskObject } from '@/model/Task';
 import ProjectVersions from '@/model/ProjectVersions';
+import ProjectURLs from '@/model/ProjectURLs';
 
 interface UpdateState {
   updateLoading: boolean;
@@ -29,6 +30,8 @@ interface UpdateState {
   updatedProjectSkills: Record<string, any> | null;
   updatedCheckList: Array<Record<string, any>> | null;
   updatedVersionsList: Record<string, any> | null;
+  updatedProjectURLs: Record<string, any> | null;
+  updatedFeatures: Array<Record<string, any>> | null;
 }
 
 const initialState: UpdateState = {
@@ -43,6 +46,8 @@ const initialState: UpdateState = {
   updatedProjectSkills: null,
   updatedCheckList: null,
   updatedVersionsList: null,
+  updatedProjectURLs: null,
+  updatedFeatures: null,
 };
 
 export const updateProject = createAsyncThunk(
@@ -341,7 +346,7 @@ export const updateCheckList = createAsyncThunk(
   'update/updateCheckList',
   async (list: Array<TaskObject>) => {
     try {
-      return list as Array<Record<string,any>>;
+      return list as Array<Record<string, any>>;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -363,12 +368,35 @@ export const updateVersionsList = createAsyncThunk(
   }
 );
 
+export const updateProjectURLs = createAsyncThunk(
+  'update/updateProjectURLs',
+  async (projectURLs: ProjectURLs) => {
+    try {
+      return projectURLs.toObject();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
 const updateSliceOptions: CreateSliceOptions<UpdateState> = {
   name: 'update',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(updateProjectURLs.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateErrorMessage = '';
+        state.updateLoadingMessage = 'Project URLs updated';
+      })
+      .addCase(updateProjectURLs.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updatedGallery = action.payload;
+      })
       .addCase(updateCheckList.pending, (state) => {
         state.updateLoading = true;
         state.updateError = null;

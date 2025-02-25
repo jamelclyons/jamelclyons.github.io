@@ -91,7 +91,7 @@ class Project extends Model {
     this.title = this.title ? this.title : this.getTitle(this.id);
     this.description =
       repo.description !== '' ? repo.description : 'No Description Provided.';
-    this.solution.urlsList.homepage.url = repo.homepage;
+    this.solution.projectURLs.homepage.url = repo.homepage;
     this.solution.contentURL = repo.contents.solution
       ? repo.contents.solution.downloadURL
       : null;
@@ -129,7 +129,7 @@ class Project extends Model {
         ? this.setFeatures(data.solution.features)
         : new Set();
     this.solution.price = data?.solution?.price ? data.solution.price : 0;
-    this.solution.urlsList = data?.solution?.urlsList
+    this.solution.projectURLs = data?.solution?.urlsList
       ? new ProjectURLs(data.solution.urlsList)
       : new ProjectURLs();
     this.process.status.progress = data?.process?.status?.progress ?? '0';

@@ -6,10 +6,10 @@ import Gallery, { GalleryObject } from './Gallery';
 export type ProjectSolutionObject = {
   gallery: GalleryObject;
   features: Array<FeatureObject>;
-  contentURL: string;
+  content_url: string;
   currency: string;
   price: number;
-  urlsList: ProjectURLsObject;
+  project_urls: ProjectURLsObject;
 };
 
 class ProjectSolution extends Model {
@@ -18,9 +18,9 @@ class ProjectSolution extends Model {
   contentURL: string | null;
   currency: string;
   price: number;
-  urlsList: ProjectURLs;
+  projectURLs: ProjectURLs;
 
-  constructor(data: Record<string, any> = {}) {
+  constructor(data: Record<string, any> | ProjectSolutionObject = {}) {
     super();
 
     this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
@@ -30,8 +30,8 @@ class ProjectSolution extends Model {
     this.contentURL = data?.content_url || null;
     this.currency = data?.currency || 'USD';
     this.price = data?.price || 0;
-    this.urlsList = data?.urlsList
-      ? new ProjectURLs(data.urlsList)
+    this.projectURLs = data?.project_urls
+      ? new ProjectURLs(data.project_urls)
       : new ProjectURLs();
   }
 

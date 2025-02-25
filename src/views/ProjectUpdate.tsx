@@ -49,39 +49,42 @@ const ProjectUpdate: React.FC = () => {
                 uml_diagrams: projectDataObject?.solution?.gallery?.uml_diagrams ?? []
             },
             features: [],
-            contentURL: '',
-            currency: '',
+            content_url: '',
+            currency: 'USD',
             price: 0,
-            urlsList: {
+            project_urls: {
                 homepage: {
-                    name: '',
+                    name: 'Homepage',
                     url: '',
                     image: {
                         id: '',
                         title: '',
                         url: '',
                         class_name: ''
-                    }
+                    },
+                    description: 'Website of the project'
                 },
                 ios: {
-                    name: '',
+                    name: 'Apple App Store Link',
                     url: '',
                     image: {
                         id: '',
                         title: '',
                         url: '',
                         class_name: ''
-                    }
+                    },
+                    description: 'Link to iOS Application'
                 },
                 android: {
-                    name: '',
+                    name: 'Google Play Link',
                     url: '',
                     image: {
                         id: '',
                         title: '',
                         url: '',
                         class_name: ''
-                    }
+                    },
+                    description: 'Link to Android Application'
                 }
             }
         },
@@ -129,7 +132,7 @@ const ProjectUpdate: React.FC = () => {
             }
         },
         problem: {
-            contentURL: projectDataObject?.problem?.contentURL ?? '',
+            content_url: projectDataObject?.problem?.contentURL ?? '',
             gallery: {
                 logos: projectDataObject?.problem?.gallery?.logos ?? [],
                 icons: projectDataObject?.problem?.gallery?.icons ?? [],
@@ -176,19 +179,65 @@ const ProjectUpdate: React.FC = () => {
                 owner: projectDataObject?.owner ?? {},
                 title: projectDataObject?.title ?? '',
                 description: projectDataObject?.description ?? '',
-                solution: projectDataObject?.solution ?? {},
+                solution: {
+                    gallery: {
+                        logos: projectDataObject.solution?.gallery.logos ?? [],
+                        icons: projectDataObject.solution?.gallery.icons ?? [],
+                        animations: projectDataObject.solution?.gallery.animations ?? [],
+                        uml_diagrams: projectDataObject.solution?.gallery.uml_diagrams ?? []
+                    },
+                    features: projectDataObject.solution?.gallery.logos ?? [],
+                    content_url: projectDataObject.solution?.content_url ?? '',
+                    currency: projectDataObject.solution?.currency ?? 'USD',
+                    price: projectDataObject?.solution?.price ?? 0,
+                    project_urls: {
+                        homepage: {
+                            name: projectDataObject?.solution?.project_urls?.homepage?.name ?? 'Homepage',
+                            url: projectDataObject?.solution?.project_urls?.homepage?.url ?? '',
+                            description: projectDataObject?.solution?.project_urls?.homepage.description ?? 'Website of the project',
+                            image: {
+                                id: projectDataObject?.solution?.project_urls?.homepage?.image?.id ?? '',
+                                title: projectDataObject?.solution?.project_urls?.homepage?.image?.title ?? '',
+                                url: projectDataObject?.solution?.project_urls?.homepage?.image?.url ?? '',
+                                class_name: projectDataObject?.solution?.project_urls?.homepage.image?.class_name ?? ''
+                            }
+                        },
+                        ios: {
+                            name: projectDataObject?.solution?.project_urls?.ios.name ?? 'Apple App Store Link',
+                            url: projectDataObject?.solution?.project_urls?.homepage ?? '',
+                            description: projectDataObject?.solution?.project_urls?.homepage ?? 'Link to iOS Application',
+                            image: {
+                                id: projectDataObject?.solution?.project_urls?.homepage ?? '',
+                                title: projectDataObject?.solution?.project_urls?.homepage ?? '',
+                                url: projectDataObject?.solution?.project_urls?.homepage ?? '',
+                                class_name: projectDataObject?.solution?.project_urls?.homepage ?? ''
+                            }
+                        },
+                        android: {
+                            name: projectDataObject?.solution?.project_urls?.homepage ?? 'Google Play Link',
+                            url: projectDataObject?.solution?.project_urls?.homepage ?? '',
+                            description: projectDataObject?.solution?.project_urls?.homepage ?? 'Link to Android Application',
+                            image: {
+                                id: projectDataObject?.solution?.project_urls?.homepage ?? '',
+                                title: projectDataObject?.solution?.project_urls?.homepage ?? '',
+                                url: projectDataObject?.solution?.project_urls?.homepage ?? '',
+                                class_name: projectDataObject?.solution?.project_urls?.homepage ?? ''
+                            }
+                        }
+                    }
+                },
                 process: {
                     status: {
-                        created_at: '',
-                        updated_at: '',
+                        created_at: projectDataObject?.process?.status?.created_at ?? '',
+                        updated_at: projectDataObject?.process?.status?.updated_at ?? '',
                         progress: projectDataObject?.process?.status?.progress ?? '0'
                     },
                     design: {
                         gallery: {
-                            logos: [],
-                            icons: [],
-                            animations: [],
-                            uml_diagrams: []
+                            logos: projectDataObject?.design?.logos ?? [],
+                            icons: projectDataObject?.design?.icons ?? [],
+                            animations: projectDataObject?.design?.animations ?? [],
+                            uml_diagrams: projectDataObject?.design?.uml_diagrams ?? []
                         },
                         check_list: [],
                         colors_list: [],
@@ -212,16 +261,16 @@ const ProjectUpdate: React.FC = () => {
                     delivery: {
                         check_list: [],
                         gallery: {
-                            logos: [],
-                            icons: [],
-                            animations: [],
-                            uml_diagrams: []
+                            logos: projectDataObject?.delivery?.logos ?? [],
+                            icons: projectDataObject?.delivery?.icons ?? [],
+                            animations: projectDataObject?.delivery?.animations ?? [],
+                            uml_diagrams: projectDataObject?.delivery?.uml_diagrams ?? []
                         },
                         content_url: ''
                     }
                 },
                 problem: {
-                    contentURL: projectDataObject?.problem?.contentURL ?? '',
+                    content_url: projectDataObject?.problem?.contentURL ?? '',
                     gallery: {
                         logos: projectDataObject?.problem?.logos ?? [],
                         icons: projectDataObject?.problem?.icons ?? [],
@@ -357,7 +406,7 @@ const ProjectUpdate: React.FC = () => {
             {projectID && projectDataObject && <UpdateProblem projectObject={projectObject} />}
 
             <hr />
-            
+
             {projectID && projectDataObject && <UpdateDetails projectObject={projectObject} />}
 
             <StatusBarComponent />

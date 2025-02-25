@@ -2,7 +2,7 @@ import Model from './Model';
 import Gallery, { GalleryObject } from './Gallery';
 
 export type ProjectProblemObject = {
-  contentURL: string;
+  content_url: string;
   gallery: GalleryObject;
 }
 
