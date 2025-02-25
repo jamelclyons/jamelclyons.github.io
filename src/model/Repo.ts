@@ -1,11 +1,27 @@
 import Model from './Model';
-import Owner from './Owner';
-import RepoContents from './RepoContents';
+import Owner, { OwnerObject } from './Owner';
+import RepoContents,{RepoContentsObject} from './RepoContents';
 import RepoContent from './RepoContent';
 import { Language, Technology } from './Taxonomy';
-import Contributors from './Contributors';
+import Contributors, { ContributorsObject } from './Contributors';
 import User from './User';
-import ProjectSkills from './ProjectSkills';
+import ProjectSkills, { ProjectSkillsObject } from './ProjectSkills';
+
+export interface RepoObject {
+  id: string;
+  privacy: boolean;
+  size: number;
+  owner: OwnerObject;
+  created_at: string;
+  updated_at: string;
+  homepage: string;
+  description: string;
+  repo_url: string;
+  skills: ProjectSkillsObject;
+  contents: RepoContentsObject;
+  contributors_url: string;
+  contributors: ContributorsObject;
+}
 
 class Repo extends Model {
   id: string;
@@ -17,12 +33,12 @@ class Repo extends Model {
   homepage: string;
   description: string;
   repoURL: string;
-  skills: ProjectSkills = new ProjectSkills();
-  contents: RepoContents = new RepoContents();
+  skills: ProjectSkills;
+  contents: RepoContents;
   contributorsURL: string;
   contributors: Contributors = new Contributors();
 
-  constructor(data: Record<string, any> = {}) {
+  constructor(data: Record<string, any> | RepoObject = {}) {
     super();
 
     this.id = data?.id;
@@ -34,15 +50,11 @@ class Repo extends Model {
     this.homepage = data?.homepage;
     this.description = data?.description;
     this.repoURL = data?.repo_url;
-    this.skills = data?.skills ? this.getSkills(data.skills) : new ProjectSkills();
+    this.skills = data?.skills
+      ? this.setSkills(data.skills)
+      : new ProjectSkills();
     this.contents = data?.contents
-      ? new RepoContents(
-          new RepoContent(data.contents.solution),
-          new RepoContent(data.contents.design),
-          new RepoContent(data.contents.development),
-          new RepoContent(data.contents.delivery),
-          new RepoContent(data.contents.problem)
-        )
+      ? new RepoContents(data.contents)
       : new RepoContents();
     this.contributorsURL = data?.contributors_url;
     this.setContributors(data?.contributors);
@@ -138,12 +150,12 @@ class Repo extends Model {
   }
 
   getSkills(repoSkills: Array<Record<string, any>>) {
-    if (repoSkills && Array.isArray(repoSkills) && repoSkills.length > 0) {
-      let types: Array<Record<string, any>> = [];
-      let languages: Array<Record<string, any>> = [];
-      let frameworks: Array<Record<string, any>> = [];
-      let technologies: Array<Record<string, any>> = [];
+    let types: Array<Record<string, any>> = [];
+    let languages: Array<Record<string, any>> = [];
+    let frameworks: Array<Record<string, any>> = [];
+    let technologies: Array<Record<string, any>> = [];
 
+    if (repoSkills && Array.isArray(repoSkills) && repoSkills.length > 0) {
       repoSkills.forEach((skill) => {
         if (skill.type === 'technology') {
           technologies.push(
@@ -169,16 +181,56 @@ class Repo extends Model {
           );
         }
       });
+    }
 
-      return new ProjectSkills({
-        types: types,
-        languages: languages,
-        frameworks: frameworks,
-        technologies: technologies,
+    return {
+      types: types,
+      languages: languages,
+      frameworks: frameworks,
+      technologies: technologies,
+    };
+  }
+
+  setSkills(repoSkills: Array<Record<string, any>>) {
+    let types: Array<Record<string, any>> = [];
+    let languages: Array<Record<string, any>> = [];
+    let frameworks: Array<Record<string, any>> = [];
+    let technologies: Array<Record<string, any>> = [];
+
+    if (repoSkills && Array.isArray(repoSkills) && repoSkills.length > 0) {
+      repoSkills.forEach((skill) => {
+        if (skill.type === 'technology') {
+          technologies.push(
+            new Technology({
+              id: skill.id,
+              title: skill.title,
+              icon_url: skill.icon_url,
+              class_name: skill.class_name,
+              usage: skill.usage,
+            }).toObject()
+          );
+        }
+
+        if (skill.type === 'language') {
+          languages.push(
+            new Language({
+              id: skill.id.toLowerCase(),
+              title: skill.title.toUpperCase(),
+              icon_url: skill.icon_url,
+              class_name: skill.class_name,
+              usage: skill.usage,
+            }).toObject()
+          );
+        }
       });
     }
 
-    return new ProjectSkills();
+    return new ProjectSkills({
+      types: types,
+      languages: languages,
+      frameworks: frameworks,
+      technologies: technologies,
+    });
   }
 
   setContents(contentsObject: Record<string, any>) {

@@ -1,12 +1,35 @@
 import Model from './Model';
-import Image from './Image';
-import ContactMethods from './ContactMethods';
+import Image, { ImageObject } from './Image';
+import ContactMethods, { ContactMethodsObject } from './ContactMethods';
 
 import Organizations from '@/model/Organizations';
 import Repos from '@/model/Repos';
 
-import user from '../../user.json';
 import GitHubRepoQuery from './GitHubRepoQuery';
+import { RepoObject } from './Repo';
+import { OrganizationObject } from './Organization';
+
+import user from '../../user.json';
+
+export interface UserObject {
+  id: string;
+  login: string;
+  avatarURL: string;
+  name: string;
+  title: string;
+  bio: string;
+  email: string;
+  phone: string;
+  resume: string;
+  website: string;
+  contactMethods: ContactMethodsObject;
+  images: Array<ImageObject>;
+  organizationsURL: string;
+  organizations: Array<OrganizationObject>;
+  reposURL: string;
+  repos: Array<RepoObject>;
+  repoQueries: Array<GitHubRepoQuery>;
+}
 
 class User extends Model {
   id: string;

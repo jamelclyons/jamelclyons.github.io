@@ -21,7 +21,7 @@ class ProjectSkills extends Model {
   technologies: Set<Technology>;
   count: number;
 
-  constructor(data: Record<string, any> | ProjectSkillsObject = []) {
+  constructor(data: Record<string, any> | ProjectSkillsObject = {}) {
     super();
 
     this.types = this.getProjectTypes(data.types);
@@ -106,6 +106,13 @@ class ProjectSkills extends Model {
     }
 
     return new Taxonomy();
+  }
+
+  set(skills: ProjectSkills){
+    this.frameworks = skills.frameworks;
+    this.languages = skills.languages;
+    this.technologies = skills.technologies;
+    this.types = skills.types;
   }
 
   show(skillsUsed: ProjectSkills): ProjectSkills {

@@ -13,38 +13,41 @@ import Owner from './Owner';
 import Feature from './Feature';
 
 import { DocumentData } from 'firebase/firestore';
+import ProjectSkills from './ProjectSkills';
+import ProjectURL from './ProjectURL';
+import ProjectStatus from './ProjectStatus';
 
 export type ProjectObject = {
   id: string;
-  owner: Record<string, any>;
   title: string;
   description: string;
   solution: ProjectSolutionObject;
   process: ProjectProcessObject;
   problem: ProjectProblemObject;
+  owner: Record<string, any>;
   details: ProjectDetailsObject;
 };
 
 class Project extends Model {
   id: string;
-  owner: Owner;
   title: string;
   description: string;
   solution: ProjectSolution;
   process: ProjectProcess;
   problem: ProjectProblem;
+  owner: Owner;
   details: ProjectDetails;
 
   constructor(data: Record<string, any> | ProjectObject = {}) {
     super();
 
     this.id = data?.id;
-    this.owner = new Owner(data?.owner);
     this.title = data?.title ? data.title : this.getTitle(data?.id);
     this.description = data?.description ?? 'No Description Provided.';
     this.solution = new ProjectSolution(data?.solution);
     this.process = new ProjectProcess(data?.process);
     this.problem = new ProjectProblem(data?.problem);
+    this.owner = new Owner(data?.owner);
     this.details = new ProjectDetails(data?.details);
   }
 
@@ -86,32 +89,52 @@ class Project extends Model {
   }
 
   fromRepo(repo: Repo) {
+    const owner = new Owner(repo.owner);
+    const solution = new ProjectSolution();
+    const process = new ProjectProcess();
+    const problem = new ProjectProblem();
+    const details = new ProjectDetails();
+
+    const projectURLs = new ProjectURLs();
+    projectURLs.homepage = new ProjectURL({ url: repo.homepage });
+
+    solution.projectURLs = projectURLs;
+    solution.contentURL = repo.contents.solution.downloadURL;
+
+    const status = new ProjectStatus();
+    const design = new ProjectDesign();
+    const development = new ProjectDevelopment();
+    const delivery = new ProjectDelivery();
+
+    status.createdAt = repo.createdAt;
+    status.updatedAt = repo.updatedAt;
+
+    design.contentURL = repo.contents.design.downloadURL;
+
+    development.contentURL = repo.contents.development.downloadURL;
+    development.skills = new ProjectSkills(repo.skills);
+    development.repoURL = repo.repoURL;
+
+    process.status = status;
+    process.design = design;
+    process.development = development;
+    process.delivery = delivery;
+
+    delivery.contentURL = repo.contents.delivery.downloadURL;
+
+    problem.contentURL = repo.contents.problem?.downloadURL;
+
+    details.teamList = repo.contributors.users;
+
     this.id = repo.id;
-    this.owner = repo.owner;
     this.title = this.title ? this.title : this.getTitle(this.id);
     this.description =
       repo.description !== '' ? repo.description : 'No Description Provided.';
-    this.solution.projectURLs.homepage.url = repo.homepage;
-    this.solution.contentURL = repo.contents.solution
-      ? repo.contents.solution.downloadURL
-      : null;
-    this.process.status.createdAt = repo.createdAt;
-    this.process.status.updatedAt = repo.updatedAt;
-    this.process.design.contentURL = repo.contents.design
-      ? repo.contents.design.downloadURL
-      : null;
-    this.process.development.contentURL = repo.contents.development
-      ? repo.contents.development.downloadURL
-      : '';
-    this.process.development.repoURL = repo.repoURL;
-    this.process.development.setSkills(repo.skills);
-    this.process.delivery.contentURL = repo.contents.delivery
-      ? repo.contents.delivery.downloadURL
-      : null;
-    this.problem.contentURL = repo.contents.problem
-      ? repo.contents.problem.downloadURL
-      : null;
-    this.details.teamList = repo.contributors.users;
+    this.solution = solution;
+    this.process = process;
+    this.problem = problem;
+    this.owner = owner;
+    this.details = details;
   }
 
   fromDocumentData(data: DocumentData) {

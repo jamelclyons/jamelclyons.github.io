@@ -1,5 +1,9 @@
 import Model from './Model';
-import User from './User';
+import User, { UserObject } from './User';
+
+export interface ContributorsObject {
+  users: Array<UserObject>;
+}
 
 class Contributors extends Model {
   users: Array<User>;

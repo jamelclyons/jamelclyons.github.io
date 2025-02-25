@@ -1,5 +1,13 @@
 import Model from './Model';
-import Image from './Image';
+import Image, { ImageObject } from './Image';
+
+export interface ContactObject {
+  id: string;
+  title: string;
+  url: string;
+  image: ImageObject;
+  value: string;
+}
 
 class Contact extends Model {
   id: string;
@@ -16,7 +24,7 @@ class Contact extends Model {
     value: string
   ) {
     super();
-    
+
     this.id = id;
     this.title = title;
     this.url = url;

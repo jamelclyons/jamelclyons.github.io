@@ -45,6 +45,7 @@ class ProjectDevelopment extends Model {
   }
 
   setSkills(skills: ProjectSkills) {
+    console.log(skills)
     this.skills = skills;
   }
 }

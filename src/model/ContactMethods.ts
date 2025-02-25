@@ -1,7 +1,20 @@
 import Model from './Model';
-import Contact from './Contact';
+import Contact, { ContactObject } from './Contact';
 import Image from './Image';
+
 import * as user from '../../user.json';
+
+export interface ContactMethodsObject {
+  hackerRank: ContactObject;
+  linkedin: ContactObject;
+  x: ContactObject;
+  instagram: ContactObject;
+  github: ContactObject;
+  youtube: ContactObject;
+  website: ContactObject;
+  email: ContactObject;
+  phone: ContactObject;
+}
 
 class ContactMethods extends Model {
   hackerRank: Contact;

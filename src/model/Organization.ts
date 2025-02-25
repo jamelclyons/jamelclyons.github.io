@@ -6,6 +6,26 @@ import user from '../../user.json';
 
 import GitHubRepoQuery from './GitHubRepoQuery';
 
+export interface OrganizationObject extends Model {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  avatarURL: string;
+  login: string;
+  description: string;
+  name: string;
+  company: string;
+  blog: string;
+  location: string;
+  email: string;
+  url: string;
+  github: string;
+  contactMethods: ContactMethods;
+  reposURL: string;
+  repos: Repos;
+  repoQueries: Array<GitHubRepoQuery>;
+}
+
 class Organization extends Model {
   id: string;
   createdAt: string;
@@ -70,7 +90,6 @@ class Organization extends Model {
       };
     });
   }
-
 
   getReposFromGitHub(data: Array<Record<string, any>>) {
     const repos = new Repos();

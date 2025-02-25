@@ -1,27 +1,29 @@
-import RepoContent from './RepoContent';
+import RepoContent, { RepoContentObject } from './RepoContent';
 import Model from './Model';
 
+export interface RepoContentsObject {
+  solution: RepoContentObject;
+  design: RepoContentObject;
+  development: RepoContentObject;
+  delivery: RepoContentObject;
+  problem: RepoContentObject;
+}
 class RepoContents extends Model {
-  solution: RepoContent | null;
-  design: RepoContent | null;
-  development: RepoContent | null;
-  delivery: RepoContent | null;
-  problem: RepoContent | null;
+  solution: RepoContent;
+  design: RepoContent;
+  development: RepoContent;
+  delivery: RepoContent;
+  problem: RepoContent;
 
-  constructor(
-    solution?: RepoContent,
-    design?: RepoContent,
-    development?: RepoContent,
-    delivery?: RepoContent,
-    problem?: RepoContent
+  constructor(data: Record<string, any> | RepoContentsObject = {}
   ) {
     super();
 
-    this.solution = solution ?? null;
-    this.design = design ?? null;
-    this.development = development ?? null;
-    this.delivery = delivery ?? null;
-    this.problem = problem ?? null;
+    this.solution = data?.solution ? new RepoContent(data.solution) : new RepoContent();
+    this.design = data?.design ? new RepoContent(data.design) : new RepoContent();
+    this.development = data?.development ? new RepoContent(data.development) : new RepoContent();
+    this.delivery = data?.delivery ? new RepoContent(data.delivery) : new RepoContent();
+    this.problem = data?.problem ? new RepoContent(data.problem) : new RepoContent();
   }
 
   setSolution(solution: RepoContent) {

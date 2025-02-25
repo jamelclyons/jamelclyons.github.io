@@ -1,6 +1,18 @@
 import Model from './Model';
 import * as UserJSON from '../../user.json';
 
+export interface OwnerObject {
+  id: string;
+  type: string;
+  login: string;
+  name: string;
+  company: string;
+  email: string;
+  avatar_url: string;
+  url: string;
+  repos_url: string;
+}
+
 class Owner extends Model {
   id: string;
   type: string;
@@ -12,7 +24,7 @@ class Owner extends Model {
   url: string;
   reposURL: string;
 
-  constructor(data: Record<string, any> = {}) {
+  constructor(data: Record<string, any> | OwnerObject = {}) {
     super();
 
     this.id = data?.id ?? '0';
