@@ -32,6 +32,13 @@ class ProjectSkills extends Model {
     this.count = this.getCount();
   }
 
+  add(skills: ProjectSkills) {
+    this.types = new Set([...this.types, ...skills.types]);
+    this.languages = new Set([...this.languages, ...skills.languages]);
+    this.frameworks = new Set([...this.frameworks, ...skills.frameworks]);
+    this.technologies = new Set([...this.technologies, ...skills.technologies]);
+  }
+
   getProjectTypes(data: Array<Record<string, any>> = []) {
     let types: Set<ProjectType> = new Set();
 
@@ -108,7 +115,7 @@ class ProjectSkills extends Model {
     return new Taxonomy();
   }
 
-  set(skills: ProjectSkills){
+  set(skills: ProjectSkills) {
     this.frameworks = skills.frameworks;
     this.languages = skills.languages;
     this.technologies = skills.technologies;

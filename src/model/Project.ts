@@ -2,20 +2,15 @@ import Model from './Model';
 import ProjectSolution, { ProjectSolutionObject } from './ProjectSolution';
 import ProjectURLs from './ProjectURLs';
 import ProjectProcess, { ProjectProcessObject } from './ProjectProcess';
-import ProjectDesign from './ProjectDesign';
-import ProjectDevelopment from './ProjectDevelopment';
-import ProjectDelivery from './ProjectDelivery';
 import ProjectProblem, { ProjectProblemObject } from './ProjectProblem';
 import ProjectDetails, { ProjectDetailsObject } from './ProjectDetails';
+import ProjectSkills from './ProjectSkills';
+import ProjectVersions from './ProjectVersions';
 import Repo from './Repo';
-import Gallery from './Gallery';
 import Owner from './Owner';
 import Feature from './Feature';
 
 import { DocumentData } from 'firebase/firestore';
-import ProjectSkills from './ProjectSkills';
-import ProjectURL from './ProjectURL';
-import ProjectStatus from './ProjectStatus';
 
 export type ProjectObject = {
   id: string;
@@ -89,88 +84,91 @@ class Project extends Model {
   }
 
   fromRepo(repo: Repo) {
-    const owner = new Owner(repo.owner);
-    const solution = new ProjectSolution();
-    const process = new ProjectProcess();
-    const problem = new ProjectProblem();
-    const details = new ProjectDetails();
-
-    const projectURLs = new ProjectURLs();
-    projectURLs.homepage = new ProjectURL({ url: repo.homepage });
-
-    solution.projectURLs = projectURLs;
-    solution.contentURL = repo.contents.solution.downloadURL;
-
-    const status = new ProjectStatus();
-    const design = new ProjectDesign();
-    const development = new ProjectDevelopment();
-    const delivery = new ProjectDelivery();
-
-    status.createdAt = repo.createdAt;
-    status.updatedAt = repo.updatedAt;
-
-    design.contentURL = repo.contents.design.downloadURL;
-
-    development.contentURL = repo.contents.development.downloadURL;
-    development.skills = new ProjectSkills(repo.skills);
-    development.repoURL = repo.repoURL;
-
-    process.status = status;
-    process.design = design;
-    process.development = development;
-    process.delivery = delivery;
-
-    delivery.contentURL = repo.contents.delivery.downloadURL;
-
-    problem.contentURL = repo.contents.problem?.downloadURL;
-
-    details.teamList = repo.contributors.users;
-
     this.id = repo.id;
-    this.title = this.title ? this.title : this.getTitle(this.id);
-    this.description =
-      repo.description !== '' ? repo.description : 'No Description Provided.';
-    this.solution = solution;
-    this.process = process;
-    this.problem = problem;
-    this.owner = owner;
-    this.details = details;
+
+    this.description = repo.description;
+
+    this.solution.projectURLs.homepage.url = repo.homepage;
+    this.solution.contentURL = repo.contents.solution.downloadURL;
+
+    this.process.status.createdAt = repo.createdAt;
+    this.process.status.updatedAt = repo.updatedAt;
+
+    this.process.design.contentURL = repo.contents.design.downloadURL;
+
+    this.process.development.contentURL = repo.contents.development.downloadURL;
+    this.process.development.skills.add(repo.skills);
+    this.process.development.repoURL = repo.repoURL;
+
+    this.process.delivery.contentURL = repo.contents.delivery.downloadURL;
+
+    this.problem.contentURL = repo.contents.problem?.downloadURL;
+
+    this.owner = new Owner(repo.owner);
+
+    this.details.teamList = repo.contributors.users;
   }
 
   fromDocumentData(data: DocumentData) {
-    this.id = data?.id ? data.id : this.id;
     this.title = data?.title ? data.title : this.id;
-    this.solution.gallery = data?.solution?.gallery
-      ? new Gallery(data.solution.gallery)
-      : new Gallery();
-    this.solution.currency = data?.solution?.currency
-      ? data.solution.currency
-      : 'USD';
-    this.solution.features =
-      Array.isArray(data?.solution?.features) &&
-      data?.solution?.features.length > 0
-        ? this.setFeatures(data.solution.features)
-        : new Set();
-    this.solution.price = data?.solution?.price ? data.solution.price : 0;
-    this.solution.projectURLs = data?.solution?.urlsList
-      ? new ProjectURLs(data.solution.urlsList)
-      : new ProjectURLs();
-    this.process.status.progress = data?.process?.status?.progress ?? '0';
-    this.process.design = data?.process?.design
-      ? new ProjectDesign(data.process.design)
-      : new ProjectDesign();
-    this.process.development = data?.process?.development
-      ? new ProjectDevelopment(data.process.development)
-      : new ProjectDevelopment();
-    this.process.delivery = data?.process?.delivery
-      ? new ProjectDelivery(data.process.delivery)
-      : new ProjectDelivery();
-    this.problem = data?.problem
-      ? new ProjectProblem(data.problem)
-      : new ProjectProblem();
-    this.details = data?.details
-      ? new ProjectDetails(data.details)
-      : new ProjectDetails();
+
+    this.description = data?.description ? data.description : this.description;
+
+    this.solution.gallery = data?.solution?.gallery;
+    this.solution.features = data?.solution?.features;
+    this.solution.contentURL = data?.solution?.content_url;
+    this.solution.currency = data?.solution?.currency;
+    this.solution.price = data?.solution?.price;
+    this.solution.projectURLs = data?.project_urls
+      ? new ProjectURLs(data.project_urls)
+      : this.solution.projectURLs;
+
+    this.process.status.progress = data?.process?.status?.progress
+      ? data?.process?.status?.progress
+      : '0';
+
+    this.process.design.gallery = data?.process?.design?.gallery;
+    this.process.design.checkList = data?.process?.design?.check_list;
+    this.process.design.colorsList = data?.process?.design?.colors_list;
+    this.process.design.contentURL = data?.process?.design?.content_url;
+
+    this.process.development.repoURL = data?.process?.development?.repo_url;
+    this.process.development.contentURL =
+      data?.process?.development?.content_url;
+    this.process.development.skills.add(
+      new ProjectSkills(data?.process?.development?.skills)
+    );
+    this.process.development.checkList = data?.process?.development?.check_list;
+    this.process.development.versionsList = data?.versions_list
+      ? new ProjectVersions(data.versions_list)
+      : this.process.development.versionsList;
+
+    this.process.delivery.checkList = data?.process?.delivery?.check_list;
+    this.process.delivery.gallery = data?.process?.delivery?.gallery;
+    this.process.delivery.contentURL = data?.process?.delivery?.content_url;
+
+    this.problem.contentURL = data?.process?.problem?.content_url;
+    this.problem.gallery = data?.problem?.gallery;
+
+    this.owner = new Owner(data.owner);
+
+    this.owner.id = data?.owner?.id ?? this.owner.id;
+    this.owner.type = data?.owner?.type ?? this.owner.type;
+    this.owner.login = data?.owner?.login ?? this.owner.login;
+    this.owner.name = data?.owner?.name ?? this.owner.name;
+    this.owner.company = data?.owner?.company ?? this.owner.company;
+    this.owner.email = data?.owner?.email ?? this.owner.email;
+    this.owner.avatarURL = data?.owner?.avatar_url ?? this.owner.avatarURL;
+    this.owner.url = data?.owner?.url ?? this.owner.url;
+    this.owner.reposURL = data?.owner?.repos_url ?? this.owner.reposURL;
+
+    this.details.privacy = data?.details?.privacy ? data.details.privacy : this.details.privacy;
+    this.details.clientID = data?.details?.client_id ? data.details.client_id : this.details.clientID;
+    this.details.clientName = data?.details?.client_name ? data.details.client_name : this.details.clientName;
+    this.details.startDate = data?.details?.start_date ? data.details.start_date : this.details.startDate;
+    this.details.endDate = data?.details?.end_date ? data.details.end_date : this.details.endDate;
+    this.details.content = data?.details?.content ? data.details.content : this.details.content;
+    this.details.teamList = data?.details?.team_list ? this.details.getTeamList(data.team_list) : this.details.teamList;
   }
 
   toObject(): Record<string, any> {

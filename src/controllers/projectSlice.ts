@@ -5,7 +5,7 @@ import { getProjectData } from './databaseSlice';
 
 import Repo from '@/model/Repo';
 import GitHubRepoQuery from '@/model/GitHubRepoQuery';
-import Project from '@/model/Project';
+import Project, { ProjectObject } from '@/model/Project';
 
 interface ProjectState {
   projectLoading: boolean;
@@ -13,7 +13,7 @@ interface ProjectState {
   projectError: Error | null;
   projectErrorMessage: string;
   projectObject: Record<string, any> | null;
-  projectPageObject: Record<string, any> | null;
+  projectPageObject: ProjectObject | null;
 }
 
 const initialState: ProjectState = {

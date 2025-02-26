@@ -54,22 +54,23 @@ export const updateProject = createAsyncThunk(
   'update/updateProject',
   async (project: Project) => {
     try {
-      const headers: SecureHeaders = await addSecureHeaders();
+      console.log(project)
+      // const headers: SecureHeaders = await addSecureHeaders();
 
-      if (headers.errorMessage) {
-        return headers;
-      }
+      // if (headers.errorMessage) {
+      //   return headers;
+      // }
 
-      const response = await fetch(`${api}/project/${project.id}`, {
-        method: 'POST',
-        headers:
-          headers instanceof SecureHeaders
-            ? new Headers(headers.toObject())
-            : {},
-        body: JSON.stringify(project.toObject()),
-      });
+      // const response = await fetch(`${api}/project/${project.id}`, {
+      //   method: 'POST',
+      //   headers:
+      //     headers instanceof SecureHeaders
+      //       ? new Headers(headers.toObject())
+      //       : {},
+      //   body: JSON.stringify(project.toObject()),
+      // });
 
-      return await response.json();
+      // return await response.json();
     } catch (error) {
       const err = error as Error;
       console.error(err);
