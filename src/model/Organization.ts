@@ -2,7 +2,7 @@ import Model from './Model';
 import ContactMethods from './ContactMethods';
 import Repos from './Repos';
 
-import user from '../../user.json';
+import * as organization from '../../organization.json';
 
 import GitHubRepoQuery from './GitHubRepoQuery';
 
@@ -48,25 +48,26 @@ class Organization extends Model {
   constructor(data: Record<string, any> = {}) {
     super();
 
-    const { company } = user;
+    const { name, company, founded_on, location, website, contact, repos_url } =
+      organization;
 
     this.id = data?.id;
-    this.createdAt = data?.created_at;
+    this.createdAt = founded_on ?? data?.created_at;
     this.updatedAt = data?.updated_at;
     this.login = data?.login;
     this.avatarURL = data?.avatar_url;
     this.description = data?.description;
-    this.name = data?.name;
-    this.company = data?.company || company;
-    this.blog = data?.blog ? data.blog : '';
-    this.location = data?.location;
-    this.email = data?.email;
+    this.name = name ?? data?.name;
+    this.company = company ?? data?.company;
+    this.blog = data?.blog ? data.blog : website;
+    this.location = location ?? data?.location;
+    this.email = contact.email.value ?? data?.email;
     this.url = data?.url;
     this.github = data?.github;
-    this.contactMethods = new ContactMethods(data?.contact_methods);
-    this.contactMethods.setContactEmail(this.email);
-    this.contactMethods.setContactWebsite(this.blog);
-    this.reposURL = data?.repos_url;
+    this.contactMethods = contact ? new ContactMethods(contact) : new ContactMethods(data?.contact_methods);
+    this.contactMethods.setContactEmail({ value: this.email });
+    this.contactMethods.setContactWebsite({ url: this.blog });
+    this.reposURL = repos_url ?? data?.repos_url;
     this.repos = data?.repos ? new Repos(data.repos) : new Repos();
     this.repoQueries = this.setRepoQueries(data?.repo_queries);
   }

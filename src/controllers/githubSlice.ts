@@ -412,9 +412,11 @@ export const getAuthenticatedAccount = createAsyncThunk(
           contactMethods = {
             ...contactMethodsObject,
             website: user.contactMethods
-              .setContactWebsite(user.website)
+              .setContactWebsite({ url: user.website })
               .toObject(),
-            email: user.contactMethods.setContactEmail(user.email).toObject(),
+            email: user.contactMethods
+              .setContactEmail({ value: user.email })
+              .toObject(),
           };
         }
 
@@ -486,9 +488,11 @@ export const getUserAccount = createAsyncThunk(
           contactMethods = {
             ...contactMethodsObject,
             website: user.contactMethods
-              .setContactWebsite(user.website)
+              .setContactWebsite({ url: user.website })
               .toObject(),
-            email: user.contactMethods.setContactEmail(user.email).toObject(),
+            email: user.contactMethods
+              .setContactEmail({ value: user.email })
+              .toObject(),
           };
         }
 
@@ -587,10 +591,10 @@ export const getOrganizationDetails = createAsyncThunk(
           contactMethods = {
             ...contactMethodsObject,
             website: organization.contactMethods
-              .setContactWebsite(organization.blog)
+              .setContactWebsite({ url: organization.blog })
               .toObject(),
             email: organization.contactMethods
-              .setContactEmail(organization.email)
+              .setContactEmail({ value: organization.email })
               .toObject(),
           };
         }

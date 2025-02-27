@@ -6,16 +6,32 @@
         "name": "J.C. LYONS ENTERPRISES LLC",
         "founded_on": "06/16/2010"
     },
-    "website": "https://jamelclyons.github.io",
+    "website": "https://jamelclyons.dev",
     "contact": {
-        "hacker_rank": "https://www.hackerrank.com/profile/jamelclyons",
-        "gitHub": "https://github.com/jamelclyons",
-        "linkedIn": "https://www.linkedin.com/in/jamelclyons/",
-        "x": "https://x.com/jamelclyons",
-        "instagram": "https://www.instagram.com/jamelclyons/",
-        "youtube": "https://www.youtube.com/jamelclyons",
-        "phone": "+16145003703",
-        "email": "jamel.c.lyons@gmail.com"
+        "hacker_rank": {
+            "url": "https://www.hackerrank.com/profile/jamelclyons"
+        },
+        "github": {
+            "url": "https://github.com/jamelclyons"
+        },
+        "linked_in": {
+            "url": "https://www.linkedin.com/in/jamelclyons/"
+        },
+        "x": {
+            "url": "https://x.com/jamelclyons"
+        },
+        "instagram": {
+            "url": "https://www.instagram.com/jamelclyons/"
+        },
+        "youtube": {
+            "url": "https://www.youtube.com/jamelclyons"
+        },
+        "phone": {
+            "value": "+16145003703"
+        },
+        "email": {
+            "value": "jamelclyons@jamelclyons.dev"
+        }
     },
     "resume": "https://drive.google.com/file/d/1iQPEk0bZww8zEI3dyqG8Lou03CyuZU4N/preview",
     "repos": ""

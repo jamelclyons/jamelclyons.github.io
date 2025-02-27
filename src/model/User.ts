@@ -55,19 +55,17 @@ class User extends Model {
 
     const { name, title, website, contact, resume, avatar_url } = user;
 
-    const { email, phone } = contact;
-
     this.id = data?.id;
     this.login = data?.login;
     this.avatarURL = data?.avatar_url || avatar_url;
     this.name = data?.name || name;
     this.title = data?.title || title;
     this.bio = data?.bio;
-    this.email = data?.email || email;
-    this.phone = data?.phone || phone;
+    this.email = data?.email || contact.email;
+    this.phone = data?.phone || contact.phone;
     this.resume = data?.resume || resume;
     this.website = data?.website || website;
-    this.contactMethods = new ContactMethods(data?.contact_methods ?? contact);
+    this.contactMethods = contact ? new ContactMethods(contact) : new ContactMethods(data.contact_methods);
     this.images = data?.images || '';
     this.organizationsURL = data?.organizations_url;
     this.organizations = data?.organizations

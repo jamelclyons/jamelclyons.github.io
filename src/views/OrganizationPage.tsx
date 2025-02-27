@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import PortfolioComponent from './components/portfolio/PortfolioComponent';
-import HeaderOrganizationComponent from './components/HeaderOrganizationComponent';
+import OrganizationComponent from './components/OrganizationComponent';
 import ContactBar from './components/ContactBar';
 
 import { getOrganization } from '@/controllers/organizationSlice';
@@ -42,7 +42,7 @@ const OrganizationPage: React.FC = () => {
     return (
         <section className='organization' id='top'>
             <>
-                {organization && <HeaderOrganizationComponent organization={organization} />}
+                {organization && <OrganizationComponent organization={organization} />}
 
                 {organization && <ContactBar contactMethods={organization.contactMethods} location='' />}
 
