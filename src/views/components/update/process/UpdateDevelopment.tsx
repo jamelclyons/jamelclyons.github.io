@@ -177,7 +177,7 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) 
 
       <br />
 
-      <UpdateProjectVersions projectVersions={projectVersions} />
+      <UpdateProjectVersions projectVersionsObject={projectVersions} />
 
       <hr />
 

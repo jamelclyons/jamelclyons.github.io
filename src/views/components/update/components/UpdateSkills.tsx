@@ -130,7 +130,7 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ skillsObject }) => {
 
   return (
     <>
-      <h3 className="title">update skills</h3>
+      <h3>Update Skills</h3>
 
       <div className="project-selection">
         <label htmlFor="options">Choose Project Types:</label>

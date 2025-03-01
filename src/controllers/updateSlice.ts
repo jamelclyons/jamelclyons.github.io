@@ -429,8 +429,8 @@ export const updateCheckList = createAsyncThunk(
   }
 );
 
-export const updateVersionsList = createAsyncThunk(
-  'update/updateVersionsList',
+export const updateVersions = createAsyncThunk(
+  'update/updateVersions',
   async (versions: ProjectVersions) => {
     try {
       return versions.toObject();
@@ -478,13 +478,13 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
         state.updateLoading = false;
         state.updatedVersionsList = action.payload;
       })
-      .addCase(updateVersionsList.pending, (state) => {
+      .addCase(updateVersions.pending, (state) => {
         state.updateLoading = true;
         state.updateError = null;
         state.updateErrorMessage = '';
         state.updateLoadingMessage = 'Version list updated';
       })
-      .addCase(updateVersionsList.fulfilled, (state, action) => {
+      .addCase(updateVersions.fulfilled, (state, action) => {
         state.updateLoading = false;
         state.updatedVersionsList = action.payload;
       })

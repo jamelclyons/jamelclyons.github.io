@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } from 'react';
+import React, { useEffect, useState, ChangeEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '@/model/store';
@@ -114,9 +114,7 @@ const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLsObject }
 
     return (
         <>
-            <h2 className="title">
-                project urls
-            </h2>
+            <h3>Project URLs</h3>
 
             <div className="form-item-flex">
                 <label htmlFor="homepage_url">{homepage.name}:</label>
