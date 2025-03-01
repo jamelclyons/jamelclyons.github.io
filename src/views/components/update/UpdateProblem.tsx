@@ -22,7 +22,7 @@ interface UpdateProblemProps {
 const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { updatedGallery } = useSelector(
+  const { updatedProblemGallery } = useSelector(
     (state: RootState) => state.update
   );
 
@@ -39,10 +39,10 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectObject }) => {
   }, [problem.gallery, setGallery]);
 
   useEffect(() => {
-    if (updatedGallery) {
-      setGallery({ logos: updatedGallery?.logos ?? [], icons: updatedGallery?.logos ?? [], animations: updatedGallery?.animations ?? [], uml_diagrams: updatedGallery?.uml_diagrams ?? [] });
+    if (updatedProblemGallery) {
+      setGallery({ logos: updatedProblemGallery?.logos ?? [], icons: updatedProblemGallery?.logos ?? [], animations: updatedProblemGallery?.animations ?? [], uml_diagrams: updatedProblemGallery?.uml_diagrams ?? [] });
     }
-  }, [updatedGallery, setGallery]);
+  }, [updatedProblemGallery, setGallery]);
 
   const handleProblemContentURLChange = (e: ChangeEvent<HTMLInputElement>) => {
     try {
@@ -92,7 +92,7 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectObject }) => {
 
       <div className="update" id="update_problem">
 
-        <UpdateGallery gallery={projectObject.problem.gallery} />
+        <UpdateGallery location='problem' gallery={gallery} />
 
         <hr />
 

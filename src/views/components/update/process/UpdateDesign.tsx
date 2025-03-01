@@ -16,6 +16,7 @@ import { updateProject } from '../../../../controllers/updateSlice';
 import UpdateCheckList from '../components/UpdateCheckList';
 import UpdateGallery from '../components/UpdateGallery';
 import UpdateColorsList from '../components/UpdateColorsList';
+import { GalleryObject } from '@/model/Gallery';
 
 interface UpdateDesignProps {
   projectObject: ProjectObject;
@@ -23,6 +24,10 @@ interface UpdateDesignProps {
 
 const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
+
+  const { updatedDesignGallery } = useSelector(
+    (state: RootState) => state.update
+  );
 
   const [design, setDesign] = useState<ProjectDesignObject>(projectObject.process.design);
   const [checkList, setCheckList] = useState(projectObject.process.design.check_list);
@@ -39,6 +44,12 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectObject }) => {
   useEffect(() => { setGallery(design.gallery) }, [design.gallery, setGallery]);
 
   useEffect(() => { setColorsList(design.colors_list) }, [design.colors_list, setColorsList]);
+
+  useEffect(() => {
+    if (updatedDesignGallery) {
+      setGallery(updatedDesignGallery)
+    }
+  }, [updatedDesignGallery, setGallery]);
 
   const handleDesignContentURLChange = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
@@ -90,7 +101,7 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectObject }) => {
 
     <UpdateCheckList checkList={checkList} />
 
-    <UpdateGallery gallery={gallery} />
+    <UpdateGallery location='design' gallery={gallery} />
 
     <UpdateColorsList colors={colorsList} />
 

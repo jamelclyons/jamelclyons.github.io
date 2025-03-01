@@ -21,6 +21,15 @@ class Image extends Model {
     this.url = data?.url || '';
     this.className = data?.class_name || '';
   }
+
+  toImageObject(): ImageObject {
+    return {
+      id: this.id,
+      title: this.title,
+      url: this.url,
+      class_name: this.className,
+    };
+  }
 }
 
 export default Image;

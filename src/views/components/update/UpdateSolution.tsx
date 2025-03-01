@@ -26,7 +26,7 @@ interface UpdateSolutionProps {
 const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { updatedGallery, updatedFeatures, updatedProjectURLs } = useSelector(
+  const { updatedSolutionGallery, updatedFeatures, updatedProjectURLs } = useSelector(
     (state: RootState) => state.update
   );
 
@@ -62,10 +62,10 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
   }, [updatedFeatures, setFeatures]);
 
   useEffect(() => {
-    if (updatedGallery) {
-      setGallery({ logos: updatedGallery?.logos ?? [], icons: updatedGallery?.logos ?? [], animations: updatedGallery?.animations ?? [], uml_diagrams: updatedGallery?.uml_diagrams ?? [] });
+    if (updatedSolutionGallery) {
+      setGallery(updatedSolutionGallery);
     }
-  }, [updatedGallery, setGallery]);
+  }, [updatedSolutionGallery, setGallery]);
 
   useEffect(() => {
     if (updatedProjectURLs) {
@@ -165,6 +165,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
         currency: currency,
         price: price,
       };
+      console.log(updatedSolution)
 
       const updatedProject: ProjectObject = {
         ...projectObject,

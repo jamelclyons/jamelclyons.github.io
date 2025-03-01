@@ -48,6 +48,14 @@ const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLsObject }
 
             if (name === 'homepage_url') {
                 setHomepage({ ...homepage, url: value });
+
+                const updatedProjectURLs: ProjectURLsObject = {
+                    homepage: { ...homepage, url: value },
+                    ios: ios,
+                    android: android
+                };
+
+                dispatch(updateProjectURLs(new ProjectURLs(updatedProjectURLs)));
             }
         } catch (error) {
             const err = error as Error;
@@ -64,6 +72,14 @@ const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLsObject }
 
             if (name === 'ios_url') {
                 setIos({ ...ios, url: value });
+
+                const updatedProjectURLs: ProjectURLsObject = {
+                    homepage: homepage,
+                    ios: { ...ios, url: value },
+                    android: android
+                };
+
+                dispatch(updateProjectURLs(new ProjectURLs(updatedProjectURLs)));
             }
         } catch (error) {
             const err = error as Error;
@@ -80,30 +96,19 @@ const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLsObject }
 
             if (name === 'android_url') {
                 setAndroid({ ...android, url: value });
+
+                const updatedProjectURLs: ProjectURLsObject = {
+                    homepage: homepage,
+                    ios: ios,
+                    android: { ...android, url: value }
+                };
+
+                dispatch(updateProjectURLs(new ProjectURLs(updatedProjectURLs)));
             }
         } catch (error) {
             const err = error as Error;
             dispatch(setMessage(err.message));
             dispatch(setMessageType('error'));
-        }
-    };
-
-    const handleUpdateProjectURLs = async (e: MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-
-        try {
-            const updatedProjectURLs: ProjectURLsObject = {
-                homepage: homepage,
-                ios: ios,
-                android: android
-            };
-
-            dispatch(updateProjectURLs(new ProjectURLs(updatedProjectURLs)));
-        } catch (error) {
-            const err = error as Error;
-            dispatch(setMessageType('error'));
-            dispatch(setMessage(err.message));
-            dispatch(setShowStatusBar(Date.now()));
         }
     };
 
@@ -120,17 +125,13 @@ const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLsObject }
 
             <div className="form-item-flex">
                 <label htmlFor="ios_url">{ios.name}:</label>
-                <input type="text" id="ios" value={ios.url ?? ''} placeholder={ios.description} name='ios_url' onChange={handleIosChange}/>
+                <input type="text" id="ios" value={ios.url ?? ''} placeholder={ios.description} name='ios_url' onChange={handleIosChange} />
             </div>
 
             <div className="form-item-flex">
                 <label htmlFor="android_url">{android.name}:</label>
-                <input type="text" id="android" value={android.url ?? ''} placeholder={android.description} name='android_url' onChange={handleAndroidChange}/>
+                <input type="text" id="android" value={android.url ?? ''} placeholder={android.description} name='android_url' onChange={handleAndroidChange} />
             </div>
-
-            <button onClick={handleUpdateProjectURLs}>
-                <h3>UPDATE PROJECT URLS</h3>
-            </button>
         </>
     )
 }

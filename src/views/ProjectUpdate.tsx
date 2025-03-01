@@ -27,7 +27,7 @@ const ProjectUpdate: React.FC = () => {
 
     const { login, projectID } = useParams();
 
-    const { updateLoading, updateLoadingMessage, updateErrorMessage, updateSuccessMessage, updateStatusCode } = useSelector(
+    const { updateLoading, updateLoadingMessage, updateErrorMessage, updateSuccessMessage, updateStatusCode, updatedProjectURLs } = useSelector(
         (state: RootState) => state.update
     );
     const { databaseLoading, databaseLoadingMessage, databaseStatusCode, databaseErrorMessage, projectDataObject } = useSelector(
@@ -165,12 +165,12 @@ const ProjectUpdate: React.FC = () => {
         }
     }, [dispatch, id]);
 
-    useEffect(() => {
-        if (databaseLoading && databaseLoadingMessage) {
-            dispatch(setMessage(databaseLoadingMessage));
-            dispatch(setMessageType('info'));
-        }
-    }, [databaseLoading, dispatch]);
+    // useEffect(() => {
+    //     if (databaseLoading && databaseLoadingMessage) {
+    //         dispatch(setMessage(databaseLoadingMessage));
+    //         dispatch(setMessageType('info'));
+    //     }
+    // }, [databaseLoading, dispatch]);
 
     useEffect(() => {
         if (projectDataObject) {
@@ -297,37 +297,37 @@ const ProjectUpdate: React.FC = () => {
         }
     }, [projectObject, setProject]);
 
-    useEffect(() => {
-        if (databaseErrorMessage) {
-            dispatch(setMessageType('error'));
-            dispatch(setMessage(databaseErrorMessage));
-            dispatch(setShowStatusBar(Date.now));
-        }
-    }, [dispatch, databaseErrorMessage]);
+    // useEffect(() => {
+    //     if (databaseErrorMessage) {
+    //         dispatch(setMessageType('error'));
+    //         dispatch(setMessage(databaseErrorMessage));
+    //         dispatch(setShowStatusBar(Date.now));
+    //     }
+    // }, [dispatch, databaseErrorMessage]);
 
-    useEffect(() => {
-        if (updateLoading && updateLoadingMessage) {
-            dispatch(setMessage(updateLoadingMessage));
-            dispatch(setMessageType('info'));
-        }
-    }, [updateLoading, dispatch]);
+    // useEffect(() => {
+    //     if (updateLoading && updateLoadingMessage) {
+    //         dispatch(setMessage(updateLoadingMessage));
+    //         dispatch(setMessageType('info'));
+    //     }
+    // }, [updateLoading, dispatch]);
 
-    useEffect(() => {
-        if (updateErrorMessage) {
-            dispatch(setMessage(updateErrorMessage));
-            dispatch(setMessageType('error'));
-            dispatch(setShowStatusBar(Date.now()));
+    // useEffect(() => {
+    //     if (updateErrorMessage) {
+    //         dispatch(setMessage(updateErrorMessage));
+    //         dispatch(setMessageType('error'));
+    //         dispatch(setShowStatusBar(Date.now()));
 
-        }
-    }, [updateErrorMessage, dispatch]);
+    //     }
+    // }, [updateErrorMessage, dispatch]);
 
-    useEffect(() => {
-        if (updateSuccessMessage) {
-            dispatch(setMessage(updateSuccessMessage));
-            dispatch(setMessageType('success'));
-            dispatch(setShowStatusBar(Date.now()));
-        }
-    }, [updateSuccessMessage, dispatch]);
+    // useEffect(() => {
+    //     if (updateSuccessMessage) {
+    //         dispatch(setMessage(updateSuccessMessage));
+    //         dispatch(setMessageType('success'));
+    //         dispatch(setShowStatusBar(Date.now()));
+    //     }
+    // }, [updateSuccessMessage, dispatch]);
 
     useEffect(() => {
         if (updateStatusCode === 403 || databaseStatusCode === 403) {
@@ -395,19 +395,19 @@ const ProjectUpdate: React.FC = () => {
 
             <hr />
 
-            {projectID && projectDataObject && <UpdateSolution projectObject={projectObject} />}
+            <UpdateSolution projectObject={projectObject} />
 
             <hr />
 
-            {projectID && projectDataObject && <UpdateProcess projectObject={projectObject} />}
+            <UpdateProcess projectObject={projectObject} />
 
             <hr />
 
-            {projectID && projectDataObject && <UpdateProblem projectObject={projectObject} />}
+            <UpdateProblem projectObject={projectObject} />
 
             <hr />
 
-            {projectID && projectDataObject && <UpdateDetails projectObject={projectObject} />}
+            <UpdateDetails projectObject={projectObject} />
 
             <StatusBarComponent />
         </section>

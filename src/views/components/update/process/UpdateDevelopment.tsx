@@ -26,7 +26,7 @@ interface UpdateDevelopmentProps {
 const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { updatedCheckList, updatedVersionsList, updatedProjectSkills } = useSelector(
+  const { updatedCheckList, updatedVersionsList, updatedProjectSkills, updatedDevelopmentGallery } = useSelector(
     (state: RootState) => state.update
   );
 

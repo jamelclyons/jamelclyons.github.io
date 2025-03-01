@@ -8,7 +8,7 @@ import {
 import { api } from '@/services/firebase/config';
 
 import SecureHeaders from '@/model/SecureHeaders';
-import Gallery from '@/model/Gallery';
+import Gallery, { GalleryObject } from '@/model/Gallery';
 import Project from '@/model/Project';
 
 import { addSecureHeaders } from '@/utilities/Headers';
@@ -25,7 +25,11 @@ interface UpdateState {
   updateError: Error | null;
   updateErrorMessage: string | null;
   updateStatusCode: number | null;
-  updatedGallery: Record<string, any> | null;
+  updatedSolutionGallery: GalleryObject | null;
+  updatedDesignGallery: GalleryObject | null;
+  updatedDevelopmentGallery: GalleryObject | null;
+  updatedDeliveryGallery: GalleryObject | null;
+  updatedProblemGallery: GalleryObject | null;
   updatedSkills: Record<string, any> | null;
   updatedProjectSkills: Record<string, any> | null;
   updatedCheckList: Array<Record<string, any>> | null;
@@ -41,7 +45,11 @@ const initialState: UpdateState = {
   updateError: null,
   updateErrorMessage: null,
   updateStatusCode: null,
-  updatedGallery: null,
+  updatedSolutionGallery: null,
+  updatedDesignGallery: null,
+  updatedDevelopmentGallery: null,
+  updatedDeliveryGallery: null,
+  updatedProblemGallery: null,
   updatedSkills: null,
   updatedProjectSkills: null,
   updatedCheckList: null,
@@ -50,11 +58,89 @@ const initialState: UpdateState = {
   updatedFeatures: null,
 };
 
+export const updateProjectURLs = createAsyncThunk(
+  'update/updateProjectURLs',
+  async (projectURLs: ProjectURLs) => {
+    try {
+      return projectURLs.toObject();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const updateSolutionGallery = createAsyncThunk(
+  'update/updateSolutionGallery',
+  async (gallery: Gallery) => {
+    try {
+      return gallery.toGalleryObject();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const updateDesignGallery = createAsyncThunk(
+  'update/updateDesignGallery',
+  async (gallery: Gallery) => {
+    try {
+      return gallery.toGalleryObject();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const updateDevelopmentGallery = createAsyncThunk(
+  'update/updateDevelopmentGallery',
+  async (gallery: Gallery) => {
+    try {
+      return gallery.toGalleryObject();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const updateDeliveryGallery = createAsyncThunk(
+  'update/updateDeliveryGallery',
+  async (gallery: Gallery) => {
+    try {
+      return gallery.toGalleryObject();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const updateProblemGallery = createAsyncThunk(
+  'update/updateProblemGallery',
+  async (gallery: Gallery) => {
+    try {
+      return gallery.toGalleryObject();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
 export const updateProject = createAsyncThunk(
   'update/updateProject',
   async (project: Project) => {
     try {
-      console.log(project)
+      console.log(project);
       // const headers: SecureHeaders = await addSecureHeaders();
 
       // if (headers.errorMessage) {
@@ -304,19 +390,6 @@ export const updateDetails = createAsyncThunk(
   }
 );
 
-export const updateGallery = createAsyncThunk(
-  'update/updateGallery',
-  async (gallery: Gallery) => {
-    try {
-      return gallery.toObject();
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
-    }
-  }
-);
-
 export const updateSkills = createAsyncThunk(
   'update/updateSkills',
   async (skills: Skills) => {
@@ -369,19 +442,6 @@ export const updateVersionsList = createAsyncThunk(
   }
 );
 
-export const updateProjectURLs = createAsyncThunk(
-  'update/updateProjectURLs',
-  async (projectURLs: ProjectURLs) => {
-    try {
-      return projectURLs.toObject();
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
-    }
-  }
-);
-
 const updateSliceOptions: CreateSliceOptions<UpdateState> = {
   name: 'update',
   initialState,
@@ -396,7 +456,17 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
       })
       .addCase(updateProjectURLs.fulfilled, (state, action) => {
         state.updateLoading = false;
-        state.updatedGallery = action.payload;
+        state.updatedProjectURLs = action.payload;
+      })
+      .addCase(updateDesignGallery.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateErrorMessage = '';
+        state.updateLoadingMessage = 'Design Gallery updated';
+      })
+      .addCase(updateDesignGallery.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updatedDesignGallery = action.payload;
       })
       .addCase(updateCheckList.pending, (state) => {
         state.updateLoading = true;
@@ -406,7 +476,7 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
       })
       .addCase(updateCheckList.fulfilled, (state, action) => {
         state.updateLoading = false;
-        state.updatedGallery = action.payload;
+        state.updatedVersionsList = action.payload;
       })
       .addCase(updateVersionsList.pending, (state) => {
         state.updateLoading = true;
@@ -416,17 +486,7 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
       })
       .addCase(updateVersionsList.fulfilled, (state, action) => {
         state.updateLoading = false;
-        state.updatedGallery = action.payload;
-      })
-      .addCase(updateGallery.pending, (state) => {
-        state.updateLoading = true;
-        state.updateError = null;
-        state.updateErrorMessage = '';
-        state.updateLoadingMessage = 'Gallery updated';
-      })
-      .addCase(updateGallery.fulfilled, (state, action) => {
-        state.updateLoading = false;
-        state.updatedGallery = action.payload;
+        state.updatedVersionsList = action.payload;
       })
       .addCase(updateProjectSkills.pending, (state) => {
         state.updateLoading = true;
@@ -489,7 +549,6 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
       )
       .addMatcher(
         isAnyOf(
-          updateGallery.rejected,
           updateProject.rejected,
           updateSolution.rejected,
           updateProcess.rejected,

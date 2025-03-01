@@ -68,6 +68,27 @@ class Gallery extends Model {
           : [],
     };
   }
+
+  toGalleryObject(): GalleryObject {
+    return {
+      logos:
+        Array.isArray(this.logos) && this.logos.length > 0
+          ? this.logos.map((logo) => logo.toImageObject())
+          : [],
+      icons:
+        Array.isArray(this.icons) && this.icons.length > 0
+          ? this.icons.map((icon) => icon.toImageObject())
+          : [],
+      animations:
+        Array.isArray(this.animations) && this.animations.length > 0
+          ? this.animations.map((animation) => animation.toImageObject())
+          : [],
+      uml_diagrams:
+        Array.isArray(this.umlDiagrams) && this.umlDiagrams.length > 0
+          ? this.umlDiagrams.map((umlDiagram) => umlDiagram.toImageObject())
+          : [],
+    };
+  }
 }
 
 export default Gallery;

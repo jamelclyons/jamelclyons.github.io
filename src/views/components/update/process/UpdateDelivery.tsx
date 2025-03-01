@@ -24,7 +24,7 @@ interface UpdateDeliveryProps {
 const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { updatedGallery } = useSelector((state: RootState) => state.update);
+  const { updatedDeliveryGallery } = useSelector((state: RootState) => state.update);
 
   const [delivery, setDelivery] = useState<ProjectDeliveryObject>(projectObject.process.delivery);
   const [checkList, setCheckList] = useState<Array<TaskObject>>(projectObject.process.delivery.check_list);
@@ -48,10 +48,10 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
   }, [delivery.content_url, setContent]);
 
   useEffect(() => {
-    if (updatedGallery) {
-      setGallery({ logos: updatedGallery?.logos ?? [], icons: updatedGallery?.logos ?? [], animations: updatedGallery?.animations ?? [], uml_diagrams: updatedGallery?.uml_diagrams ?? [] });
+    if (updatedDeliveryGallery) {
+      setGallery(updatedDeliveryGallery);
     }
-  }, [updatedGallery, setGallery]);
+  }, [updatedDeliveryGallery, setGallery]);
 
   const handleDeliveryContentURLChange = (e: ChangeEvent<HTMLInputElement>) => {
     try {
@@ -108,7 +108,7 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
 
       <UpdateCheckList checkList={checkList} />
 
-      <UpdateGallery gallery={gallery} />
+      <UpdateGallery location='delivery' gallery={gallery} />
 
       <div className="form-item-flex">
         <label htmlFor="delivery_content_url">
