@@ -4,8 +4,10 @@ import ProjectVersions, { ProjectVersionsObject } from './ProjectVersions';
 import ProjectSkills from './ProjectSkills';
 
 import { ProjectSkillsObject } from './ProjectSkills';
+import Gallery, { GalleryObject } from './Gallery';
 
 export type ProjectDevelopmentObject = {
+  gallery: GalleryObject;
   repo_url: string;
   content_url: string;
   skills: ProjectSkillsObject;
@@ -14,6 +16,7 @@ export type ProjectDevelopmentObject = {
 };
 
 class ProjectDevelopment extends Model {
+  gallery: Gallery;
   repoURL: string;
   contentURL: string;
   skills: ProjectSkills;
@@ -23,6 +26,7 @@ class ProjectDevelopment extends Model {
   constructor(data: Record<string, any> | ProjectDevelopmentObject = {}) {
     super();
 
+    this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
     this.repoURL = data?.repo_url || '';
     this.contentURL = data?.content_url || '';
     this.skills = data?.skills

@@ -40,7 +40,7 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectObject }) => {
 
   useEffect(() => {
     if (updatedProblemGallery) {
-      setGallery({ logos: updatedProblemGallery?.logos ?? [], icons: updatedProblemGallery?.logos ?? [], animations: updatedProblemGallery?.animations ?? [], uml_diagrams: updatedProblemGallery?.uml_diagrams ?? [] });
+      setGallery(updatedProblemGallery);
     }
   }, [updatedProblemGallery, setGallery]);
 
@@ -87,25 +87,23 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectObject }) => {
   };
 
   return (
-    <>
+    <div className="update" id="update_problem">
+
       <h2 className="title">Problem</h2>
 
-      <div className="update" id="update_problem">
+      <UpdateGallery location='problem' gallery={gallery} />
 
-        <UpdateGallery location='problem' gallery={gallery} />
+      <hr />
 
-        <hr />
-
-        <div className="form-item-flex">
-          <label htmlFor="problem_content_url">Problem Content URL:</label>
-          <input type="text" name='problem_content_url' value={contentURL ?? ''} onChange={handleProblemContentURLChange} />
-        </div>
-
-        <button onClick={handleUpdateProblem}>
-          <h3>UPDATE PROBLEM</h3>
-        </button>
+      <div className="form-item-flex">
+        <label htmlFor="problem_content_url">Problem Content URL:</label>
+        <input type="text" name='problem_content_url' value={contentURL ?? ''} onChange={handleProblemContentURLChange} />
       </div>
-    </>
+
+      <button onClick={handleUpdateProblem}>
+        <h3>UPDATE PROBLEM</h3>
+      </button>
+    </div>
   );
 };
 

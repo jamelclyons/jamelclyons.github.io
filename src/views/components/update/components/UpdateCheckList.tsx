@@ -8,9 +8,9 @@ interface UpdateCheckListProps {
 
 const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ checkList }) => {
     return (
-        <>
-            <h1>UpdateCheckList</h1>
-        </>
+        <details>
+            <summary>Check List</summary>
+        </details>
     )
 }
 

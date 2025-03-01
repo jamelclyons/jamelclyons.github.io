@@ -27,8 +27,8 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
   const { updatedDeliveryGallery } = useSelector((state: RootState) => state.update);
 
   const [delivery, setDelivery] = useState<ProjectDeliveryObject>(projectObject.process.delivery);
-  const [checkList, setCheckList] = useState<Array<TaskObject>>(projectObject.process.delivery.check_list);
   const [gallery, setGallery] = useState<GalleryObject>(projectObject.process.delivery.gallery);
+  const [checkList, setCheckList] = useState<Array<TaskObject>>(projectObject.process.delivery.check_list);
   const [content, setContent] = useState<string>(projectObject.process.delivery.content_url);
 
   useEffect(() => {
@@ -103,12 +103,17 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
   };
 
   return (
-    <>
+    <div className="update" id="update_delivery">
+
       <h2 className="title">delivery</h2>
 
       <UpdateCheckList checkList={checkList} />
 
+      <br />
+
       <UpdateGallery location='delivery' gallery={gallery} />
+
+      <hr />
 
       <div className="form-item-flex">
         <label htmlFor="delivery_content_url">
@@ -120,7 +125,7 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
       <button onClick={handleUpdateDelivery}>
         <h3>Update Delivery</h3>
       </button>
-    </>
+    </div>
   )
 }
 

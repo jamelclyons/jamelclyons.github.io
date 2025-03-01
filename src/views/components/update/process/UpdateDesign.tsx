@@ -30,8 +30,8 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectObject }) => {
   );
 
   const [design, setDesign] = useState<ProjectDesignObject>(projectObject.process.design);
+  const [gallery, setGallery] = useState<GalleryObject>(projectObject.process.design.gallery);
   const [checkList, setCheckList] = useState(projectObject.process.design.check_list);
-  const [gallery, setGallery] = useState(projectObject.process.design.gallery);
   const [colorsList, setColorsList] = useState(projectObject.process.design.colors_list);
   const [contentURL, setContentURL] = useState(projectObject.process.design.content_url);
 
@@ -96,24 +96,31 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectObject }) => {
     }
   };
 
-  return (<>
-    <h2 className="title">design</h2>
+  return (
+    <div className='update' id='update_design'>
+      <h2 className="title">design</h2>
 
-    <UpdateCheckList checkList={checkList} />
+      <UpdateCheckList checkList={checkList} />
 
-    <UpdateGallery location='design' gallery={gallery} />
+      <br />
 
-    <UpdateColorsList colors={colorsList} />
+      <UpdateGallery location='design' gallery={gallery} />
 
-    <div className="form-item-flex">
-      <label htmlFor="design_content_url">Design Content URL:</label>
-      <input type="text" name='design_content_url' value={contentURL ?? ''} onChange={handleDesignContentURLChange} />
+      <br />
+
+      <UpdateColorsList colors={colorsList} />
+
+      <hr />
+
+      <div className="form-item-flex">
+        <label htmlFor="design_content_url">Design Content URL:</label>
+        <input type="text" name='design_content_url' value={contentURL ?? ''} onChange={handleDesignContentURLChange} />
+      </div>
+
+      <button onClick={handleUpdateDesign}>
+        <h3>Update Design</h3>
+      </button>
     </div>
-
-    <button onClick={handleUpdateDesign}>
-      <h3>Update Design</h3>
-    </button>
-  </>
   )
 }
 

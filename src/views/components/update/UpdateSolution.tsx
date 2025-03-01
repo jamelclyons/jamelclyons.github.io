@@ -18,6 +18,7 @@ import {
 } from '@/controllers/messageSlice';
 import UpdateFeatures from './components/UpdateFeatures';
 import UpdateProjectURL from './components/UpdateProjectURL';
+import UpdateGallery from './components/UpdateGallery';
 
 interface UpdateSolutionProps {
   projectObject: ProjectObject;
@@ -38,10 +39,6 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
   const [currency, setCurrency] = useState<string>(projectObject.solution.currency);
   const [price, setPrice] = useState<number>(projectObject.solution.price);
 
-  const [homepage, setHomepage] = useState<ProjectURLObject>(projectObject.solution.project_urls.homepage);
-  const [ios, setIos] = useState<ProjectURLObject>(projectObject.solution.project_urls.ios);
-  const [android, setAndroid] = useState<ProjectURLObject>(projectObject.solution.project_urls.android);
-
   useEffect(() => {
     setSolution(projectObject.solution)
   }, [projectObject.solution, setSolution]);
@@ -49,6 +46,12 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
   useEffect(() => {
     setGallery(solution.gallery);
   }, [solution.gallery, setGallery]);
+
+  useEffect(() => {
+    if (updatedSolutionGallery) {
+      setGallery(updatedSolutionGallery);
+    }
+  }, [updatedSolutionGallery, setGallery]);
 
   useEffect(() => {
     if (updatedFeatures) {
@@ -60,12 +63,6 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
       }));
     }
   }, [updatedFeatures, setFeatures]);
-
-  useEffect(() => {
-    if (updatedSolutionGallery) {
-      setGallery(updatedSolutionGallery);
-    }
-  }, [updatedSolutionGallery, setGallery]);
 
   useEffect(() => {
     if (updatedProjectURLs) {
@@ -182,13 +179,21 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
   };
 
   return (
-    <>
+    <div className='update' id='update_solution'>
       <h1 className="title">solution</h1>
+
+      <UpdateGallery location='solution' gallery={gallery} />
+
+      <br />
 
       <UpdateFeatures features={features} />
 
+      <br />
+
       <UpdateProjectURL projectURLsObject={projectURLs} />
-      
+
+      <hr />
+
       <div className="form-item-flex">
         <label htmlFor="currency">Currency:</label>
         <input type="text" id="currency" value={currency} placeholder='Currency Ex: USD' name='currency' onChange={handleCurrencyChange} />
@@ -207,7 +212,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
       <button onClick={handleUpdateSolution}>
         <h3>UPDATE SOLUTION</h3>
       </button>
-    </>
+    </div>
   )
 }
 

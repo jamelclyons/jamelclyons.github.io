@@ -1,8 +1,5 @@
-import { Privacy, privacyFromString } from './enum/Enums';
-
 import Model from './Model';
 import User from './User';
-import packageJson from '../../package.json';
 
 export type ProjectDetailsObject = {
   privacy: string;

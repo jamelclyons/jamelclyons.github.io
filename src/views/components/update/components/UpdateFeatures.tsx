@@ -8,7 +8,9 @@ interface UpdateFeaturesProps {
 
 const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ features }) => {
     return (
-        <div>UpdateFeatures</div>
+        <details>
+            <summary>Features</summary>
+        </details>
     )
 }
 

@@ -8,7 +8,9 @@ interface UpdateColorsListProps {
 
 const UpdateColorsList: React.FC<UpdateColorsListProps> = ({ colors }) => {
     return (
-        <div>UpdateColorsList</div>
+        <details>
+            <summary>Colors</summary>
+        </details>
     )
 }
 

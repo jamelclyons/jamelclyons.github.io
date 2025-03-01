@@ -118,6 +118,12 @@ const ProjectUpdate: React.FC = () => {
                 versions_list: {
                     current: '',
                     previous: []
+                },
+                gallery: {
+                    logos: [],
+                    icons: [],
+                    animations: [],
+                    uml_diagrams: []
                 }
             },
             delivery: {
@@ -256,6 +262,12 @@ const ProjectUpdate: React.FC = () => {
                         versions_list: {
                             current: '',
                             previous: []
+                        },
+                        gallery: {
+                            logos: [],
+                            icons: [],
+                            animations: [],
+                            uml_diagrams: []
                         }
                     },
                     delivery: {
