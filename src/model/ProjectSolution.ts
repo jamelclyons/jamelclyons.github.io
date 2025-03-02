@@ -46,6 +46,17 @@ class ProjectSolution extends Model {
 
     return features;
   }
+
+  toProjectSolutionObject(): ProjectSolutionObject {
+    return {
+      gallery: this.gallery.toGalleryObject(),
+      features: Array.from(this.features),
+      content_url: this.contentURL ?? '',
+      currency: this.currency,
+      price: this.price,
+      project_urls: this.projectURLs.toProjectURLsObject(),
+    };
+  }
 }
 
 export default ProjectSolution;

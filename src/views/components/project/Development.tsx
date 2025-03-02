@@ -16,6 +16,7 @@ import {
 } from '@/controllers/authSlice';
 import StatusBar from '../StatusBar';
 import Skills from '@/model/Skills';
+import Task from '@/model/Task';
 
 interface DevelopmentProps {
   development: ProjectDevelopment;
@@ -33,6 +34,12 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
   const [messageType, setMessageType] = useState<string>('info');
   const [message, setMessage] = useState<string>('Click Log in with GitHub to gain access to the code.');
   const [skills, setSkills] = useState<Skills>(development.skills);
+
+  const [tasks, setTasks] = useState<Set<Task>>(checkList.tasks);
+
+  useEffect(() => {
+    setTasks(checkList.tasks)
+  }, [checkList, setTasks])
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -56,7 +63,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
   }, []);
 
   useEffect(() => {
-      setSkills(development.skills);
+    setSkills(development.skills);
   }, [development]);
 
   const handleSeeCode = () => {
@@ -70,7 +77,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
   return (
     <>{(
       skills ||
-      checkList.length > 0 ||
+      tasks.size > 0 ||
       (typeof contentURL === 'string' && contentURL !== '') ||
       (versionsList?.current !== '' && versionsList?.previous.length > 0) ||
       repoURL !== '') &&
@@ -80,7 +87,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
         {skills && <SkillsComponent skillsUsed={skills} />}
 
-        {checkList.length > 0 && <CheckList checkList={checkList} />}
+        {tasks.size > 0 && <CheckList tasks={Array.from(tasks)} />}
 
         {contentURL && <ContentComponent title={''} url={contentURL} />}
 

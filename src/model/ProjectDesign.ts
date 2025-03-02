@@ -1,18 +1,18 @@
 import Model from './Model';
 import Gallery, { GalleryObject } from './Gallery';
-import Task, { TaskObject } from './Task';
 import Color, { ColorObject } from './Color';
+import CheckList, { CheckListObject } from './CheckList';
 
 export type ProjectDesignObject = {
   gallery: GalleryObject;
-  check_list: Array<TaskObject>;
+  check_list: CheckListObject;
   colors_list: Array<ColorObject>;
   content_url: string;
 };
 
 class ProjectDesign extends Model {
   gallery: Gallery;
-  checkList: Array<Task>;
+  checkList: CheckList;
   colorsList: Array<Color>;
   contentURL: string | null;
 
@@ -20,21 +20,11 @@ class ProjectDesign extends Model {
     super();
 
     this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
-    this.checkList = data?.check_list ? this.toArrayTask(data.check_list) : [];
+    this.checkList = new CheckList(data?.check_list);
     this.colorsList = data?.colors_list
       ? this.toArrayColor(data.colors_list)
       : [];
     this.contentURL = data?.content_url || null;
-  }
-
-  toArrayTask(data: Array<Record<string, any>>) {
-    const checkList: Array<Task> = [];
-
-    data.forEach((task) => {
-      checkList.push(new Task(task));
-    });
-
-    return checkList;
   }
 
   toArrayColor(data: Array<Record<string, any>>) {
@@ -45,6 +35,15 @@ class ProjectDesign extends Model {
     });
 
     return colorsList;
+  }
+
+  toProjectDesignObject(): ProjectDesignObject {
+    return {
+      gallery: this.gallery.toGalleryObject(),
+      check_list: this.checkList.toCheckListObject(),
+      colors_list: this.colorsList.map((color) => color.toColorObject()),
+      content_url: this.contentURL ?? '',
+    };
   }
 }
 

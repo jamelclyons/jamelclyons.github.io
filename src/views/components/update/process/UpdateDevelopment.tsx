@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '@/model/store';
 import { ProjectDevelopmentObject } from '@/model/ProjectDevelopment';
-import { TaskObject } from '../../../../model/Task';
 import { ProjectVersionsObject } from '../../../../model/ProjectVersions';
 import Project, { ProjectObject } from '@/model/Project';
 import { ProjectSkillsObject } from '@/model/ProjectSkills';
@@ -12,7 +11,7 @@ import {
   setMessage,
   setMessageType,
   setShowStatusBar,
-} from '../../../../controllers/messageSlice';
+} from '@/controllers/messageSlice';
 import { updateProject } from '../../../../controllers/updateSlice';
 
 import UpdateCheckList from '../components/UpdateCheckList';
@@ -20,6 +19,7 @@ import UpdateSkills from '../components/UpdateSkills';
 import UpdateProjectVersions from '../components/UpdateProjectVersions';
 import { GalleryObject } from '@/model/Gallery';
 import UpdateGallery from '../components/UpdateGallery';
+import CheckList, { CheckListObject } from '@/model/CheckList';
 
 interface UpdateDevelopmentProps {
   projectObject: ProjectObject;
@@ -28,13 +28,13 @@ interface UpdateDevelopmentProps {
 const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { updatedCheckList, updatedVersionsList, updatedProjectSkills, updatedDevelopmentGallery } = useSelector(
+  const { updatedDevelopmentCheckList, updatedVersionsList, updatedProjectSkills, updatedDevelopmentGallery } = useSelector(
     (state: RootState) => state.update
   );
 
   const [development, setDevelopment] = useState<ProjectDevelopmentObject>(projectObject.process.development);
   const [gallery, setGallery] = useState<GalleryObject>(projectObject.process.development.gallery);
-  const [checkList, setCheckList] = useState<Array<TaskObject>>(projectObject.process.development.check_list);
+  const [checkList, setCheckList] = useState<CheckListObject>(projectObject.process.development.check_list);
   const [projectSkills, setProjectSkills] = useState<ProjectSkillsObject>(projectObject.process.development.skills);
   const [repoURL, setRepoURL] = useState<string>(projectObject.process.development.repo_url);
   const [contentURL, setContentURL] = useState<string>(projectObject.process.development.content_url);
@@ -63,13 +63,11 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) 
   }, [updatedDevelopmentGallery, setGallery]);
 
   useEffect(() => {
-    if (updatedCheckList) {
-      setCheckList(updatedCheckList.map((task) => {
-        const taskObject: TaskObject = { name: task?.name, status: task?.status }
-        return taskObject
-      }))
+    if (updatedDevelopmentCheckList) {
+      console.log(updatedDevelopmentCheckList)
+      setCheckList(updatedDevelopmentCheckList)
     }
-  }, [updatedCheckList, setCheckList]);
+  }, [updatedDevelopmentCheckList, setCheckList]);
 
   useEffect(() => {
     if (updatedVersionsList) {
@@ -165,7 +163,7 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) 
     <div className='update' id='update_development'>
       <h2 className="title">development</h2>
 
-      <UpdateCheckList checkList={checkList} />
+      <UpdateCheckList location='development' checkListObject={checkList} />
 
       <br />
 

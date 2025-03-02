@@ -14,7 +14,7 @@ import user from '../../user.json';
 export interface UserObject {
   id: string;
   login: string;
-  avatarURL: string;
+  avatar_url: string;
   name: string;
   title: string;
   bio: string;
@@ -22,13 +22,13 @@ export interface UserObject {
   phone: string;
   resume: string;
   website: string;
-  contactMethods: ContactMethodsObject;
+  contact_methods: ContactMethodsObject;
   images: Array<ImageObject>;
-  organizationsURL: string;
+  organizations_url: string;
   organizations: Array<OrganizationObject>;
-  reposURL: string;
+  repos_url: string;
   repos: Array<RepoObject>;
-  repoQueries: Array<GitHubRepoQuery>;
+  repo_queries: Array<GitHubRepoQuery>;
 }
 
 class User extends Model {
@@ -43,7 +43,7 @@ class User extends Model {
   resume: string;
   website: string;
   contactMethods: ContactMethods;
-  images: Record<string, Image>;
+  images: Array<Image>;
   organizationsURL: string;
   organizations: Organizations = new Organizations();
   reposURL: string;
@@ -65,7 +65,9 @@ class User extends Model {
     this.phone = data?.phone || contact.phone;
     this.resume = data?.resume || resume;
     this.website = data?.website || website;
-    this.contactMethods = contact ? new ContactMethods(contact) : new ContactMethods(data.contact_methods);
+    this.contactMethods = contact
+      ? new ContactMethods(contact)
+      : new ContactMethods(data.contact_methods);
     this.images = data?.images || '';
     this.organizationsURL = data?.organizations_url;
     this.organizations = data?.organizations
@@ -140,6 +142,28 @@ class User extends Model {
     }
 
     return repoQueries;
+  }
+
+  toUserObject(): UserObject {
+    return {
+      id: this.id,
+      login: this.login,
+      avatar_url: this.avatarURL,
+      name: this.name,
+      title: this.title,
+      bio: this.bio,
+      email: this.email,
+      phone: this.phone,
+      resume: this.resume,
+      website: this.website,
+      contact_methods: this.contactMethods.toContactMethodsObject(),
+      images: this.images.map((image) => image.toImageObject()),
+      organizations_url: this.organizationsURL,
+      organizations: [],
+      repos_url: this.reposURL,
+      repos: [],
+      repo_queries: [],
+    };
   }
 }
 

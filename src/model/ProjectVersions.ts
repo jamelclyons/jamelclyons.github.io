@@ -15,6 +15,13 @@ class ProjectVersions extends Model {
     this.current = data?.current;
     this.previous = data?.previous;
   }
+  
+  toProjectVersionsObject(): ProjectVersionsObject {
+    return {
+      current: this.current,
+      previous: this.previous,
+    };
+  }
 }
 
 export default ProjectVersions;

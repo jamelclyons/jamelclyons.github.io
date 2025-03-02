@@ -13,7 +13,7 @@ class Contact extends Model {
   id: string;
   title: string;
   url: string;
-  image: Image | null;
+  image: Image;
   value: string;
 
   constructor(
@@ -30,6 +30,16 @@ class Contact extends Model {
     this.url = url;
     this.image = image;
     this.value = value;
+  }
+
+  toContactObject(): ContactObject {
+    return {
+      id: this.id,
+      title: this.title,
+      url: this.url,
+      image: this.image.toImageObject(),
+      value: this.value,
+    };
   }
 }
 

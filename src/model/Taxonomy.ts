@@ -20,7 +20,7 @@ class Taxonomy extends Model {
   image: Image;
   usage: number;
 
-  constructor(data?: Record<string, any>) {
+  constructor(data: Record<string, any> | TaxonomyObject = {}) {
     super();
 
     this.id = data?.id ? data.id : '';
@@ -220,3 +220,9 @@ export class Service extends Taxonomy {
     };
   }
 }
+
+export const existsInSet = (taxonomy: Taxonomy, set: Set<Taxonomy>) => {
+  const map = new Map(Array.from(set).map((tax) => [tax.id, tax]));
+
+  return map.has(taxonomy.id);
+};

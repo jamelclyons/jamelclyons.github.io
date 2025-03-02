@@ -17,6 +17,7 @@ import UpdateCheckList from '../components/UpdateCheckList';
 import UpdateGallery from '../components/UpdateGallery';
 import UpdateColorsList from '../components/UpdateColorsList';
 import { GalleryObject } from '@/model/Gallery';
+import { CheckListObject } from '@/model/CheckList';
 
 interface UpdateDesignProps {
   projectObject: ProjectObject;
@@ -25,13 +26,13 @@ interface UpdateDesignProps {
 const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { updatedDesignGallery } = useSelector(
+  const { updatedDesignGallery, updatedDesignCheckList } = useSelector(
     (state: RootState) => state.update
   );
 
   const [design, setDesign] = useState<ProjectDesignObject>(projectObject.process.design);
   const [gallery, setGallery] = useState<GalleryObject>(projectObject.process.design.gallery);
-  const [checkList, setCheckList] = useState(projectObject.process.design.check_list);
+  const [checkList, setCheckList] = useState<CheckListObject>(projectObject.process.design.check_list);
   const [colorsList, setColorsList] = useState(projectObject.process.design.colors_list);
   const [contentURL, setContentURL] = useState(projectObject.process.design.content_url);
 
@@ -50,6 +51,12 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectObject }) => {
       setGallery(updatedDesignGallery)
     }
   }, [updatedDesignGallery, setGallery]);
+
+  useEffect(() => {
+    if (updatedDesignCheckList) {
+      setCheckList(updatedDesignCheckList)
+    }
+  }, [updatedDesignCheckList, setCheckList]);
 
   const handleDesignContentURLChange = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
@@ -100,7 +107,7 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectObject }) => {
     <div className='update' id='update_design'>
       <h2 className="title">design</h2>
 
-      <UpdateCheckList checkList={checkList} />
+      <UpdateCheckList location='design' checkListObject={checkList} />
 
       <br />
 

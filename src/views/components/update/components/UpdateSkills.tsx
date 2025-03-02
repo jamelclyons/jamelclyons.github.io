@@ -5,19 +5,19 @@ import {
   setMessage,
   setMessageType,
   setShowStatusBar,
-} from '../../../../controllers/messageSlice';
+} from '@/controllers/messageSlice';
 import {
   getProjectTypes,
   getLanguages,
   getFrameworks,
   getTechnologies,
   SkillsObject,
-} from '../../../../controllers/taxonomiesSlice';
-import { updateProjectSkills, updateSkills } from '../../../../controllers/updateSlice';
+} from '@/controllers/taxonomiesSlice';
+import { updateProjectSkills } from '@/controllers/updateSlice';
 
-import type { AppDispatch, RootState } from '../../../../model/store';
+import type { AppDispatch, RootState } from '@/model/store';
 import ProjectSkills, { ProjectSkillsObject } from '@/model/ProjectSkills';
-import Taxonomy, { Framework, Language, ProjectType, Technology } from '@/model/Taxonomy';
+import { Framework, Language, ProjectType, Technology, existsInSet } from '@/model/Taxonomy';
 
 interface UpdateSkillsProps {
   skillsObject: ProjectSkillsObject;
@@ -51,14 +51,6 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ skillsObject }) => {
   useEffect(() => {
     dispatch(getTechnologies());
   }, []);
-
-  const existsInSet = (taxonomy: Taxonomy, set: Set<Taxonomy>) => {
-    const map = new Map(
-      Array.from(set).map((tax) => [tax.id, tax])
-    );
-
-    return map.has(taxonomy.id);
-  };
 
   const handleProjectTypesCheckboxChange = (type: ProjectType) => {
     setSelectedProjectTypes((prevTypes) => {
@@ -116,7 +108,7 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ skillsObject }) => {
     <div className='update' id='update_skills'>
       <h3>Update Skills</h3>
 
-      <div className="project-selection">
+      <div className="project-selection form-item">
         <label htmlFor="options">Choose Project Types:</label>
 
         {Array.isArray(projectTypesObject) &&
@@ -184,21 +176,21 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ skillsObject }) => {
         <label htmlFor="options">Choose Technologies:</label>
 
         {Array.isArray(technologiesObject) &&
-        technologiesObject.length > 0 &&
+          technologiesObject.length > 0 &&
           Array.from(technologiesObject)
-          .map((tech) => new Technology(tech))
-          .map((technology) => (
-            <div className="form-item-flex" key={technology.id}>
-              <input
-                type="checkbox"
-                id={`checkbox-${technology.id}`}
-                value={technology.id}
-                checked={existsInSet(technology, selectedTechnologies)}
-                onChange={() => handleTechnologiesCheckboxChange(technology)}
-              />
-              <label htmlFor={`checkbox-${technology.id}`}>{technology.title}</label>
-            </div>
-          ))}
+            .map((tech) => new Technology(tech))
+            .map((technology) => (
+              <div className="form-item-flex" key={technology.id}>
+                <input
+                  type="checkbox"
+                  id={`checkbox-${technology.id}`}
+                  value={technology.id}
+                  checked={existsInSet(technology, selectedTechnologies)}
+                  onChange={() => handleTechnologiesCheckboxChange(technology)}
+                />
+                <label htmlFor={`checkbox-${technology.id}`}>{technology.title}</label>
+              </div>
+            ))}
       </div>
 
       <button onClick={handleUpdateSkills}>

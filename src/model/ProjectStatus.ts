@@ -13,12 +13,20 @@ class ProjectStatus extends Model {
   updatedAt: string;
   progress: string;
 
-  constructor(data: Record<string, any> = {}) {
+  constructor(data: Record<string, any> | ProjectStatusObject = {}) {
     super();
 
     this.createdAt = data?.created_at ? formatTime(data.created_at) : '';
     this.updatedAt = data?.updated_at ? formatTime(data.updated_at) : '';
     this.progress = data?.progress || '0';
+  }
+
+  toProjectStatusObject(): ProjectStatusObject {
+    return {
+      created_at: this.createdAt,
+      updated_at: this.updatedAt,
+      progress: this.progress,
+    };
   }
 }
 

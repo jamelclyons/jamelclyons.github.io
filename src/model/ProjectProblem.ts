@@ -4,7 +4,7 @@ import Gallery, { GalleryObject } from './Gallery';
 export type ProjectProblemObject = {
   content_url: string;
   gallery: GalleryObject;
-}
+};
 
 class ProjectProblem extends Model {
   contentURL: string | null;
@@ -14,7 +14,14 @@ class ProjectProblem extends Model {
     super();
 
     this.contentURL = data?.content_url || null;
-    this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery;
+    this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
+  }
+
+  toProjectProblemObject(): ProjectProblemObject {
+    return {
+      content_url: this.contentURL ?? '',
+      gallery: this.gallery.toGalleryObject(),
+    };
   }
 }
 

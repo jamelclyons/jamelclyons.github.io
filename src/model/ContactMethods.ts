@@ -2,8 +2,6 @@ import Model from './Model';
 import Contact, { ContactObject } from './Contact';
 import Image from './Image';
 
-import * as user from '../../user.json';
-
 export interface ContactMethodsObject {
   hacker_rank: ContactObject;
   linked_in: ContactObject;
@@ -299,6 +297,20 @@ class ContactMethods extends Model {
     if (data?.id === 'phone') {
       this.phone = this.setContactPhone(data.value);
     }
+  }
+
+  toContactMethodsObject(): ContactMethodsObject {
+    return {
+      hacker_rank: this.hackerRank.toContactObject(),
+      linked_in: this.linkedin.toContactObject(),
+      x: this.x.toContactObject(),
+      instagram: this.instagram.toContactObject(),
+      github: this.github.toContactObject(),
+      youtube: this.youtube.toContactObject(),
+      website: this.website.toContactObject(),
+      email: this.email.toContactObject(),
+      phone: this.phone.toContactObject(),
+    };
   }
 }
 

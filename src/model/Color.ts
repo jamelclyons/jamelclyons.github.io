@@ -15,6 +15,13 @@ class Color extends Model {
     this.name = data?.name;
     this.color = data?.color;
   }
+
+  toColorObject(): ColorObject {
+    return {
+      name: this.name,
+      color: this.color,
+    };
+  }
 }
 
 export default Color;

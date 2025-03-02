@@ -29,8 +29,8 @@ const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLsObject }
     }, [projectURLsObject, setProjectURLs]);
 
     useEffect(() => {
-        setHomepage(projectURLs.homepage);
-    }, [projectURLs.homepage, setHomepage]);
+        setHomepage(projectURLsObject.homepage);
+    }, [projectURLsObject, setHomepage]);
 
     useEffect(() => {
         setIos(projectURLs.ios);
@@ -116,20 +116,26 @@ const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLsObject }
         <>
             <h3>Project URLs</h3>
 
-            <div className="form-item-flex">
-                <label htmlFor="homepage_url">{homepage.name}:</label>
-                <input type="text" id="homepage" value={homepage.url ?? ''} placeholder={homepage.description} name='homepage_url' onChange={handleHomepageChange} />
-            </div>
+            {homepage &&
+                (<div className="form-item-flex">
+                    <label htmlFor="homepage_url">{homepage.name}:</label>
+                    <input type="text" id="homepage" value={homepage.url ?? ''} placeholder={homepage.description} name='homepage_url' onChange={handleHomepageChange} />
+                </div>)
+            }
 
-            <div className="form-item-flex">
-                <label htmlFor="ios_url">{ios.name}:</label>
-                <input type="text" id="ios" value={ios.url ?? ''} placeholder={ios.description} name='ios_url' onChange={handleIosChange} />
-            </div>
+            {ios &&
+                (<div className="form-item-flex">
+                    <label htmlFor="ios_url">{ios.name}:</label>
+                    <input type="text" id="ios" value={ios.url ?? ''} placeholder={ios.description} name='ios_url' onChange={handleIosChange} />
+                </div>)
+            }
 
-            <div className="form-item-flex">
-                <label htmlFor="android_url">{android.name}:</label>
-                <input type="text" id="android" value={android.url ?? ''} placeholder={android.description} name='android_url' onChange={handleAndroidChange} />
-            </div>
+            {android &&
+                (<div className="form-item-flex">
+                    <label htmlFor="android_url">{android.name}:</label>
+                    <input type="text" id="android" value={android.url ?? ''} placeholder={android.description} name='android_url' onChange={handleAndroidChange} />
+                </div>)
+            }
         </>
     )
 }

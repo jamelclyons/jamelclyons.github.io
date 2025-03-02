@@ -17,11 +17,30 @@ class ProjectURLs extends Model {
 
     this.homepage = data?.homepage
       ? new ProjectURL(data.homepage)
-      : new ProjectURL({name: 'Homepage', description: 'Website of the project'});
-    this.ios = data?.ios ? new ProjectURL(data.ios) : new ProjectURL({name: 'Apple App Store Link', description: 'Link to iOS Application'});
+      : new ProjectURL({
+          name: 'Homepage',
+          description: 'Website of the project',
+        });
+    this.ios = data?.ios
+      ? new ProjectURL(data.ios)
+      : new ProjectURL({
+          name: 'Apple App Store Link',
+          description: 'Link to iOS Application',
+        });
     this.android = data?.android
       ? new ProjectURL(data.android)
-      : new ProjectURL({name: 'Google Play Link', description: 'Link to Android Application'});
+      : new ProjectURL({
+          name: 'Google Play Link',
+          description: 'Link to Android Application',
+        });
+  }
+
+  toProjectURLsObject(): ProjectURLsObject {
+    return {
+      homepage: this.homepage.toProjectURLObject(),
+      ios: this.ios.toProjectURLObject(),
+      android: this.android.toProjectURLObject(),
+    };
   }
 }
 

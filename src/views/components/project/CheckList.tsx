@@ -1,19 +1,19 @@
 import React from 'react';
 
-import Task, { TaskObject } from '../../../model/Task';
+import Task from '../../../model/Task';
 
 interface CheckListProps{
-  checkList: Array<TaskObject>
+  tasks: Array<Task>
 }
 
-const CheckList: React.FC<CheckListProps> = ({ checkList }) => {
+const CheckList: React.FC<CheckListProps> = ({ tasks }) => {
 
   return (
     <>
-      {checkList ? (
+      {tasks ? (
         <div className="checklist">
-          {Array.isArray(checkList) &&
-            checkList.map((task, index) => (
+          {Array.isArray(tasks) &&
+            tasks.map((task, index) => (
               <span key={index}>
                 <input
                   type="checkbox"
@@ -22,7 +22,7 @@ const CheckList: React.FC<CheckListProps> = ({ checkList }) => {
                   checked={task.status}
                   disabled
                 />
-                <h4>{task.name}</h4>
+                <h4>{task.description}</h4>
               </span>
             ))}
         </div>

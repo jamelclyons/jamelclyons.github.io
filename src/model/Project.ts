@@ -7,7 +7,7 @@ import ProjectDetails, { ProjectDetailsObject } from './ProjectDetails';
 import ProjectSkills from './ProjectSkills';
 import ProjectVersions from './ProjectVersions';
 import Repo from './Repo';
-import Owner from './Owner';
+import Owner, { OwnerObject } from './Owner';
 import Feature from './Feature';
 
 import { DocumentData } from 'firebase/firestore';
@@ -19,7 +19,7 @@ export type ProjectObject = {
   solution: ProjectSolutionObject;
   process: ProjectProcessObject;
   problem: ProjectProblemObject;
-  owner: Record<string, any>;
+  owner: OwnerObject;
   details: ProjectDetailsObject;
 };
 
@@ -182,6 +182,19 @@ class Project extends Model {
       problem: this.problem.toObject(),
       details: this.details.toObject(),
     };
+  }
+
+  toProjectObject(): ProjectObject {
+    return {
+      id: this.id,
+      owner: this.owner.toOwnerObject(),
+      title: this.title,
+      description: this.description,
+      solution: this.solution.toProjectSolutionObject(),
+      process: this.process.toProjectProcessObject(),
+      problem: this.problem.toProjectProblemObject(),
+      details: this.details.toDetailsObject(),
+    }
   }
 }
 

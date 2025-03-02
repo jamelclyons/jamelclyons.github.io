@@ -16,6 +16,7 @@ import UpdateGallery from '../components/UpdateGallery';
 import { GalleryObject } from '@/model/Gallery';
 import { TaskObject } from '@/model/Task';
 import UpdateCheckList from '../components/UpdateCheckList';
+import { CheckListObject } from '@/model/CheckList';
 
 interface UpdateDeliveryProps {
   projectObject: ProjectObject;
@@ -24,11 +25,11 @@ interface UpdateDeliveryProps {
 const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { updatedDeliveryGallery } = useSelector((state: RootState) => state.update);
+  const { updatedDeliveryGallery, updatedDeliveryCheckList } = useSelector((state: RootState) => state.update);
 
   const [delivery, setDelivery] = useState<ProjectDeliveryObject>(projectObject.process.delivery);
   const [gallery, setGallery] = useState<GalleryObject>(projectObject.process.delivery.gallery);
-  const [checkList, setCheckList] = useState<Array<TaskObject>>(projectObject.process.delivery.check_list);
+  const [checkList, setCheckList] = useState<CheckListObject>(projectObject.process.delivery.check_list);
   const [content, setContent] = useState<string>(projectObject.process.delivery.content_url);
 
   useEffect(() => {
@@ -46,6 +47,12 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
   useEffect(() => {
     setContent(delivery.content_url)
   }, [delivery.content_url, setContent]);
+
+  useEffect(() => {
+    if (updatedDeliveryCheckList) {
+      setCheckList(updatedDeliveryCheckList);
+    }
+  }, [updatedDeliveryCheckList, setCheckList]);
 
   useEffect(() => {
     if (updatedDeliveryGallery) {
@@ -107,7 +114,7 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
 
       <h2 className="title">delivery</h2>
 
-      <UpdateCheckList checkList={checkList} />
+      <UpdateCheckList location='delivery' checkListObject={checkList} />
 
       <br />
 

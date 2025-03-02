@@ -1,5 +1,5 @@
 import Model from './Model';
-import User from './User';
+import User, { UserObject } from './User';
 
 export type ProjectDetailsObject = {
   privacy: string;
@@ -8,7 +8,7 @@ export type ProjectDetailsObject = {
   start_date: string;
   end_date: string;
   content: string;
-  team_list: Array<Record<string, any>>;
+  team_list: Array<UserObject>;
 };
 
 class ProjectDetails extends Model {
@@ -41,6 +41,18 @@ class ProjectDetails extends Model {
       });
     }
     return teamList;
+  }
+
+  toDetailsObject(): ProjectDetailsObject {
+    return {
+      privacy: this.privacy,
+      client_id: this.clientID,
+      client_name: this.clientName,
+      start_date: this.startDate,
+      end_date: this.endDate,
+      content: this.content,
+      team_list: this.teamList.map((user) => user.toUserObject()),
+    };
   }
 }
 

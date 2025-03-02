@@ -1,35 +1,32 @@
-import Gallery, { GalleryObject } from './Gallery';
-import Image from './Image';
 import Model from './Model';
-import Task, { TaskObject } from './Task';
+import CheckList, { CheckListObject } from './CheckList';
+import Gallery, { GalleryObject } from './Gallery';
 
 export type ProjectDeliveryObject = {
-  check_list: Array<TaskObject>;
+  check_list: CheckListObject;
   gallery: GalleryObject;
   content_url: string;
 };
 
 class ProjectDelivery extends Model {
-  checkList: Array<Task>;
+  checkList: CheckList;
   gallery: Gallery;
   contentURL: string | null;
 
   constructor(data: Record<string, any> | ProjectDeliveryObject = {}) {
     super();
 
-    this.checkList = data?.check_list ? this.toArrayTask(data?.check_list) : [];
+    this.checkList = new CheckList(data?.check_list);
     this.gallery = new Gallery(data.gallery);
     this.contentURL = data?.content_url || null;
   }
 
-  toArrayTask(data: Array<Record<string, any>>) {
-    const checkList: Array<Task> = [];
-
-    data.forEach((task) => {
-      checkList.push(new Task(task));
-    });
-
-    return checkList;
+  toProjectDeliveryObject(): ProjectDeliveryObject {
+    return {
+      check_list: this.checkList.toCheckListObject(),
+      gallery: this.gallery.toGalleryObject(),
+      content_url: this.contentURL ?? '',
+    };
   }
 }
 

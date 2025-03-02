@@ -22,6 +22,15 @@ class ProjectURL extends Model {
     this.description = data?.description;
     this.image = new Image(data?.image);
   }
+
+  toProjectURLObject(): ProjectURLObject {
+    return {
+      name: this.name,
+      url: this.url,
+      description: this.description,
+      image: this.image.toImageObject(),
+    };
+  }
 }
 
 export default ProjectURL;

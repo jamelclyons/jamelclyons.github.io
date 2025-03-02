@@ -17,6 +17,7 @@ import ProjectSkills from '@/model/ProjectSkills';
 import { TaskObject } from '@/model/Task';
 import ProjectVersions from '@/model/ProjectVersions';
 import ProjectURLs from '@/model/ProjectURLs';
+import CheckList, { CheckListObject } from '@/model/CheckList';
 
 interface UpdateState {
   updateLoading: boolean;
@@ -25,6 +26,9 @@ interface UpdateState {
   updateError: Error | null;
   updateErrorMessage: string | null;
   updateStatusCode: number | null;
+  updatedDesignCheckList: CheckListObject | null;
+  updatedDevelopmentCheckList: CheckListObject | null;
+  updatedDeliveryCheckList: CheckListObject | null;
   updatedSolutionGallery: GalleryObject | null;
   updatedDesignGallery: GalleryObject | null;
   updatedDevelopmentGallery: GalleryObject | null;
@@ -45,6 +49,9 @@ const initialState: UpdateState = {
   updateError: null,
   updateErrorMessage: null,
   updateStatusCode: null,
+  updatedDesignCheckList: null,
+  updatedDevelopmentCheckList: null,
+  updatedDeliveryCheckList: null,
   updatedSolutionGallery: null,
   updatedDesignGallery: null,
   updatedDevelopmentGallery: null,
@@ -57,6 +64,45 @@ const initialState: UpdateState = {
   updatedProjectURLs: null,
   updatedFeatures: null,
 };
+
+export const updateDesignCheckList = createAsyncThunk(
+  'update/updateDesignCheckList',
+  async (checkList: CheckList) => {
+    try {
+      return checkList.toCheckListObject();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const updateDevelopmentCheckList = createAsyncThunk(
+  'update/updateDevelopmentCheckList',
+  async (checkList: CheckList) => {
+    try {
+      return checkList.toCheckListObject();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const updateDeliveryCheckList = createAsyncThunk(
+  'update/updateDeliveryCheckList',
+  async (checkList: CheckList) => {
+    try {
+      return checkList.toCheckListObject();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
 
 export const updateProjectURLs = createAsyncThunk(
   'update/updateProjectURLs',
@@ -448,6 +494,36 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(updateDesignCheckList.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateErrorMessage = '';
+        state.updateLoadingMessage = 'Design check list updated';
+      })
+      .addCase(updateDesignCheckList.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updatedDesignCheckList = action.payload;
+      })
+      .addCase(updateDevelopmentCheckList.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateErrorMessage = '';
+        state.updateLoadingMessage = 'Development check list updated';
+      })
+      .addCase(updateDevelopmentCheckList.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updatedDevelopmentCheckList = action.payload;
+      })
+      .addCase(updateDeliveryCheckList.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateErrorMessage = '';
+        state.updateLoadingMessage = 'Delivery check list updated';
+      })
+      .addCase(updateDeliveryCheckList.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updatedDeliveryCheckList = action.payload;
+      })
       .addCase(updateProjectURLs.pending, (state) => {
         state.updateLoading = true;
         state.updateError = null;

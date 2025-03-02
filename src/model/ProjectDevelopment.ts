@@ -5,13 +5,14 @@ import ProjectSkills from './ProjectSkills';
 
 import { ProjectSkillsObject } from './ProjectSkills';
 import Gallery, { GalleryObject } from './Gallery';
+import CheckList, { CheckListObject } from './CheckList';
 
 export type ProjectDevelopmentObject = {
   gallery: GalleryObject;
   repo_url: string;
   content_url: string;
   skills: ProjectSkillsObject;
-  check_list: Array<TaskObject>;
+  check_list: CheckListObject;
   versions_list: ProjectVersionsObject;
 };
 
@@ -20,7 +21,7 @@ class ProjectDevelopment extends Model {
   repoURL: string;
   contentURL: string;
   skills: ProjectSkills;
-  checkList: Array<TaskObject>;
+  checkList: CheckList;
   versionsList: ProjectVersions;
 
   constructor(data: Record<string, any> | ProjectDevelopmentObject = {}) {
@@ -32,7 +33,7 @@ class ProjectDevelopment extends Model {
     this.skills = data?.skills
       ? new ProjectSkills(data.skills)
       : new ProjectSkills();
-    this.checkList = data?.check_list ? this.toArrayTask(data.check_list) : [];
+    this.checkList = new CheckList(data?.check_list);
     this.versionsList = data?.versions_list
       ? new ProjectVersions(data.versions_list)
       : new ProjectVersions();
@@ -49,8 +50,19 @@ class ProjectDevelopment extends Model {
   }
 
   setSkills(skills: ProjectSkills) {
-    console.log(skills)
+    console.log(skills);
     this.skills = skills;
+  }
+
+  toProjectDevelopmentObject(): ProjectDevelopmentObject {
+    return {
+      gallery: this.gallery.toGalleryObject(),
+      repo_url: this.repoURL,
+      content_url: this.contentURL,
+      skills: this.skills.toProjectSkillsObject(),
+      check_list: this.checkList.toCheckListObject(),
+      versions_list: this.versionsList.toProjectVersionsObject(),
+    };
   }
 }
 
