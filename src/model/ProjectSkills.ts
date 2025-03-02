@@ -4,14 +4,16 @@ import Taxonomy, {
   Framework,
   Language,
   ProjectType,
+  ProjectTypeObject,
+  TaxonomyObject,
   Technology,
 } from './Taxonomy';
 
 export type ProjectSkillsObject = {
-  types: Array<Record<string, any>>;
-  languages: Array<Record<string, any>>;
-  frameworks: Array<Record<string, any>>;
-  technologies: Array<Record<string, any>>;
+  types: Array<ProjectTypeObject>;
+  languages: Array<TaxonomyObject>;
+  frameworks: Array<TaxonomyObject>;
+  technologies: Array<TaxonomyObject>;
 };
 
 class ProjectSkills extends Model {
@@ -181,6 +183,33 @@ class ProjectSkills extends Model {
       this.frameworks.size +
       this.technologies.size
     );
+  }
+
+  toProjectSkillsObject(): ProjectSkillsObject {
+    return {
+      types:
+        this.types.size > 0
+          ? Array.from(this.types).map((type) => type.toProjectTypeObject())
+          : [],
+      languages:
+        this.languages.size > 0
+          ? Array.from(this.languages).map((language) =>
+              language.toLanguageObject()
+            )
+          : [],
+      frameworks:
+        this.frameworks.size > 0
+          ? Array.from(this.frameworks).map((framework) =>
+              framework.toFrameworkObject()
+            )
+          : [],
+      technologies:
+        this.technologies.size > 0
+          ? Array.from(this.technologies).map((technology) =>
+              technology.toTechnologyObject()
+            )
+          : [],
+    };
   }
 }
 

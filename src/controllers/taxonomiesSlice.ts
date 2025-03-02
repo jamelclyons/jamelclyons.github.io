@@ -23,6 +23,8 @@ import Taxonomy, {
   Framework,
   Language,
   ProjectType,
+  ProjectTypeObject,
+  TaxonomyObject,
   Technology,
 } from '@/model/Taxonomy';
 import Image from '@/model/Image';
@@ -37,7 +39,7 @@ interface TaxonomiesState {
   taxonomiesError: Error | null;
   taxonomiesErrorMessage: string;
   taxonomiesStatusCode: string;
-  projectTypesObject: Array<Record<string, any>>;
+  projectTypesObject: Array<ProjectTypeObject>;
   projectTypeObject: Record<string, any> | null;
   languagesObject: Array<Record<string, any>>;
   languageObject: Record<string, any> | null;
@@ -81,7 +83,7 @@ const getTaxonomy = (type: string, doc: DocumentData) => {
     class_name: data?.class_name,
   });
 
-  return taxonomy.toObject();
+  return taxonomy.toTaxonomyObject();
 };
 
 export const getTaxImage = createAsyncThunk(
@@ -112,7 +114,7 @@ export const getTaxImages = createAsyncThunk<
       collection(db, type)
     );
 
-    let updatedTaxonomies: Array<Record<string, any>> = [];
+    let updatedTaxonomies: Array<TaxonomyObject> = [];
 
     querySnapshot.forEach((doc: DocumentData) => {
       let data = doc.data();
@@ -120,9 +122,9 @@ export const getTaxImages = createAsyncThunk<
       taxonomies.forEach((taxonomy) => {
         if (taxonomy.id === doc.id) {
           let tax = new Taxonomy(taxonomy);
-          tax.setClassName(data?.class_name);
-          tax.setIconURL(data?.icon_url);
-          updatedTaxonomies.push(tax.toObject());
+          tax.image.setClassName(data?.class_name);
+          tax.image.setURL(data?.icon_url);
+          updatedTaxonomies.push(tax.toTaxonomyObject());
         }
       });
     });
@@ -144,11 +146,10 @@ export const getProjectTypes = createAsyncThunk(
         collection(db, type)
       );
 
-      let projectTypes: Array<Record<string, any>> = [];
+      let projectTypes: Array<ProjectTypeObject> = [];
 
       querySnapshot.forEach((doc: DocumentData) => {
         let taxonomy = getTaxonomy(type, doc);
-
         projectTypes.push(taxonomy);
       });
 

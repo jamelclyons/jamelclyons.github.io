@@ -13,27 +13,28 @@ import {
   getTechnologies,
   SkillsObject,
 } from '../../../../controllers/taxonomiesSlice';
-import { updateSkills } from '../../../../controllers/updateSlice';
+import { updateProjectSkills, updateSkills } from '../../../../controllers/updateSlice';
 
 import type { AppDispatch, RootState } from '../../../../model/store';
 import ProjectSkills, { ProjectSkillsObject } from '@/model/ProjectSkills';
+import Taxonomy, { Framework, Language, ProjectType, Technology } from '@/model/Taxonomy';
 
 interface UpdateSkillsProps {
-  skillsObject: SkillsObject;
+  skillsObject: ProjectSkillsObject;
 }
 
 const UpdateSkills: React.FC<UpdateSkillsProps> = ({ skillsObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const [skills, setSkills] = useState<SkillsObject>(skillsObject);
-  const [selectedProjectTypes, setSelectedProjectTypes] = useState(skillsObject.types);
-  const [selectedLanguages, setSelectedLanguages] = useState(skillsObject.languages);
-  const [selectedFrameworks, setSelectedFrameworks] = useState(skillsObject.frameworks);
-  const [selectedTechnologies, setSelectedTechnologies] = useState(skillsObject.technologies);
-
   const { projectTypesObject, languagesObject, frameworksObject, technologiesObject } = useSelector(
     (state: RootState) => state.taxonomies
   );
+
+  const [skills, setSkills] = useState<ProjectSkills>(new ProjectSkills(skillsObject));
+  const [selectedProjectTypes, setSelectedProjectTypes] = useState<Set<ProjectType>>(skills.types);
+  const [selectedLanguages, setSelectedLanguages] = useState<Set<Language>>(skills.languages);
+  const [selectedFrameworks, setSelectedFrameworks] = useState<Set<Framework>>(skills.frameworks);
+  const [selectedTechnologies, setSelectedTechnologies] = useState<Set<Technology>>(skills.technologies);
 
   useEffect(() => {
     dispatch(getProjectTypes());
@@ -51,75 +52,58 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ skillsObject }) => {
     dispatch(getTechnologies());
   }, []);
 
-  // const handleProjectTypesCheckboxChange = (id: string) => {
-  //   setSelectedProjectTypes((prevSelectedIds) => {
-  //     const updatedSelection = new Set(prevSelectedIds);
+  const existsInSet = (taxonomy: Taxonomy, set: Set<Taxonomy>) => {
+    const map = new Map(
+      Array.from(set).map((tax) => [tax.id, tax])
+    );
 
-  // if (updatedSelection.has(id)) {
-  //   updatedSelection.delete(id);
-  // } else {
-  //   updatedSelection.add(id);
-  // }
+    return map.has(taxonomy.id);
+  };
 
-  //     return updatedSelection;
-  //   });
-  // };
+  const handleProjectTypesCheckboxChange = (type: ProjectType) => {
+    setSelectedProjectTypes((prevTypes) => {
+      const updatedSelection = new Set(prevTypes);
+      const exists = existsInSet(type, selectedProjectTypes);
+      return exists ? new Set(Array.from(updatedSelection).filter((t) => t.id !== type.id)) : updatedSelection.add(type);
+    });
+  };
 
-  // const handleLanguagesCheckboxChange = (id: string) => {
-  //   setSelectedLanguages((prevSelectedIds) => {
-  //     const updatedSelection = new Set(prevSelectedIds);
+  const handleLanguagesCheckboxChange = (language: Language) => {
+    setSelectedLanguages((prevLangs) => {
+      const updatedSelection = new Set(prevLangs);
+      const exists = existsInSet(language, selectedLanguages);
+      return exists ? new Set(Array.from(updatedSelection).filter((t) => t.id !== language.id)) : updatedSelection.add(language)
+    });
+  };
 
-  // if (updatedSelection.has(id)) {
-  //   updatedSelection.delete(id);
-  // } else {
-  //   updatedSelection.add(id);
-  // }
+  const handleFrameworksCheckboxChange = (framework: Framework) => {
+    setSelectedFrameworks((prevFrameworks) => {
+      const updatedSelection = new Set(prevFrameworks);
+      const exists = existsInSet(framework, selectedFrameworks);
+      return exists ? new Set(Array.from(updatedSelection).filter((t) => t.id !== framework.id)) : updatedSelection.add(framework)
+    });
+  };
 
-  //     return updatedSelection;
-  //   });
-  // };
-
-  // const handleFrameworksCheckboxChange = (id: string) => {
-  //   setSelectedFrameworks((prevSelectedIds) => {
-  //     const updatedSelection = new Set(prevSelectedIds);
-
-  // if (updatedSelection.has(id)) {
-  //   updatedSelection.delete(id);
-  // } else {
-  //   updatedSelection.add(id);
-  // }
-
-  //     return updatedSelection;
-  //   });
-  // };
-
-  // const handleTechnologiesCheckboxChange = (id: string) => {
-  //   setSelectedTechnologies((prevSelectedIds) => {
-  //     const updatedSelection = new Set(prevSelectedIds);
-
-  // if (updatedSelection.has(id)) {
-  //   updatedSelection.delete(id);
-  // } else {
-  //   updatedSelection.add(id);
-  // }
-
-  //     return updatedSelection;
-  //   });
-  // };
-
+  const handleTechnologiesCheckboxChange = (technology: Technology) => {
+    setSelectedTechnologies((prevTechnologies) => {
+      const updatedSelection = new Set(prevTechnologies);
+      const exists = existsInSet(technology, selectedTechnologies);
+      return exists ? new Set(Array.from(updatedSelection).filter((t) => t.id !== technology.id)) : updatedSelection.add(technology)
+    });
+  };
 
   const handleUpdateSkills = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     try {
       const updatedSkills: ProjectSkillsObject = {
-        types: selectedProjectTypes,
-        languages: selectedLanguages,
-        frameworks: selectedFrameworks,
-        technologies: selectedTechnologies
+        types: selectedProjectTypes.size > 0 ? Array.from(selectedProjectTypes).map((type) => type.toProjectTypeObject()) : [],
+        languages: selectedLanguages.size > 0 ? Array.from(selectedLanguages).map((language) => language.toLanguageObject()) : [],
+        frameworks: selectedFrameworks.size > 0 ? Array.from(selectedFrameworks).map((framework) => framework.toFrameworkObject()) : [],
+        technologies: selectedTechnologies.size > 0 ? Array.from(selectedTechnologies).map((technology) => technology.toTechnologyObject()) : []
       };
 
-      dispatch(updateSkills(new ProjectSkills(updatedSkills)));
+      dispatch(updateProjectSkills(new ProjectSkills(updatedSkills)));
     } catch (error) {
       const err = error as Error;
       dispatch(setMessageType('error'));
@@ -129,85 +113,98 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ skillsObject }) => {
   };
 
   return (
-    <>
+    <div className='update' id='update_skills'>
       <h3>Update Skills</h3>
 
       <div className="project-selection">
         <label htmlFor="options">Choose Project Types:</label>
 
         {Array.isArray(projectTypesObject) &&
-          projectTypesObject.map((item) => (
-            <div className="form-item-flex" key={item.id}>
-              <input
-                type="checkbox"
-                id={`checkbox-${item.id}`}
-                value={item.id}
-              // checked={selectedProjectTypes.has(item.id)}
-              // onChange={() => handleProjectTypesCheckboxChange(item.id)}
-              />
-              <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
-            </div>
-          ))}
+          projectTypesObject.length > 0 &&
+          Array.from(projectTypesObject)
+            .map((type) => new ProjectType(type))
+            .map((type) => (
+              <div className="form-item-flex" key={type.id}>
+                <input
+                  type="checkbox"
+                  id={`checkbox-${type.id}`}
+                  value={type.id}
+                  checked={existsInSet(type, selectedProjectTypes)}
+
+                  onChange={() => handleProjectTypesCheckboxChange(type)}
+                />
+                <label htmlFor={`checkbox-${type.id}`}>{type.title}</label>
+              </div>
+            ))}
       </div>
 
       <div className="project-selection">
         <label htmlFor="options">Choose Languages:</label>
 
         {Array.isArray(languagesObject) &&
-          languagesObject.map((item) => (
-            <div className="form-item-flex" key={item.id}>
-              <input
-                type="checkbox"
-                id={`checkbox-${item.id}`}
-                value={item.id}
-              // checked={selectedLanguages.has(item.id)}
-              // onChange={() => handleLanguagesCheckboxChange(item.id)}
-              />
-              <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
-            </div>
-          ))}
+          languagesObject.length > 0 &&
+          Array.from(languagesObject)
+            .map((lang) => new Language(lang))
+            .map((language) => (
+              <div className="form-item-flex" key={language.id}>
+                <input
+                  type="checkbox"
+                  id={`checkbox-${language.id}`}
+                  value={language.id}
+                  checked={existsInSet(language, selectedLanguages)}
+                  onChange={() => handleLanguagesCheckboxChange(language)}
+                />
+                <label htmlFor={`checkbox-${language.id}`}>{language.title}</label>
+              </div>
+            ))}
       </div>
 
       <div className="project-selection">
         <label htmlFor="options">Choose Frameworks:</label>
 
         {Array.isArray(frameworksObject) &&
-          frameworksObject.map((item) => (
-            <div className="form-item-flex" key={item.id}>
-              <input
-                type="checkbox"
-                id={`checkbox-${item.id}`}
-                value={item.id}
-              // checked={selectedFrameworks.has(item.id)}
-              // onChange={() => handleFrameworksCheckboxChange(item.id)}
-              />
-              <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
-            </div>
-          ))}
+          frameworksObject.length > 0 &&
+          Array.from(frameworksObject)
+            .map((framework) => new Framework(framework))
+            .map((framework) => (
+              <div className="form-item-flex" key={framework.id}>
+                <input
+                  type="checkbox"
+                  id={`checkbox-${framework.id}`}
+                  value={framework.id}
+                  checked={existsInSet(framework, selectedFrameworks)}
+                  onChange={() => handleFrameworksCheckboxChange(framework)}
+                />
+                <label htmlFor={`checkbox-${framework.id}`}>{framework.title}</label>
+              </div>
+            ))}
       </div>
 
       <div className="project-selection">
         <label htmlFor="options">Choose Technologies:</label>
 
         {Array.isArray(technologiesObject) &&
-          technologiesObject.map((item) => (
-            <div className="form-item-flex" key={item.id}>
+        technologiesObject.length > 0 &&
+          Array.from(technologiesObject)
+          .map((tech) => new Technology(tech))
+          .map((technology) => (
+            <div className="form-item-flex" key={technology.id}>
               <input
                 type="checkbox"
-                id={`checkbox-${item.id}`}
-                value={item.id}
-              // checked={selectedTechnologies.has(item.id)}
-              // onChange={() => handleTechnologiesCheckboxChange(item.id)}
+                id={`checkbox-${technology.id}`}
+                value={technology.id}
+                checked={existsInSet(technology, selectedTechnologies)}
+                onChange={() => handleTechnologiesCheckboxChange(technology)}
               />
-              <label htmlFor={`checkbox-${item.id}`}>{item.title}</label>
+              <label htmlFor={`checkbox-${technology.id}`}>{technology.title}</label>
             </div>
           ))}
       </div>
 
-      <button>
+      <button onClick={handleUpdateSkills}>
         <h3>Update Skills</h3>
       </button>
-    </>
+    </div>
   )
 }
 

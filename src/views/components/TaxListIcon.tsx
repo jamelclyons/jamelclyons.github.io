@@ -31,7 +31,7 @@ const TaxListIcon: React.FC<TaxListIconProps> = ({ title, taxonomies }) => {
       const { languages, frameworks, technologies } = skills;
 
       taxonomies.forEach(async (tax) => {
-        if (tax.className === '' && tax.iconURL === '') {
+        if (tax.image.className === '' && tax.image.url === '') {
           if (languages.size > 0) {
             languages.forEach((language) => {
               if (language.id === tax.id) {

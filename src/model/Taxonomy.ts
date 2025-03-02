@@ -1,7 +1,16 @@
 import Model from './Model';
 
 import { snakeCaseToPath } from '../utilities/String';
-import Image from './Image';
+import Image, { ImageObject } from './Image';
+
+export type TaxonomyObject = {
+  id: string;
+  type: string;
+  title: string;
+  path: string;
+  image: ImageObject;
+  usage: number;
+};
 
 class Taxonomy extends Model {
   id: string;
@@ -9,8 +18,6 @@ class Taxonomy extends Model {
   title: string;
   path: string;
   image: Image;
-  iconURL: string;
-  className: string;
   usage: number;
 
   constructor(data?: Record<string, any>) {
@@ -22,14 +29,12 @@ class Taxonomy extends Model {
     this.path = data?.path
       ? snakeCaseToPath(data.path)
       : snakeCaseToPath(this.type);
-    this.iconURL = data?.icon_url ? data.icon_url : '';
-    this.className = data?.class_name ? data.class_name : '';
     this.usage = data?.usage ? data.usage : '';
     this.image = new Image({
-      id: this.id,
-      title: this.title,
-      url: this.iconURL,
-      class_name: this.className,
+      id: data?.image?.id,
+      title: data?.image?.title,
+      url: data?.image?.iconURL,
+      class_name: data?.image?.className,
     });
   }
 
@@ -53,20 +58,32 @@ class Taxonomy extends Model {
     return true;
   }
 
-  setIconURL(url: string) {
-    this.iconURL = url;
-    this.image.url = url;
-  }
-
-  setClassName(className: string) {
-    this.className = className;
-    this.image.className = className;
-  }
-
   toObject() {
     return super.toObject();
   }
+
+  toTaxonomyObject(): TaxonomyObject {
+    return {
+      id: this.id,
+      type: this.type,
+      title: this.title,
+      path: this.path,
+      image: this.image.toImageObject(),
+      usage: this.usage,
+    };
+  }
 }
+
+export default Taxonomy;
+
+export type ProjectTypeObject = {
+  id: string;
+  type: string;
+  title: string;
+  path: string;
+  image: ImageObject;
+  usage: number;
+};
 
 export class ProjectType extends Taxonomy {
   readonly type: string = 'project_type';
@@ -75,7 +92,27 @@ export class ProjectType extends Taxonomy {
   constructor(data?: Record<string, any>) {
     super(data);
   }
+
+  toProjectTypeObject(): ProjectTypeObject {
+    return {
+      id: this.id,
+      type: this.type,
+      title: this.title,
+      path: this.path,
+      image: this.image.toImageObject(),
+      usage: this.usage,
+    };
+  }
 }
+
+export type LanguageObject = {
+  id: string;
+  type: string;
+  title: string;
+  path: string;
+  image: ImageObject;
+  usage: number;
+};
 
 export class Language extends Taxonomy {
   readonly type: string = 'language';
@@ -84,7 +121,27 @@ export class Language extends Taxonomy {
   constructor(data?: Record<string, any>) {
     super(data);
   }
+
+  toLanguageObject(): LanguageObject {
+    return {
+      id: this.id,
+      type: this.type,
+      title: this.title,
+      path: this.path,
+      image: this.image.toImageObject(),
+      usage: this.usage,
+    };
+  }
 }
+
+export type FrameworkObject = {
+  id: string;
+  type: string;
+  title: string;
+  path: string;
+  image: ImageObject;
+  usage: number;
+};
 
 export class Framework extends Taxonomy {
   readonly type: string = 'framework';
@@ -93,7 +150,27 @@ export class Framework extends Taxonomy {
   constructor(data?: Record<string, any>) {
     super(data);
   }
+
+  toFrameworkObject(): FrameworkObject {
+    return {
+      id: this.id,
+      type: this.type,
+      title: this.title,
+      path: this.path,
+      image: this.image.toImageObject(),
+      usage: this.usage,
+    };
+  }
 }
+
+export type TechnologyObject = {
+  id: string;
+  type: string;
+  title: string;
+  path: string;
+  image: ImageObject;
+  usage: number;
+};
 
 export class Technology extends Taxonomy {
   readonly type: string = 'technology';
@@ -102,6 +179,44 @@ export class Technology extends Taxonomy {
   constructor(data?: Record<string, any>) {
     super(data);
   }
+
+  toTechnologyObject(): TechnologyObject {
+    return {
+      id: this.id,
+      type: this.type,
+      title: this.title,
+      path: this.path,
+      image: this.image.toImageObject(),
+      usage: this.usage,
+    };
+  }
 }
 
-export default Taxonomy;
+export type ServiceObject = {
+  id: string;
+  type: string;
+  title: string;
+  path: string;
+  image: ImageObject;
+  usage: number;
+};
+
+export class Service extends Taxonomy {
+  readonly type: string = 'service';
+  readonly path: string = 'services';
+
+  constructor(data?: Record<string, any>) {
+    super(data);
+  }
+
+  toServiceObject(): ServiceObject {
+    return {
+      id: this.id,
+      type: this.type,
+      title: this.title,
+      path: this.path,
+      image: this.image.toImageObject(),
+      usage: this.usage,
+    };
+  }
+}

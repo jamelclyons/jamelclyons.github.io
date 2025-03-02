@@ -22,6 +22,14 @@ class Image extends Model {
     this.className = data?.class_name || '';
   }
 
+  setURL(url: string) {
+    this.url = url;
+  }
+
+  setClassName(className: string) {
+    this.className = className;
+  }
+
   toImageObject(): ImageObject {
     return {
       id: this.id,

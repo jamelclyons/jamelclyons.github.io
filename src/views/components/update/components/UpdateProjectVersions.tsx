@@ -114,10 +114,11 @@ const UpdateProjectVersions: React.FC<UpdateProjectVersionsProps> = ({ projectVe
                                 </div>
                             </div>
                         ))}
+                        
+                        <hr />
                     </>
                 )}
 
-                <hr />
 
                 <h4>Update Current Version</h4>
 

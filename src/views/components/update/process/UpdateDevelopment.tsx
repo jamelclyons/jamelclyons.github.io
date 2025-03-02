@@ -165,15 +165,15 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) 
     <div className='update' id='update_development'>
       <h2 className="title">development</h2>
 
-      <UpdateGallery location='development' gallery={gallery} />
-
-      <br />
-
       <UpdateCheckList checkList={checkList} />
 
       <br />
 
       <UpdateSkills skillsObject={projectSkills} />
+
+      <br />
+
+      <UpdateGallery location='development' gallery={gallery} />
 
       <br />
 
