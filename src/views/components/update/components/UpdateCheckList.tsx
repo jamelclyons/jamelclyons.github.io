@@ -23,14 +23,14 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkListOb
     const [checkList, setCheckList] = useState<CheckList>(new CheckList(checkListObject));
     const [tasks, setTasks] = useState<Set<Task>>(checkList.tasks);
     const [task, setTask] = useState<Task>(new Task());
-    const [selectedTasks, setSelectedTasks] = useState<Array<Task>>(Array.isArray(checkListObject.tasks) && checkListObject.tasks.length > 0 ? checkListObject.tasks.map((task) => new Task(task)) : []);
+    const [selectedTasks, setSelectedTasks] = useState<Set<Task>>(Array.isArray(checkListObject.tasks) && checkListObject.tasks.length > 0 ? new Set(checkListObject.tasks.map((task) => new Task(task))) : new Set());
 
     useEffect(() => {
         setCheckList(new CheckList(checkListObject));
     }, [checkListObject, setCheckList]);
 
     useEffect(() => {
-        setSelectedTasks(checkListObject.tasks.map((task) => new Task(task)));
+        setSelectedTasks(new Set(checkListObject.tasks.map((task) => new Task(task))));
     }, [checkListObject, setSelectedTasks]);
 
     useEffect(() => {
@@ -42,7 +42,6 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkListOb
         task: Task
     ) => {
         const { name, value, checked } = e.target;
-        const index = selectedTasks.indexOf(task);
 
         let description = task.description;
         let status = task.status;
@@ -53,7 +52,6 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkListOb
         const weightRegex = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}-weight$/;
 
         if (taskRegex.test(name)) {
-            console.log(value)
             description = value;
         }
 
@@ -65,16 +63,19 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkListOb
             weight = parseInt(value);
         }
 
-        selectedTasks[index] = new Task({
-            id: task.id,
-            description: description,
-            status: status,
-            weight: weight
-        })
+        const updatedTasks = Array.from(selectedTasks).map((t) =>
+            t.id === task.id ?
+                new Task({
+                    id: task.id,
+                    description: description,
+                    status: status,
+                    weight: weight
+                }) : t
+        );
 
-        setSelectedTasks([...selectedTasks, selectedTasks[index]]);
-
-        console.log(selectedTasks[index])
+        setSelectedTasks(new Set(updatedTasks));
+        checkList.addTasks(new Set(updatedTasks));
+        setCheckList(checkList)
     };
 
     const handleTaskChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -117,6 +118,7 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkListOb
             });
             checkList.addTasks(tasks)
             setCheckList(checkList)
+            setSelectedTasks(checkList.tasks)
             setTask(new Task());
         } else {
             console.error('A description is required')
@@ -154,7 +156,7 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkListOb
 
             <div className="update">
 
-                {selectedTasks.length > 0 ? (selectedTasks.map((task) => (
+                {selectedTasks.size > 0 ? (Array.from(selectedTasks).map((task) => (
                     <div className="form-item" key={task.id}>
                         <div className="form-item-flex">
                             <label htmlFor={`${task.id}-status`}>Status:</label>
@@ -190,7 +192,7 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkListOb
                             <label htmlFor={`${task.weight}-weight`}>Weignt:</label>
                             <input
                                 type="number"
-                                name={`${task.weight}-weight`}
+                                name={`${task.id}-weight`}
                                 value={task.weight}
                                 onChange={(e) => handleChange(e, task)}
                             />
