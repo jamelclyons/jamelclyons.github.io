@@ -16,8 +16,9 @@ import Skills from '@/model/Skills';
 import ProjectSkills from '@/model/ProjectSkills';
 import { TaskObject } from '@/model/Task';
 import ProjectVersions from '@/model/ProjectVersions';
-import ProjectURLs from '@/model/ProjectURLs';
+import ProjectURLs, { ProjectURLsObject } from '@/model/ProjectURLs';
 import CheckList, { CheckListObject } from '@/model/CheckList';
+import Feature, { FeatureObject } from '@/model/Feature';
 
 interface UpdateState {
   updateLoading: boolean;
@@ -38,8 +39,8 @@ interface UpdateState {
   updatedProjectSkills: Record<string, any> | null;
   updatedCheckList: Array<Record<string, any>> | null;
   updatedVersionsList: Record<string, any> | null;
-  updatedProjectURLs: Record<string, any> | null;
-  updatedFeatures: Array<Record<string, any>> | null;
+  updatedProjectURLs: ProjectURLsObject | null;
+  updatedFeatures: Array<FeatureObject> | null;
 }
 
 const initialState: UpdateState = {
@@ -64,6 +65,19 @@ const initialState: UpdateState = {
   updatedProjectURLs: null,
   updatedFeatures: null,
 };
+
+export const updateFeatures = createAsyncThunk(
+  'update/updateFeatures',
+  async (features: Array<Feature>) => {
+    try {
+      return features.map((feature) => feature.toFeatureObject());
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
 
 export const updateDesignCheckList = createAsyncThunk(
   'update/updateDesignCheckList',
@@ -108,7 +122,7 @@ export const updateProjectURLs = createAsyncThunk(
   'update/updateProjectURLs',
   async (projectURLs: ProjectURLs) => {
     try {
-      return projectURLs.toObject();
+      return projectURLs.toProjectURLsObject();
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -494,6 +508,16 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(updateFeatures.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateErrorMessage = '';
+        state.updateLoadingMessage = 'Features updated';
+      })
+      .addCase(updateFeatures.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updatedFeatures = action.payload;
+      })
       .addCase(updateDesignCheckList.pending, (state) => {
         state.updateLoading = true;
         state.updateError = null;

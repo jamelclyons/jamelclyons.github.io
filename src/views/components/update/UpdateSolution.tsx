@@ -55,12 +55,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
 
   useEffect(() => {
     if (updatedFeatures) {
-      setFeatures(updatedFeatures.map((feature) => {
-        const updatedFeature: FeatureObject = {
-          name: feature.name
-        }
-        return updatedFeature;
-      }));
+      setFeatures(updatedFeatures);
     }
   }, [updatedFeatures, setFeatures]);
 

@@ -130,7 +130,7 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ skillsObject }) => {
             ))}
       </div>
 
-      <div className="project-selection">
+      <div className="project-selection form-item">
         <label htmlFor="options">Choose Languages:</label>
 
         {Array.isArray(languagesObject) &&
@@ -151,7 +151,7 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ skillsObject }) => {
             ))}
       </div>
 
-      <div className="project-selection">
+      <div className="project-selection form-item">
         <label htmlFor="options">Choose Frameworks:</label>
 
         {Array.isArray(frameworksObject) &&
@@ -172,7 +172,7 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ skillsObject }) => {
             ))}
       </div>
 
-      <div className="project-selection">
+      <div className="project-selection form-item">
         <label htmlFor="options">Choose Technologies:</label>
 
         {Array.isArray(technologiesObject) &&

@@ -17,7 +17,7 @@ const FeaturesComponent: React.FC<FeaturesComponentProps> = ({ features }) => {
           {Array.from(features).map((feature) => (
             <>
               <p className="feature-name" id="feature_name">
-                {feature.name}
+                {feature.description}
               </p>
             </>
           ))}

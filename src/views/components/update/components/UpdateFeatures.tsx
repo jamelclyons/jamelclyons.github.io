@@ -7,8 +7,20 @@ interface UpdateFeaturesProps {
 }
 
 const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ features }) => {
+    console.log(features)
     return (
-        <h3>Features</h3>
+        <div className="update" id="update_features">
+            <h3>Features</h3>
+
+            <hr />
+
+            <h4>Add New Feature</h4>
+
+            <div className="form-item">
+                <label htmlFor=""></label>
+
+            </div>
+        </div>
     )
 }
 

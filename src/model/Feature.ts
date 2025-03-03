@@ -1,16 +1,26 @@
 import Model from './Model';
 
 export type FeatureObject = {
-  name: string;
-}
+  id: string;
+  description: string;
+};
 
 class Feature extends Model {
-  name: string;
+  id: string;
+  description: string;
 
-  constructor(data?: Record<string,any>) {
+  constructor(data?: Record<string, any> | FeatureObject) {
     super();
-    
-    this.name = data?.name ? data.name : 'Not Provided';
+
+    this.id = data?.id ?? '';
+    this.description = data?.description ? data.description : 'Not Provided';
+  }
+
+  toFeatureObject(): FeatureObject {
+    return {
+      id: this.id,
+      description: this.description,
+    };
   }
 }
 
