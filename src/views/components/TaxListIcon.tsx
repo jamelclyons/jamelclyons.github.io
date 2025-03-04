@@ -15,7 +15,7 @@ interface TaxListIconProps {
 const TaxListIcon: React.FC<TaxListIconProps> = ({ title, taxonomies }) => {
   const { skillsObject } = useSelector((state: RootState) => state.taxonomies);
 
-  const [skills, setSkills] = useState<Skills>()
+  const [skills, setSkills] = useState<Skills>(new Skills())
   const [projectSkills, setprojectSkills] = useState<Set<Taxonomy>>();
 
   useEffect(() => {

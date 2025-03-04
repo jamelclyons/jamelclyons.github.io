@@ -127,6 +127,7 @@ class ProjectSkills extends Model {
   show(skillsUsed: ProjectSkills): ProjectSkills {
     const filteredSkills: ProjectSkills = new ProjectSkills();
     const skills = new Skills();
+    
     const { types, languages, frameworks, technologies } = skills;
 
     if (skillsUsed.count > 0) {

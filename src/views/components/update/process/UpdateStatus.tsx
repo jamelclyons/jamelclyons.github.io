@@ -1,7 +1,7 @@
 import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import type { AppDispatch } from '../../../../model/store';
+import type { AppDispatch, RootState } from '../../../../model/store';
 import { ProjectStatusObject } from '../../../../model/ProjectStatus';
 import Project, { ProjectObject } from '@/model/Project';
 
@@ -11,6 +11,7 @@ import {
     setShowStatusBar,
 } from '../../../../controllers/messageSlice';
 import { updateProject } from '../../../../controllers/updateSlice';
+import CheckList from '@/model/CheckList';
 
 interface UpdateStatusProps {
     projectObject: ProjectObject;
@@ -19,9 +20,16 @@ interface UpdateStatusProps {
 const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
     const dispatch = useDispatch<AppDispatch>();
 
+    const { updatedDesignCheckList, updatedDevelopmentCheckList, updatedDeliveryCheckList } = useSelector(
+        (state: RootState) => state.update
+    );
+
     const [status, setStatus] = useState<ProjectStatusObject>(projectObject.process.status);
     const [createdAt, setCreatedAt] = useState<string>(projectObject.process.status.created_at);
     const [updatedAt, setUpdatedAt] = useState<string>(projectObject.process.status.updated_at);
+    const [designCheckList, setDesignCheckList] = useState<CheckList>(new CheckList(projectObject.process.design.check_list))
+    const [developmentCheckList, setDevelopmentCheckList] = useState<CheckList>(new CheckList(projectObject.process.development.check_list))
+    const [deliveryCheckList, setDeliveryCheckList] = useState<CheckList>(new CheckList(projectObject.process.delivery.check_list))
     const [progress, setProgress] = useState<string>(projectObject.process.status.progress);
 
     useEffect(() => {
@@ -29,7 +37,51 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
     }, [projectObject.process.status, setStatus]);
 
     useEffect(() => {
-        setProgress(status.progress)
+        if (updatedDesignCheckList) {
+            setDesignCheckList(new CheckList(updatedDesignCheckList))
+        }
+    }, [updatedDesignCheckList, setDesignCheckList]);
+
+    useEffect(() => {
+        if (updatedDevelopmentCheckList) {
+            setDevelopmentCheckList(new CheckList(updatedDevelopmentCheckList))
+        }
+    }, [updatedDevelopmentCheckList, setDevelopmentCheckList]);
+
+    useEffect(() => {
+        if (updatedDeliveryCheckList) {
+            setDeliveryCheckList(new CheckList(updatedDeliveryCheckList))
+        }
+    }, [updatedDeliveryCheckList, setDeliveryCheckList]);
+
+    useEffect(() => {
+        const totalWeight =
+            designCheckList.totalWeight +
+            developmentCheckList.totalWeight +
+            deliveryCheckList.totalWeight;
+
+            if (totalWeight > 0) {
+            const percentageComplete =
+                ((designCheckList.weight +
+                    developmentCheckList.weight +
+                    deliveryCheckList.weight) /
+                totalWeight) * 100;
+
+            setProgress((prev) => {
+                const newProgress = percentageComplete.toString();
+                return prev !== newProgress ? newProgress : prev; // Prevent unnecessary state updates
+            });
+        }
+    }, [
+        designCheckList.weight, designCheckList.totalWeight,
+        developmentCheckList.weight, developmentCheckList.totalWeight,
+        deliveryCheckList.weight, deliveryCheckList.totalWeight
+    ]);
+
+    useEffect(() => {
+        if (status.progress !== '0') {
+            setProgress(status.progress)
+        }
     }, [status.progress, setProgress]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

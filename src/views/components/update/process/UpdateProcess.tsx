@@ -12,7 +12,6 @@ interface UpdateProcessProps {
 }
 
 const UpdateProcess: React.FC<UpdateProcessProps> = ({ projectObject }) => {
-
     return (
         <div className='update' id='update_process'>
             <h1 className='title'>process</h1>

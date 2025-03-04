@@ -3,10 +3,13 @@ import Task, { TaskObject } from './Task';
 
 export interface CheckListObject {
   tasks: Array<TaskObject>;
+  weight: number;
+  total_weight: number;
 }
 
 class CheckList extends Model {
   tasks: Set<Task>;
+  weight: number;
   totalWeight: number;
 
   constructor(data: Record<string, any> | CheckListObject = {}) {
@@ -14,9 +17,11 @@ class CheckList extends Model {
 
     if (data?.tasks && Array.isArray(data?.tasks)) {
       this.tasks = this.getTasks(data.tasks);
+      this.weight = this.getWeight(data.tasks);
       this.totalWeight = this.getTotalWeight(data.tasks);
     } else {
       this.tasks = new Set<Task>();
+      this.weight = 0;
       this.totalWeight = 0;
     }
   }
@@ -33,6 +38,20 @@ class CheckList extends Model {
     }
 
     return tasks;
+  }
+
+  getWeight(data: Array<Record<string, any>> | Array<TaskObject>): number {
+    if (!Array.isArray(data) || data.length === 0) return 0;
+
+    let totalWeight = 0;
+
+    data.forEach((task) => {
+      if (task.status) {
+        totalWeight += task.weight;
+      }
+    });
+
+    return totalWeight;
   }
 
   getTotalWeight(data: Array<Record<string, any>> | Array<TaskObject>): number {
@@ -64,6 +83,8 @@ class CheckList extends Model {
 
     return {
       tasks: taskArray.map((task) => task.toTaskObject()),
+      weight: this.weight,
+      total_weight: this.totalWeight,
     };
   }
 }

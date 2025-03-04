@@ -17,6 +17,7 @@ import {
 import StatusBar from '../StatusBar';
 import Skills from '@/model/Skills';
 import Task from '@/model/Task';
+import ProjectSkills from '@/model/ProjectSkills';
 
 interface DevelopmentProps {
   development: ProjectDevelopment;
@@ -33,7 +34,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
   const [showStatusBar, setShowStatusBar] = useState<string>('hide');
   const [messageType, setMessageType] = useState<string>('info');
   const [message, setMessage] = useState<string>('Click Log in with GitHub to gain access to the code.');
-  const [skills, setSkills] = useState<Skills>(development.skills);
+  const [skills, setSkills] = useState<ProjectSkills>(development.skills);
 
   const [tasks, setTasks] = useState<Set<Task>>(checkList.tasks);
 
@@ -85,13 +86,13 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
         <h4 className="title">development</h4>
 
-        {skills && <SkillsComponent skillsUsed={skills} />}
+        {skills && <SkillsComponent projectSkills={skills} />}
 
         {tasks.size > 0 && <CheckList tasks={Array.from(tasks)} />}
 
         {contentURL && <ContentComponent title={''} url={contentURL} />}
 
-        {/* <Versions versions_list={development?.versionsList} /> */}
+        <Versions projectVersions={development?.versionsList} />
 
         <button className='repo' onClick={handleSeeCode}>
           <ImageComponent image={new Image({ title: 'GitHub', url: '', class_name: 'fa fa-github fa-fw' })} />

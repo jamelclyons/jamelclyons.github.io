@@ -86,7 +86,7 @@ const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ account }) => {
 
           <ProjectsComponent projects={projects} />
 
-          <SkillsComponent skillsUsed={null} />
+          <SkillsComponent projectSkills={null} />
         </main>
       ) : <LoadingComponent />}
     </>

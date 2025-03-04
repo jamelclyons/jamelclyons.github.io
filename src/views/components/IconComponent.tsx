@@ -6,7 +6,6 @@ interface IconComponentProps {
 }
 
 const IconComponent: React.FC<IconComponentProps> = ({ image }) => {
-
   return (
     <>
         {image?.url ? (

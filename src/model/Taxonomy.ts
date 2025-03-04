@@ -33,8 +33,8 @@ class Taxonomy extends Model {
     this.image = new Image({
       id: data?.image?.id,
       title: data?.image?.title,
-      url: data?.image?.iconURL,
-      class_name: data?.image?.className,
+      url: data?.image?.url,
+      class_name: data?.image?.class_name,
     });
   }
 

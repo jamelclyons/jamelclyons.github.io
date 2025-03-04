@@ -21,17 +21,25 @@ class Skills extends Model {
   technologies: Set<Technology>;
   count: number;
 
-  constructor(data: Record<string, any> = []) {
+  constructor(data: Record<string, any> | SkillsObject = []) {
     super();
 
     const { types, languages, frameworks, technologies } = skills;
 
-    this.types = this.getProjectTypes(data.types || types);
-    this.languages = this.getLanguages(data.languages || languages);
-    this.frameworks = this.getFrameworks(data.frameworks || frameworks);
-    this.technologies = this.getTechnologies(data.technologies || technologies);
+    this.types = data?.types
+      ? this.getProjectTypes(data.types)
+      : this.getProjectTypes(types);
+    this.languages = data?.languages
+      ? this.getLanguages(data.languages)
+      : this.getLanguages(languages);
+    this.frameworks = data?.frameworks
+      ? this.getFrameworks(data.frameworks)
+      : this.getFrameworks(frameworks);
+    this.technologies = data?.technologies
+      ? this.getTechnologies(data.technologies)
+      : this.getTechnologies(technologies);
 
-    this.count = this.getCount();
+      this.count = this.getCount();
   }
 
   getProjectTypes(data: Array<Record<string, any>> = []) {

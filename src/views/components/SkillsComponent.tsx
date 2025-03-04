@@ -9,12 +9,13 @@ import Skills from '@/model/Skills';
 
 import { setMessage, setMessageType } from '@/controllers/messageSlice';
 import { getSkills } from '@/controllers/taxonomiesSlice';
+import ProjectSkills from '@/model/ProjectSkills';
 
 interface SkillsComponentProps {
-    skillsUsed: Skills | null
+    projectSkills: ProjectSkills | null
 }
 
-const SkillsComponent: React.FC<SkillsComponentProps> = ({ skillsUsed }) => {
+const SkillsComponent: React.FC<SkillsComponentProps> = ({ projectSkills }) => {
     const dispatch = useDispatch<AppDispatch>();
 
     const { taxonomiesLoading, skillsObject } = useSelector((state: RootState) => state.taxonomies);
@@ -23,23 +24,25 @@ const SkillsComponent: React.FC<SkillsComponentProps> = ({ skillsUsed }) => {
 
     const { types, languages, frameworks, technologies } = skills;
 
-    useEffect(() => {
-        if (skillsUsed === null && skillsObject) {
-            setSkills(new Skills(skillsObject))
-        }
-    }, [skillsUsed, skillsObject]);
+    // useEffect(() => {
+    //     console.log(skillsObject)
+    //     if (skillsUsed === null && skillsObject) {
+    //         setSkills(new Skills(skillsObject))
+    //     }
+    // }, [skillsUsed, skillsObject]);
 
     useEffect(() => {
-        if (skillsUsed) {
-            setSkills(skillsUsed)
+        if (projectSkills) {
+            setSkills(projectSkills)
         }
-    }, [skillsUsed]);
+    }, [projectSkills, setSkills]);
 
-    useEffect(() => {
-        if (skillsObject === null) {
-            dispatch(getSkills());
-        }
-    }, [skillsObject, dispatch]);
+    // useEffect(() => {
+    //     console.log(skillsObject)
+    //     if (skillsObject === null) {
+    //         dispatch(getSkills());
+    //     }
+    // }, [skillsObject, dispatch]);
 
     useEffect(() => {
         if (taxonomiesLoading) {
