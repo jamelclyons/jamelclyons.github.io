@@ -16,7 +16,7 @@ const FeaturesComponent: React.FC<FeaturesComponentProps> = ({ features }) => {
         <div className="product-features">
           {Array.from(features).map((feature) => (
             <>
-              <p className="feature-name" id="feature_name">
+              <p className="feature-name" id="feature_name" key={feature.id}>
                 {feature.description}
               </p>
             </>

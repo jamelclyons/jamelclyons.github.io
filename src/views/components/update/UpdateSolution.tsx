@@ -181,7 +181,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
 
       <br />
 
-      <UpdateFeatures features={features} />
+      <UpdateFeatures featuresObject={features} />
 
       <br />
 

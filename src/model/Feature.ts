@@ -13,7 +13,7 @@ class Feature extends Model {
     super();
 
     this.id = data?.id ?? '';
-    this.description = data?.description ? data.description : 'Not Provided';
+    this.description = data?.description ?? '';
   }
 
   toFeatureObject(): FeatureObject {

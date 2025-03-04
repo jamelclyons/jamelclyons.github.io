@@ -110,18 +110,24 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkListOb
 
     const handleAddToCheckList = (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-
-        if (task.description !== '') {
-            setTasks((prevTasks) => {
-                const exists = existsInSet(task, tasks);
-                return exists ? new Set(Array.from(prevTasks).filter((t) => t.id !== task.id)) : prevTasks.add(task);
-            });
-            checkList.addTasks(tasks)
-            setCheckList(checkList)
-            setSelectedTasks(checkList.tasks)
-            setTask(new Task());
-        } else {
-            console.error('A description is required')
+        try {
+            if (task.description !== '') {
+                setTasks((prevTasks) => {
+                    const exists = existsInSet(task, tasks);
+                    return exists ? new Set(Array.from(prevTasks).filter((t) => t.id !== task.id)) : prevTasks.add(task);
+                });
+                checkList.addTasks(tasks)
+                setCheckList(checkList)
+                setSelectedTasks(checkList.tasks)
+                setTask(new Task());
+            } else {
+                throw new Error('A description is required')
+            }
+        } catch (error) {
+            const err = error as Error;
+            dispatch(setMessage(err.message));
+            dispatch(setMessageType('error'));
+            dispatch(setShowStatusBar(Date.now()));
         }
     };
 
