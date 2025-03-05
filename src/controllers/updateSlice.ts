@@ -19,6 +19,7 @@ import ProjectVersions from '@/model/ProjectVersions';
 import ProjectURLs, { ProjectURLsObject } from '@/model/ProjectURLs';
 import CheckList, { CheckListObject } from '@/model/CheckList';
 import Feature, { FeatureObject } from '@/model/Feature';
+import Color, { ColorObject } from '@/model/Color';
 
 interface UpdateState {
   updateLoading: boolean;
@@ -41,6 +42,7 @@ interface UpdateState {
   updatedVersionsList: Record<string, any> | null;
   updatedProjectURLs: ProjectURLsObject | null;
   updatedFeatures: Array<FeatureObject> | null;
+  updatedColors: Array<ColorObject> | null;
 }
 
 const initialState: UpdateState = {
@@ -64,7 +66,21 @@ const initialState: UpdateState = {
   updatedVersionsList: null,
   updatedProjectURLs: null,
   updatedFeatures: null,
+  updatedColors: null,
 };
+
+export const updateColors = createAsyncThunk(
+  'update/updateColors',
+  async (colors: Array<Color>) => {
+    try {
+      return colors.map((color) => color.toColorObject());
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
 
 export const updateFeatures = createAsyncThunk(
   'update/updateFeatures',
@@ -508,6 +524,16 @@ const updateSliceOptions: CreateSliceOptions<UpdateState> = {
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(updateColors.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateErrorMessage = '';
+        state.updateLoadingMessage = 'Colors updated';
+      })
+      .addCase(updateColors.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updatedColors = action.payload;
+      })
       .addCase(updateFeatures.pending, (state) => {
         state.updateLoading = true;
         state.updateError = null;

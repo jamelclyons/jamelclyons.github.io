@@ -19,8 +19,8 @@ const ColorsComponent: React.FC<ColorsProps> = ({ colors }) => {
                 <div className="color" key={index}>
                   <span
                     className="color-square"
-                    style={{ backgroundColor: colorObj.color }}></span>
-                  <h5>{colorObj.color}</h5>
+                    style={{ backgroundColor: colorObj.value }}></span>
+                  <h5>{colorObj.value}</h5>
                 </div>
               ))}
           </div>

@@ -26,7 +26,7 @@ interface UpdateDesignProps {
 const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectObject }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { updatedDesignGallery, updatedDesignCheckList } = useSelector(
+  const { updatedDesignGallery, updatedDesignCheckList, updatedColors } = useSelector(
     (state: RootState) => state.update
   );
 
@@ -57,6 +57,12 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectObject }) => {
       setCheckList(updatedDesignCheckList)
     }
   }, [updatedDesignCheckList, setCheckList]);
+
+  useEffect(() => {
+    if (updatedColors) {
+      setColorsList(updatedColors)
+    }
+  }, [updatedColors, setColorsList]);
 
   const handleDesignContentURLChange = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
@@ -115,7 +121,7 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ projectObject }) => {
 
       <br />
 
-      <UpdateColorsList colors={colorsList} />
+      <UpdateColorsList colorsObject={colorsList} />
 
       <hr />
 
