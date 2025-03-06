@@ -20,7 +20,7 @@ const UpdateProjectVersions: React.FC<UpdateProjectVersionsProps> = ({ projectVe
 
     const [projectVersions, setProjectVersions] = useState<ProjectVersionsObject>(projectVersionsObject);
     const [currentVersion, setCurrentVersion] = useState<string>(projectVersionsObject.current);
-    const [previousVersions, setPreviousVersions] = useState<Array<string>>(projectVersionsObject.previous);
+    const [history, setHistory] = useState<Set<string>>(new Set(projectVersionsObject.history));
 
     useEffect(() => {
         setProjectVersions(projectVersionsObject);
@@ -29,10 +29,10 @@ const UpdateProjectVersions: React.FC<UpdateProjectVersionsProps> = ({ projectVe
     useEffect(() => {
         const updatedProjectVersions: ProjectVersionsObject = {
             current: currentVersion,
-            previous: previousVersions
+            history: Array.from(history)
         };
         setProjectVersions(updatedProjectVersions);
-    }, [currentVersion, previousVersions, setProjectVersions]);
+    }, [currentVersion, history, setProjectVersions]);
 
     const handleCurrentVersionChange = (e: ChangeEvent<HTMLInputElement>) => {
         try {
@@ -57,10 +57,10 @@ const UpdateProjectVersions: React.FC<UpdateProjectVersionsProps> = ({ projectVe
 
             if (index === -1) return;
 
-            const updatedPreviousVersions = [...previousVersions];
+            const updatedPreviousVersions = [...history];
             updatedPreviousVersions[index] = value;
 
-            setPreviousVersions(updatedPreviousVersions);
+            setHistory(new Set(updatedPreviousVersions));
         } catch (error) {
             const err = error as Error;
             dispatch(setMessage(err.message));
@@ -70,9 +70,11 @@ const UpdateProjectVersions: React.FC<UpdateProjectVersionsProps> = ({ projectVe
 
     const handleUpdateCurrentVersion = () => {
         try {
-            const updatedPreviousVersion = [currentVersion, ...previousVersions];
+            const updatedPreviousVersion = [currentVersion, ...history];
 
-            setPreviousVersions(updatedPreviousVersion);
+            if (!history.has(currentVersion)) {
+                setHistory(new Set(updatedPreviousVersion));
+            }
         } catch (error) {
             const err = error as Error;
             dispatch(setMessage(err.message));
@@ -95,11 +97,11 @@ const UpdateProjectVersions: React.FC<UpdateProjectVersionsProps> = ({ projectVe
             <h3>Project Versions</h3>
 
             <form onSubmit={(e) => e.preventDefault()} id='update_gallery_logos'>
-                {Array.isArray(previousVersions) && previousVersions.length > 0 && (
+                {history.size > 0 && (
                     <>
-                        <h4>Previous Versions</h4>
+                        <h4>Version History</h4>
 
-                        {previousVersions.map((version: string, index: number) => (
+                        {Array.from(history).map((version: string, index: number) => (
                             <div className="form-item" key={index}>
 
                                 <div className="form-item-flex">
@@ -114,7 +116,7 @@ const UpdateProjectVersions: React.FC<UpdateProjectVersionsProps> = ({ projectVe
                                 </div>
                             </div>
                         ))}
-                        
+
                         <hr />
                     </>
                 )}
@@ -123,7 +125,14 @@ const UpdateProjectVersions: React.FC<UpdateProjectVersionsProps> = ({ projectVe
                 <h4>Update Current Version</h4>
 
                 <div className="form-item-flex">
-                    <input type="text" id="current_version" value={currentVersion ?? ''} placeholder='Current Project Version' name='current_version' onChange={handleCurrentVersionChange} />
+                    <input
+                        type="text"
+                        id="current_version"
+                        value={currentVersion ?? ''}
+                        placeholder='Current Project Version'
+                        name='current_version'
+                        onChange={handleCurrentVersionChange}
+                    />
                     <button type='button' onClick={handleUpdateCurrentVersion}>
                         <h3>Update Current Version</h3>
                     </button>

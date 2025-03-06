@@ -80,7 +80,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
       skills ||
       tasks.size > 0 ||
       (typeof contentURL === 'string' && contentURL !== '') ||
-      (versionsList?.current !== '' && versionsList?.previous.length > 0) ||
+      (versionsList?.current !== '' && versionsList?.history.size > 0) ||
       repoURL !== '') &&
       <div className="project-process-development" id="project_process_development">
 

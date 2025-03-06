@@ -73,7 +73,7 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ projectObject }) 
     if (updatedVersionsList) {
       const projectVersionsObject: ProjectVersionsObject = {
         current: updatedVersionsList?.current,
-        previous: updatedVersionsList?.previous
+        history: updatedVersionsList?.history
       }
       setProjectVersions(projectVersionsObject)
     }

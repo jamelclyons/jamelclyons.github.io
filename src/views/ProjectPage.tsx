@@ -30,6 +30,7 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
   const { portfolioObject } = useSelector(
     (state: RootState) => state.portfolio
   );
+  
   const { authenticatedUserObject } = useSelector((state: RootState) => state.user);
 
   const [project, setProject] = useState<Project>();

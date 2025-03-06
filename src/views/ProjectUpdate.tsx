@@ -9,6 +9,7 @@ import {
     setMessageType,
     setShowStatusBar,
 } from '@/controllers/messageSlice';
+import { getProject, getProjectPage } from '@/controllers/projectSlice';
 
 import UpdateDetails from './components/update/UpdateDetails';
 import UpdateProcess from './components/update/process/UpdateProcess';
@@ -19,7 +20,8 @@ import StatusBarComponent from './components/StatusBarComponent';
 import type { AppDispatch, RootState } from '@/model/store';
 import Project, { ProjectObject } from '@/model/Project';
 import Owner from '@/model/Owner';
-import { ImageObject } from '@/model/Image';
+import Portfolio from '@/model/Portfolio';
+import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 
 const ProjectUpdate: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -30,7 +32,10 @@ const ProjectUpdate: React.FC = () => {
     const { projectLoading, projectPageLoading, projectErrorMessage, projectPageObject } = useSelector(
         (state: RootState) => state.project
     );
-    const { updateLoading, updateLoadingMessage, updateErrorMessage, updateSuccessMessage, updateStatusCode, updatedProjectURLs } = useSelector(
+    const { portfolioObject } = useSelector(
+        (state: RootState) => state.portfolio
+    );
+    const { updateLoading, updateLoadingMessage, updateErrorMessage, updateSuccessMessage, updateStatusCode } = useSelector(
         (state: RootState) => state.update
     );
     const { databaseLoading, databaseLoadingMessage, databaseStatusCode, databaseErrorMessage, projectDataObject } = useSelector(
@@ -39,10 +44,37 @@ const ProjectUpdate: React.FC = () => {
 
     const [owner, setOwner] = useState<Owner>(new Owner({ login: login, name: 'Jamel C. Lyons' }));
     const [id, setId] = useState<string>();
+    const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject ?? []));
     const [projectObject, setProjectObject] = useState<ProjectObject>(new Project(projectPageObject ?? {}).toProjectObject());
+    const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>();
     const [project, setProject] = useState<Project>(new Project(projectObject));
     const [updatedTitle, setUpdatedTitle] = useState<string>(projectID ?? '');
 
+    useEffect(() => {
+        if (portfolioObject) {
+            setPortfolio(new Portfolio(portfolioObject));
+        }
+    }, [portfolioObject]);
+
+    useEffect(() => {
+        if (projectID) {
+            const filteredProject = portfolio.filterProject(projectID);
+            setProject(filteredProject);
+        }
+    }, [projectID]);
+
+    useEffect(() => {
+        if (login && projectID) {
+          setRepoQuery(new GitHubRepoQuery(login, projectID))
+        }
+      }, [owner, projectID]);
+    
+      useEffect(() => {
+        if (repoQuery) {
+          dispatch(getProjectPage(repoQuery));
+        }
+      }, [dispatch, repoQuery]);
+      
     useEffect(() => {
         if (projectID) {
             setId(projectID);
@@ -55,12 +87,12 @@ const ProjectUpdate: React.FC = () => {
         }
     }, [dispatch, id]);
 
-    // useEffect(() => {
-    //     if (databaseLoading && databaseLoadingMessage) {
-    //         dispatch(setMessage(databaseLoadingMessage));
-    //         dispatch(setMessageType('info'));
-    //     }
-    // }, [databaseLoading, dispatch]);
+    useEffect(() => {
+        if (databaseLoading && databaseLoadingMessage) {
+            dispatch(setMessage(databaseLoadingMessage));
+            dispatch(setMessageType('info'));
+        }
+    }, [databaseLoading, dispatch]);
 
     useEffect(() => {
         if (projectPageObject) {
@@ -74,37 +106,37 @@ const ProjectUpdate: React.FC = () => {
         }
     }, [projectObject, setProject]);
 
-    // useEffect(() => {
-    //     if (databaseErrorMessage) {
-    //         dispatch(setMessageType('error'));
-    //         dispatch(setMessage(databaseErrorMessage));
-    //         dispatch(setShowStatusBar(Date.now));
-    //     }
-    // }, [dispatch, databaseErrorMessage]);
+    useEffect(() => {
+        if (databaseErrorMessage) {
+            dispatch(setMessageType('error'));
+            dispatch(setMessage(databaseErrorMessage));
+            dispatch(setShowStatusBar(Date.now));
+        }
+    }, [dispatch, databaseErrorMessage]);
 
-    // useEffect(() => {
-    //     if (updateLoading && updateLoadingMessage) {
-    //         dispatch(setMessage(updateLoadingMessage));
-    //         dispatch(setMessageType('info'));
-    //     }
-    // }, [updateLoading, dispatch]);
+    useEffect(() => {
+        if (updateLoading && updateLoadingMessage) {
+            dispatch(setMessage(updateLoadingMessage));
+            dispatch(setMessageType('info'));
+        }
+    }, [updateLoading, dispatch]);
 
-    // useEffect(() => {
-    //     if (updateErrorMessage) {
-    //         dispatch(setMessage(updateErrorMessage));
-    //         dispatch(setMessageType('error'));
-    //         dispatch(setShowStatusBar(Date.now()));
+    useEffect(() => {
+        if (updateErrorMessage) {
+            dispatch(setMessage(updateErrorMessage));
+            dispatch(setMessageType('error'));
+            dispatch(setShowStatusBar(Date.now()));
 
-    //     }
-    // }, [updateErrorMessage, dispatch]);
+        }
+    }, [updateErrorMessage, dispatch]);
 
-    // useEffect(() => {
-    //     if (updateSuccessMessage) {
-    //         dispatch(setMessage(updateSuccessMessage));
-    //         dispatch(setMessageType('success'));
-    //         dispatch(setShowStatusBar(Date.now()));
-    //     }
-    // }, [updateSuccessMessage, dispatch]);
+    useEffect(() => {
+        if (updateSuccessMessage) {
+            dispatch(setMessage(updateSuccessMessage));
+            dispatch(setMessageType('success'));
+            dispatch(setShowStatusBar(Date.now()));
+        }
+    }, [updateSuccessMessage, dispatch]);
 
     useEffect(() => {
         if (updateStatusCode === 403 || databaseStatusCode === 403) {
@@ -185,6 +217,12 @@ const ProjectUpdate: React.FC = () => {
             <hr />
 
             <UpdateDetails projectObject={projectObject} />
+
+            <br />
+
+            <button onClick={handleUpdateProject}>
+                <h3 className='title'>Update Project</h3>
+            </button>
 
             <StatusBarComponent />
         </section>

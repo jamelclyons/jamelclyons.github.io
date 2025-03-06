@@ -157,7 +157,10 @@ class User extends Model {
       resume: this.resume,
       website: this.website,
       contact_methods: this.contactMethods.toContactMethodsObject(),
-      images: this.images.map((image) => image.toImageObject()),
+      images:
+        this.images.length > 0
+          ? this.images.map((image) => image.toImageObject())
+          : [],
       organizations_url: this.organizationsURL,
       organizations: [],
       repos_url: this.reposURL,
