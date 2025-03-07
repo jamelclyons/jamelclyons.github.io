@@ -15,18 +15,23 @@ import { updateProject } from '@/controllers/updateSlice';
 import { Privacy, privacyFromString } from '@/model/enum/Enums';
 
 interface UpdateDetailsProps {
-  projectObject: ProjectObject;
+  project: Project;
 }
 
-const UpdateDetails: React.FC<UpdateDetailsProps> = ({ projectObject }) => {
+const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
   const dispatch = useDispatch<AppDispatch>();
 
+  const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject());
   const [detailsObject, setDetailsObject] = useState<ProjectDetailsObject>(projectObject.details);
   const [privacy, setPrivacy] = useState<string>(detailsObject.privacy);
   const [clientID, setClientID] = useState<string>(detailsObject.client_id);
   const [clientName, setClientName] = useState<string>(detailsObject.client_name);
   const [startDate, setStartDate] = useState<string>(detailsObject.start_date);
   const [endDate, setEndDate] = useState<string>(detailsObject.end_date);
+
+  useEffect(() => {
+    setProjectObject(project.toProjectObject())
+  }, [project, setProjectObject]);
 
   useEffect(() => {
     if (projectObject.details) {

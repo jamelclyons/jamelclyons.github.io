@@ -12,27 +12,28 @@ import {
 import { updateVersions } from '@/controllers/updateSlice';
 
 interface UpdateProjectVersionsProps {
-    projectVersionsObject: ProjectVersionsObject
+    projectVersions: ProjectVersions;
 }
 
-const UpdateProjectVersions: React.FC<UpdateProjectVersionsProps> = ({ projectVersionsObject }) => {
+const UpdateProjectVersions: React.FC<UpdateProjectVersionsProps> = ({ projectVersions }) => {
     const dispatch = useDispatch<AppDispatch>();
 
-    const [projectVersions, setProjectVersions] = useState<ProjectVersionsObject>(projectVersionsObject);
-    const [currentVersion, setCurrentVersion] = useState<string>(projectVersionsObject.current);
-    const [history, setHistory] = useState<Set<string>>(new Set(projectVersionsObject.history));
+    const [projectVersionsObject, setProjectVersionsObject] = useState<ProjectVersionsObject>(projectVersions.toProjectVersionsObject());
+
+    const [currentVersion, setCurrentVersion] = useState<string>(projectVersions.current);
+    const [history, setHistory] = useState<Set<string>>(projectVersions.history);
 
     useEffect(() => {
-        setProjectVersions(projectVersionsObject);
-    }, [projectVersionsObject, setProjectVersions]);
+        setProjectVersionsObject(projectVersions.toProjectVersionsObject());
+    }, [projectVersions, setProjectVersionsObject]);
 
     useEffect(() => {
         const updatedProjectVersions: ProjectVersionsObject = {
             current: currentVersion,
             history: Array.from(history)
         };
-        setProjectVersions(updatedProjectVersions);
-    }, [currentVersion, history, setProjectVersions]);
+        setProjectVersionsObject(updatedProjectVersions);
+    }, [currentVersion, history, setProjectVersionsObject]);
 
     const handleCurrentVersionChange = (e: ChangeEvent<HTMLInputElement>) => {
         try {

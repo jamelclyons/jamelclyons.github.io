@@ -20,21 +20,20 @@ import ProjectSkills, { ProjectSkillsObject } from '@/model/ProjectSkills';
 import { Framework, Language, ProjectType, Technology, existsInSet } from '@/model/Taxonomy';
 
 interface UpdateSkillsProps {
-  skillsObject: ProjectSkillsObject;
+  projectSkills: ProjectSkills;
 }
 
-const UpdateSkills: React.FC<UpdateSkillsProps> = ({ skillsObject }) => {
+const UpdateSkills: React.FC<UpdateSkillsProps> = ({ projectSkills }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { projectTypesObject, languagesObject, frameworksObject, technologiesObject } = useSelector(
     (state: RootState) => state.taxonomies
   );
 
-  const [skills, setSkills] = useState<ProjectSkills>(new ProjectSkills(skillsObject));
-  const [selectedProjectTypes, setSelectedProjectTypes] = useState<Set<ProjectType>>(skills.types);
-  const [selectedLanguages, setSelectedLanguages] = useState<Set<Language>>(skills.languages);
-  const [selectedFrameworks, setSelectedFrameworks] = useState<Set<Framework>>(skills.frameworks);
-  const [selectedTechnologies, setSelectedTechnologies] = useState<Set<Technology>>(skills.technologies);
+  const [selectedProjectTypes, setSelectedProjectTypes] = useState<Set<ProjectType>>(projectSkills.types);
+  const [selectedLanguages, setSelectedLanguages] = useState<Set<Language>>(projectSkills.languages);
+  const [selectedFrameworks, setSelectedFrameworks] = useState<Set<Framework>>(projectSkills.frameworks);
+  const [selectedTechnologies, setSelectedTechnologies] = useState<Set<Technology>>(projectSkills.technologies);
 
   useEffect(() => {
     dispatch(getProjectTypes());

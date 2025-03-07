@@ -14,20 +14,21 @@ import { updateDesignCheckList, updateDevelopmentCheckList, updateDeliveryCheckL
 
 interface UpdateCheckListProps {
     location: string;
-    checkListObject: CheckListObject
+    checkList: CheckList;
 }
 
-const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkListObject }) => {
+const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }) => {
     const dispatch = useDispatch<AppDispatch>();
 
-    const [checkList, setCheckList] = useState<CheckList>(new CheckList(checkListObject));
+    const [checkListObject, setCheckListObject] = useState<CheckListObject>(checkList.toCheckListObject());
+
     const [tasks, setTasks] = useState<Set<Task>>(checkList.tasks);
     const [task, setTask] = useState<Task>(new Task());
     const [selectedTasks, setSelectedTasks] = useState<Set<Task>>(Array.isArray(checkListObject.tasks) && checkListObject.tasks.length > 0 ? new Set(checkListObject.tasks.map((task) => new Task(task))) : new Set());
 
     useEffect(() => {
-        setCheckList(new CheckList(checkListObject));
-    }, [checkListObject, setCheckList]);
+        setCheckListObject(checkList.toCheckListObject());
+    }, [checkList, setCheckListObject]);
 
     useEffect(() => {
         setSelectedTasks(new Set(checkListObject.tasks.map((task) => new Task(task))));
@@ -75,7 +76,7 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkListOb
 
         setSelectedTasks(new Set(updatedTasks));
         checkList.addTasks(new Set(updatedTasks));
-        setCheckList(checkList)
+        setCheckListObject(checkList.toCheckListObject())
     };
 
     const handleTaskChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -117,7 +118,7 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkListOb
                     return exists ? new Set(Array.from(prevTasks).filter((t) => t.id !== task.id)) : prevTasks.add(task);
                 });
                 checkList.addTasks(tasks)
-                setCheckList(checkList)
+                setCheckListObject(checkList.toCheckListObject())
                 setSelectedTasks(checkList.tasks)
                 setTask(new Task());
             } else {

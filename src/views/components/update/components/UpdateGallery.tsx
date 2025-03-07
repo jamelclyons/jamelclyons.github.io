@@ -14,18 +14,18 @@ import { updateDeliveryGallery, updateDesignGallery, updateDevelopmentGallery, u
 
 interface UpdateGalleryProps {
     location: string;
-    gallery: GalleryObject;
+    gallery: Gallery;
 }
 
 const UpdateGallery: React.FC<UpdateGalleryProps> = ({ location, gallery }) => {
     const dispatch = useDispatch<AppDispatch>();
 
-    const [galleryObject, setGalleryObject] = useState<GalleryObject>(gallery);
+    const [galleryObject, setGalleryObject] = useState<GalleryObject>(gallery.toGalleryObject());
 
-    const [logos, setLogos] = useState<Array<ImageObject>>(gallery.logos);
-    const [icons, setIcons] = useState<Array<ImageObject>>(gallery.icons);
-    const [animations, setAnimations] = useState<Array<ImageObject>>(gallery.animations);
-    const [umlDiagrams, setUmlDiagrams] = useState<Array<ImageObject>>(gallery.uml_diagrams);
+    const [logos, setLogos] = useState<Array<ImageObject>>(galleryObject.logos);
+    const [icons, setIcons] = useState<Array<ImageObject>>(galleryObject.icons);
+    const [animations, setAnimations] = useState<Array<ImageObject>>(galleryObject.animations);
+    const [umlDiagrams, setUmlDiagrams] = useState<Array<ImageObject>>(galleryObject.uml_diagrams);
 
     const [newLogo, setNewLogo] = useState<ImageObject>({ id: '', title: '', url: '', class_name: '' });
     const [newIcon, setNewIcon] = useState<ImageObject>({ id: '', title: '', url: '', class_name: '' });
@@ -33,7 +33,7 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ location, gallery }) => {
     const [newUmlDiagram, setNewUmlDiagram] = useState<ImageObject>({ id: '', title: '', url: '', class_name: '' });
 
     useEffect(() => {
-        setGalleryObject(gallery);
+        setGalleryObject(gallery.toGalleryObject());
     }, [gallery, setGalleryObject]);
 
     useEffect(() => {

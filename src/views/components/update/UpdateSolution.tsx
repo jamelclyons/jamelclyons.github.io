@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../model/store';
 import Project, { ProjectObject } from '@/model/Project';
 
-import { ProjectSolutionObject } from '../../../model/ProjectSolution';
-import { GalleryObject } from '@/model/Gallery';
-import { FeatureObject } from '@/model/Feature';
-import { ProjectURLsObject } from '@/model/ProjectURLs';
+import ProjectSolution, { ProjectSolutionObject } from '../../../model/ProjectSolution';
+import Gallery from '@/model/Gallery';
+import Feature from '@/model/Feature';
+import ProjectURLs, { ProjectURLsObject } from '@/model/ProjectURLs';
 import { ProjectURLObject } from '@/model/ProjectURL';
 
 import { updateProject } from '@/controllers/updateSlice';
@@ -21,27 +21,27 @@ import UpdateProjectURL from './components/UpdateProjectURL';
 import UpdateGallery from './components/UpdateGallery';
 
 interface UpdateSolutionProps {
-  projectObject: ProjectObject;
+  project: Project;
 }
 
-const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
+const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { updatedSolutionGallery, updatedFeatures, updatedProjectURLs } = useSelector(
     (state: RootState) => state.update
   );
 
-  const [solution, setSolution] = useState<ProjectSolutionObject>(projectObject.solution);
-  const [gallery, setGallery] = useState<GalleryObject>(projectObject.solution.gallery);
-  const [features, setFeatures] = useState<Array<FeatureObject>>(projectObject.solution.features);
-  const [content, setContent] = useState<string>(projectObject.solution.content_url);
-  const [projectURLs, setProjectURLs] = useState<ProjectURLsObject>(projectObject.solution.project_urls);
-  const [currency, setCurrency] = useState<string>(projectObject.solution.currency);
-  const [price, setPrice] = useState<number>(projectObject.solution.price);
+  const [solution, setSolution] = useState<ProjectSolution>(project.solution);
+  const [gallery, setGallery] = useState<Gallery>(project.solution.gallery);
+  const [features, setFeatures] = useState<Set<Feature>>(project.solution.features);
+  const [content, setContent] = useState<string>(project.solution.contentURL);
+  const [projectURLs, setProjectURLs] = useState<ProjectURLs>(project.solution.projectURLs);
+  const [currency, setCurrency] = useState<string>(project.solution.currency);
+  const [price, setPrice] = useState<number>(project.solution.price);
 
   useEffect(() => {
-    setSolution(projectObject.solution)
-  }, [projectObject.solution, setSolution]);
+    setSolution(project.solution)
+  }, [project.solution, setSolution]);
 
   useEffect(() => {
     setGallery(solution.gallery);
@@ -49,13 +49,13 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
 
   useEffect(() => {
     if (updatedSolutionGallery) {
-      setGallery(updatedSolutionGallery);
+      setGallery(new Gallery(updatedSolutionGallery));
     }
   }, [updatedSolutionGallery, setGallery]);
 
   useEffect(() => {
     if (updatedFeatures) {
-      setFeatures(updatedFeatures);
+      setFeatures(new Set(updatedFeatures.map((feature) => new Feature(feature))));
     }
   }, [updatedFeatures, setFeatures]);
 
@@ -66,7 +66,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
         ios: updatedProjectURLs?.ios as ProjectURLObject,
         android: updatedProjectURLs?.android as ProjectURLObject
       }
-      setProjectURLs(updatedProjectURLsObject);
+      setProjectURLs(new ProjectURLs(updatedProjectURLsObject));
     }
   }, [updatedProjectURLs, setProjectURLs]);
 
@@ -79,14 +79,14 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
       if (name === 'currency') {
         setCurrency(value);
 
-        setSolution({
+        setSolution(new ProjectSolution({
           gallery: gallery,
           features: features,
           content_url: content,
           project_urls: projectURLs,
           currency: value,
           price: price,
-        });
+        }));
       }
     } catch (error) {
       const err = error as Error;
@@ -104,14 +104,14 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
       if (name === 'price') {
         setPrice(parseInt(value));
 
-        setSolution({
+        setSolution(new ProjectSolution({
           gallery: gallery,
           features: features,
           content_url: value,
           project_urls: projectURLs,
           currency: currency,
           price: price,
-        });
+        }));
       }
     } catch (error) {
       const err = error as Error;
@@ -129,14 +129,14 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
       if (name === 'solution_content_url') {
         setContent(value);
 
-        setSolution({
+        setSolution(new ProjectSolution({
           gallery: gallery,
           features: features,
           content_url: value,
           project_urls: projectURLs,
           currency: currency,
           price: price,
-        });
+        }));
       }
     } catch (error) {
       const err = error as Error;
@@ -150,17 +150,16 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
 
     try {
       const updatedSolution: ProjectSolutionObject = {
-        gallery: gallery,
-        features: features,
+        gallery: gallery.toGalleryObject(),
+        features: Array.from(features),
         content_url: content,
-        project_urls: projectURLs,
+        project_urls: projectURLs.toProjectURLsObject(),
         currency: currency,
         price: price,
       };
-      console.log(updatedSolution)
 
       const updatedProject: ProjectObject = {
-        ...projectObject,
+        ...project.toProjectObject(),
         solution: updatedSolution
       }
 
@@ -181,11 +180,11 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ projectObject }) => {
 
       <br />
 
-      <UpdateFeatures featuresObject={features} />
+      <UpdateFeatures features={features} />
 
       <br />
 
-      <UpdateProjectURL projectURLsObject={projectURLs} />
+      <UpdateProjectURL projectURLs={projectURLs} />
 
       <hr />
 

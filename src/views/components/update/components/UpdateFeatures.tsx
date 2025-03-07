@@ -12,23 +12,23 @@ import {
 import { updateFeatures } from '@/controllers/updateSlice';
 
 interface UpdateFeaturesProps {
-    featuresObject: Array<FeatureObject>;
+    features: Set<Feature>;
 }
 
-const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ featuresObject }) => {
+const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ features }) => {
     const dispatch = useDispatch<AppDispatch>();
 
-    const [features, setFeatures] = useState<Array<Feature>>(featuresObject.map((feature) => new Feature(feature)));
+    const [featuresObject, setFeaturesObject] = useState<Array<FeatureObject>>(Array.from(features).map((feature) => feature.toFeatureObject()));
     const [feature, setFeature] = useState<Feature>(new Feature());
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>, feature: Feature) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>, feature: FeatureObject) => {
         const { name, value } = e.target;
 
-        const updatedFeatures = features.map((f) =>
-            f.id === feature.id ? new Feature({ ...feature, [name]: value }) : f
+        const updatedFeatures = featuresObject.map((f) =>
+            f.id === feature.id ? { ...feature, [name]: value } : f
         );
 
-        setFeatures(updatedFeatures);
+        setFeaturesObject(updatedFeatures);
     };
 
     const handleFeatureChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -57,9 +57,9 @@ const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ featuresObject }) => {
                 throw new Error('A description is required');
             }
 
-            setFeatures(prevFeatures => {
+            setFeaturesObject(prevFeatures => {
                 const updatedFeatures = [...prevFeatures, feature];
-                dispatch(updateFeatures(updatedFeatures));
+                dispatch(updateFeatures(new Set(updatedFeatures.map((f) => new Feature(f)))));
                 return updatedFeatures;
             });
 
@@ -76,11 +76,11 @@ const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ featuresObject }) => {
         e.preventDefault();
 
         try {
-            if (features.length === 0) {
+            if (featuresObject.length === 0) {
                 throw new Error('No features added');
             }
 
-            dispatch(updateFeatures(features));
+            dispatch(updateFeatures(new Set(featuresObject.map((featureObject) => new Feature(featureObject)))));
         } catch (error) {
             const err = error as Error;
             dispatch(setMessage(err.message));
@@ -93,7 +93,7 @@ const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ featuresObject }) => {
         <div className="update" id="update_features">
             <h3>Features</h3>
 
-            {features.map((feature) => (
+            {featuresObject.map((feature) => (
                 <div className="form-item" key={feature.id}>
                     <div className="form-item-flex">
                         <label htmlFor="">ID:</label>

@@ -11,14 +11,14 @@ export type ProjectDeliveryObject = {
 class ProjectDelivery extends Model {
   checkList: CheckList;
   gallery: Gallery;
-  contentURL: string | null;
+  contentURL: string;
 
   constructor(data: Record<string, any> | ProjectDeliveryObject = {}) {
     super();
 
     this.checkList = new CheckList(data?.check_list);
     this.gallery = new Gallery(data.gallery);
-    this.contentURL = data?.content_url || null;
+    this.contentURL = data?.content_url || '';
   }
 
   toProjectDeliveryObject(): ProjectDeliveryObject {

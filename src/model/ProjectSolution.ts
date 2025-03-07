@@ -15,7 +15,7 @@ export type ProjectSolutionObject = {
 class ProjectSolution extends Model {
   gallery: Gallery;
   features: Set<Feature>;
-  contentURL: string | null;
+  contentURL: string;
   currency: string;
   price: number;
   projectURLs: ProjectURLs;
@@ -27,7 +27,7 @@ class ProjectSolution extends Model {
     this.features = data?.features
       ? this.setFeatures(data.features)
       : new Set<Feature>();
-    this.contentURL = data?.content_url || null;
+    this.contentURL = data?.content_url || '';
     this.currency = data?.currency || 'USD';
     this.price = data?.price || 0;
     this.projectURLs = data?.project_urls

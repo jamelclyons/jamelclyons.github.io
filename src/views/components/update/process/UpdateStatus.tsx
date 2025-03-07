@@ -2,7 +2,7 @@ import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } f
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../../model/store';
-import { ProjectStatusObject } from '../../../../model/ProjectStatus';
+import ProjectStatus, { ProjectStatusObject } from '../../../../model/ProjectStatus';
 import Project, { ProjectObject } from '@/model/Project';
 
 import {
@@ -14,27 +14,31 @@ import { updateProject } from '../../../../controllers/updateSlice';
 import CheckList from '@/model/CheckList';
 
 interface UpdateStatusProps {
-    projectObject: ProjectObject;
+    project: Project;
 }
 
-const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
+const UpdateStatus: React.FC<UpdateStatusProps> = ({ project }) => {
     const dispatch = useDispatch<AppDispatch>();
 
     const { updatedDesignCheckList, updatedDevelopmentCheckList, updatedDeliveryCheckList } = useSelector(
         (state: RootState) => state.update
     );
 
-    const [status, setStatus] = useState<ProjectStatusObject>(projectObject.process.status);
-    const [createdAt, setCreatedAt] = useState<string>(projectObject.process.status.created_at);
-    const [updatedAt, setUpdatedAt] = useState<string>(projectObject.process.status.updated_at);
-    const [designCheckList, setDesignCheckList] = useState<CheckList>(new CheckList(projectObject.process.design.check_list))
-    const [developmentCheckList, setDevelopmentCheckList] = useState<CheckList>(new CheckList(projectObject.process.development.check_list))
+    const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject());
+
+    const [status, setStatus] = useState<ProjectStatus>(project.process.status);
+    const [createdAt, setCreatedAt] = useState<string>(project.process.status.createdAt);
+    const [updatedAt, setUpdatedAt] = useState<string>(project.process.status.updatedAt);
+    const [designCheckList, setDesignCheckList] = useState<CheckList>(project.process.design.checkList)
+    const [developmentCheckList, setDevelopmentCheckList] = useState<CheckList>(project.process.development.checkList)
     const [deliveryCheckList, setDeliveryCheckList] = useState<CheckList>(new CheckList(projectObject.process.delivery.check_list))
     const [progress, setProgress] = useState<string>(projectObject.process.status.progress);
 
+    useEffect(() => { setProjectObject(project.toProjectObject()) }, [project, setProjectObject]);
+
     useEffect(() => {
-        setStatus(projectObject.process.status)
-    }, [projectObject.process.status, setStatus]);
+        setStatus(project.process.status)
+    }, [project.process.status, setStatus]);
 
     useEffect(() => {
         if (updatedDesignCheckList) {
@@ -60,12 +64,12 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
             developmentCheckList.totalWeight +
             deliveryCheckList.totalWeight;
 
-            if (totalWeight > 0) {
+        if (totalWeight > 0) {
             const percentageComplete =
                 ((designCheckList.weight +
                     developmentCheckList.weight +
                     deliveryCheckList.weight) /
-                totalWeight) * 100;
+                    totalWeight) * 100;
 
             setProgress((prev) => {
                 const newProgress = percentageComplete.toString();
@@ -93,11 +97,11 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ projectObject }) => {
             if (name === 'progress') {
                 setProgress(value);
 
-                setStatus({
+                setStatus(new ProjectStatus({
                     created_at: createdAt,
                     updated_at: updatedAt,
                     progress: value
-                });
+                }));
             }
         } catch (error) {
             const err = error as Error;

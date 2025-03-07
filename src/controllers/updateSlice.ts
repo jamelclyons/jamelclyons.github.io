@@ -84,9 +84,9 @@ export const updateColors = createAsyncThunk(
 
 export const updateFeatures = createAsyncThunk(
   'update/updateFeatures',
-  async (features: Array<Feature>) => {
+  async (features: Set<Feature>) => {
     try {
-      return features.map((feature) => feature.toFeatureObject());
+      return Array.from(features).map((feature) => feature.toFeatureObject());
     } catch (error) {
       const err = error as Error;
       console.error(err);

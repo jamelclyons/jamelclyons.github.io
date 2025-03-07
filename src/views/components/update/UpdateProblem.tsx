@@ -9,30 +9,35 @@ import {
 import { updateProject } from '@/controllers/updateSlice';
 
 import type { AppDispatch, RootState } from '@/model/store';
-import { GalleryObject } from '@/model/Gallery';
+import Gallery from '@/model/Gallery';
 import Project, { ProjectObject } from '@/model/Project';
-import { ProjectProblemObject } from '@/model/ProjectProblem';
+import ProjectProblem from '@/model/ProjectProblem';
 
 import UpdateGallery from './components/UpdateGallery';
 
 interface UpdateProblemProps {
-  projectObject: ProjectObject;
+  project: Project;
 }
 
-const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectObject }) => {
+const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { updatedProblemGallery } = useSelector(
     (state: RootState) => state.update
   );
 
-  const [problem, setProblem] = useState<ProjectProblemObject>(projectObject.problem);
-  const [gallery, setGallery] = useState<GalleryObject>(projectObject.problem.gallery);
+  const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject());
+  const [problem, setProblem] = useState<ProjectProblem>(project.problem);
+  const [gallery, setGallery] = useState<Gallery>(project.problem.gallery);
   const [contentURL, setContentURL] = useState<string>(projectObject.problem.content_url);
 
   useEffect(() => {
-    setProblem(projectObject.problem);
-  }, [projectObject.problem, setProblem]);
+    setProjectObject(project.toProjectObject())
+  }, [project, setProjectObject]);
+
+  useEffect(() => {
+    setProblem(project.problem);
+  }, [project.problem, setProblem]);
 
   useEffect(() => {
     setGallery(problem.gallery);
@@ -40,7 +45,7 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectObject }) => {
 
   useEffect(() => {
     if (updatedProblemGallery) {
-      setGallery(updatedProblemGallery);
+      setGallery(new Gallery(updatedProblemGallery));
     }
   }, [updatedProblemGallery, setGallery]);
 
@@ -53,10 +58,10 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectObject }) => {
       if (name === 'problem_content_url') {
         setContentURL(value);
 
-        setProblem({
+        setProblem(new ProjectProblem({
           gallery: gallery,
           content_url: value
-        });
+        }));
       }
     } catch (error) {
       const err = error as Error;
@@ -72,7 +77,7 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ projectObject }) => {
       const updatedProjectObject: ProjectObject = {
         ...projectObject,
         problem: {
-          gallery: gallery,
+          gallery: gallery.toGalleryObject(),
           content_url: contentURL
         },
       };

@@ -9,7 +9,7 @@ import {
     setMessageType,
     setShowStatusBar,
 } from '@/controllers/messageSlice';
-import { getProject, getProjectPage } from '@/controllers/projectSlice';
+import { getProjectPage } from '@/controllers/projectSlice';
 
 import UpdateDetails from './components/update/UpdateDetails';
 import UpdateProcess from './components/update/process/UpdateProcess';
@@ -38,16 +38,15 @@ const ProjectUpdate: React.FC = () => {
     const { updateLoading, updateLoadingMessage, updateErrorMessage, updateSuccessMessage, updateStatusCode } = useSelector(
         (state: RootState) => state.update
     );
-    const { databaseLoading, databaseLoadingMessage, databaseStatusCode, databaseErrorMessage, projectDataObject } = useSelector(
+    const { databaseLoading, databaseLoadingMessage, databaseStatusCode, databaseErrorMessage } = useSelector(
         (state: RootState) => state.database
     );
 
     const [owner, setOwner] = useState<Owner>(new Owner({ login: login, name: 'Jamel C. Lyons' }));
     const [id, setId] = useState<string>();
     const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject ?? []));
-    const [projectObject, setProjectObject] = useState<ProjectObject>(new Project(projectPageObject ?? {}).toProjectObject());
     const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>();
-    const [project, setProject] = useState<Project>(new Project(projectObject));
+    const [project, setProject] = useState<Project>(new Project(projectPageObject ?? {}));
     const [updatedTitle, setUpdatedTitle] = useState<string>(projectID ?? '');
 
     useEffect(() => {
@@ -65,16 +64,16 @@ const ProjectUpdate: React.FC = () => {
 
     useEffect(() => {
         if (login && projectID) {
-          setRepoQuery(new GitHubRepoQuery(login, projectID))
+            setRepoQuery(new GitHubRepoQuery(login, projectID))
         }
-      }, [owner, projectID]);
-    
-      useEffect(() => {
+    }, [owner, projectID]);
+
+    useEffect(() => {
         if (repoQuery) {
-          dispatch(getProjectPage(repoQuery));
+            dispatch(getProjectPage(repoQuery));
         }
-      }, [dispatch, repoQuery]);
-      
+    }, [dispatch, repoQuery]);
+
     useEffect(() => {
         if (projectID) {
             setId(projectID);
@@ -96,15 +95,9 @@ const ProjectUpdate: React.FC = () => {
 
     useEffect(() => {
         if (projectPageObject) {
-            setProjectObject(projectPageObject);
+            setProject(new Project(projectPageObject));
         }
-    }, [projectPageObject, setProjectObject]);
-
-    useEffect(() => {
-        if (projectObject) {
-            setProject(new Project(projectObject));
-        }
-    }, [projectObject, setProject]);
+    }, [projectPageObject, setProject]);
 
     useEffect(() => {
         if (databaseErrorMessage) {
@@ -152,14 +145,14 @@ const ProjectUpdate: React.FC = () => {
 
             if (name === 'title') {
                 setUpdatedTitle(value);
-            }
 
-            const updatedProjectObject: ProjectObject = {
-                ...projectObject,
-                title: updatedTitle
-            }
+                const updatedProjectObject: ProjectObject = {
+                    ...project.toProjectObject(),
+                    title: value
+                }
 
-            setProject(new Project(updatedProjectObject))
+                setProject(new Project(updatedProjectObject))
+            }
         } catch (error) {
             const err = error as Error;
             dispatch(setMessage(err.message));
@@ -204,19 +197,19 @@ const ProjectUpdate: React.FC = () => {
 
             <hr />
 
-            <UpdateSolution projectObject={projectObject} />
+            <UpdateSolution project={project} />
 
             <hr />
 
-            <UpdateProcess projectObject={projectObject} />
+            <UpdateProcess project={project} />
 
             <hr />
 
-            <UpdateProblem projectObject={projectObject} />
+            <UpdateProblem project={project} />
 
             <hr />
 
-            <UpdateDetails projectObject={projectObject} />
+            <UpdateDetails project={project} />
 
             <br />
 

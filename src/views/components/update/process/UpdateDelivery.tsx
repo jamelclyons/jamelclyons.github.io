@@ -2,7 +2,7 @@ import React, { useEffect, useState, MouseEvent, ChangeEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '@/model/store';
-import { ProjectDeliveryObject } from '@/model/ProjectDelivery';
+import ProjectDelivery, { ProjectDeliveryObject } from '@/model/ProjectDelivery';
 import Project, { ProjectObject } from '@/model/Project';
 
 import {
@@ -13,50 +13,53 @@ import {
 import { updateProject } from '@/controllers/updateSlice';
 
 import UpdateGallery from '../components/UpdateGallery';
-import { GalleryObject } from '@/model/Gallery';
-import { TaskObject } from '@/model/Task';
+import Gallery from '@/model/Gallery';
 import UpdateCheckList from '../components/UpdateCheckList';
-import { CheckListObject } from '@/model/CheckList';
+import CheckList from '@/model/CheckList';
 
 interface UpdateDeliveryProps {
-  projectObject: ProjectObject;
+  project: Project;
 }
 
-const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
+const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ project }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { updatedDeliveryGallery, updatedDeliveryCheckList } = useSelector((state: RootState) => state.update);
 
-  const [delivery, setDelivery] = useState<ProjectDeliveryObject>(projectObject.process.delivery);
-  const [gallery, setGallery] = useState<GalleryObject>(projectObject.process.delivery.gallery);
-  const [checkList, setCheckList] = useState<CheckListObject>(projectObject.process.delivery.check_list);
-  const [content, setContent] = useState<string>(projectObject.process.delivery.content_url);
+  const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject());
+
+  const [delivery, setDelivery] = useState<ProjectDelivery>(project.process.delivery);
+  const [gallery, setGallery] = useState<Gallery>(project.process.delivery.gallery);
+  const [checkList, setCheckList] = useState<CheckList>(project.process.delivery.checkList);
+  const [content, setContent] = useState<string>(project.process.delivery.contentURL);
+
+  useEffect(() => { setProjectObject(project.toProjectObject()) }, [project, setProjectObject]);
 
   useEffect(() => {
-    setDelivery(projectObject.process.delivery)
-  }, [projectObject.process.delivery, setDelivery]);
+    setDelivery(project.process.delivery)
+  }, [project.process.delivery, setDelivery]);
 
   useEffect(() => {
     setGallery(delivery.gallery)
   }, [delivery.gallery, setGallery]);
 
   useEffect(() => {
-    setCheckList(delivery.check_list)
-  }, [delivery.check_list, setCheckList]);
+    setCheckList(delivery.checkList)
+  }, [delivery.checkList, setCheckList]);
 
   useEffect(() => {
-    setContent(delivery.content_url)
-  }, [delivery.content_url, setContent]);
+    setContent(delivery.contentURL)
+  }, [delivery.contentURL, setContent]);
 
   useEffect(() => {
     if (updatedDeliveryCheckList) {
-      setCheckList(updatedDeliveryCheckList);
+      setCheckList(new CheckList(updatedDeliveryCheckList));
     }
   }, [updatedDeliveryCheckList, setCheckList]);
 
   useEffect(() => {
     if (updatedDeliveryGallery) {
-      setGallery(updatedDeliveryGallery);
+      setGallery(new Gallery(updatedDeliveryGallery));
     }
   }, [updatedDeliveryGallery, setGallery]);
 
@@ -69,11 +72,11 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
       if (name === 'delivery_content_url') {
         setContent(value);
 
-        setDelivery({
+        setDelivery(new ProjectDelivery({
           check_list: checkList,
           gallery: gallery,
           content_url: content
-        });
+        }));
       }
     } catch (error) {
       const err = error as Error;
@@ -87,8 +90,8 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
 
     try {
       const updatedDeliveryObject: ProjectDeliveryObject = {
-        check_list: checkList,
-        gallery: gallery,
+        check_list: checkList.toCheckListObject(),
+        gallery: gallery.toGalleryObject(),
         content_url: content
       };
 
@@ -114,7 +117,7 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ projectObject }) => {
 
       <h2 className="title">delivery</h2>
 
-      <UpdateCheckList location='delivery' checkListObject={checkList} />
+      <UpdateCheckList location='delivery' checkList={checkList} />
 
       <br />
 

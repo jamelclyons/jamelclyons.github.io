@@ -13,32 +13,32 @@ import {
 } from '@/controllers/messageSlice';
 
 interface UpdateProjectURLProps {
-    projectURLsObject: ProjectURLsObject
+    projectURLs: ProjectURLs
 }
 
-const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLsObject }) => {
+const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLs }) => {
     const dispatch = useDispatch<AppDispatch>();
 
-    const [projectURLs, setProjectURLs] = useState<ProjectURLsObject>(projectURLsObject);
+    const [projectURLsObject, setProjectURLsObject] = useState<ProjectURLsObject>(projectURLs.toProjectURLsObject());
     const [homepage, setHomepage] = useState<ProjectURLObject>(projectURLsObject.homepage);
     const [ios, setIos] = useState<ProjectURLObject>(projectURLsObject.ios);
     const [android, setAndroid] = useState<ProjectURLObject>(projectURLsObject.android);
 
     useEffect(() => {
-        setProjectURLs(projectURLsObject);
-    }, [projectURLsObject, setProjectURLs]);
+        setProjectURLsObject(projectURLsObject);
+    }, [projectURLsObject, setProjectURLsObject]);
 
     useEffect(() => {
         setHomepage(projectURLsObject.homepage);
     }, [projectURLsObject, setHomepage]);
 
     useEffect(() => {
-        setIos(projectURLs.ios);
-    }, [projectURLs.ios, setIos]);
+        setIos(projectURLsObject.ios);
+    }, [projectURLsObject.ios, setIos]);
 
     useEffect(() => {
-        setAndroid(projectURLs.android);
-    }, [projectURLs.android, setAndroid]);
+        setAndroid(projectURLsObject.android);
+    }, [projectURLsObject.android, setAndroid]);
 
     const handleHomepageChange = (e: ChangeEvent<HTMLInputElement>) => {
         try {

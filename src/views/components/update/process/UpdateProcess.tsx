@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ProjectObject } from '@/model/Project';
+import Project from '@/model/Project';
 
 import UpdateStatus from './UpdateStatus';
 import UpdateDesign from './UpdateDesign';
@@ -8,27 +8,27 @@ import UpdateDevelopment from './UpdateDevelopment';
 import UpdateDelivery from './UpdateDelivery';
 
 interface UpdateProcessProps {
-    projectObject: ProjectObject;
+    project: Project;
 }
 
-const UpdateProcess: React.FC<UpdateProcessProps> = ({ projectObject }) => {
+const UpdateProcess: React.FC<UpdateProcessProps> = ({ project }) => {
     return (
         <div className='update' id='update_process'>
             <h1 className='title'>process</h1>
 
-            <UpdateStatus projectObject={projectObject} />
+            <UpdateStatus project={project} />
 
             <br />
 
-            <UpdateDesign projectObject={projectObject} />
+            <UpdateDesign project={project} />
 
             <br />
 
-            <UpdateDevelopment projectObject={projectObject} />
+            <UpdateDevelopment project={project} />
 
             <br />
 
-            <UpdateDelivery projectObject={projectObject} />
+            <UpdateDelivery project={project} />
 
             <br />
 
