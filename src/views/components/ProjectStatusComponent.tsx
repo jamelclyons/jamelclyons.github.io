@@ -15,8 +15,14 @@ const ProjectStatusComponent: React.FC<ProjectStatusProps> = ({ projectStatus })
         <>
           <div className="project-status">
             <h4>STATUS</h4>
-            <h5>Started: {createdAt}</h5>
-            <h5>Updated: {updatedAt}</h5>
+            <div className="row">
+              <h5>Started:</h5>
+              <p>{createdAt}</p>
+            </div>
+            <div className="row">
+              <h5>Updated:</h5>
+              <p>{updatedAt}</p>
+            </div>
             <progress value={progress} max="100"></progress>
             <h6>{progress}% Completed</h6>
           </div>

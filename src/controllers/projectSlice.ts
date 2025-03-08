@@ -9,6 +9,7 @@ import Project, { ProjectObject } from '@/model/Project';
 
 interface ProjectState {
   projectLoading: boolean;
+  projectLoadingMessage: string | null;
   projectPageLoading: boolean;
   projectError: Error | null;
   projectErrorMessage: string;
@@ -18,6 +19,7 @@ interface ProjectState {
 
 const initialState: ProjectState = {
   projectLoading: false,
+  projectLoadingMessage: null,
   projectPageLoading: false,
   projectError: null,
   projectErrorMessage: '',
@@ -101,17 +103,20 @@ export const projectSlice = createSlice({
         state.projectLoading = false;
         state.projectError = null;
         state.projectErrorMessage = '';
+        state.projectLoadingMessage = null;
         state.projectObject = action.payload;
       })
       .addCase(getProject.pending, (state) => {
         state.projectLoading = true;
         state.projectError = null;
         state.projectErrorMessage = '';
+        state.projectLoadingMessage = 'Now Loading Project...';
       })
       .addCase(getProject.rejected, (state, action) => {
         state.projectLoading = false;
         state.projectError = (action.error as Error) || null;
         state.projectErrorMessage = action.error.message || '';
+        state.projectLoadingMessage = null;
       })
       .addCase(
         getProjectPage.fulfilled,

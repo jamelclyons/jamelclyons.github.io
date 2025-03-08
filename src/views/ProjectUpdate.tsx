@@ -2,7 +2,6 @@ import React, { useEffect, useState, MouseEvent, ChangeEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { getProjectData } from '@/controllers/databaseSlice';
 import { updateProject } from '@/controllers/updateSlice';
 import {
     setMessage,
@@ -29,7 +28,7 @@ const ProjectUpdate: React.FC = () => {
 
     const { login, projectID } = useParams();
 
-    const { projectLoading, projectPageLoading, projectErrorMessage, projectPageObject } = useSelector(
+    const { projectLoading, projectLoadingMessage, projectErrorMessage, projectPageObject } = useSelector(
         (state: RootState) => state.project
     );
     const { portfolioObject } = useSelector(
@@ -38,35 +37,46 @@ const ProjectUpdate: React.FC = () => {
     const { updateLoading, updateLoadingMessage, updateErrorMessage, updateSuccessMessage, updateStatusCode } = useSelector(
         (state: RootState) => state.update
     );
-    const { databaseLoading, databaseLoadingMessage, databaseStatusCode, databaseErrorMessage } = useSelector(
-        (state: RootState) => state.database
-    );
 
-    const [owner, setOwner] = useState<Owner>(new Owner({ login: login, name: 'Jamel C. Lyons' }));
+    const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio());
+
+    const [owner, setOwner] = useState<Owner>(new Owner());
     const [id, setId] = useState<string>();
-    const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject ?? []));
     const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>();
-    const [project, setProject] = useState<Project>(new Project(projectPageObject ?? {}));
+
+    const [project, setProject] = useState<Project>(new Project());
+
     const [updatedTitle, setUpdatedTitle] = useState<string>(projectID ?? '');
+
+    useEffect(() => {
+        if (login) {
+            setOwner(new Owner({ login: login }))
+        }
+    }, [login, setOwner]);
+
+    useEffect(() => {
+        if (projectID) {
+            setId(projectID);
+        }
+    }, [projectID, setId]);
 
     useEffect(() => {
         if (portfolioObject) {
             setPortfolio(new Portfolio(portfolioObject));
         }
-    }, [portfolioObject]);
+    }, [portfolioObject, setPortfolio]);
 
     useEffect(() => {
-        if (projectID) {
-            const filteredProject = portfolio.filterProject(projectID);
-            setProject(filteredProject);
+        if (portfolio.size > 0 && id) {
+            setProject(portfolio.filterProject(id));
         }
-    }, [projectID]);
+    }, [id, portfolio, setProject]);
 
     useEffect(() => {
-        if (login && projectID) {
-            setRepoQuery(new GitHubRepoQuery(login, projectID))
+        if (id) {
+            setRepoQuery(new GitHubRepoQuery(owner.login, id))
         }
-    }, [owner, projectID]);
+    }, [owner, id]);
 
     useEffect(() => {
         if (repoQuery) {
@@ -75,23 +85,20 @@ const ProjectUpdate: React.FC = () => {
     }, [dispatch, repoQuery]);
 
     useEffect(() => {
-        if (projectID) {
-            setId(projectID);
-        }
-    }, [dispatch, projectID]);
-
-    useEffect(() => {
-        if (id) {
-            dispatch(getProjectData(id));
-        }
-    }, [dispatch, id]);
-
-    useEffect(() => {
-        if (databaseLoading && databaseLoadingMessage) {
-            dispatch(setMessage(databaseLoadingMessage));
+        if (projectLoading && projectLoadingMessage) {
+            dispatch(setMessage(projectLoadingMessage));
             dispatch(setMessageType('info'));
+            dispatch(setShowStatusBar(Date.now()));
         }
-    }, [databaseLoading, dispatch]);
+    }, [projectLoading, projectLoadingMessage, dispatch]);
+
+    useEffect(() => {
+        if (projectErrorMessage) {
+            dispatch(setMessage(projectErrorMessage));
+            dispatch(setMessageType('info'));
+            dispatch(setShowStatusBar(Date.now));
+        }
+    }, [projectErrorMessage, dispatch]);
 
     useEffect(() => {
         if (projectPageObject) {
@@ -100,26 +107,18 @@ const ProjectUpdate: React.FC = () => {
     }, [projectPageObject, setProject]);
 
     useEffect(() => {
-        if (databaseErrorMessage) {
-            dispatch(setMessageType('error'));
-            dispatch(setMessage(databaseErrorMessage));
-            dispatch(setShowStatusBar(Date.now));
-        }
-    }, [dispatch, databaseErrorMessage]);
-
-    useEffect(() => {
         if (updateLoading && updateLoadingMessage) {
             dispatch(setMessage(updateLoadingMessage));
             dispatch(setMessageType('info'));
+            dispatch(setShowStatusBar(Date.now()));
         }
-    }, [updateLoading, dispatch]);
+    }, [updateLoading, updateLoadingMessage, dispatch]);
 
     useEffect(() => {
         if (updateErrorMessage) {
             dispatch(setMessage(updateErrorMessage));
             dispatch(setMessageType('error'));
             dispatch(setShowStatusBar(Date.now()));
-
         }
     }, [updateErrorMessage, dispatch]);
 
@@ -132,7 +131,7 @@ const ProjectUpdate: React.FC = () => {
     }, [updateSuccessMessage, dispatch]);
 
     useEffect(() => {
-        if (updateStatusCode === 403 || databaseStatusCode === 403) {
+        if (updateStatusCode === 403) {
             navigate('/login');
         }
     }, [updateStatusCode]);

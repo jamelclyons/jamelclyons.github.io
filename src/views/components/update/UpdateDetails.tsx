@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import type { AppDispatch } from '@/model/store';
 import Project, { ProjectObject } from '@/model/Project';
-import { ProjectDetailsObject } from '@/model/ProjectDetails';
+import ProjectDetails, { ProjectDetailsObject } from '@/model/ProjectDetails';
 
 import {
   setMessage,
@@ -22,27 +22,34 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject());
-  const [detailsObject, setDetailsObject] = useState<ProjectDetailsObject>(projectObject.details);
-  const [privacy, setPrivacy] = useState<string>(detailsObject.privacy);
-  const [clientID, setClientID] = useState<string>(detailsObject.client_id);
-  const [clientName, setClientName] = useState<string>(detailsObject.client_name);
-  const [startDate, setStartDate] = useState<string>(detailsObject.start_date);
-  const [endDate, setEndDate] = useState<string>(detailsObject.end_date);
+
+  const [details, setDetails] = useState<ProjectDetails>(project.details);
+  const [privacy, setPrivacy] = useState<string>(details.privacy);
+  const [clientID, setClientID] = useState<string>(details.clientID);
+  const [clientName, setClientName] = useState<string>(details.clientName);
+  const [startDate, setStartDate] = useState<string>(details.startDate ?? '');
+  const [endDate, setEndDate] = useState<string>(details.endDate ?? '');
 
   useEffect(() => {
     setProjectObject(project.toProjectObject())
   }, [project, setProjectObject]);
 
   useEffect(() => {
-    if (projectObject.details) {
-      setDetailsObject(projectObject.details);
-      setPrivacy(projectObject.details.privacy)
-      setClientID(projectObject.details.client_id)
-      setClientName(projectObject.details.client_name)
-      setStartDate(projectObject.details.start_date)
-      setEndDate(projectObject.details.end_date)
-    }
-  }, [projectObject.details, setDetailsObject]);
+    setDetails(project.details);
+    setPrivacy(project.details.privacy)
+    setClientID(project.details.clientID)
+    setClientName(project.details.clientName)
+    setStartDate(project.details.startDate ?? '')
+    setEndDate(project.details.endDate ?? '')
+  }, [
+    project.details,
+    setDetails,
+    setPrivacy,
+    setClientID,
+    setClientName,
+    setStartDate,
+    setEndDate
+  ]);
 
   const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
     try {
@@ -54,7 +61,7 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
         setPrivacy(privacyFromString(value));
       }
 
-      setDetailsObject({ ...detailsObject, privacy: privacy });
+      setDetails(new ProjectDetails({ ...details.toDetailsObject(), privacy: privacy }));
     } catch (error) {
       const err = error as Error;
       dispatch(setMessage(err.message));
@@ -83,13 +90,15 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
         setEndDate(value);
       }
 
-      setDetailsObject({
-        ...detailsObject,
+      const detailsObject: ProjectDetailsObject = {
+        ...details.toDetailsObject(),
         client_id: clientID,
         client_name: clientName,
         start_date: startDate,
         end_date: endDate
-      });
+      };
+
+      setDetails(new ProjectDetails(detailsObject));
     } catch (error) {
       const err = error as Error;
       dispatch(setMessage(err.message));

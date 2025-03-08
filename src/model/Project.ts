@@ -4,11 +4,19 @@ import ProjectURLs from './ProjectURLs';
 import ProjectProcess, { ProjectProcessObject } from './ProjectProcess';
 import ProjectProblem, { ProjectProblemObject } from './ProjectProblem';
 import ProjectDetails, { ProjectDetailsObject } from './ProjectDetails';
-import ProjectSkills from './ProjectSkills';
+import ProjectSkills, { ProjectSkillsObject } from './ProjectSkills';
 import ProjectVersions from './ProjectVersions';
 import Repo from './Repo';
 import Owner, { OwnerObject } from './Owner';
 import Feature from './Feature';
+import ProjectDesign, { ProjectDesignObject } from './ProjectDesign';
+import Gallery from './Gallery';
+import CheckList from './CheckList';
+import Color from './Color';
+import ProjectDevelopment, {
+  ProjectDevelopmentObject,
+} from './ProjectDevelopment';
+import ProjectDelivery, { ProjectDeliveryObject } from './ProjectDelivery';
 
 import { DocumentData } from 'firebase/firestore';
 
@@ -114,61 +122,134 @@ class Project extends Model {
 
     this.description = data?.description ? data.description : this.description;
 
-    this.solution.gallery = data?.solution?.gallery;
-    this.solution.features = data?.solution?.features;
-    this.solution.contentURL = data?.solution?.content_url;
-    this.solution.currency = data?.solution?.currency;
-    this.solution.price = data?.solution?.price;
-    this.solution.projectURLs = data?.project_urls
-      ? new ProjectURLs(data.project_urls)
-      : this.solution.projectURLs;
+    const solutionObject: ProjectSolutionObject = {
+      gallery: data?.solution?.gallery
+        ? new Gallery(data?.solution?.gallery).toGalleryObject()
+        : this.solution.gallery.toGalleryObject(),
+      features: data?.solution?.features ?? Array.from(this.solution.features),
+      content_url: this.solution.contentURL,
+      currency: data?.solution?.currency ?? this.solution.currency,
+      price: data?.solution?.price ?? this.solution.price,
+      project_urls: data?.project_urls
+        ? new ProjectURLs(data.project_urls).toProjectURLsObject()
+        : this.solution.projectURLs.toProjectURLsObject(),
+    };
 
-    this.process.status.progress = data?.process?.status?.progress
-      ? data?.process?.status?.progress
-      : '0';
+    this.solution = new ProjectSolution(solutionObject);
 
-    this.process.design.gallery = data?.process?.design?.gallery;
-    this.process.design.checkList = data?.process?.design?.check_list;
-    this.process.design.colorsList = data?.process?.design?.colors_list;
-    this.process.design.contentURL = data?.process?.design?.content_url;
+    const designObject: ProjectDesignObject = {
+      gallery: data?.process.design.gallery
+        ? new Gallery(data?.process.design.gallery).toGalleryObject()
+        : this.process.design.gallery.toGalleryObject(),
+      check_list: data?.process?.design?.check_list
+        ? new CheckList(data?.process?.design?.check_list).toCheckListObject()
+        : this.process.design.checkList.toCheckListObject(),
+      colors_list: data?.process?.design?.colors_list
+        ? Array.from(data?.process?.design?.colors_list).map((color) =>
+            new Color(color as Record<string, any>).toColorObject()
+          )
+        : this.process.design.colorsList.map((color) => color.toColorObject()),
+      content_url:
+        data?.process?.design?.content_url ?? this.process.design.contentURL,
+    };
 
-    this.process.development.repoURL = data?.process?.development?.repo_url;
-    this.process.development.contentURL =
-      data?.process?.development?.content_url;
-    this.process.development.skills.add(
-      new ProjectSkills(data?.process?.development?.skills)
-    );
-    this.process.development.checkList = data?.process?.development?.check_list;
-    this.process.development.versionsList = data?.versions_list
-      ? new ProjectVersions(data.versions_list)
-      : this.process.development.versionsList;
+    this.process.design = new ProjectDesign(designObject);
 
-    this.process.delivery.checkList = data?.process?.delivery?.check_list;
-    this.process.delivery.gallery = data?.process?.delivery?.gallery;
-    this.process.delivery.contentURL = data?.process?.delivery?.content_url;
+    const skillsObject: ProjectSkillsObject = data?.process?.development?.skills
+      ? new ProjectSkills(
+          data?.process?.development?.skills
+        ).toProjectSkillsObject()
+      : this.process.development.skills.toProjectSkillsObject();
 
-    this.problem.contentURL = data?.process?.problem?.content_url;
-    this.problem.gallery = data?.problem?.gallery;
+    const developmentObject: ProjectDevelopmentObject = {
+      gallery: data?.process?.development?.gallery
+        ? new Gallery(data?.process.development.gallery).toGalleryObject()
+        : this.process.development.gallery.toGalleryObject(),
+      repo_url:
+        data?.process?.development?.repo_url ??
+        this.process.development.repoURL,
+      content_url:
+        data?.process?.development?.content_url ??
+        this.process.development.contentURL,
+      skills: skillsObject,
+      check_list: data?.process?.development?.check_list
+        ? new CheckList(
+            data?.process?.development?.check_list
+          ).toCheckListObject()
+        : this.process.development.checkList.toCheckListObject(),
+      versions_list: data?.process?.development?.versions_list
+        ? new ProjectVersions(
+            data.process.development.versions_list
+          ).toProjectVersionsObject()
+        : this.process.development.versionsList.toProjectVersionsObject(),
+    };
 
-    this.owner = new Owner(data.owner);
+    this.process.development = new ProjectDevelopment(developmentObject);
 
-    this.owner.id = data?.owner?.id ?? this.owner.id;
-    this.owner.type = data?.owner?.type ?? this.owner.type;
-    this.owner.login = data?.owner?.login ?? this.owner.login;
-    this.owner.name = data?.owner?.name ?? this.owner.name;
-    this.owner.company = data?.owner?.company ?? this.owner.company;
-    this.owner.email = data?.owner?.email ?? this.owner.email;
-    this.owner.avatarURL = data?.owner?.avatar_url ?? this.owner.avatarURL;
-    this.owner.url = data?.owner?.url ?? this.owner.url;
-    this.owner.reposURL = data?.owner?.repos_url ?? this.owner.reposURL;
+    const deliveryObject: ProjectDeliveryObject = {
+      check_list: data?.process?.delivery?.check_list
+        ? new CheckList(data?.process?.delivery?.check_list).toCheckListObject()
+        : this.process.delivery.checkList.toCheckListObject(),
+      gallery: data?.process?.delivery?.gallery
+        ? new Gallery(data?.process.delivery.gallery).toGalleryObject()
+        : this.process.delivery.gallery.toGalleryObject(),
+      content_url:
+        data?.process?.delivery?.content_url ??
+        this.process.delivery.contentURL,
+    };
 
-    this.details.privacy = data?.details?.privacy ? data.details.privacy : this.details.privacy;
-    this.details.clientID = data?.details?.client_id ? data.details.client_id : this.details.clientID;
-    this.details.clientName = data?.details?.client_name ? data.details.client_name : this.details.clientName;
-    this.details.startDate = data?.details?.start_date ? data.details.start_date : this.details.startDate;
-    this.details.endDate = data?.details?.end_date ? data.details.end_date : this.details.endDate;
-    this.details.content = data?.details?.content ? data.details.content : this.details.content;
-    this.details.teamList = data?.details?.team_list ? this.details.getTeamList(data.team_list) : this.details.teamList;
+    this.process.delivery = new ProjectDelivery(deliveryObject);
+
+    const problemObject: ProjectProblemObject = {
+      content_url: data?.problem?.content_url ?? this.problem.contentURL,
+      gallery: data?.problem.gallery
+        ? new Gallery(data?.problem.gallery).toGalleryObject()
+        : this.problem.gallery.toGalleryObject(),
+    };
+
+    this.problem = new ProjectProblem(problemObject);
+
+    const ownerObject: OwnerObject = {
+      id: data?.owner?.id ?? this.owner.id,
+      type: data?.owner?.type ?? this.owner.type,
+      login: data?.owner?.login ?? this.owner.login,
+      name: data?.owner?.name ?? this.owner.name,
+      company: data?.owner?.company ?? this.owner.company,
+      email: data?.owner?.email ?? this.owner.email,
+      avatar_url: data?.owner?.avatar_url ?? this.owner.avatarURL,
+      url: data?.owner?.url ?? this.owner.url,
+      repos_url: data?.owner?.repos_url ?? this.owner.reposURL,
+    };
+
+    this.owner = new Owner(ownerObject);
+
+    const projectDetailsObject: ProjectDetailsObject = {
+      privacy: data?.details?.privacy
+        ? data.details.privacy
+        : this.details.privacy,
+      client_id: data?.details?.client_id
+        ? data.details.client_id
+        : this.details.clientID,
+      client_name: data?.details?.client_name
+        ? data.details.client_name
+        : this.details.clientName,
+      start_date: data?.details?.start_date
+        ? data.details.start_date
+        : this.process.status.createdAt,
+      end_date: data?.details?.end_date
+        ? data.details.end_date
+        : this.process.status.updatedAt,
+      content: data?.details?.content
+        ? data.details.content
+        : this.details.content,
+      team_list: data?.details?.team_list
+        ? this.details
+            .getTeamList(data.details.team_list)
+            .map((user) => user.toUserObject())
+        : this.details.teamList.map((user) => user.toUserObject()),
+    };
+
+    this.details = new ProjectDetails(projectDetailsObject);
   }
 
   toObject(): Record<string, any> {
@@ -194,7 +275,7 @@ class Project extends Model {
       process: this.process.toProjectProcessObject(),
       problem: this.problem.toProjectProblemObject(),
       details: this.details.toDetailsObject(),
-    }
+    };
   }
 }
 

@@ -25,11 +25,7 @@ const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ user, details 
                 <td>
                   <label htmlFor="client_name">Client:</label>
                 </td>
-                <td>
-                  <h4 className="company-name">
-                    {clientName}
-                  </h4>
-                </td>
+                <td>{clientName}</td>
               </tr>
               <tr>
                 <td>
