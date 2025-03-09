@@ -1,25 +1,30 @@
 import Model from './Model';
 import Gallery, { GalleryObject } from './Gallery';
+import ContentURL, { ContentURLObject } from './ContentURL';
 
 export type ProjectProblemObject = {
-  content_url: string;
+  content_url: ContentURLObject | null;
   gallery: GalleryObject;
 };
 
 class ProjectProblem extends Model {
-  contentURL: string | null;
+  contentURL: ContentURL | null;
   gallery: Gallery;
 
   constructor(data: Record<string, any> = {}) {
     super();
 
-    this.contentURL = data?.content_url || null;
+    this.contentURL = data?.content_url?.url
+      ? new ContentURL(data.content_url.url)
+      : null;
     this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
   }
 
   toProjectProblemObject(): ProjectProblemObject {
     return {
-      content_url: this.contentURL ?? '',
+      content_url: this.contentURL
+        ? this.contentURL.toContentURLObject()
+        : null,
       gallery: this.gallery.toGalleryObject(),
     };
   }

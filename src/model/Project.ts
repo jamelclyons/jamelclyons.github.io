@@ -19,6 +19,7 @@ import ProjectDevelopment, {
 import ProjectDelivery, { ProjectDeliveryObject } from './ProjectDelivery';
 
 import { DocumentData } from 'firebase/firestore';
+import ContentURL from './ContentURL';
 
 export type ProjectObject = {
   id: string;
@@ -97,20 +98,20 @@ class Project extends Model {
     this.description = repo.description;
 
     this.solution.projectURLs.homepage.url = repo.homepage;
-    this.solution.contentURL = repo.contents.solution.downloadURL;
+    this.solution.contentURL = repo.contents?.solution?.downloadURL ? new ContentURL(repo.contents.solution.downloadURL) : null;
 
     this.process.status.createdAt = repo.createdAt;
     this.process.status.updatedAt = repo.updatedAt;
 
-    this.process.design.contentURL = repo.contents.design.downloadURL;
+    this.process.design.contentURL = repo.contents?.design?.downloadURL ? new ContentURL(repo.contents.design.downloadURL) : null;
 
-    this.process.development.contentURL = repo.contents.development.downloadURL;
+    this.process.development.contentURL = repo.contents?.development?.downloadURL ? new ContentURL(repo.contents.development.downloadURL) : null;
     this.process.development.skills.add(repo.skills);
     this.process.development.repoURL = repo.repoURL;
 
-    this.process.delivery.contentURL = repo.contents.delivery.downloadURL;
+    this.process.delivery.contentURL = repo.contents?.delivery?.downloadURL ? new ContentURL(repo.contents.delivery.downloadURL) : null;
 
-    this.problem.contentURL = repo.contents.problem?.downloadURL;
+    this.problem.contentURL = repo.contents?.problem?.downloadURL ? new ContentURL(repo.contents.problem.downloadURL) : null;
 
     this.owner = new Owner(repo.owner);
 

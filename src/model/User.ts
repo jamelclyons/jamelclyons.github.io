@@ -10,6 +10,7 @@ import { RepoObject } from './Repo';
 import { OrganizationObject } from './Organization';
 
 import user from '../../user.json';
+import ContentURL, { ContentURLObject } from './ContentURL';
 
 export interface UserObject {
   id: string;
@@ -29,6 +30,7 @@ export interface UserObject {
   repos_url: string;
   repos: Array<RepoObject>;
   repo_queries: Array<GitHubRepoQuery>;
+  story: ContentURLObject | null;
 }
 
 class User extends Model {
@@ -49,13 +51,14 @@ class User extends Model {
   reposURL: string;
   repos: Repos = new Repos();
   repoQueries: Array<GitHubRepoQuery>;
+  story: ContentURL | null;
 
   constructor(data: Record<string, any> = {}) {
     super();
 
     const { name, title, website, contact, resume, avatar_url } = user;
 
-    this.id = data?.id;
+    this.id = data?.id || this.getID();
     this.login = data?.login;
     this.avatarURL = data?.avatar_url || avatar_url;
     this.name = data?.name || name;
@@ -78,6 +81,14 @@ class User extends Model {
     this.repoQueries = data?.repo_queries
       ? this.setRepoQueries(data.repo_queries)
       : [];
+    this.story = data?.story || null;
+  }
+
+  getID() {
+    const githubURL = user.contact.github.url;
+    const path = new URL(githubURL);
+    const pathname = path.pathname.split('/');
+    return pathname[1];
   }
 
   setRepos(data: Array<Record<string, any>>) {
@@ -144,6 +155,10 @@ class User extends Model {
     return repoQueries;
   }
 
+  setStory(url: string) {
+    this.story = new ContentURL(url);
+  }
+
   toUserObject(): UserObject {
     return {
       id: this.id,
@@ -166,6 +181,7 @@ class User extends Model {
       repos_url: this.reposURL,
       repos: [],
       repo_queries: [],
+      story: this.story,
     };
   }
 }

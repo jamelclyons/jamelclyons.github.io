@@ -21,7 +21,7 @@ const TheProblem: React.FC<ProblemProps> = ({ problem }) => {
 
           <Gallery title={'Problem'} gallery={gallery.images} />
 
-          {contentURL && <ContentComponent title={null} url={contentURL} />}
+          {contentURL && <ContentComponent title={null} content={contentURL} />}
         </div>
       }
     </>

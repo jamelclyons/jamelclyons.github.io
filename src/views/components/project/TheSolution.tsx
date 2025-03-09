@@ -36,7 +36,7 @@ const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
 
           <h3>THE SOLUTION</h3>
 
-          {contentURL && <ContentComponent title={null} url={contentURL} />}
+          {contentURL && <ContentComponent title={null} content={contentURL} />}
         </div>
       }
     </>

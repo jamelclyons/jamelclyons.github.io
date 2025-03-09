@@ -90,7 +90,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
         {tasks.size > 0 && <CheckList tasks={Array.from(tasks)} />}
 
-        {contentURL && <ContentComponent title={''} url={contentURL} />}
+        {contentURL && <ContentComponent title={''} content={contentURL} />}
 
         <Versions projectVersions={development?.versionsList} />
 

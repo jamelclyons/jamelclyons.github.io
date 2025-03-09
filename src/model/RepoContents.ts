@@ -1,29 +1,29 @@
-import RepoContent, { RepoContentObject } from './RepoContent';
 import Model from './Model';
+import RepoContent, { RepoContentObject } from './RepoContent';
 
 export interface RepoContentsObject {
-  solution: RepoContentObject;
-  design: RepoContentObject;
-  development: RepoContentObject;
-  delivery: RepoContentObject;
-  problem: RepoContentObject;
+  solution: RepoContentObject | null;
+  design: RepoContentObject | null;
+  development: RepoContentObject | null;
+  delivery: RepoContentObject | null;
+  problem: RepoContentObject | null;
 }
 class RepoContents extends Model {
-  solution: RepoContent;
-  design: RepoContent;
-  development: RepoContent;
-  delivery: RepoContent;
-  problem: RepoContent;
+  solution: RepoContent | null;
+  design: RepoContent | null;
+  development: RepoContent | null;
+  delivery: RepoContent | null;
+  problem: RepoContent | null;
 
   constructor(data: Record<string, any> | RepoContentsObject = {}
   ) {
     super();
 
-    this.solution = data?.solution ? new RepoContent(data.solution) : new RepoContent();
-    this.design = data?.design ? new RepoContent(data.design) : new RepoContent();
-    this.development = data?.development ? new RepoContent(data.development) : new RepoContent();
-    this.delivery = data?.delivery ? new RepoContent(data.delivery) : new RepoContent();
-    this.problem = data?.problem ? new RepoContent(data.problem) : new RepoContent();
+    this.solution = data?.solution ? new RepoContent(data.solution) : null;
+    this.design = data?.design ? new RepoContent(data.design) : null;
+    this.development = data?.development ? new RepoContent(data.development) : null;
+    this.delivery = data?.delivery ? new RepoContent(data.delivery) : null;
+    this.problem = data?.problem ? new RepoContent(data.problem) : null;
   }
 
   setSolution(solution: RepoContent) {

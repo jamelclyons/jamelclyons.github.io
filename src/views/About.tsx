@@ -7,16 +7,14 @@ import OrganizationsComponent from './components/OrganizationsComponent';
 import StoryComponent from './components/StoryComponent';
 import LoadingComponent from './components/LoadingComponent';
 
-import { getRepoContents } from '@/controllers/githubSlice';
-
 import type { AppDispatch, RootState } from '@/model/store';
 import User from '@/model/User';
 import Skills from '@/model/Skills';
-import RepoContentQuery from '@/model/RepoContentQuery';
 import Portfolio from '@/model/Portfolio';
 
 import { setMessage, setMessageType, setShowStatusBar } from '@/controllers/messageSlice';
 import { getPortfolio } from '@/controllers/portfolioSlice';
+import ContentURL from '@/model/ContentURL';
 
 interface AboutProps {
   user: User;
@@ -26,39 +24,19 @@ interface AboutProps {
 const About: React.FC<AboutProps> = ({ user, skills }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { githubLoading, contents } = useSelector((state: RootState) => state.github);
+  const { githubLoading } = useSelector((state: RootState) => state.github);
   const { portfolioLoading, portfolioObject, portfolioErrorMessage } = useSelector((state: RootState) => state.portfolio);
 
-  const [story, setStory] = useState<string>();
+  const [story, setStory] = useState<ContentURL | null>(user.story);
   const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject ?? []));
 
   useEffect(() => {
     document.title = `About - ${user.name}`;
-  }, []);
+  }, [user]);
 
   useEffect(() => {
-    if (user) {
-      dispatch(getRepoContents(
-        new RepoContentQuery(
-          user.id,
-          user.id,
-          '',
-          'main'
-        )))
-    }
-  }, []);
-
-  useEffect(() => {
-    if (Array.isArray(contents) && contents.length > 0) {
-      contents.map((content) => {
-        if (content.type === 'file') {
-          if (content.name === 'story.md') {
-            setStory(content.download_url);
-          }
-        }
-      });
-    }
-  }, [contents]);
+    setStory(user.story)
+  }, [user]);
 
   useEffect(() => {
     if (githubLoading) {

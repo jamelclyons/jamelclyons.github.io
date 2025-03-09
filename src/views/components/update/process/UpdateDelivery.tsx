@@ -16,6 +16,7 @@ import UpdateGallery from '../components/UpdateGallery';
 import Gallery from '@/model/Gallery';
 import UpdateCheckList from '../components/UpdateCheckList';
 import CheckList from '@/model/CheckList';
+import ContentURL, { ContentURLObject } from '@/model/ContentURL';
 
 interface UpdateDeliveryProps {
   project: Project;
@@ -31,7 +32,7 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ project }) => {
   const [delivery, setDelivery] = useState<ProjectDelivery>(project.process.delivery);
   const [gallery, setGallery] = useState<Gallery>(project.process.delivery.gallery);
   const [checkList, setCheckList] = useState<CheckList>(project.process.delivery.checkList);
-  const [content, setContent] = useState<string>(project.process.delivery.contentURL);
+  const [content, setContent] = useState<ContentURL | null>(project?.process?.delivery?.contentURL);
 
   useEffect(() => { setProjectObject(project.toProjectObject()) }, [project, setProjectObject]);
 
@@ -70,12 +71,21 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ project }) => {
       const { name, value } = target;
 
       if (name === 'delivery_content_url') {
-        setContent(value);
+        const contentObject: ContentURLObject = {
+          owner: null,
+          repo: null,
+          path: null,
+          branch: null,
+          url: value,
+          isValid: false
+        }
+
+        setContent(new ContentURL(value));
 
         setDelivery(new ProjectDelivery({
-          check_list: checkList,
-          gallery: gallery,
-          content_url: content
+          check_list: checkList.toCheckListObject(),
+          gallery: gallery.toGalleryObject(),
+          content_url: contentObject
         }));
       }
     } catch (error) {
@@ -92,7 +102,7 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ project }) => {
       const updatedDeliveryObject: ProjectDeliveryObject = {
         check_list: checkList.toCheckListObject(),
         gallery: gallery.toGalleryObject(),
-        content_url: content
+        content_url: content ? content?.toContentURLObject() : null
       };
 
       const updatedProjectObject: ProjectObject = {
@@ -129,7 +139,7 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ project }) => {
         <label htmlFor="delivery_content_url">
           Delivery Content URL:
         </label>
-        <input type="text" name='delivery_content_url' value={content ?? ''} onChange={handleDeliveryContentURLChange} />
+        <input type="text" name='delivery_content_url' value={content?.url ?? ''} onChange={handleDeliveryContentURLChange} />
       </div>
 
       <button onClick={handleUpdateDelivery}>

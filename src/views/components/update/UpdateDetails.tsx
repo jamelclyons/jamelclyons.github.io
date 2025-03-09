@@ -13,6 +13,7 @@ import {
 import { updateProject } from '@/controllers/updateSlice';
 
 import { Privacy, privacyFromString } from '@/model/enum/Enums';
+import ContentURL, { ContentURLObject } from '@/model/ContentURL';
 
 interface UpdateDetailsProps {
   project: Project;
@@ -24,11 +25,12 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
   const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject());
 
   const [details, setDetails] = useState<ProjectDetails>(project.details);
-  const [privacy, setPrivacy] = useState<string>(details.privacy);
-  const [clientID, setClientID] = useState<string>(details.clientID);
-  const [clientName, setClientName] = useState<string>(details.clientName);
-  const [startDate, setStartDate] = useState<string>(details.startDate ?? '');
-  const [endDate, setEndDate] = useState<string>(details.endDate ?? '');
+  const [privacy, setPrivacy] = useState<string>(project.details.privacy);
+  const [clientID, setClientID] = useState<string>(project.details.clientID);
+  const [clientName, setClientName] = useState<string>(project.details.clientName);
+  const [startDate, setStartDate] = useState<string>(project.details.startDate ?? '');
+  const [endDate, setEndDate] = useState<string>(project.details.endDate ?? '');
+  const [content, setContent] = useState<ContentURL | null>(project.details.content);
 
   useEffect(() => {
     setProjectObject(project.toProjectObject())
@@ -74,6 +76,8 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
       const target = e.target;
       const { name, value } = target;
 
+      let contentObject: ContentURLObject | null = content ? content?.toContentURLObject() : null;
+
       if (name === 'client_id') {
         setClientID(value);
       }
@@ -90,12 +94,26 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
         setEndDate(value);
       }
 
+      if (name === 'content_url') {
+        setContent(new ContentURL(value));
+
+        contentObject = {
+          owner: null,
+          repo: null,
+          path: null,
+          branch: null,
+          url: value,
+          isValid: false
+        }
+      }
+
       const detailsObject: ProjectDetailsObject = {
         ...details.toDetailsObject(),
         client_id: clientID,
         client_name: clientName,
         start_date: startDate,
-        end_date: endDate
+        end_date: endDate,
+        content: contentObject
       };
 
       setDetails(new ProjectDetails(detailsObject));
@@ -116,7 +134,7 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
         client_name: clientName,
         start_date: startDate,
         end_date: endDate,
-        content: '',
+        content: content ? content?.toContentURLObject() : null,
         team_list: []
       };
 
@@ -165,6 +183,11 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
         <div className="form-item-flex">
           <label htmlFor="end_date">End Date:</label>
           <input type="date" id="end_date" name="end_date" value={endDate ?? ''} min="2010-06-16" onChange={handleChange} />
+        </div>
+
+        <div className="form-item-flex">
+          <label htmlFor="content_url">Content URL:</label>
+          <input type="string" id="content_url" name="content_url" value={content?.url ?? ''} onChange={handleChange} />
         </div>
 
         <button onClick={handleUpdateDetails}>

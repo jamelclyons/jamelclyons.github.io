@@ -19,6 +19,7 @@ import UpdateColorsList from '../components/UpdateColorsList';
 import Gallery, { GalleryObject } from '@/model/Gallery';
 import CheckList, { CheckListObject } from '@/model/CheckList';
 import Color from '@/model/Color';
+import ContentURL, { ContentURLObject } from '@/model/ContentURL';
 
 interface UpdateDesignProps {
   project: Project;
@@ -37,7 +38,7 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ project }) => {
   const [gallery, setGallery] = useState<Gallery>(project.process.design.gallery);
   const [checkList, setCheckList] = useState<CheckList>(project.process.design.checkList);
   const [colorsList, setColorsList] = useState<Array<Color>>(project.process.design.colorsList);
-  const [contentURL, setContentURL] = useState<string>(project.process.design.contentURL);
+  const [content, setContent] = useState<ContentURL | null>(project.process.design.contentURL);
 
   useEffect(() => {
     setProjectObject(project.toProjectObject())
@@ -77,13 +78,22 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ project }) => {
     const { name, value } = target;
 
     if (name === 'design_content_url') {
-      setContentURL(value)
+      const contentObject: ContentURLObject = {
+        owner: null,
+        repo: null,
+        path: null,
+        branch: null,
+        url: value,
+        isValid: false
+      }
+
+      setContent(new ContentURL(value));
 
       setDesign(new ProjectDesign({
-        gallery: gallery,
-        check_list: checkList,
-        colors_list: colorsList,
-        content_url: value
+        gallery: gallery.toGalleryObject(),
+        check_list: checkList.toCheckListObject(),
+        colors_list: colorsList.map((color) => color.toColorObject()),
+        content_url: contentObject
       }))
     }
   }
@@ -96,7 +106,7 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ project }) => {
         gallery: gallery.toGalleryObject(),
         check_list: checkList.toCheckListObject(),
         colors_list: colorsList.map((color) => color.toColorObject()),
-        content_url: contentURL
+        content_url: content ? content?.toContentURLObject() : null
       };
 
       const updatedProjectObject: ProjectObject = {
@@ -134,7 +144,7 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ project }) => {
 
       <div className="form-item-flex">
         <label htmlFor="design_content_url">Design Content URL:</label>
-        <input type="text" name='design_content_url' value={contentURL ?? ''} onChange={handleDesignContentURLChange} />
+        <input type="text" name='design_content_url' value={content?.url ?? ''} onChange={handleDesignContentURLChange} />
       </div>
 
       <button onClick={handleUpdateDesign}>

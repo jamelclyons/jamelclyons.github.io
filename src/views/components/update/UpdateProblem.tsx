@@ -14,6 +14,7 @@ import Project, { ProjectObject } from '@/model/Project';
 import ProjectProblem from '@/model/ProjectProblem';
 
 import UpdateGallery from './components/UpdateGallery';
+import ContentURL, { ContentURLObject } from '@/model/ContentURL';
 
 interface UpdateProblemProps {
   project: Project;
@@ -29,7 +30,7 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
   const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject());
   const [problem, setProblem] = useState<ProjectProblem>(project.problem);
   const [gallery, setGallery] = useState<Gallery>(project.problem.gallery);
-  const [contentURL, setContentURL] = useState<string>(projectObject.problem.content_url);
+  const [content, setContent] = useState<ContentURL | null>(project.problem.contentURL);
 
   useEffect(() => {
     setProjectObject(project.toProjectObject())
@@ -56,11 +57,20 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
       const { name, value } = target;
 
       if (name === 'problem_content_url') {
-        setContentURL(value);
+        const contentObject: ContentURLObject = {
+          owner: null,
+          repo: null,
+          path: null,
+          branch: null,
+          url: value,
+          isValid: false
+        }
+
+        setContent(new ContentURL(value));
 
         setProblem(new ProjectProblem({
-          gallery: gallery,
-          content_url: value
+          gallery: gallery.toGalleryObject(),
+          content_url: contentObject
         }));
       }
     } catch (error) {
@@ -78,7 +88,7 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
         ...projectObject,
         problem: {
           gallery: gallery.toGalleryObject(),
-          content_url: contentURL
+          content_url: content ? content.toContentURLObject() : null
         },
       };
 
@@ -102,7 +112,7 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
 
       <div className="form-item-flex">
         <label htmlFor="problem_content_url">Problem Content URL:</label>
-        <input type="text" name='problem_content_url' value={contentURL ?? ''} onChange={handleProblemContentURLChange} />
+        <input type="text" name='problem_content_url' value={content?.url ?? ''} onChange={handleProblemContentURLChange} />
       </div>
 
       <button onClick={handleUpdateProblem}>

@@ -3,6 +3,7 @@ import User, { UserObject } from './User';
 import * as UserJSON from '../../user.json';
 
 import { formatTime } from '@/utilities/String';
+import ContentURL, { ContentURLObject } from './ContentURL';
 
 export type ProjectDetailsObject = {
   privacy: string;
@@ -10,7 +11,7 @@ export type ProjectDetailsObject = {
   client_name: string;
   start_date: string;
   end_date: string;
-  content: string;
+  content: ContentURLObject | null;
   team_list: Array<UserObject>;
 };
 
@@ -20,7 +21,7 @@ class ProjectDetails extends Model {
   clientName: string;
   startDate: string | null;
   endDate: string | null;
-  content: string;
+  content: ContentURL;
   teamList: Array<User>;
 
   constructor(data: Record<string, any> | ProjectDetailsObject = {}) {
@@ -53,7 +54,7 @@ class ProjectDetails extends Model {
       client_name: this.clientName,
       start_date: this.startDate ?? '',
       end_date: this.endDate ?? '',
-      content: this.content,
+      content: this.content ? this.content?.toContentURLObject() : null,
       team_list: this.teamList.map((user) => user.toUserObject()),
     };
   }

@@ -6,11 +6,12 @@ import ProjectSkills from './ProjectSkills';
 import { ProjectSkillsObject } from './ProjectSkills';
 import Gallery, { GalleryObject } from './Gallery';
 import CheckList, { CheckListObject } from './CheckList';
+import ContentURL, { ContentURLObject } from './ContentURL';
 
 export type ProjectDevelopmentObject = {
   gallery: GalleryObject;
   repo_url: string;
-  content_url: string;
+  content_url: ContentURLObject | null;
   skills: ProjectSkillsObject;
   check_list: CheckListObject;
   versions_list: ProjectVersionsObject;
@@ -19,7 +20,7 @@ export type ProjectDevelopmentObject = {
 class ProjectDevelopment extends Model {
   gallery: Gallery;
   repoURL: string;
-  contentURL: string;
+  contentURL: ContentURL | null;
   skills: ProjectSkills;
   checkList: CheckList;
   versionsList: ProjectVersions;
@@ -29,7 +30,9 @@ class ProjectDevelopment extends Model {
 
     this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
     this.repoURL = data?.repo_url || '';
-    this.contentURL = data?.content_url || '';
+    this.contentURL = data?.content_url?.url
+    ? new ContentURL(data.content_url.url)
+    : null;
     this.skills = data?.skills
       ? new ProjectSkills(data.skills)
       : new ProjectSkills();

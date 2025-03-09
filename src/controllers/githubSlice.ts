@@ -357,6 +357,7 @@ export const getAuthenticatedAccount = createAsyncThunk(
       let organizations = null;
       let repos = null;
       let repoQueries: Array<Record<string, any>> = [];
+      let story = null;
 
       const { data } = await octokit.users.getAuthenticated();
 
@@ -364,8 +365,6 @@ export const getAuthenticatedAccount = createAsyncThunk(
         user.fromGitHub(data);
 
         if (user.organizationsURL) {
-          await thunkAPI.dispatch(setMessage('Now Loading Organizations'));
-
           const orgResponse = await thunkAPI.dispatch(
             getOrganizationDetailsList(user.organizationsURL)
           );
@@ -377,8 +376,6 @@ export const getAuthenticatedAccount = createAsyncThunk(
             organizations = orgResponse.payload;
           }
         }
-
-        await thunkAPI.dispatch(setMessage('Now Loading Repositories'));
 
         const repoResponse = await thunkAPI.dispatch(getRepoDetailsList());
 
@@ -394,8 +391,6 @@ export const getAuthenticatedAccount = createAsyncThunk(
             });
           }
         }
-
-        await thunkAPI.dispatch(setMessage('Now Loading Contacts'));
 
         const contactsResponse = await thunkAPI.dispatch(
           getSocialAccounts(user.id)
@@ -418,6 +413,28 @@ export const getAuthenticatedAccount = createAsyncThunk(
               .setContactEmail({ value: user.email })
               .toObject(),
           };
+        }
+
+        const contentsResponse = await thunkAPI.dispatch(
+          getRepoContents(new RepoContentQuery(user.id, user.id, '', 'main'))
+        );
+
+        if (
+          getRepoContents.fulfilled.match(contentsResponse) &&
+          contentsResponse.payload
+        ) {
+          if (
+            Array.isArray(contentsResponse.payload) &&
+            contentsResponse.payload.length > 0
+          ) {
+            contentsResponse.payload.map((content) => {
+              if (content.type === 'file') {
+                if (content.name === 'story.md') {
+                  user.setStory(content.download_url);
+                }
+              }
+            });
+          }
         }
 
         return {
@@ -554,11 +571,11 @@ export const getOrganizationDetails = createAsyncThunk(
       const orgResponse = await thunkAPI.dispatch(
         getOrganizationAccount(login)
       );
-
       if (
         getOrganizationAccount.fulfilled.match(orgResponse) &&
         orgResponse.payload
       ) {
+
         const organization = new Organization();
         let repos: Array<Record<string, any>> = [];
         let contactMethods: Record<string, any> = {};

@@ -1,3 +1,4 @@
+import ContentURL from './ContentURL';
 import Model from './Model';
 
 export interface RepoContentObject extends Model {
@@ -6,7 +7,7 @@ export interface RepoContentObject extends Model {
   path: string;
   type: string;
   size: number;
-  download_url: string;
+  download_url: string | null;
 }
 
 class RepoContent extends Model {
@@ -15,7 +16,7 @@ class RepoContent extends Model {
   path: string = '';
   type: string = '';
   size: number = 0;
-  downloadURL: string = '';
+  downloadURL: string | null = null;
 
   constructor(data: Record<string, any> | RepoContentObject = {}) {
     super();
@@ -24,8 +25,8 @@ class RepoContent extends Model {
     this.name = data?.name ?? '';
     this.path = data?.path ?? '';
     this.type = data?.type ?? '';
-    this.size = data?.size ?? '';
-    this.downloadURL = data?.download_url ?? '';
+    this.size = data?.size ?? 0;
+    this.downloadURL = data?.download_url ? new ContentURL(data.download_url).url : null;
   }
 }
 

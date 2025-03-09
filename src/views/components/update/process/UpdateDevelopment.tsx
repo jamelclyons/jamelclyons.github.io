@@ -20,6 +20,7 @@ import UpdateProjectVersions from '../components/UpdateProjectVersions';
 import Gallery from '@/model/Gallery';
 import UpdateGallery from '../components/UpdateGallery';
 import CheckList from '@/model/CheckList';
+import ContentURL, { ContentURLObject } from '@/model/ContentURL';
 
 interface UpdateDevelopmentProps {
   project: Project;
@@ -39,7 +40,7 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ project }) => {
   const [checkList, setCheckList] = useState<CheckList>(project.process.development.checkList);
   const [projectSkills, setProjectSkills] = useState<ProjectSkills>(project.process.development.skills);
   const [repoURL, setRepoURL] = useState<string>(project.process.development.repoURL);
-  const [contentURL, setContentURL] = useState<string>(project.process.development.contentURL);
+  const [content, setContent] = useState<ContentURL | null>(project.process.development.contentURL);
   const [projectVersions, setProjectVersions] = useState<ProjectVersions>(project.process.development.versionsList);
 
   useEffect(() => {
@@ -107,7 +108,7 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ project }) => {
       setDevelopment(new ProjectDevelopment({
         gallery: gallery,
         repo_url: value,
-        content_url: contentURL,
+        content_url: content,
         skills: projectSkills,
         check_list: checkList,
         versions_list: projectVersions
@@ -121,15 +122,24 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ project }) => {
     const { name, value } = target;
 
     if (name === 'content_url') {
-      setContentURL(value)
+      const contentObject: ContentURLObject = {
+        owner: null,
+        repo: null,
+        path: null,
+        branch: null,
+        url: value,
+        isValid: false
+      }
+
+      setContent(new ContentURL(value));
 
       setDevelopment(new ProjectDevelopment({
-        gallery: gallery,
+        gallery: gallery.toGalleryObject(),
         repo_url: repoURL,
-        content_url: value,
-        skills: projectSkills,
-        check_list: checkList,
-        versions_list: projectVersions
+        content_url: contentObject,
+        skills: projectSkills.toProjectSkillsObject(),
+        check_list: checkList.toCheckListObject(),
+        versions_list: projectVersions.toProjectVersionsObject()
       }))
     }
   }
@@ -141,7 +151,7 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ project }) => {
       const updatedDevelopment: ProjectDevelopmentObject = {
         gallery: gallery.toGalleryObject(),
         repo_url: repoURL,
-        content_url: contentURL,
+        content_url: content ? content.toContentURLObject() : null,
         skills: projectSkills.toProjectSkillsObject(),
         check_list: checkList.toCheckListObject(),
         versions_list: projectVersions.toProjectVersionsObject()
@@ -191,12 +201,12 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ project }) => {
 
       <div className="form-item-flex">
         <label htmlFor="development_content_url">Development Content URL:</label>
-        <input type="text" name='development_content_url' value={contentURL ?? ''} onChange={handleDevelopmentContentURLChange} />
+        <input type="text" name='development_content_url' value={content?.url ?? ''} onChange={handleDevelopmentContentURLChange} />
       </div>
 
       <button onClick={handleUpdateDevelopment}>
         <h3>Update Development</h3>
-      </button>
+      </button>l
     </div>
   )
 }

@@ -36,7 +36,7 @@ const HeaderComponent: React.FC<HeaderComponentProps> = ({ name }) => {
             </div>
 
             <div className="center">
-              <a href="/#/" onClick={toggleMenu}>
+              <a href="/#/">
                 <h1 className="title">{name}</h1>
               </a>
             </div>

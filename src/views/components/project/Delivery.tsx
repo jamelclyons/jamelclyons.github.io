@@ -29,7 +29,7 @@ const Delivery: React.FC<DeliveryProps> = ({ delivery }) => {
 
         {gallery.images.length > 0 && <Gallery gallery={gallery.images} title="" />}
 
-        {contentURL && <ContentComponent title={null} url={contentURL} />}
+        {contentURL && <ContentComponent title={null} content={contentURL} />}
       </div>
     )
   );

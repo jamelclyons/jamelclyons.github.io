@@ -19,6 +19,7 @@ import {
 import UpdateFeatures from './components/UpdateFeatures';
 import UpdateProjectURL from './components/UpdateProjectURL';
 import UpdateGallery from './components/UpdateGallery';
+import ContentURL, { ContentURLObject } from '@/model/ContentURL';
 
 interface UpdateSolutionProps {
   project: Project;
@@ -34,7 +35,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
   const [solution, setSolution] = useState<ProjectSolution>(project.solution);
   const [gallery, setGallery] = useState<Gallery>(project.solution.gallery);
   const [features, setFeatures] = useState<Set<Feature>>(project.solution.features);
-  const [content, setContent] = useState<string>(project.solution.contentURL);
+  const [content, setContent] = useState<ContentURL | null>(project.solution.contentURL);
   const [projectURLs, setProjectURLs] = useState<ProjectURLs>(project.solution.projectURLs);
   const [currency, setCurrency] = useState<string>(project.solution.currency);
   const [price, setPrice] = useState<number>(project.solution.price);
@@ -127,12 +128,21 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
       const { name, value } = target;
 
       if (name === 'solution_content_url') {
-        setContent(value);
+        const contentURLObject: ContentURLObject = {
+          owner: null,
+          repo: null,
+          path: null,
+          branch: null,
+          url: value,
+          isValid: false
+        }
+
+        setContent(new ContentURL(value));
 
         setSolution(new ProjectSolution({
           gallery: gallery,
           features: features,
-          content_url: value,
+          content_url: contentURLObject,
           project_urls: projectURLs,
           currency: currency,
           price: price,
@@ -200,7 +210,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
 
       <div className="form-item-flex">
         <label htmlFor="solution_content_url">Solution Content URL:</label>
-        <input type="text" id="solution_content_url" value={content ?? ''} placeholder='URL to the html content' name='solution_content_url' onChange={handleSolutionContentURLChange} />
+        <input type="text" id="solution_content_url" value={content?.url ?? ''} placeholder='URL to the html content' name='solution_content_url' onChange={handleSolutionContentURLChange} />
       </div>
 
       <button onClick={handleUpdateSolution}>

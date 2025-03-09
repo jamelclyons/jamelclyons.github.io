@@ -2,11 +2,12 @@ import Model from './Model';
 import Feature, { FeatureObject } from './Feature';
 import ProjectURLs, { ProjectURLsObject } from './ProjectURLs';
 import Gallery, { GalleryObject } from './Gallery';
+import ContentURL, { ContentURLObject } from './ContentURL';
 
 export type ProjectSolutionObject = {
   gallery: GalleryObject;
   features: Array<FeatureObject>;
-  content_url: string;
+  content_url: ContentURLObject | null;
   currency: string;
   price: number;
   project_urls: ProjectURLsObject;
@@ -15,19 +16,21 @@ export type ProjectSolutionObject = {
 class ProjectSolution extends Model {
   gallery: Gallery;
   features: Set<Feature>;
-  contentURL: string;
+  contentURL: ContentURL | null;
   currency: string;
   price: number;
   projectURLs: ProjectURLs;
 
   constructor(data: Record<string, any> | ProjectSolutionObject = {}) {
     super();
-
+    console.log(data?.content_url)
     this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
     this.features = data?.features
       ? this.setFeatures(data.features)
       : new Set<Feature>();
-    this.contentURL = data?.content_url || '';
+    this.contentURL = data?.content_url
+      ? new ContentURL(data.content_url.url)
+      : null;
     this.currency = data?.currency || 'USD';
     this.price = data?.price || 0;
     this.projectURLs = data?.project_urls
@@ -51,7 +54,9 @@ class ProjectSolution extends Model {
     return {
       gallery: this.gallery.toGalleryObject(),
       features: Array.from(this.features),
-      content_url: this.contentURL ?? '',
+      content_url: this.contentURL
+        ? this.contentURL?.toContentURLObject()
+        : null,
       currency: this.currency,
       price: this.price,
       project_urls: this.projectURLs.toProjectURLsObject(),
