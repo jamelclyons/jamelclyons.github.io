@@ -13,7 +13,7 @@ interface ProjectState {
   projectPageLoading: boolean;
   projectError: Error | null;
   projectErrorMessage: string;
-  projectObject: Record<string, any> | null;
+  projectObject: ProjectObject | null;
   projectPageObject: ProjectObject | null;
 }
 
@@ -48,7 +48,7 @@ export const getProject = createAsyncThunk(
       const projectDataResponse = await thunkAPI.dispatch(
         getProjectData(query.repo)
       );
-
+      console.log(projectDataResponse.payload);
       if (
         getProjectData.fulfilled.match(projectDataResponse) &&
         projectDataResponse.payload?.data
@@ -56,13 +56,7 @@ export const getProject = createAsyncThunk(
         project.fromDocumentData(projectDataResponse.payload.data);
       }
 
-      return {
-        ...project.toObject(),
-        details: {
-          ...project.details.toObject(),
-          team_list: project.details.teamList.map((user) => user.toObject()),
-        },
-      };
+      return project.toProjectObject();
     } catch (error) {
       const err = error as Error;
       console.error(err);

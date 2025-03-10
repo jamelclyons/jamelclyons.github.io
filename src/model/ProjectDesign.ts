@@ -17,7 +17,7 @@ class ProjectDesign extends Model {
   colorsList: Array<Color>;
   contentURL: ContentURL | null;
 
-  constructor(data: Record<string, any> = {}) {
+  constructor(data: Record<string, any> | ProjectDesignObject = {}) {
     super();
 
     this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
@@ -28,6 +28,10 @@ class ProjectDesign extends Model {
     this.contentURL = data?.content_url?.url
       ? new ContentURL(data.content_url.url)
       : null;
+  }
+
+  setContentURL(url: string) {
+    this.contentURL = new ContentURL(url);
   }
 
   toArrayColor(data: Array<Record<string, any>>) {
@@ -46,7 +50,7 @@ class ProjectDesign extends Model {
       check_list: this.checkList.toCheckListObject(),
       colors_list: this.colorsList.map((color) => color.toColorObject()),
       content_url: this.contentURL
-        ? this.contentURL?.toContentURLObject()
+        ? this.contentURL.toContentURLObject()
         : null,
     };
   }

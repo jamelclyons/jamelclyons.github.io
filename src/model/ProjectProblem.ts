@@ -20,6 +20,10 @@ class ProjectProblem extends Model {
     this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
   }
 
+  setContentURL(url: string) {
+    this.contentURL = new ContentURL(url);
+  }
+  
   toProjectProblemObject(): ProjectProblemObject {
     return {
       content_url: this.contentURL

@@ -21,31 +21,27 @@ class ContentURL extends Model {
   constructor(url: string) {
     super();
 
-    this.owner = null;
-    this.repo = null;
-    this.path = null;
-    this.branch = null;
-    this.url = null;
+    let parts: Array<string> = [];
+
     this.isValid = false;
 
     try {
       const pathname = new URL(url).pathname;
-      console.log(new URL(url))
-
-      const parts = pathname.split('/');
-
-      if (parts.length < 5) throw new Error('Invalid URL format');
-
-      this.owner = parts[1];
-      this.repo = parts[2];
-      this.path = parts[4];
-      this.branch = parts[3];
-      this.url = url;
-      this.isValid = true;
+      parts = pathname.split('/');
     } catch (error) {
       const err = error as Error;
-      throw new Error('Error fetching content:', err);
+      console.error('Error fetching content:', err);
     }
+
+    if (parts.length >= 5) {
+      this.isValid = true;
+    }
+
+    this.owner = parts[1] ?? null;
+    this.repo = parts[2] ?? null;
+    this.path = parts[4] ?? null;
+    this.branch = parts[3] ?? null;
+    this.url = url;
   }
 
   toContentURLObject(): ContentURLObject {

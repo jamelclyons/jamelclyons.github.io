@@ -24,11 +24,17 @@ class ProjectDelivery extends Model {
       : null;
   }
 
+  setContentURL(url: string) {
+    this.contentURL = new ContentURL(url);
+  }
+
   toProjectDeliveryObject(): ProjectDeliveryObject {
     return {
       check_list: this.checkList.toCheckListObject(),
       gallery: this.gallery.toGalleryObject(),
-      content_url: this.contentURL,
+      content_url: this.contentURL
+        ? this.contentURL?.toContentURLObject()
+        : null,
     };
   }
 }

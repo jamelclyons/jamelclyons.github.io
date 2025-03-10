@@ -1,1 +1,1 @@
-<p>Created a portfolio website using GitHub &apos; s API and Pages, with Firebase as the backend and database.</p>
+<p>I developed a portfolio website using GitHub and Firebase.</p>

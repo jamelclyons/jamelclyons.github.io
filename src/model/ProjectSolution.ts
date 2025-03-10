@@ -23,7 +23,7 @@ class ProjectSolution extends Model {
 
   constructor(data: Record<string, any> | ProjectSolutionObject = {}) {
     super();
-    console.log(data?.content_url)
+
     this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
     this.features = data?.features
       ? this.setFeatures(data.features)
@@ -36,6 +36,10 @@ class ProjectSolution extends Model {
     this.projectURLs = data?.project_urls
       ? new ProjectURLs(data.project_urls)
       : new ProjectURLs();
+  }
+
+  setContentURL(url: string) {
+    this.contentURL = new ContentURL(url);
   }
 
   setFeatures(data?: Array<Record<string, any>>): Set<Feature> {

@@ -36,6 +36,10 @@ class ProjectDetails extends Model {
     this.teamList = data?.team_list ? this.getTeamList(data.team_list) : [];
   }
 
+  setContentURL(url: string) {
+    this.content = new ContentURL(url);
+  }
+
   getTeamList(data: Array<Record<string, any>>) {
     let teamList: Array<User> = [];
 

@@ -1,1 +1,1 @@
-Development section
+<p>I leveraged the GitHub API to fetch data from my repositories. I used React for the frontend and Vite to transpile the TypeScript code to JavaScript. During development, I used Sass to organize the styling and Gulp to compress the CSS file.</p>

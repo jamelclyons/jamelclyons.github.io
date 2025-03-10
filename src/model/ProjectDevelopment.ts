@@ -1,5 +1,5 @@
 import Model from './Model';
-import Task, { TaskObject } from './Task';
+import Task from './Task';
 import ProjectVersions, { ProjectVersionsObject } from './ProjectVersions';
 import ProjectSkills from './ProjectSkills';
 
@@ -31,8 +31,8 @@ class ProjectDevelopment extends Model {
     this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
     this.repoURL = data?.repo_url || '';
     this.contentURL = data?.content_url?.url
-    ? new ContentURL(data.content_url.url)
-    : null;
+      ? new ContentURL(data.content_url.url)
+      : null;
     this.skills = data?.skills
       ? new ProjectSkills(data.skills)
       : new ProjectSkills();
@@ -51,9 +51,11 @@ class ProjectDevelopment extends Model {
 
     return checkList;
   }
+  setContentURL(url: string) {
+    this.contentURL = new ContentURL(url);
+  }
 
   setSkills(skills: ProjectSkills) {
-    console.log(skills);
     this.skills = skills;
   }
 
@@ -61,7 +63,9 @@ class ProjectDevelopment extends Model {
     return {
       gallery: this.gallery.toGalleryObject(),
       repo_url: this.repoURL,
-      content_url: this.contentURL,
+      content_url: this.contentURL
+        ? this.contentURL?.toContentURLObject()
+        : null,
       skills: this.skills.toProjectSkillsObject(),
       check_list: this.checkList.toCheckListObject(),
       versions_list: this.versionsList.toProjectVersionsObject(),

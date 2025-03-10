@@ -1,1 +1,1 @@
-Design section
+<p>I have structured each project to allow for new iterations while providing clarity on my development and operations work. A project may include an ID, title, description, solution, process, problem, owner, and details. Every project starts with a problem, and the process is documented on the way to a solution.</p> 

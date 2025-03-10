@@ -19,7 +19,6 @@ import ProjectDevelopment, {
 import ProjectDelivery, { ProjectDeliveryObject } from './ProjectDelivery';
 
 import { DocumentData } from 'firebase/firestore';
-import ContentURL from './ContentURL';
 
 export type ProjectObject = {
   id: string;
@@ -97,21 +96,35 @@ class Project extends Model {
 
     this.description = repo.description;
 
+    if (repo.contents?.solution?.downloadURL) {
+      this.solution.setContentURL(repo.contents.solution.downloadURL);
+    }
+
     this.solution.projectURLs.homepage.url = repo.homepage;
-    this.solution.contentURL = repo.contents?.solution?.downloadURL ? new ContentURL(repo.contents.solution.downloadURL) : null;
 
     this.process.status.createdAt = repo.createdAt;
     this.process.status.updatedAt = repo.updatedAt;
 
-    this.process.design.contentURL = repo.contents?.design?.downloadURL ? new ContentURL(repo.contents.design.downloadURL) : null;
+    if (repo.contents?.design?.downloadURL) {
+      this.process.design.setContentURL(repo.contents.design.downloadURL);
+    }
 
-    this.process.development.contentURL = repo.contents?.development?.downloadURL ? new ContentURL(repo.contents.development.downloadURL) : null;
+    if (repo.contents?.development?.downloadURL) {
+      this.process.development.setContentURL(
+        repo.contents.development.downloadURL
+      );
+    }
+
     this.process.development.skills.add(repo.skills);
     this.process.development.repoURL = repo.repoURL;
 
-    this.process.delivery.contentURL = repo.contents?.delivery?.downloadURL ? new ContentURL(repo.contents.delivery.downloadURL) : null;
+    if (repo.contents?.delivery?.downloadURL) {
+      this.process.delivery.setContentURL(repo.contents.delivery.downloadURL);
+    }
 
-    this.problem.contentURL = repo.contents?.problem?.downloadURL ? new ContentURL(repo.contents.problem.downloadURL) : null;
+    if (repo.contents?.problem?.downloadURL) {
+      this.problem.setContentURL(repo.contents.problem.downloadURL);
+    }
 
     this.owner = new Owner(repo.owner);
 
@@ -128,7 +141,9 @@ class Project extends Model {
         ? new Gallery(data?.solution?.gallery).toGalleryObject()
         : this.solution.gallery.toGalleryObject(),
       features: data?.solution?.features ?? Array.from(this.solution.features),
-      content_url: this.solution.contentURL,
+      content_url: this.solution.contentURL
+        ? this.solution.contentURL.toContentURLObject()
+        : null,
       currency: data?.solution?.currency ?? this.solution.currency,
       price: data?.solution?.price ?? this.solution.price,
       project_urls: data?.project_urls
@@ -150,8 +165,9 @@ class Project extends Model {
             new Color(color as Record<string, any>).toColorObject()
           )
         : this.process.design.colorsList.map((color) => color.toColorObject()),
-      content_url:
-        data?.process?.design?.content_url ?? this.process.design.contentURL,
+      content_url: this.process.design.contentURL
+        ? this.process.design.contentURL.toContentURLObject()
+        : null,
     };
 
     this.process.design = new ProjectDesign(designObject);
@@ -169,9 +185,9 @@ class Project extends Model {
       repo_url:
         data?.process?.development?.repo_url ??
         this.process.development.repoURL,
-      content_url:
-        data?.process?.development?.content_url ??
-        this.process.development.contentURL,
+      content_url: this.process.development.contentURL
+        ? this.process.development.contentURL.toContentURLObject()
+        : null,
       skills: skillsObject,
       check_list: data?.process?.development?.check_list
         ? new CheckList(
@@ -194,15 +210,17 @@ class Project extends Model {
       gallery: data?.process?.delivery?.gallery
         ? new Gallery(data?.process.delivery.gallery).toGalleryObject()
         : this.process.delivery.gallery.toGalleryObject(),
-      content_url:
-        data?.process?.delivery?.content_url ??
-        this.process.delivery.contentURL,
+      content_url: this.process.delivery.contentURL
+        ? this.process.delivery.contentURL.toContentURLObject()
+        : null,
     };
 
     this.process.delivery = new ProjectDelivery(deliveryObject);
 
     const problemObject: ProjectProblemObject = {
-      content_url: data?.problem?.content_url ?? this.problem.contentURL,
+      content_url: this.problem.contentURL
+        ? this.problem.contentURL.toContentURLObject()
+        : null,
       gallery: data?.problem.gallery
         ? new Gallery(data?.problem.gallery).toGalleryObject()
         : this.problem.gallery.toGalleryObject(),
@@ -240,9 +258,9 @@ class Project extends Model {
       end_date: data?.details?.end_date
         ? data.details.end_date
         : this.process.status.updatedAt,
-      content: data?.details?.content
-        ? data.details.content
-        : this.details.content,
+      content: this.details.content
+        ? this.details.content.toContentURLObject()
+        : null,
       team_list: data?.details?.team_list
         ? this.details
             .getTeamList(data.details.team_list)
