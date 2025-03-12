@@ -25,7 +25,7 @@ const TaxList: React.FC<TaxListProps> = ({ taxonomies, title }) =>{
   return (
     taxonomies && taxonomies?.size > 0 && (
       <div className="tax-list">
-        <h6 className="title">{title}</h6>
+        <h5 className="title">{title}</h5>
 
         <div className="tax-row">
           {Array.from(taxonomies).map((taxonomy, index) =>
@@ -34,7 +34,7 @@ const TaxList: React.FC<TaxListProps> = ({ taxonomies, title }) =>{
                 key={index}
                 className="tag"
                 onClick={() => handleClick(taxonomy)}>
-                <h3>{taxonomy.title}</h3>
+                <h6>{taxonomy.title}</h6>
               </button>
             ) : null
           )}

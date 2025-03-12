@@ -2,7 +2,7 @@ import React from 'react';
 
 import ProjectDetails from '@/model/ProjectDetails';
 
-import ProjectTeamComponent from './ProjectTeam';
+import ProjectTeamComponent from './Team';
 import User from '@/model/User';
 
 interface ProjectDetailsProps {

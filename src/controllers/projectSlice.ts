@@ -48,7 +48,7 @@ export const getProject = createAsyncThunk(
       const projectDataResponse = await thunkAPI.dispatch(
         getProjectData(query.repo)
       );
-      console.log(projectDataResponse.payload);
+
       if (
         getProjectData.fulfilled.match(projectDataResponse) &&
         projectDataResponse.payload?.data

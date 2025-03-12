@@ -53,7 +53,7 @@ const SkillsComponent: React.FC<SkillsComponentProps> = ({ projectSkills }) => {
 
     return (
         <div className="skills" id="skills">
-            <h5 className="title">skills</h5>
+            <h4 className="title">skills</h4>
 
             {types.size > 0 && <TaxList taxonomies={types} title={'Project Types'} />}
 

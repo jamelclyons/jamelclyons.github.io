@@ -1,8 +1,8 @@
-import React from 'react'
+import React from 'react';
 
-import Project from '@/model/Project'
+import ProjectDescription from './ProjectDescription';
 
-import ProjectDescription from '../portfolio/ProjectDescription';
+import Project from '@/model/Project';
 
 interface ProjectCardProps {
     project: Project

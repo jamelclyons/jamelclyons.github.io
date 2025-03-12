@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ProjectStatusComponent from '../ProjectStatusComponent';
+import ProjectStatusComponent from './Status';
 
 import Design from './Design';
 import Development from './Development';
@@ -20,8 +20,8 @@ const TheProcess: React.FC<ProcessProps> = ({ process }) => {
   return (
     <>
       {hasContent && (
-        <div className="project-process" id="project_process">
-          <h3 className="title">the process</h3>
+        <div className="project-section project-process" id="project_process">
+          <h2 className="title">the process</h2>
           {status && <ProjectStatusComponent projectStatus={status} />}
           {design && <Design design={design} />}
           {development && <Development development={development} />}

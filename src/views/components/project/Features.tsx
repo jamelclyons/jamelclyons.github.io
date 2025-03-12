@@ -2,16 +2,16 @@ import React from 'react';
 
 import Feature from '../../../model/Feature';
 
-interface FeaturesComponentProps {
+interface FeaturesProps {
   features: Set<Feature>
 }
 
-const FeaturesComponent: React.FC<FeaturesComponentProps> = ({ features }) => {
+const Features: React.FC<FeaturesProps> = ({ features }) => {
 
   return (
     features.size > 0 && (
       <div className="product-features-card card">
-        <h3>Features</h3>
+        <h4>Features</h4>
 
         <div className="product-features">
           {Array.from(features).map((feature) => (
@@ -27,4 +27,4 @@ const FeaturesComponent: React.FC<FeaturesComponentProps> = ({ features }) => {
   );
 }
 
-export default FeaturesComponent;
+export default Features;

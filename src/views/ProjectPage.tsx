@@ -7,7 +7,6 @@ import ProjectComponent from './components/project/ProjectComponent';
 
 import { setMessage, setMessageType, setShowStatusBar } from '../controllers/messageSlice';
 import { getProjectPage } from '@/controllers/projectSlice';
-import { getAuthenticatedUserAccount } from '@/controllers/userSlice';
 
 import type { AppDispatch, RootState } from '../model/store';
 import Project from '../model/Project';
@@ -24,49 +23,46 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
 
   const { owner, projectID } = useParams<string>();
 
-  const { projectErrorMessage, projectPageObject } = useSelector(
-    (state: RootState) => state.project
-  );
   const { portfolioObject } = useSelector(
     (state: RootState) => state.portfolio
   );
+  const { projectErrorMessage, projectPageObject } = useSelector(
+    (state: RootState) => state.project
+  );
 
-  const { authenticatedUserObject } = useSelector((state: RootState) => state.user);
-
-  const [project, setProject] = useState<Project>();
+  const [portfolio, setPortfolio] = useState<Portfolio>();
   const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>();
-  const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject ?? []));
+  const [project, setProject] = useState<Project>();
 
   useEffect(() => {
     if (portfolioObject) {
       setPortfolio(new Portfolio(portfolioObject));
     }
-  }, [portfolioObject]);
+  }, [portfolioObject, setPortfolio]);
 
   useEffect(() => {
-    if (projectID) {
-      const filteredProject = portfolio.filterProject(projectID);
-      setProject(filteredProject);
+    if (projectID && portfolio && portfolio?.size > 0) {
+      setProject(portfolio.filterProject(projectID));
     }
-  }, [projectID]);
+  }, [projectID, portfolio, setProject]);
 
   useEffect(() => {
     if (owner && projectID) {
       setRepoQuery(new GitHubRepoQuery(owner, projectID))
     }
-  }, [owner, projectID]);
+  }, [owner, projectID, setRepoQuery]);
 
   useEffect(() => {
     if (repoQuery) {
       dispatch(getProjectPage(repoQuery));
     }
-  }, [dispatch, repoQuery]);
+  }, [repoQuery, dispatch]);
 
   useEffect(() => {
     if (projectPageObject) {
       setProject(new Project(projectPageObject));
     }
-  }, [projectPageObject]);
+  }, [projectPageObject, setProject]);
 
   useEffect(() => {
     if (project) {
@@ -80,16 +76,10 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
       dispatch(setMessage(projectErrorMessage));
       dispatch(setShowStatusBar(true));
     }
-  }, [dispatch, projectErrorMessage]);
-
-  useEffect(() => {
-    if (authenticatedUserObject === null) {
-      dispatch(getAuthenticatedUserAccount());
-    }
-  }, [authenticatedUserObject, dispatch]);
+  }, [projectErrorMessage, dispatch]);
 
   return (
-    <section className="project">
+    <section>
       <>
         {project ?
           <ProjectComponent user={user} project={project} /> : <LoadingComponent />

@@ -23,7 +23,7 @@ const Delivery: React.FC<DeliveryProps> = ({ delivery }) => {
   return (
     hasContent && (
       <div className="project-process-delivery" id="project_process_delivery">
-        <h4 className="title">delivery</h4>
+        <h3 className="title">delivery</h3>
 
         {tasks.size > 0 && <CheckList tasks={Array.from(tasks)} />}
 

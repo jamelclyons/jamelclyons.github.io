@@ -13,9 +13,12 @@ button,
   box-shadow: var(--box-shadow);
 
   h2,
-  h3 {
+  h3,
+  h4,
+  h5,
+  h6 {
     color: var(--button-color);
-    padding: 0.75rem;
+    padding: 0.75em;
   }
 
   i {

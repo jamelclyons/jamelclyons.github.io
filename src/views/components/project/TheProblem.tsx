@@ -16,8 +16,8 @@ const TheProblem: React.FC<ProblemProps> = ({ problem }) => {
   return (
     <>
       {hasContent &&
-        <div className="project-problem" id="project_problem">
-          <h3 className="title">the problem</h3>
+        <div className="project-section project-problem" id="project_problem">
+          <h2 className="title">the problem</h2>
 
           <Gallery title={'Problem'} gallery={gallery.images} />
 

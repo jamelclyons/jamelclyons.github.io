@@ -84,7 +84,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
       repoURL !== '') &&
       <div className="project-process-development" id="project_process_development">
 
-        <h4 className="title">development</h4>
+        <h3 className="title">development</h3>
 
         {skills && <SkillsComponent projectSkills={skills} />}
 

@@ -4,12 +4,12 @@ import Member from '../member/MemberCard';
 
 import User from '../../../model/User';
 
-interface ProjectTeamComponentProps {
+interface TeamProps {
   user: User;
   projectTeam: Array<User>
 }
 
-const ProjectTeamComponent: React.FC<ProjectTeamComponentProps> = ({ user, projectTeam }) => {
+const Team: React.FC<TeamProps> = ({ user, projectTeam }) => {
   return (
     <>
       {Array.isArray(projectTeam) && projectTeam.length > 0 && (
@@ -27,4 +27,4 @@ const ProjectTeamComponent: React.FC<ProjectTeamComponentProps> = ({ user, proje
   );
 }
 
-export default ProjectTeamComponent;
+export default Team;

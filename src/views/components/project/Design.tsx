@@ -28,7 +28,7 @@ const Design: React.FC<DesignProps> = ({ design }) => {
         logos.length > 0 || icons.length > 0 || animations.length > 0 || umlDiagrams.length > 0 ||
         contentURL) &&
         <div className="project-process-design" id="project_process_design">
-          <h4 className="title">design</h4>
+          <h3 className="title">design</h3>
 
           {tasks.size > 0 && <CheckList tasks={Array.from(tasks)} />}
 

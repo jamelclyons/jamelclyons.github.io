@@ -70,7 +70,7 @@ const TaxListIcon: React.FC<TaxListIconProps> = ({ title, taxonomies }) => {
   return (
     projectSkills && (
       <div className="tax-list">
-        <h6 className="title">{title}</h6>
+        <h5 className="title">{title}</h5>
 
         <div className="tax-row">
           <ProjectSkillsBar skills={projectSkills} />

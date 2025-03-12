@@ -2,8 +2,7 @@ import React from 'react';
 
 import ProjectSolution from '../../../model/ProjectSolution';
 
-import FeaturesComponent from './FeaturesComponent';
-import PricingComponent from './PricingComponent';
+import FeaturesComponent from './Features';
 import ProjectURLsComponent from './ProjectURLsComponent';
 import GalleryComponent from '../Gallery';
 import ContentComponent from '../content/ContentComponent';
@@ -25,16 +24,14 @@ const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
   return (
     <>
       {hasContent &&
-        <div className="project-solution" id="project_solution">
+        <div className="project-section project-solution" id="project_solution">
+          <h2>THE SOLUTION</h2>
+
           {gallery.images.length > 0 && <GalleryComponent gallery={gallery.images} title='' />}
 
           {features.size > 0 && <FeaturesComponent features={features} />}
 
-          {currency && price > 0 && <PricingComponent currency={currency} price={price} />}
-
           {projectURLs && <ProjectURLsComponent projectUrls={projectURLs} />}
-
-          <h3>THE SOLUTION</h3>
 
           {contentURL && <ContentComponent title={null} content={contentURL} />}
         </div>
