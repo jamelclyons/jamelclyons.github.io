@@ -1,14 +1,13 @@
-import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } from 'react';
+import React, { useEffect, useState, ChangeEvent, MouseEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import type { AppDispatch, RootState } from '../../../model/store';
+import type { AppDispatch, RootState } from '@/model/store';
 import Project, { ProjectObject } from '@/model/Project';
-
-import ProjectSolution, { ProjectSolutionObject } from '../../../model/ProjectSolution';
+import ProjectSolution, { ProjectSolutionObject } from '@/model/ProjectSolution';
 import Gallery from '@/model/Gallery';
 import Feature from '@/model/Feature';
-import ProjectURLs, { ProjectURLsObject } from '@/model/ProjectURLs';
-import { ProjectURLObject } from '@/model/ProjectURL';
+import ProjectURLs from '@/model/ProjectURLs';
+import ContentURL, { ContentURLObject } from '@/model/ContentURL';
 
 import { updateProject } from '@/controllers/updateSlice';
 import {
@@ -16,10 +15,10 @@ import {
   setMessageType,
   setShowStatusBar,
 } from '@/controllers/messageSlice';
+
 import UpdateFeatures from './components/UpdateFeatures';
 import UpdateProjectURL from './components/UpdateProjectURL';
 import UpdateGallery from './components/UpdateGallery';
-import ContentURL, { ContentURLObject } from '@/model/ContentURL';
 
 interface UpdateSolutionProps {
   project: Project;
@@ -61,11 +60,16 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
   }, [updatedFeatures, setFeatures]);
 
   useEffect(() => {
-    if (updatedProjectURLs) {
-      const updatedProjectURLsObject: ProjectURLsObject = {
-        homepage: updatedProjectURLs?.homepage as ProjectURLObject,
-        ios: updatedProjectURLs?.ios as ProjectURLObject,
-        android: updatedProjectURLs?.android as ProjectURLObject
+    setProjectURLs(project.solution.projectURLs);
+  }, [project.solution.projectURLs, setProjectURLs]);
+
+  useEffect(() => {
+    if (updatedProjectURLs &&
+      (updatedProjectURLs.homepage !== undefined || updatedProjectURLs.ios !== undefined || updatedProjectURLs.android !== undefined)) {
+      const updatedProjectURLsObject = {
+        homepage: { url: updatedProjectURLs.homepage },
+        ios: { url: updatedProjectURLs.ios },
+        android: { url: updatedProjectURLs.android }
       }
       setProjectURLs(new ProjectURLs(updatedProjectURLsObject));
     }

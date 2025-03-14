@@ -16,7 +16,7 @@ import Skills from '@/model/Skills';
 import ProjectSkills from '@/model/ProjectSkills';
 import { TaskObject } from '@/model/Task';
 import ProjectVersions from '@/model/ProjectVersions';
-import ProjectURLs, { ProjectURLsObject } from '@/model/ProjectURLs';
+import { ProjectURLsDataObject } from '@/model/ProjectURLs';
 import CheckList, { CheckListObject } from '@/model/CheckList';
 import Feature, { FeatureObject } from '@/model/Feature';
 import Color, { ColorObject } from '@/model/Color';
@@ -40,7 +40,7 @@ interface UpdateState {
   updatedProjectSkills: Record<string, any> | null;
   updatedCheckList: Array<Record<string, any>> | null;
   updatedVersionsList: Record<string, any> | null;
-  updatedProjectURLs: ProjectURLsObject | null;
+  updatedProjectURLs: ProjectURLsDataObject | null;
   updatedFeatures: Array<FeatureObject> | null;
   updatedColors: Array<ColorObject> | null;
 }
@@ -136,9 +136,10 @@ export const updateDeliveryCheckList = createAsyncThunk(
 
 export const updateProjectURLs = createAsyncThunk(
   'update/updateProjectURLs',
-  async (projectURLs: ProjectURLs) => {
+  async (projectURLs: ProjectURLsDataObject) => {
     try {
-      return projectURLs.toProjectURLsObject();
+      console.log(projectURLs)
+      return projectURLs;
     } catch (error) {
       const err = error as Error;
       console.error(err);

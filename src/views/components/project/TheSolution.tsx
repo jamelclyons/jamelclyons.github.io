@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ProjectSolution from '../../../model/ProjectSolution';
+import ProjectSolution from '@/model/ProjectSolution';
 
 import FeaturesComponent from './Features';
 import ProjectURLsComponent from './ProjectURLsComponent';
@@ -17,7 +17,7 @@ const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
   const hasContent = features.size > 0 ||
     currency ||
     price > 0 ||
-    projectURLs.homepage.url === '' || projectURLs.ios.url === '' || projectURLs.android.url === '' ||
+    (projectURLs.homepage.url || projectURLs.ios.url || projectURLs.android.url) ||
     gallery.images.length > 0 ||
     contentURL;
 

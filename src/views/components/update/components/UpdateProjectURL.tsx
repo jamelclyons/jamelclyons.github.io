@@ -1,9 +1,8 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import type { AppDispatch, RootState } from '@/model/store';
-import ProjectURLs, { ProjectURLsObject } from '@/model/ProjectURLs';
-import { ProjectURLObject } from '@/model/ProjectURL';
+import type { AppDispatch } from '@/model/store';
+import ProjectURLs from '@/model/ProjectURLs';
 
 import { updateProjectURLs } from '@/controllers/updateSlice';
 import {
@@ -17,28 +16,34 @@ interface UpdateProjectURLProps {
 }
 
 const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLs }) => {
+    const urls = new ProjectURLs();
+    const homepage = urls.homepage;
+    const ios = urls.ios;
+    const android = urls.android;
+
     const dispatch = useDispatch<AppDispatch>();
 
-    const [projectURLsObject, setProjectURLsObject] = useState<ProjectURLsObject>(projectURLs.toProjectURLsObject());
-    const [homepage, setHomepage] = useState<ProjectURLObject>(projectURLsObject.homepage);
-    const [ios, setIos] = useState<ProjectURLObject>(projectURLsObject.ios);
-    const [android, setAndroid] = useState<ProjectURLObject>(projectURLsObject.android);
+    const [homepageURL, setHomepageURL] = useState<string | null>(projectURLs.homepage.url);
+    const [iosURL, setIosURL] = useState<string | null>(projectURLs.ios.url);
+    const [androidURL, setAndroidURL] = useState<string | null>(projectURLs.android.url);
 
     useEffect(() => {
-        setProjectURLsObject(projectURLsObject);
-    }, [projectURLsObject, setProjectURLsObject]);
+        if (projectURLs.homepage) {
+            setHomepageURL(projectURLs.homepage.url);
+        }
+    }, [projectURLs.homepage, setHomepageURL]);
 
     useEffect(() => {
-        setHomepage(projectURLsObject.homepage);
-    }, [projectURLsObject, setHomepage]);
+        if (projectURLs.ios) {
+            setIosURL(projectURLs.ios.url);
+        }
+    }, [projectURLs.ios, setIosURL]);
 
     useEffect(() => {
-        setIos(projectURLsObject.ios);
-    }, [projectURLsObject.ios, setIos]);
-
-    useEffect(() => {
-        setAndroid(projectURLsObject.android);
-    }, [projectURLsObject.android, setAndroid]);
+        if (projectURLs.android) {
+            setAndroidURL(projectURLs.android.url);
+        }
+    }, [projectURLs.android, setAndroidURL]);
 
     const handleHomepageChange = (e: ChangeEvent<HTMLInputElement>) => {
         try {
@@ -47,15 +52,7 @@ const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLs }) => {
             const { name, value } = target;
 
             if (name === 'homepage_url') {
-                setHomepage({ ...homepage, url: value });
-
-                const updatedProjectURLs: ProjectURLsObject = {
-                    homepage: { ...homepage, url: value },
-                    ios: ios,
-                    android: android
-                };
-
-                dispatch(updateProjectURLs(new ProjectURLs(updatedProjectURLs)));
+                setHomepageURL(value);
             }
         } catch (error) {
             const err = error as Error;
@@ -71,15 +68,7 @@ const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLs }) => {
             const { name, value } = target;
 
             if (name === 'ios_url') {
-                setIos({ ...ios, url: value });
-
-                const updatedProjectURLs: ProjectURLsObject = {
-                    homepage: homepage,
-                    ios: { ...ios, url: value },
-                    android: android
-                };
-
-                dispatch(updateProjectURLs(new ProjectURLs(updatedProjectURLs)));
+                setIosURL(value);
             }
         } catch (error) {
             const err = error as Error;
@@ -95,15 +84,7 @@ const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLs }) => {
             const { name, value } = target;
 
             if (name === 'android_url') {
-                setAndroid({ ...android, url: value });
-
-                const updatedProjectURLs: ProjectURLsObject = {
-                    homepage: homepage,
-                    ios: ios,
-                    android: { ...android, url: value }
-                };
-
-                dispatch(updateProjectURLs(new ProjectURLs(updatedProjectURLs)));
+                setAndroidURL(value);
             }
         } catch (error) {
             const err = error as Error;
@@ -112,31 +93,43 @@ const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLs }) => {
         }
     };
 
+    const handleUpdateProjectURLs = () => {
+        dispatch(updateProjectURLs({
+            homepage: homepageURL,
+            ios: iosURL,
+            android: androidURL
+        }));
+    };
+
     return (
-        <>
+        <div className='update' id='update_urls'>
             <h3>Project URLs</h3>
 
             {homepage &&
                 (<div className="form-item-flex">
                     <label htmlFor="homepage_url">{homepage.name}:</label>
-                    <input type="text" id="homepage" value={homepage.url ?? ''} placeholder={homepage.description} name='homepage_url' onChange={handleHomepageChange} />
+                    <input type="text" id="homepage" value={homepageURL ?? ''} placeholder={homepage.description} name='homepage_url' onChange={handleHomepageChange} />
                 </div>)
             }
 
             {ios &&
                 (<div className="form-item-flex">
                     <label htmlFor="ios_url">{ios.name}:</label>
-                    <input type="text" id="ios" value={ios.url ?? ''} placeholder={ios.description} name='ios_url' onChange={handleIosChange} />
+                    <input type="text" id="ios" value={iosURL ?? ''} placeholder={ios.description} name='ios_url' onChange={handleIosChange} />
                 </div>)
             }
 
             {android &&
                 (<div className="form-item-flex">
                     <label htmlFor="android_url">{android.name}:</label>
-                    <input type="text" id="android" value={android.url ?? ''} placeholder={android.description} name='android_url' onChange={handleAndroidChange} />
+                    <input type="text" id="android" value={androidURL ?? ''} placeholder={android.description} name='android_url' onChange={handleAndroidChange} />
                 </div>)
             }
-        </>
+
+            <button onClick={handleUpdateProjectURLs}>
+                <h3>Update Project Urls</h3>
+            </button>
+        </div>
     )
 }
 

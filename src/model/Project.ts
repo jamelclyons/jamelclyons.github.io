@@ -1,6 +1,6 @@
 import Model from './Model';
 import ProjectSolution, { ProjectSolutionObject } from './ProjectSolution';
-import ProjectURLs from './ProjectURLs';
+import ProjectURLs, { ProjectURLsObject } from './ProjectURLs';
 import ProjectProcess, { ProjectProcessObject } from './ProjectProcess';
 import ProjectProblem, { ProjectProblemObject } from './ProjectProblem';
 import ProjectDetails, { ProjectDetailsObject } from './ProjectDetails';
@@ -19,6 +19,7 @@ import ProjectDevelopment, {
 import ProjectDelivery, { ProjectDeliveryObject } from './ProjectDelivery';
 
 import { DocumentData } from 'firebase/firestore';
+import ProjectURL from './ProjectURL';
 
 export type ProjectObject = {
   id: string;
@@ -100,7 +101,7 @@ class Project extends Model {
       this.solution.setContentURL(repo.contents.solution.downloadURL);
     }
 
-    this.solution.projectURLs.homepage.url = repo.homepage;
+    this.solution.projectURLs.homepage = new ProjectURL({ url: repo.homepage });
 
     this.process.status.createdAt = repo.createdAt;
     this.process.status.updatedAt = repo.updatedAt;
@@ -136,6 +137,30 @@ class Project extends Model {
 
     this.description = data?.description ? data.description : this.description;
 
+    const projectURLsObject: ProjectURLsObject = {
+      homepage: data?.solution?.project_urls?.homepage?.url
+        ? new ProjectURL({
+            url: data.solution.project_urls.homepage.url,
+          }).toProjectURLObject()
+        : this.solution.projectURLs.homepage
+        ? this.solution.projectURLs.homepage.toProjectURLObject()
+        : null,
+      ios: data?.solution?.project_urls?.ios?.url
+        ? new ProjectURL({
+            url: data.solution.project_urls.ios.url,
+          }).toProjectURLObject()
+        : this.solution.projectURLs.ios
+        ? this.solution.projectURLs.ios.toProjectURLObject()
+        : null,
+      android: data?.solution?.project_urls?.android?.url
+        ? new ProjectURL({
+            url: data.solution.project_urls.android.url,
+          }).toProjectURLObject()
+        : this.solution.projectURLs.android
+        ? this.solution.projectURLs.android.toProjectURLObject()
+        : null,
+    };
+
     const solutionObject: ProjectSolutionObject = {
       gallery: data?.solution?.gallery
         ? new Gallery(data?.solution?.gallery).toGalleryObject()
@@ -146,12 +171,14 @@ class Project extends Model {
         : null,
       currency: data?.solution?.currency ?? this.solution.currency,
       price: data?.solution?.price ?? this.solution.price,
-      project_urls: data?.project_urls
-        ? new ProjectURLs(data.project_urls).toProjectURLsObject()
-        : this.solution.projectURLs.toProjectURLsObject(),
+      project_urls: new ProjectURLs(projectURLsObject).toProjectURLsObject(),
     };
 
     this.solution = new ProjectSolution(solutionObject);
+
+    this.process.status.progress = data?.process?.status?.progress
+      ? data.process.status.progress
+      : '0';
 
     const designObject: ProjectDesignObject = {
       gallery: data?.process.design.gallery
