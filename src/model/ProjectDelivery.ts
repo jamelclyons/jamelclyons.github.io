@@ -9,6 +9,12 @@ export type ProjectDeliveryObject = {
   content_url: ContentURLObject | null;
 };
 
+export type ProjectDeliveryDataObject = {
+  check_list: CheckListObject;
+  gallery: GalleryObject;
+  content_url: string | null;
+};
+
 class ProjectDelivery extends Model {
   checkList: CheckList;
   gallery: Gallery;
@@ -35,6 +41,14 @@ class ProjectDelivery extends Model {
       content_url: this.contentURL
         ? this.contentURL?.toContentURLObject()
         : null,
+    };
+  }
+
+  toProjectDeliveryDataObject(): ProjectDeliveryDataObject {
+    return {
+      check_list: this.checkList.toCheckListObject(),
+      gallery: this.gallery.toGalleryObject(),
+      content_url: this.contentURL?.url ? this.contentURL.url : null,
     };
   }
 }

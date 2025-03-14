@@ -1,6 +1,9 @@
 import Model from './Model';
 import Feature, { FeatureObject } from './Feature';
-import ProjectURLs, { ProjectURLsObject } from './ProjectURLs';
+import ProjectURLs, {
+  ProjectURLsDataObject,
+  ProjectURLsObject,
+} from './ProjectURLs';
 import Gallery, { GalleryObject } from './Gallery';
 import ContentURL, { ContentURLObject } from './ContentURL';
 
@@ -11,6 +14,15 @@ export type ProjectSolutionObject = {
   currency: string;
   price: number;
   project_urls: ProjectURLsObject;
+};
+
+export type ProjectSolutionDataObject = {
+  gallery: GalleryObject;
+  features: Array<FeatureObject>;
+  content_url: string | null;
+  currency: string;
+  price: number;
+  project_urls: ProjectURLsDataObject;
 };
 
 class ProjectSolution extends Model {
@@ -64,6 +76,17 @@ class ProjectSolution extends Model {
       currency: this.currency,
       price: this.price,
       project_urls: this.projectURLs.toProjectURLsObject(),
+    };
+  }
+
+  toProjectSolutionDataObject(): ProjectSolutionDataObject {
+    return {
+      gallery: this.gallery.toGalleryObject(),
+      features: Array.from(this.features),
+      content_url: this.contentURL?.url ? this.contentURL.url : null,
+      currency: this.currency,
+      price: this.price,
+      project_urls: this.projectURLs.toProjectURLsDataObject(),
     };
   }
 }

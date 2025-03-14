@@ -1,17 +1,17 @@
 import React, { useEffect, useState, ChangeEvent, MouseEvent, SetStateAction } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import type { AppDispatch, RootState } from '../../../../model/store';
-import ProjectStatus, { ProjectStatusObject } from '../../../../model/ProjectStatus';
+import type { AppDispatch, RootState } from '@/model/store';
+import ProjectStatus, { ProjectStatusObject } from '@/model/ProjectStatus';
 import Project, { ProjectObject } from '@/model/Project';
+import CheckList from '@/model/CheckList';
 
 import {
     setMessage,
     setMessageType,
     setShowStatusBar,
-} from '../../../../controllers/messageSlice';
-import { updateProject } from '../../../../controllers/updateSlice';
-import CheckList from '@/model/CheckList';
+} from '@/controllers/messageSlice';
+import { updateProject } from '@/controllers/updateSlice';
 
 interface UpdateStatusProps {
     project: Project;
@@ -27,12 +27,12 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ project }) => {
     const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject());
 
     const [status, setStatus] = useState<ProjectStatus>(project.process.status);
-    const [createdAt, setCreatedAt] = useState<string>(project.process.status.createdAt);
-    const [updatedAt, setUpdatedAt] = useState<string>(project.process.status.updatedAt);
+    const [createdAt, setCreatedAt] = useState<string | null>(project.process.status.createdAt);
+    const [updatedAt, setUpdatedAt] = useState<string | null>(project.process.status.updatedAt);
+    const [progress, setProgress] = useState<string | null>(project.process.status.progress);
     const [designCheckList, setDesignCheckList] = useState<CheckList>(project.process.design.checkList)
     const [developmentCheckList, setDevelopmentCheckList] = useState<CheckList>(project.process.development.checkList)
     const [deliveryCheckList, setDeliveryCheckList] = useState<CheckList>(new CheckList(projectObject.process.delivery.check_list))
-    const [progress, setProgress] = useState<string>(projectObject.process.status.progress);
 
     useEffect(() => { setProjectObject(project.toProjectObject()) }, [project, setProjectObject]);
 
@@ -146,11 +146,11 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ project }) => {
 
                 {/* updated at */}
 
-                <progress value={progress} max="100"></progress>
+                <progress value={progress ?? '0'} max="100"></progress>
 
                 <div className="form-item-flex">
                     <label htmlFor="progress">Completed</label>
-                    <input type="number" value={progress} placeholder="Progress # 0-100" onChange={handleChange} id='progress' name='progress' />
+                    <input type="number" value={progress ?? '0'} placeholder="Progress # 0-100" onChange={handleChange} id='progress' name='progress' />
                 </div>
 
                 <button onClick={handleUpdateStatus}>

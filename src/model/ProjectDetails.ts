@@ -9,10 +9,20 @@ export type ProjectDetailsObject = {
   privacy: string;
   client_id: string;
   client_name: string;
-  start_date: string;
-  end_date: string;
+  start_date: string | null;
+  end_date: string | null;
   content: ContentURLObject | null;
   team_list: Array<UserObject>;
+};
+
+export type ProjectDetailsDataObject = {
+  privacy: string;
+  client_id: string;
+  client_name: string;
+  start_date: string | null;
+  end_date: string | null;
+  content: string | null;
+  team_list: Array<string>;
 };
 
 class ProjectDetails extends Model {
@@ -21,7 +31,7 @@ class ProjectDetails extends Model {
   clientName: string;
   startDate: string | null;
   endDate: string | null;
-  content: ContentURL;
+  content: ContentURL | null;
   teamList: Array<User>;
 
   constructor(data: Record<string, any> | ProjectDetailsObject = {}) {
@@ -56,10 +66,22 @@ class ProjectDetails extends Model {
       privacy: this.privacy,
       client_id: this.clientID,
       client_name: this.clientName,
-      start_date: this.startDate ?? '',
-      end_date: this.endDate ?? '',
+      start_date: this.startDate,
+      end_date: this.endDate,
       content: this.content ? this.content?.toContentURLObject() : null,
       team_list: this.teamList.map((user) => user.toUserObject()),
+    };
+  }
+
+  toDetailsDataObject(): ProjectDetailsDataObject {
+    return {
+      privacy: this.privacy,
+      client_id: this.clientID,
+      client_name: this.clientName,
+      start_date: this.startDate,
+      end_date: this.endDate,
+      content: this.content?.url ? this.content.url : null,
+      team_list: this.teamList.map((user) => user.id),
     };
   }
 }

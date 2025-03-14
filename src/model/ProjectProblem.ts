@@ -7,6 +7,11 @@ export type ProjectProblemObject = {
   gallery: GalleryObject;
 };
 
+export type ProjectProblemDataObject = {
+  content_url: string | null;
+  gallery: GalleryObject;
+};
+
 class ProjectProblem extends Model {
   contentURL: ContentURL | null;
   gallery: Gallery;
@@ -23,12 +28,19 @@ class ProjectProblem extends Model {
   setContentURL(url: string) {
     this.contentURL = new ContentURL(url);
   }
-  
+
   toProjectProblemObject(): ProjectProblemObject {
     return {
       content_url: this.contentURL
         ? this.contentURL.toContentURLObject()
         : null,
+      gallery: this.gallery.toGalleryObject(),
+    };
+  }
+
+  toProjectProblemDataObject(): ProjectProblemDataObject {
+    return {
+      content_url: this.contentURL?.url ? this.contentURL.url : null,
       gallery: this.gallery.toGalleryObject(),
     };
   }

@@ -213,34 +213,6 @@ export const updateProblemGallery = createAsyncThunk(
   }
 );
 
-export const updateProject = createAsyncThunk(
-  'update/updateProject',
-  async (project: Project) => {
-    try {
-      const headers: SecureHeaders = await addSecureHeaders();
-
-      if (headers.errorMessage) {
-        return headers;
-      }
-      const response = await fetch(`${api}/project/${project.id}`, {
-        method: 'POST',
-        headers:
-          headers instanceof SecureHeaders
-            ? new Headers(headers.toObject())
-            : {},
-        body: JSON.stringify(project.toObject()),
-      });
-
-      return await response.json();
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      err.stack;
-      throw new Error(err.message);
-    }
-  }
-);
-
 export const updateSolution = createAsyncThunk(
   'update/updateSolution',
   async (data: Record<string, any>) => {
@@ -512,6 +484,34 @@ export const updateVersions = createAsyncThunk(
     } catch (error) {
       const err = error as Error;
       console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+export const updateProject = createAsyncThunk(
+  'update/updateProject',
+  async (project: Project) => {
+    try {
+      const headers: SecureHeaders = await addSecureHeaders();
+
+      if (headers.errorMessage) {
+        return headers;
+      }
+      const response = await fetch(`${api}/project/${project.id}`, {
+        method: 'POST',
+        headers:
+          headers instanceof SecureHeaders
+            ? new Headers(headers.toObject())
+            : {},
+        body: JSON.stringify(project.toProjectDataObject()),
+      });
+
+      return await response.json();
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      err.stack;
       throw new Error(err.message);
     }
   }

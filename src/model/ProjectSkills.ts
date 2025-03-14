@@ -16,6 +16,13 @@ export type ProjectSkillsObject = {
   technologies: Array<TaxonomyObject>;
 };
 
+export type ProjectSkillsDataObject = {
+  types: Array<string>;
+  languages: Array<string>;
+  frameworks: Array<string>;
+  technologies: Array<string>;
+};
+
 class ProjectSkills extends Model {
   types: Set<ProjectType>;
   languages: Set<Language>;
@@ -127,7 +134,7 @@ class ProjectSkills extends Model {
   show(skillsUsed: ProjectSkills): ProjectSkills {
     const filteredSkills: ProjectSkills = new ProjectSkills();
     const skills = new Skills();
-    
+
     const { types, languages, frameworks, technologies } = skills;
 
     if (skillsUsed.count > 0) {
@@ -209,6 +216,27 @@ class ProjectSkills extends Model {
           ? Array.from(this.technologies).map((technology) =>
               technology.toTechnologyObject()
             )
+          : [],
+    };
+  }
+
+  toProjectSkillsDataObject(): ProjectSkillsDataObject {
+    return {
+      types:
+        this.types.size > 0
+          ? Array.from(this.types).map((type) => type.id)
+          : [],
+      languages:
+        this.languages.size > 0
+          ? Array.from(this.languages).map((language) => language.id)
+          : [],
+      frameworks:
+        this.frameworks.size > 0
+          ? Array.from(this.frameworks).map((framework) => framework.id)
+          : [],
+      technologies:
+        this.technologies.size > 0
+          ? Array.from(this.technologies).map((technology) => technology.id)
           : [],
     };
   }

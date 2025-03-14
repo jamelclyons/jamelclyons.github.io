@@ -1,9 +1,9 @@
 import Model from './Model';
-import ProjectSolution, { ProjectSolutionObject } from './ProjectSolution';
+import ProjectSolution, { ProjectSolutionDataObject, ProjectSolutionObject } from './ProjectSolution';
 import ProjectURLs, { ProjectURLsObject } from './ProjectURLs';
-import ProjectProcess, { ProjectProcessObject } from './ProjectProcess';
-import ProjectProblem, { ProjectProblemObject } from './ProjectProblem';
-import ProjectDetails, { ProjectDetailsObject } from './ProjectDetails';
+import ProjectProcess, { ProjectProcessDataObject, ProjectProcessObject } from './ProjectProcess';
+import ProjectProblem, { ProjectProblemDataObject, ProjectProblemObject } from './ProjectProblem';
+import ProjectDetails, { ProjectDetailsDataObject, ProjectDetailsObject } from './ProjectDetails';
 import ProjectSkills, { ProjectSkillsObject } from './ProjectSkills';
 import ProjectVersions from './ProjectVersions';
 import Repo from './Repo';
@@ -17,9 +17,9 @@ import ProjectDevelopment, {
   ProjectDevelopmentObject,
 } from './ProjectDevelopment';
 import ProjectDelivery, { ProjectDeliveryObject } from './ProjectDelivery';
+import ProjectURL from './ProjectURL';
 
 import { DocumentData } from 'firebase/firestore';
-import ProjectURL from './ProjectURL';
 
 export type ProjectObject = {
   id: string;
@@ -30,6 +30,17 @@ export type ProjectObject = {
   problem: ProjectProblemObject;
   owner: OwnerObject;
   details: ProjectDetailsObject;
+};
+
+export type ProjectDataObject = {
+  id: string;
+  title: string;
+  description: string;
+  solution: ProjectSolutionDataObject;
+  process: ProjectProcessDataObject;
+  problem: ProjectProblemDataObject;
+  owner: string;
+  details: ProjectDetailsDataObject;
 };
 
 class Project extends Model {
@@ -321,6 +332,19 @@ class Project extends Model {
       process: this.process.toProjectProcessObject(),
       problem: this.problem.toProjectProblemObject(),
       details: this.details.toDetailsObject(),
+    };
+  }
+
+  toProjectDataObject(): ProjectDataObject {
+    return {
+      id: this.id,
+      owner: this.owner.id,
+      title: this.title,
+      description: this.description,
+      solution: this.solution.toProjectSolutionDataObject(),
+      process: this.process.toProjectProcessDataObject(),
+      problem: this.problem.toProjectProblemDataObject(),
+      details: this.details.toDetailsDataObject(),
     };
   }
 }

@@ -206,7 +206,7 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ project }) => {
 
       <button onClick={handleUpdateDevelopment}>
         <h3>Update Development</h3>
-      </button>l
+      </button>
     </div>
   )
 }

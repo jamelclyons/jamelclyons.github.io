@@ -11,6 +11,13 @@ export type ProjectDesignObject = {
   content_url: ContentURLObject | null;
 };
 
+export type ProjectDesignDataObject = {
+  gallery: GalleryObject;
+  check_list: CheckListObject;
+  colors_list: Array<ColorObject>;
+  content_url: string | null;
+};
+
 class ProjectDesign extends Model {
   gallery: Gallery;
   checkList: CheckList;
@@ -52,6 +59,15 @@ class ProjectDesign extends Model {
       content_url: this.contentURL
         ? this.contentURL.toContentURLObject()
         : null,
+    };
+  }
+
+  toProjectDesignDataObject(): ProjectDesignDataObject {
+    return {
+      gallery: this.gallery.toGalleryObject(),
+      check_list: this.checkList.toCheckListObject(),
+      colors_list: this.colorsList.map((color) => color.toColorObject()),
+      content_url: this.contentURL?.url ? this.contentURL.url : null,
     };
   }
 }

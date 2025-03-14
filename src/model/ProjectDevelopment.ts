@@ -1,7 +1,7 @@
 import Model from './Model';
 import Task from './Task';
 import ProjectVersions, { ProjectVersionsObject } from './ProjectVersions';
-import ProjectSkills from './ProjectSkills';
+import ProjectSkills, { ProjectSkillsDataObject } from './ProjectSkills';
 
 import { ProjectSkillsObject } from './ProjectSkills';
 import Gallery, { GalleryObject } from './Gallery';
@@ -10,9 +10,18 @@ import ContentURL, { ContentURLObject } from './ContentURL';
 
 export type ProjectDevelopmentObject = {
   gallery: GalleryObject;
-  repo_url: string;
+  repo_url: string | null;
   content_url: ContentURLObject | null;
   skills: ProjectSkillsObject;
+  check_list: CheckListObject;
+  versions_list: ProjectVersionsObject;
+};
+
+export type ProjectDevelopmentDataObject = {
+  gallery: GalleryObject;
+  repo_url: string | null;
+  content_url: string | null;
+  skills: ProjectSkillsDataObject;
   check_list: CheckListObject;
   versions_list: ProjectVersionsObject;
 };
@@ -67,6 +76,19 @@ class ProjectDevelopment extends Model {
         ? this.contentURL?.toContentURLObject()
         : null,
       skills: this.skills.toProjectSkillsObject(),
+      check_list: this.checkList.toCheckListObject(),
+      versions_list: this.versionsList.toProjectVersionsObject(),
+    };
+  }
+
+  toProjectDevelopmentDataObject(): ProjectDevelopmentDataObject {
+    return {
+      gallery: this.gallery.toGalleryObject(),
+      repo_url: this.repoURL,
+      content_url: this.contentURL?.url
+        ? this.contentURL.url
+        : null,
+      skills: this.skills.toProjectSkillsDataObject(),
       check_list: this.checkList.toCheckListObject(),
       versions_list: this.versionsList.toProjectVersionsObject(),
     };

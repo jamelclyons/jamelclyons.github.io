@@ -1,6 +1,6 @@
 import Model from './Model';
 import Owner, { OwnerObject } from './Owner';
-import RepoContents,{RepoContentsObject} from './RepoContents';
+import RepoContents, { RepoContentsObject } from './RepoContents';
 import RepoContent from './RepoContent';
 import { Language, Technology } from './Taxonomy';
 import Contributors, { ContributorsObject } from './Contributors';
@@ -262,6 +262,9 @@ class Repo extends Model {
               break;
             case 'TheProblem.md':
               contents.problem = new RepoContent(content).toObject();
+              break;
+            case 'Details.md':
+              contents.details = new RepoContent(content).toObject();
               break;
           }
         }

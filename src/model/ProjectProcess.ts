@@ -1,16 +1,24 @@
 import Model from './Model';
-import ProjectDesign, { ProjectDesignObject } from './ProjectDesign';
+import ProjectDesign, { ProjectDesignDataObject, ProjectDesignObject } from './ProjectDesign';
 import ProjectDevelopment, {
+  ProjectDevelopmentDataObject,
   ProjectDevelopmentObject,
 } from './ProjectDevelopment';
-import ProjectDelivery, { ProjectDeliveryObject } from './ProjectDelivery';
-import ProjectStatus, { ProjectStatusObject } from './ProjectStatus';
+import ProjectDelivery, { ProjectDeliveryDataObject, ProjectDeliveryObject } from './ProjectDelivery';
+import ProjectStatus, { ProjectStatusDataObject, ProjectStatusObject } from './ProjectStatus';
 
 export type ProjectProcessObject = {
   status: ProjectStatusObject;
   design: ProjectDesignObject;
   development: ProjectDevelopmentObject;
   delivery: ProjectDeliveryObject;
+};
+
+export type ProjectProcessDataObject = {
+  status: ProjectStatusDataObject;
+  design: ProjectDesignDataObject;
+  development: ProjectDevelopmentDataObject;
+  delivery: ProjectDeliveryDataObject;
 };
 
 class ProjectProcess extends Model {
@@ -34,6 +42,15 @@ class ProjectProcess extends Model {
       design: this.design.toProjectDesignObject(),
       development: this.development.toProjectDevelopmentObject(),
       delivery: this.delivery.toProjectDeliveryObject(),
+    };
+  }
+
+  toProjectProcessDataObject(): ProjectProcessDataObject {
+    return {
+      status: this.status.toProjectStatusDataObject(),
+      design: this.design.toProjectDesignDataObject(),
+      development: this.development.toProjectDevelopmentDataObject(),
+      delivery: this.delivery.toProjectDeliveryDataObject(),
     };
   }
 }
