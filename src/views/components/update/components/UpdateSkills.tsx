@@ -10,8 +10,7 @@ import {
   getProjectTypes,
   getLanguages,
   getFrameworks,
-  getTechnologies,
-  SkillsObject,
+  getTechnologies
 } from '@/controllers/taxonomiesSlice';
 import { updateProjectSkills } from '@/controllers/updateSlice';
 
@@ -50,6 +49,22 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ projectSkills }) => {
   useEffect(() => {
     dispatch(getTechnologies());
   }, []);
+
+  useEffect(() => {
+    setSelectedProjectTypes(projectSkills.types);
+  }, [projectSkills.types, setSelectedProjectTypes]);
+
+  useEffect(() => {
+    setSelectedLanguages(projectSkills.languages);
+  }, [projectSkills.languages, setSelectedLanguages]);
+
+  useEffect(() => {
+    setSelectedFrameworks(projectSkills.frameworks);
+  }, [projectSkills.frameworks, setSelectedFrameworks]);
+
+  useEffect(() => {
+    setSelectedTechnologies(projectSkills.technologies);
+  }, [projectSkills.technologies, setSelectedTechnologies]);
 
   const handleProjectTypesCheckboxChange = (type: ProjectType) => {
     setSelectedProjectTypes((prevTypes) => {

@@ -42,7 +42,7 @@ class ProjectDetails extends Model {
     this.clientName = data?.client_name ? data.client_name : UserJSON.name;
     this.startDate = data?.start_date ? formatTime(data.start_date) : null;
     this.endDate = data?.end_date ? formatTime(data.end_date) : null;
-    this.content = data?.content ? data.content : null;
+    this.content = data?.content?.url ? new ContentURL(data.content.url) : null;
     this.teamList = data?.team_list ? this.getTeamList(data.team_list) : [];
   }
 

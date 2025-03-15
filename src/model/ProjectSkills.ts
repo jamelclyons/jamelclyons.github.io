@@ -1,6 +1,7 @@
 import Model from './Model';
 import Skills from './Skills';
 import Taxonomy, {
+  existsInSet,
   Framework,
   Language,
   ProjectType,
@@ -41,19 +42,57 @@ class ProjectSkills extends Model {
     this.count = this.getCount();
   }
 
+  addByID(skillsData: ProjectSkillsDataObject) {
+    const skills = new Skills();
+    const typeSkills = Array.from(skills.types).filter((skill) =>
+      skillsData.types.includes(skill.id)
+    );
+    const languageSkills = Array.from(skills.languages).filter((skill) =>
+      skillsData.languages.includes(skill.id)
+    );
+    const frameworkSkills = Array.from(skills.frameworks).filter((skill) =>
+      skillsData.frameworks.includes(skill.id)
+    );
+    const technologySkills = Array.from(skills.technologies).filter((skill) =>
+      skillsData.technologies.includes(skill.id)
+    );
+
+    const projectSkills = new ProjectSkills();
+    projectSkills.types = new Set(typeSkills);
+    projectSkills.languages = new Set(languageSkills);
+    projectSkills.frameworks = new Set(frameworkSkills);
+    projectSkills.technologies = new Set(technologySkills);
+
+    this.add(projectSkills);
+  }
+
   add(skills: ProjectSkills) {
-    this.types = new Set([...this.types, ...skills.types]);
-    this.languages = new Set([...this.languages, ...skills.languages]);
-    this.frameworks = new Set([...this.frameworks, ...skills.frameworks]);
-    this.technologies = new Set([...this.technologies, ...skills.technologies]);
+    Array.from(skills.types).map((type) => {
+      const exists = existsInSet(type, this.types);
+      return exists ? this.types : this.types.add(type);
+    });
+    Array.from(skills.languages).map((language) => {
+      const exists = existsInSet(language, this.languages);
+      return exists ? this.languages : this.languages.add(language);
+    });
+    Array.from(skills.frameworks).map((framework) => {
+      const exists = existsInSet(framework, this.frameworks);
+      return exists ? this.frameworks : this.frameworks.add(framework);
+    });
+    Array.from(skills.technologies).map((technology) => {
+      const exists = existsInSet(technology, this.technologies);
+      return exists ? this.technologies : this.technologies.add(technology);
+    });
   }
 
   getProjectTypes(data: Array<Record<string, any>> = []) {
     let types: Set<ProjectType> = new Set();
 
-    data.forEach((type) => {
-      types.add(new ProjectType(type));
-    });
+    if (data.length > 0) {
+      data.forEach((type) => {
+        types.add(new ProjectType(type));
+      });
+    }
 
     return types;
   }
@@ -61,19 +100,23 @@ class ProjectSkills extends Model {
   getLanguages(data: Array<Record<string, any>> = []) {
     let languages: Set<Language> = new Set();
 
-    data.forEach((language) => {
-      languages.add(new Language(language));
-    });
-
+    if (data.length > 0) {
+      data.forEach((language) => {
+        const lang = new Language(language);
+        languages.add(lang);
+      });
+    }
     return languages;
   }
 
   getFrameworks(data: Array<Record<string, any>> = []) {
     let frameworks: Set<Framework> = new Set();
 
-    data.forEach((framework) => {
-      frameworks.add(new Framework(framework));
-    });
+    if (data.length > 0) {
+      data.forEach((framework) => {
+        frameworks.add(new Framework(framework));
+      });
+    }
 
     return frameworks;
   }
@@ -81,9 +124,11 @@ class ProjectSkills extends Model {
   getTechnologies(data: Array<Record<string, any>> = []) {
     let technologies: Set<Technology> = new Set();
 
-    data.forEach((technology) => {
-      technologies.add(new Technology(technology));
-    });
+    if (data.length > 0) {
+      data.forEach((technology) => {
+        technologies.add(new Technology(technology));
+      });
+    }
 
     return technologies;
   }

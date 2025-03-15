@@ -1,11 +1,15 @@
 import Model from './Model';
-import Task, { TaskObject } from './Task';
+import Task, { TaskDataObject, TaskObject } from './Task';
 
-export interface CheckListObject {
+export type CheckListObject = {
   tasks: Array<TaskObject>;
   weight: number;
-  total_weight: number;
-}
+};
+
+export type CheckListDataObject = {
+  tasks: Array<TaskDataObject>;
+  weight: number;
+};
 
 class CheckList extends Model {
   tasks: Set<Task>;
@@ -84,7 +88,15 @@ class CheckList extends Model {
     return {
       tasks: taskArray.map((task) => task.toTaskObject()),
       weight: this.weight,
-      total_weight: this.totalWeight,
+    };
+  }
+
+  toCheckListDataObject(): CheckListDataObject {
+    const taskArray = Array.from(this.tasks);
+
+    return {
+      tasks: taskArray.map((task) => task.toTaskObject()),
+      weight: this.weight,
     };
   }
 }

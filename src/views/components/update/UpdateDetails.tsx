@@ -43,6 +43,7 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
     setClientName(project.details.clientName)
     setStartDate(project.details.startDate ?? '')
     setEndDate(project.details.endDate ?? '')
+    setContent(project.details.content)
   }, [
     project.details,
     setDetails,
@@ -50,7 +51,8 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
     setClientID,
     setClientName,
     setStartDate,
-    setEndDate
+    setEndDate,
+    setContent
   ]);
 
   const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -61,9 +63,8 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
 
       if (name === 'privacy') {
         setPrivacy(privacyFromString(value));
+        setDetails(new ProjectDetails({ ...details.toDetailsObject(), privacy: value }));
       }
-
-      setDetails(new ProjectDetails({ ...details.toDetailsObject(), privacy: privacy }));
     } catch (error) {
       const err = error as Error;
       dispatch(setMessage(err.message));

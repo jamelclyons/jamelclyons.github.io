@@ -4,6 +4,7 @@ import ProjectDetails from '@/model/ProjectDetails';
 
 import ProjectTeamComponent from './Team';
 import User from '@/model/User';
+import ContentComponent from '../content/ContentComponent';
 
 interface ProjectDetailsProps {
   user: User;
@@ -11,7 +12,7 @@ interface ProjectDetailsProps {
 }
 
 const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ user, details }) => {
-  const { clientName, privacy, clientID, startDate, endDate, teamList } = details;
+  const { clientName, privacy, clientID, startDate, endDate, teamList, content } = details;
 
   return (
     <>
@@ -45,6 +46,8 @@ const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ user, details 
           {teamList &&
             <ProjectTeamComponent user={user} projectTeam={teamList} />
           }
+
+          {content && <ContentComponent title={null} content={content} />}
         </div>
       )}
     </>

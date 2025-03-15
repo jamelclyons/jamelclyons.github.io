@@ -10,6 +10,7 @@ import Skills from '@/model/Skills';
 import { setMessage, setMessageType } from '@/controllers/messageSlice';
 import { getSkills } from '@/controllers/taxonomiesSlice';
 import ProjectSkills from '@/model/ProjectSkills';
+import { Framework, Language, ProjectType, Technology } from '@/model/Taxonomy';
 
 interface SkillsComponentProps {
     projectSkills: ProjectSkills | null
@@ -18,18 +19,14 @@ interface SkillsComponentProps {
 const SkillsComponent: React.FC<SkillsComponentProps> = ({ projectSkills }) => {
     const dispatch = useDispatch<AppDispatch>();
 
-    const { taxonomiesLoading, skillsObject } = useSelector((state: RootState) => state.taxonomies);
+    const { taxonomiesLoading } = useSelector((state: RootState) => state.taxonomies);
 
-    const [skills, setSkills] = useState<Skills>(new Skills());
-
-    const { types, languages, frameworks, technologies } = skills;
-
-    // useEffect(() => {
-    //     console.log(skillsObject)
-    //     if (skillsUsed === null && skillsObject) {
-    //         setSkills(new Skills(skillsObject))
-    //     }
-    // }, [skillsUsed, skillsObject]);
+    const [skills, setSkills] = useState<ProjectSkills | Skills>(projectSkills ?? new Skills());
+    const [types, setTypes] = useState<Set<ProjectType>>(skills.types);
+    const [languages, setLanguages] = useState<Set<Language>>(skills.languages);
+    const [frameworks, setFrameworks] = useState<Set<Framework>>(skills.frameworks);
+    const [technologies, setTechnologies] = useState<Set<Technology>>(skills.technologies);
+    // const [services, setServices] = useState<Set<Service>>(skills.services);
 
     useEffect(() => {
         if (projectSkills) {
@@ -37,12 +34,35 @@ const SkillsComponent: React.FC<SkillsComponentProps> = ({ projectSkills }) => {
         }
     }, [projectSkills, setSkills]);
 
+    useEffect(() => {
+        if (projectSkills?.types) {
+            setTypes(projectSkills.types)
+        }
+    }, [projectSkills?.types, setTypes]);
+
+    useEffect(() => {
+        if (projectSkills?.languages) {
+            setLanguages(projectSkills.languages)
+        }
+    }, [projectSkills?.languages, setLanguages]);
+
+    useEffect(() => {
+        if (projectSkills?.frameworks) {
+            setFrameworks(projectSkills.frameworks)
+        }
+    }, [projectSkills?.frameworks, setFrameworks]);
+
+    useEffect(() => {
+        if (projectSkills?.technologies) {
+            setTechnologies(projectSkills.technologies)
+        }
+    }, [projectSkills?.technologies, setTechnologies]);
+
     // useEffect(() => {
-    //     console.log(skillsObject)
-    //     if (skillsObject === null) {
-    //         dispatch(getSkills());
+    //     if (projectSkills?.services) {
+    //         setServices(projectSkills.services)
     //     }
-    // }, [skillsObject, dispatch]);
+    // }, [projectSkills?.services, setServices]);
 
     useEffect(() => {
         if (taxonomiesLoading) {

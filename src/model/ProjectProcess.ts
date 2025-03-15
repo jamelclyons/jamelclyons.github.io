@@ -1,11 +1,19 @@
 import Model from './Model';
-import ProjectDesign, { ProjectDesignDataObject, ProjectDesignObject } from './ProjectDesign';
+import ProjectDesign, {
+  ProjectDesignDataObject,
+  ProjectDesignObject,
+} from './ProjectDesign';
 import ProjectDevelopment, {
   ProjectDevelopmentDataObject,
   ProjectDevelopmentObject,
 } from './ProjectDevelopment';
-import ProjectDelivery, { ProjectDeliveryDataObject, ProjectDeliveryObject } from './ProjectDelivery';
-import ProjectStatus, { ProjectStatusDataObject, ProjectStatusObject } from './ProjectStatus';
+import ProjectDelivery, {
+  ProjectDeliveryDataObject,
+  ProjectDeliveryObject,
+} from './ProjectDelivery';
+import ProjectStatus, { ProjectStatusObject } from './ProjectStatus';
+import ProjectProgress from './ProjectProgress';
+import ProjectCheckList, { ProjectCheckListObject } from './ProjectCheckList';
 
 export type ProjectProcessObject = {
   status: ProjectStatusObject;
@@ -15,25 +23,36 @@ export type ProjectProcessObject = {
 };
 
 export type ProjectProcessDataObject = {
-  status: ProjectStatusDataObject;
   design: ProjectDesignDataObject;
   development: ProjectDevelopmentDataObject;
   delivery: ProjectDeliveryDataObject;
 };
 
 class ProjectProcess extends Model {
-  status: ProjectStatus;
   design: ProjectDesign;
   development: ProjectDevelopment;
   delivery: ProjectDelivery;
+  status: ProjectStatus;
+  checkList: ProjectCheckList;
 
   constructor(data: Record<string, any> | ProjectProcessObject = {}) {
     super();
 
-    this.status = new ProjectStatus(data?.status);
     this.design = new ProjectDesign(data?.design);
     this.development = new ProjectDevelopment(data?.development);
     this.delivery = new ProjectDelivery(data?.delivery);
+
+    const projectCheckListObject: ProjectCheckListObject = {
+      design_check_list: this.design.checkList.toCheckListObject(),
+      development_check_list: this.development.checkList.toCheckListObject(),
+      delivery_check_list: this.delivery.checkList.toCheckListObject(),
+    };
+
+    this.checkList = new ProjectCheckList(projectCheckListObject);
+
+    const progress = new ProjectProgress(this.checkList);
+
+    this.status = new ProjectStatus(data?.status, progress);
   }
 
   toProjectProcessObject(): ProjectProcessObject {
@@ -47,7 +66,6 @@ class ProjectProcess extends Model {
 
   toProjectProcessDataObject(): ProjectProcessDataObject {
     return {
-      status: this.status.toProjectStatusDataObject(),
       design: this.design.toProjectDesignDataObject(),
       development: this.development.toProjectDevelopmentDataObject(),
       delivery: this.delivery.toProjectDeliveryDataObject(),

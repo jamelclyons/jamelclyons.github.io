@@ -20,12 +20,15 @@ class ContentURL extends Model {
 
   constructor(url: string) {
     super();
-
     let parts: Array<string> = [];
 
     this.isValid = false;
 
     try {
+      if (typeof url !== 'string') {
+        throw new Error('URL must be an email.');
+      }
+
       const pathname = new URL(url).pathname;
       parts = pathname.split('/');
     } catch (error) {

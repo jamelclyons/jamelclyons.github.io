@@ -1,9 +1,21 @@
 import Model from './Model';
-import ProjectSolution, { ProjectSolutionDataObject, ProjectSolutionObject } from './ProjectSolution';
+import ProjectSolution, {
+  ProjectSolutionDataObject,
+  ProjectSolutionObject,
+} from './ProjectSolution';
 import ProjectURLs, { ProjectURLsObject } from './ProjectURLs';
-import ProjectProcess, { ProjectProcessDataObject, ProjectProcessObject } from './ProjectProcess';
-import ProjectProblem, { ProjectProblemDataObject, ProjectProblemObject } from './ProjectProblem';
-import ProjectDetails, { ProjectDetailsDataObject, ProjectDetailsObject } from './ProjectDetails';
+import ProjectProcess, {
+  ProjectProcessDataObject,
+  ProjectProcessObject,
+} from './ProjectProcess';
+import ProjectProblem, {
+  ProjectProblemDataObject,
+  ProjectProblemObject,
+} from './ProjectProblem';
+import ProjectDetails, {
+  ProjectDetailsDataObject,
+  ProjectDetailsObject,
+} from './ProjectDetails';
 import ProjectSkills, { ProjectSkillsObject } from './ProjectSkills';
 import ProjectVersions from './ProjectVersions';
 import Repo from './Repo';
@@ -105,7 +117,6 @@ class Project extends Model {
 
   fromRepo(repo: Repo) {
     this.id = repo.id;
-
     this.description = repo.description;
 
     if (repo.contents?.solution?.downloadURL) {
@@ -141,6 +152,10 @@ class Project extends Model {
     this.owner = new Owner(repo.owner);
 
     this.details.teamList = repo.contributors.users;
+
+    if (repo.contents?.details?.downloadURL) {
+      this.details.setContentURL(repo.contents.details.downloadURL);
+    }
   }
 
   fromDocumentData(data: DocumentData) {
@@ -210,23 +225,19 @@ class Project extends Model {
 
     this.process.design = new ProjectDesign(designObject);
 
-    const skillsObject: ProjectSkillsObject = data?.process?.development?.skills
-      ? new ProjectSkills(
-          data?.process?.development?.skills
-        ).toProjectSkillsObject()
-      : this.process.development.skills.toProjectSkillsObject();
+    this.process.development.skills.addByID(data?.process?.development?.skills);
 
     const developmentObject: ProjectDevelopmentObject = {
       gallery: data?.process?.development?.gallery
         ? new Gallery(data?.process.development.gallery).toGalleryObject()
         : this.process.development.gallery.toGalleryObject(),
-      repo_url:
-        data?.process?.development?.repo_url ??
-        this.process.development.repoURL,
+      repo_url: data?.process?.development?.repo_url
+        ? data.process.development.repo_url
+        : this.process.development.repoURL,
       content_url: this.process.development.contentURL
         ? this.process.development.contentURL.toContentURLObject()
         : null,
-      skills: skillsObject,
+      skills: this.process.development.skills.toProjectSkillsObject(),
       check_list: data?.process?.development?.check_list
         ? new CheckList(
             data?.process?.development?.check_list

@@ -39,7 +39,7 @@ class Skills extends Model {
       ? this.getTechnologies(data.technologies)
       : this.getTechnologies(technologies);
 
-      this.count = this.getCount();
+    this.count = this.getCount();
   }
 
   getProjectTypes(data: Array<Record<string, any>> = []) {
@@ -175,6 +175,15 @@ class Skills extends Model {
       this.frameworks.size +
       this.technologies.size
     );
+  }
+
+  getAll() {
+    return Array.from([
+      ...this.types,
+      ...this.languages,
+      ...this.frameworks,
+      ...this.technologies,
+    ]);
   }
 }
 

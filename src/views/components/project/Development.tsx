@@ -15,7 +15,6 @@ import {
   signInWithGitHubPopup
 } from '@/controllers/authSlice';
 import StatusBar from '../StatusBar';
-import Skills from '@/model/Skills';
 import Task from '@/model/Task';
 import ProjectSkills from '@/model/ProjectSkills';
 

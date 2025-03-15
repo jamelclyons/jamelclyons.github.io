@@ -7,6 +7,13 @@ export type TaskObject = {
   weight: number;
 };
 
+export type TaskDataObject = {
+  id: string;
+  description: string;
+  status: boolean;
+  weight: number;
+};
+
 class Task extends Model {
   id: string;
   description: string;

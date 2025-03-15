@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import type { RootState } from '@/model/store';
-import Taxonomy from '@/model/Taxonomy';
+import Taxonomy, { Framework, Language, ProjectType, Technology } from '@/model/Taxonomy';
 import Skills from '@/model/Skills';
 
 import ProjectSkillsBar from './ProjectSkillsBar';
+import ProjectSkills, { ProjectSkillsObject } from '@/model/ProjectSkills';
 
 interface TaxListIconProps {
   title: string;
@@ -16,7 +17,7 @@ const TaxListIcon: React.FC<TaxListIconProps> = ({ title, taxonomies }) => {
   const { skillsObject } = useSelector((state: RootState) => state.taxonomies);
 
   const [skills, setSkills] = useState<Skills>(new Skills())
-  const [projectSkills, setprojectSkills] = useState<Set<Taxonomy>>();
+  const [projectSkills, setProjectSkills] = useState<Set<Taxonomy>>(new Set());
 
   useEffect(() => {
     if (skillsObject) {
@@ -26,16 +27,16 @@ const TaxListIcon: React.FC<TaxListIconProps> = ({ title, taxonomies }) => {
 
   useEffect(() => {
     if (taxonomies.size > 0 && skills) {
-      let taxonomiesList: Set<Taxonomy> = new Set();
 
       const { languages, frameworks, technologies } = skills;
 
       taxonomies.forEach(async (tax) => {
         if (tax.image.className === '' && tax.image.url === '') {
+
           if (languages.size > 0) {
             languages.forEach((language) => {
               if (language.id === tax.id) {
-                taxonomiesList.add(language);
+                projectSkills.add(language);
               }
             })
           }
@@ -43,7 +44,7 @@ const TaxListIcon: React.FC<TaxListIconProps> = ({ title, taxonomies }) => {
           if (frameworks.size > 0) {
             frameworks.forEach((framework) => {
               if (framework.id === tax.id) {
-                taxonomiesList.add(framework);
+                projectSkills.add(framework);
               }
             })
           }
@@ -51,21 +52,18 @@ const TaxListIcon: React.FC<TaxListIconProps> = ({ title, taxonomies }) => {
           if (technologies.size > 0) {
             technologies.forEach((technology) => {
               if (technology.id === tax.id) {
-                taxonomiesList.add(technology);
+                projectSkills.add(technology);
               }
             })
           }
         }
-        
+
         if (tax.image.className || tax.image.url) {
-          taxonomiesList.add(tax);
+          projectSkills.add(tax);
         }
       });
-
-      setprojectSkills(taxonomiesList);
     }
-  }, [skills, taxonomies]);
-
+  }, [taxonomies, setProjectSkills]);
 
   return (
     projectSkills && (

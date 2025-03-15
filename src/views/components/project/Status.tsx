@@ -28,8 +28,8 @@ const Status: React.FC<ProjectStatusProps> = ({ projectStatus }) => {
               </div>
             </div>
 
-            <progress value={progress} max="100"></progress>
-            <h5>{progress}% Completed</h5>
+            <progress value={progress.completion} max="100"></progress>
+            <h5>{progress.completion}% Completed</h5>
           </div>
         </>
       )}

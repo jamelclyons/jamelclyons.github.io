@@ -86,7 +86,7 @@ class Repo extends Model {
   }
 
   languagesFromGithub(data: Array<Record<string, any>>) {
-    if (Array.isArray(data) && data.length) {
+    if (Array.isArray(data) && data.length > 0) {
       let languages: Array<Record<string, any>> = [];
 
       data.forEach(({ language, usage }) => {
@@ -239,6 +239,7 @@ class Repo extends Model {
     this.contents.setDevelopment(new RepoContent(contentsObject.development));
     this.contents.setDelivery(new RepoContent(contentsObject.delivery));
     this.contents.setProblem(new RepoContent(contentsObject.problem));
+    this.contents.setDetails(new RepoContent(contentsObject.details));
   }
 
   filterContents(contentsObject: Array<Record<string, any>>) {
