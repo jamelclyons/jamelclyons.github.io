@@ -13,7 +13,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
     return (
         <div className="project-card card">
-            <h2 className="title">{title}</h2>
+            <h2>{title}</h2>
 
             {Array.isArray(solution.gallery.images) &&
                 solution.gallery.images.length > 0 ? (

@@ -14,22 +14,22 @@ const Status: React.FC<ProjectStatusProps> = ({ projectStatus }) => {
       {createdAt && updatedAt && progress && (
         <>
           <div className="project-status">
-            <h4>STATUS</h4>
+            <h3>STATUS</h3>
 
             <div className="status-details">
               <div className="row">
-                <h5>Started:</h5>
-                <h6>{createdAt}</h6>
+                <h4>Started:</h4>
+                <h5>{createdAt}</h5>
               </div>
 
               <div className="row">
-                <h5>Updated:</h5>
-                <h6>{updatedAt}</h6>
+                <h4>Updated:</h4>
+                <h5>{updatedAt}</h5>
               </div>
             </div>
 
             <progress value={progress.completion} max="100"></progress>
-            <h5>{progress.completion}% Completed</h5>
+            <h4>{progress.completion}% Completed</h4>
           </div>
         </>
       )}

@@ -195,8 +195,6 @@ class Project extends Model {
       content_url: this.solution.contentURL
         ? this.solution.contentURL.toContentURLObject()
         : null,
-      currency: data?.solution?.currency ?? this.solution.currency,
-      price: data?.solution?.price ?? this.solution.price,
       project_urls: new ProjectURLs(projectURLsObject).toProjectURLsObject(),
     };
 

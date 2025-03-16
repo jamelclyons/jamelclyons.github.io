@@ -1,0 +1,39 @@
+.checklist {
+  display: flex;
+
+  .task {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    input[type='checkbox'] {
+      appearance: none;
+      width: 1.5rem;
+      height: 1.5rem;
+      border: 2px solid gray;
+      background-color: white;
+      cursor: pointer;
+      position: relative;
+    }
+
+    input[type='checkbox']:checked::after {
+      content: '✔'; /* Custom checkmark */
+      font-size: 1.25rem;
+      color: white;
+      position: absolute;
+      top: 0;
+      left: 2px;
+    }
+
+    input[type='checkbox']:disabled {
+      background-color: green;
+      border-color: darkgreen;
+      cursor: not-allowed;
+    }
+
+    input[type='checkbox']:disabled:checked::after {
+      color: white; /* Keep the checkmark visible */
+    }
+  }
+}

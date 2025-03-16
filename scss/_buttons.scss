@@ -19,10 +19,11 @@ button,
   h6 {
     color: var(--button-color);
     padding: 0.75em;
+    word-wrap: normal;
   }
 
   i {
     color: var(--button-color);
-    padding-left: 0.5rem;
+    padding-left: 0.5em;
   }
 }

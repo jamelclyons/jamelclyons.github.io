@@ -37,7 +37,7 @@ const HeaderComponent: React.FC<HeaderComponentProps> = ({ name }) => {
 
             <div className="center">
               <a href="/#/">
-                <h1 className="title">{name}</h1>
+                <h1 className="header-title">{name}</h1>
               </a>
             </div>
 

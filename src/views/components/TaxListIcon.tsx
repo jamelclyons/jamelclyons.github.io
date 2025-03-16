@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import type { RootState } from '@/model/store';
-import Taxonomy, { Framework, Language, ProjectType, Technology } from '@/model/Taxonomy';
+import Taxonomy from '@/model/Taxonomy';
 import Skills from '@/model/Skills';
 
 import ProjectSkillsBar from './ProjectSkillsBar';
-import ProjectSkills, { ProjectSkillsObject } from '@/model/ProjectSkills';
 
 interface TaxListIconProps {
   title: string;

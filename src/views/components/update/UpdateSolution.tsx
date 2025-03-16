@@ -36,12 +36,26 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
   const [features, setFeatures] = useState<Set<Feature>>(project.solution.features);
   const [content, setContent] = useState<ContentURL | null>(project.solution.contentURL);
   const [projectURLs, setProjectURLs] = useState<ProjectURLs>(project.solution.projectURLs);
-  const [currency, setCurrency] = useState<string>(project.solution.currency);
-  const [price, setPrice] = useState<number>(project.solution.price);
 
   useEffect(() => {
     setSolution(project.solution)
   }, [project.solution, setSolution]);
+
+  useEffect(() => {
+    setGallery(project.solution.gallery);
+  }, [project.solution.gallery, setGallery]);
+
+  useEffect(() => {
+    setFeatures(project.solution.features);
+  }, [project.solution.features, setFeatures]);
+
+  useEffect(() => {
+    setContent(project.solution.contentURL);
+  }, [project.solution.contentURL, setContent]);
+
+  useEffect(() => {
+    setProjectURLs(project.solution.projectURLs);
+  }, [project.solution.projectURLs, setProjectURLs]);
 
   useEffect(() => {
     setGallery(solution.gallery);
@@ -59,9 +73,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
     }
   }, [updatedFeatures, setFeatures]);
 
-  useEffect(() => {
-    setProjectURLs(project.solution.projectURLs);
-  }, [project.solution.projectURLs, setProjectURLs]);
+  
 
   useEffect(() => {
     if (updatedProjectURLs &&
@@ -75,56 +87,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
     }
   }, [updatedProjectURLs, setProjectURLs]);
 
-  const handleCurrencyChange = (e: ChangeEvent<HTMLInputElement>) => {
-    try {
-      const target = e.target as HTMLInputElement;
-
-      const { name, value } = target;
-
-      if (name === 'currency') {
-        setCurrency(value);
-
-        setSolution(new ProjectSolution({
-          gallery: gallery,
-          features: features,
-          content_url: content,
-          project_urls: projectURLs,
-          currency: value,
-          price: price,
-        }));
-      }
-    } catch (error) {
-      const err = error as Error;
-      dispatch(setMessage(err.message));
-      dispatch(setMessageType('error'));
-    }
-  };
-
-  const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
-    try {
-      const target = e.target as HTMLInputElement;
-
-      const { name, value } = target;
-
-      if (name === 'price') {
-        setPrice(parseInt(value));
-
-        setSolution(new ProjectSolution({
-          gallery: gallery,
-          features: features,
-          content_url: value,
-          project_urls: projectURLs,
-          currency: currency,
-          price: price,
-        }));
-      }
-    } catch (error) {
-      const err = error as Error;
-      dispatch(setMessage(err.message));
-      dispatch(setMessageType('error'));
-    }
-  };
-
+  
   const handleSolutionContentURLChange = (e: ChangeEvent<HTMLInputElement>) => {
     try {
       const target = e.target as HTMLInputElement;
@@ -147,9 +110,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
           gallery: gallery,
           features: features,
           content_url: contentURLObject,
-          project_urls: projectURLs,
-          currency: currency,
-          price: price,
+          project_urls: projectURLs
         }));
       }
     } catch (error) {
@@ -167,9 +128,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
         gallery: gallery.toGalleryObject(),
         features: Array.from(features),
         content_url: content,
-        project_urls: projectURLs.toProjectURLsObject(),
-        currency: currency,
-        price: price,
+        project_urls: projectURLs.toProjectURLsObject()
       };
 
       const updatedProject: ProjectObject = {
@@ -201,16 +160,6 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
       <UpdateProjectURL projectURLs={projectURLs} />
 
       <hr />
-
-      <div className="form-item-flex">
-        <label htmlFor="currency">Currency:</label>
-        <input type="text" id="currency" value={currency} placeholder='Currency Ex: USD' name='currency' onChange={handleCurrencyChange} />
-      </div>
-
-      <div className="form-item-flex">
-        <label htmlFor="price">Price:</label>
-        <input type="text" id="price" value={price} placeholder='0.00' name='price' onChange={handlePriceChange} />
-      </div>
 
       <div className="form-item-flex">
         <label htmlFor="solution_content_url">Solution Content URL:</label>

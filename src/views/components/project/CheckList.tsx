@@ -14,7 +14,7 @@ const CheckList: React.FC<CheckListProps> = ({ tasks }) => {
         <div className="checklist">
           {Array.isArray(tasks) &&
             tasks.map((task, index) => (
-              <span key={index}>
+              <span className='task' key={index}>
                 <input
                   type="checkbox"
                   name={`task_${index}`}
@@ -22,7 +22,7 @@ const CheckList: React.FC<CheckListProps> = ({ tasks }) => {
                   checked={task.status}
                   disabled
                 />
-                <h4>{task.description}</h4>
+                <h5>{task.description}</h5>
               </span>
             ))}
         </div>

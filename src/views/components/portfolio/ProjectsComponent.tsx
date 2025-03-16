@@ -11,11 +11,13 @@ const ProjectsComponent: React.FC<ProjectsComponentProps> = ({ projects }) => {
 
   return (
     <>
-      {projects.size > 0 && (
-        Array.from(projects).map((project, index) => (
-          <PortfolioProject key={index} project={project} />
-        ))
-      )}
+      <div className="projects">
+        {projects.size > 0 && (
+          Array.from(projects).map((project, index) => (
+            <PortfolioProject key={index} project={project} />
+          ))
+        )}
+      </div>
     </>
   );
 }

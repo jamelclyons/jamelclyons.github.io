@@ -12,11 +12,9 @@ interface SolutionProps {
 }
 
 const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
-  const { features, currency, price, projectURLs, gallery, contentURL } = solution;
+  const { features, projectURLs, gallery, contentURL } = solution;
 
   const hasContent = features.size > 0 ||
-    currency ||
-    price > 0 ||
     (projectURLs.homepage.url || projectURLs.ios.url || projectURLs.android.url) ||
     gallery.images.length > 0 ||
     contentURL;

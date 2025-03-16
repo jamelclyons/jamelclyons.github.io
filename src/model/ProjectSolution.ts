@@ -11,8 +11,6 @@ export type ProjectSolutionObject = {
   gallery: GalleryObject;
   features: Array<FeatureObject>;
   content_url: ContentURLObject | null;
-  currency: string;
-  price: number;
   project_urls: ProjectURLsObject;
 };
 
@@ -20,8 +18,6 @@ export type ProjectSolutionDataObject = {
   gallery: GalleryObject;
   features: Array<FeatureObject>;
   content_url: string | null;
-  currency: string;
-  price: number;
   project_urls: ProjectURLsDataObject;
 };
 
@@ -29,8 +25,6 @@ class ProjectSolution extends Model {
   gallery: Gallery;
   features: Set<Feature>;
   contentURL: ContentURL | null;
-  currency: string;
-  price: number;
   projectURLs: ProjectURLs;
 
   constructor(data: Record<string, any> | ProjectSolutionObject = {}) {
@@ -43,8 +37,6 @@ class ProjectSolution extends Model {
     this.contentURL = data?.content_url
       ? new ContentURL(data.content_url.url)
       : null;
-    this.currency = data?.currency || 'USD';
-    this.price = data?.price || 0;
     this.projectURLs = data?.project_urls
       ? new ProjectURLs(data.project_urls)
       : new ProjectURLs();
@@ -73,8 +65,6 @@ class ProjectSolution extends Model {
       content_url: this.contentURL
         ? this.contentURL?.toContentURLObject()
         : null,
-      currency: this.currency,
-      price: this.price,
       project_urls: this.projectURLs.toProjectURLsObject(),
     };
   }
@@ -84,8 +74,6 @@ class ProjectSolution extends Model {
       gallery: this.gallery.toGalleryObject(),
       features: Array.from(this.features),
       content_url: this.contentURL?.url ? this.contentURL.url : null,
-      currency: this.currency,
-      price: this.price,
       project_urls: this.projectURLs.toProjectURLsDataObject(),
     };
   }

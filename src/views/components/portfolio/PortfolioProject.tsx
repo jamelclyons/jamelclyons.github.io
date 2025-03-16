@@ -12,7 +12,7 @@ const PortfolioProject: React.FC<PortfolioProjectProps> = ({ project }) => {
     const { id, owner } = project;
 
     return (
-        <a className='project' href={`/#/portfolio/${owner.login}/${id}`}>
+        <a href={`/#/portfolio/${owner.login}/${id}`}>
             <ProjectCard project={project} />
         </a>
     )
