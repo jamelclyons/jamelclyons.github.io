@@ -1,16 +1,11 @@
 import Model from './Model';
 import User, { UserObject } from './User';
-import * as UserJSON from '../../user.json';
 
-import { formatTime } from '@/utilities/String';
 import ContentURL, { ContentURLObject } from './ContentURL';
 
 export type ProjectDetailsObject = {
   privacy: string;
   client_id: string;
-  client_name: string;
-  start_date: string | null;
-  end_date: string | null;
   content: ContentURLObject | null;
   team_list: Array<UserObject>;
 };
@@ -18,9 +13,6 @@ export type ProjectDetailsObject = {
 export type ProjectDetailsDataObject = {
   privacy: string;
   client_id: string;
-  client_name: string;
-  start_date: string | null;
-  end_date: string | null;
   content: string | null;
   team_list: Array<string>;
 };
@@ -28,9 +20,6 @@ export type ProjectDetailsDataObject = {
 class ProjectDetails extends Model {
   privacy: string;
   clientID: string;
-  clientName: string;
-  startDate: string | null;
-  endDate: string | null;
   content: ContentURL | null;
   teamList: Array<User>;
 
@@ -39,9 +28,6 @@ class ProjectDetails extends Model {
 
     this.privacy = data?.privacy ? data.privacy : 'private';
     this.clientID = data?.client_id ? data.client_id : '0';
-    this.clientName = data?.client_name ? data.client_name : UserJSON.name;
-    this.startDate = data?.start_date ? formatTime(data.start_date) : null;
-    this.endDate = data?.end_date ? formatTime(data.end_date) : null;
     this.content = data?.content?.url ? new ContentURL(data.content.url) : null;
     this.teamList = data?.team_list ? this.getTeamList(data.team_list) : [];
   }
@@ -65,9 +51,6 @@ class ProjectDetails extends Model {
     return {
       privacy: this.privacy,
       client_id: this.clientID,
-      client_name: this.clientName,
-      start_date: this.startDate,
-      end_date: this.endDate,
       content: this.content ? this.content?.toContentURLObject() : null,
       team_list: this.teamList.map((user) => user.toUserObject()),
     };
@@ -77,9 +60,6 @@ class ProjectDetails extends Model {
     return {
       privacy: this.privacy,
       client_id: this.clientID,
-      client_name: this.clientName,
-      start_date: this.startDate,
-      end_date: this.endDate,
       content: this.content?.url ? this.content.url : null,
       team_list: this.teamList.map((user) => user.id),
     };

@@ -9,7 +9,6 @@ interface ProjectSkillsProp {
 }
 
 const ProjectSkills: React.FC<ProjectSkillsProp> = ({ skills }) => {
-
   const handleClick = (skill: Taxonomy) => {
     handleSkills();
     window.location.href = `/#/projects/${skill.path}/${skill.id}`;

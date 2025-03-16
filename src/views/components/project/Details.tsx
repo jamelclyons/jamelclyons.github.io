@@ -12,42 +12,19 @@ interface ProjectDetailsProps {
 }
 
 const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ user, details }) => {
-  const { clientName, privacy, clientID, startDate, endDate, teamList, content } = details;
+  const { privacy, teamList, content } = details;
 
   return (
     <>
-      {(privacy === 'public' || clientID !== '0') && (
+      {privacy === 'public' && (
         <div className="project-details">
           <h3 className="title">the details</h3>
 
-          <table>
-            <tbody>
-              <tr>
-                <td>
-                  <label htmlFor="client_name">Client:</label>
-                </td>
-                <td>{clientName}</td>
-              </tr>
-              <tr>
-                <td>
-                  <label htmlFor="start_date">Start Date:</label>
-                </td>
-                <td>{startDate}</td>
-              </tr>
-              <tr>
-                <td>
-                  <label htmlFor="end_date">End Date:</label>
-                </td>
-                <td>{endDate}</td>
-              </tr>
-            </tbody>
-          </table>
+          {content && <ContentComponent title={null} content={content} />}
 
           {teamList &&
             <ProjectTeamComponent user={user} projectTeam={teamList} />
           }
-
-          {content && <ContentComponent title={null} content={content} />}
         </div>
       )}
     </>

@@ -16,7 +16,8 @@ import { updateProjectSkills } from '@/controllers/updateSlice';
 
 import type { AppDispatch, RootState } from '@/model/store';
 import ProjectSkills, { ProjectSkillsObject } from '@/model/ProjectSkills';
-import { Framework, Language, ProjectType, Technology, existsInSet } from '@/model/Taxonomy';
+import { Framework, Language, ProjectType, Service, Technology, existsInSet } from '@/model/Taxonomy';
+import Skills from '@/model/Skills';
 
 interface UpdateSkillsProps {
   projectSkills: ProjectSkills;
@@ -33,6 +34,9 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ projectSkills }) => {
   const [selectedLanguages, setSelectedLanguages] = useState<Set<Language>>(projectSkills.languages);
   const [selectedFrameworks, setSelectedFrameworks] = useState<Set<Framework>>(projectSkills.frameworks);
   const [selectedTechnologies, setSelectedTechnologies] = useState<Set<Technology>>(projectSkills.technologies);
+  const [selectedServices, setSelectedServices] = useState<Set<Service>>(projectSkills.services);
+
+  const [skills, setSkills] = useState<Skills>(new Skills());
 
   useEffect(() => {
     dispatch(getProjectTypes());
@@ -66,6 +70,10 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ projectSkills }) => {
     setSelectedTechnologies(projectSkills.technologies);
   }, [projectSkills.technologies, setSelectedTechnologies]);
 
+  useEffect(() => {
+    setSelectedServices(projectSkills.services);
+  }, [projectSkills.services, setSelectedServices]);
+
   const handleProjectTypesCheckboxChange = (type: ProjectType) => {
     setSelectedProjectTypes((prevTypes) => {
       const updatedSelection = new Set(prevTypes);
@@ -98,6 +106,14 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ projectSkills }) => {
     });
   };
 
+  const handleServicesCheckboxChange = (service: Service) => {
+    setSelectedServices((prevServices) => {
+      const updatedSelection = new Set(prevServices);
+      const exists = existsInSet(service, selectedServices);
+      return exists ? new Set(Array.from(updatedSelection).filter((t) => t.id !== service.id)) : updatedSelection.add(service)
+    });
+  };
+
   const handleUpdateSkills = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
@@ -106,7 +122,8 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ projectSkills }) => {
         types: selectedProjectTypes.size > 0 ? Array.from(selectedProjectTypes).map((type) => type.toProjectTypeObject()) : [],
         languages: selectedLanguages.size > 0 ? Array.from(selectedLanguages).map((language) => language.toLanguageObject()) : [],
         frameworks: selectedFrameworks.size > 0 ? Array.from(selectedFrameworks).map((framework) => framework.toFrameworkObject()) : [],
-        technologies: selectedTechnologies.size > 0 ? Array.from(selectedTechnologies).map((technology) => technology.toTechnologyObject()) : []
+        technologies: selectedTechnologies.size > 0 ? Array.from(selectedTechnologies).map((technology) => technology.toTechnologyObject()) : [],
+        services: selectedServices.size > 0 ? Array.from(selectedServices).map((service) => service.toServiceObject()) : []
       };
 
       dispatch(updateProjectSkills(new ProjectSkills(updatedSkills)));
@@ -125,9 +142,8 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ projectSkills }) => {
       <div className="project-selection form-item">
         <label htmlFor="options">Choose Project Types:</label>
 
-        {Array.isArray(projectTypesObject) &&
-          projectTypesObject.length > 0 &&
-          Array.from(projectTypesObject)
+        {skills.types.size > 0 &&
+          Array.from(skills.types)
             .map((type) => new ProjectType(type))
             .map((type) => (
               <div className="form-item-flex" key={type.id}>
@@ -147,9 +163,8 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ projectSkills }) => {
       <div className="project-selection form-item">
         <label htmlFor="options">Choose Languages:</label>
 
-        {Array.isArray(languagesObject) &&
-          languagesObject.length > 0 &&
-          Array.from(languagesObject)
+        {skills.languages.size > 0 &&
+          Array.from(skills.languages)
             .map((lang) => new Language(lang))
             .map((language) => (
               <div className="form-item-flex" key={language.id}>
@@ -168,9 +183,8 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ projectSkills }) => {
       <div className="project-selection form-item">
         <label htmlFor="options">Choose Frameworks:</label>
 
-        {Array.isArray(frameworksObject) &&
-          frameworksObject.length > 0 &&
-          Array.from(frameworksObject)
+        {skills.frameworks.size > 0 &&
+          Array.from(skills.frameworks)
             .map((framework) => new Framework(framework))
             .map((framework) => (
               <div className="form-item-flex" key={framework.id}>
@@ -189,9 +203,8 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ projectSkills }) => {
       <div className="project-selection form-item">
         <label htmlFor="options">Choose Technologies:</label>
 
-        {Array.isArray(technologiesObject) &&
-          technologiesObject.length > 0 &&
-          Array.from(technologiesObject)
+        {skills.technologies.size > 0 &&
+          Array.from(skills.technologies)
             .map((tech) => new Technology(tech))
             .map((technology) => (
               <div className="form-item-flex" key={technology.id}>
@@ -203,6 +216,26 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ projectSkills }) => {
                   onChange={() => handleTechnologiesCheckboxChange(technology)}
                 />
                 <label htmlFor={`checkbox-${technology.id}`}>{technology.title}</label>
+              </div>
+            ))}
+      </div>
+
+      <div className="project-selection form-item">
+        <label htmlFor="options">Choose Services:</label>
+
+        {skills.services.size > 0 &&
+          Array.from(skills.services)
+            .map((service) => new Service(service))
+            .map((service) => (
+              <div className="form-item-flex" key={service.id}>
+                <input
+                  type="checkbox"
+                  id={`checkbox-${service.id}`}
+                  value={service.id}
+                  checked={existsInSet(service, selectedServices)}
+                  onChange={() => handleServicesCheckboxChange(service)}
+                />
+                <label htmlFor={`checkbox-${service.id}`}>{service.title}</label>
               </div>
             ))}
       </div>

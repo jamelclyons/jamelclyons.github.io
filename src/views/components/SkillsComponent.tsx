@@ -10,7 +10,7 @@ import Skills from '@/model/Skills';
 import { setMessage, setMessageType } from '@/controllers/messageSlice';
 import { getSkills } from '@/controllers/taxonomiesSlice';
 import ProjectSkills from '@/model/ProjectSkills';
-import { Framework, Language, ProjectType, Technology } from '@/model/Taxonomy';
+import { Framework, Language, ProjectType, Service, Technology } from '@/model/Taxonomy';
 
 interface SkillsComponentProps {
     projectSkills: ProjectSkills | null
@@ -26,7 +26,7 @@ const SkillsComponent: React.FC<SkillsComponentProps> = ({ projectSkills }) => {
     const [languages, setLanguages] = useState<Set<Language>>(skills.languages);
     const [frameworks, setFrameworks] = useState<Set<Framework>>(skills.frameworks);
     const [technologies, setTechnologies] = useState<Set<Technology>>(skills.technologies);
-    // const [services, setServices] = useState<Set<Service>>(skills.services);
+    const [services, setServices] = useState<Set<Service>>(skills.services);
 
     useEffect(() => {
         if (projectSkills) {
@@ -58,11 +58,11 @@ const SkillsComponent: React.FC<SkillsComponentProps> = ({ projectSkills }) => {
         }
     }, [projectSkills?.technologies, setTechnologies]);
 
-    // useEffect(() => {
-    //     if (projectSkills?.services) {
-    //         setServices(projectSkills.services)
-    //     }
-    // }, [projectSkills?.services, setServices]);
+    useEffect(() => {
+        if (projectSkills?.services) {
+            setServices(projectSkills.services)
+        }
+    }, [projectSkills?.services, setServices]);
 
     useEffect(() => {
         if (taxonomiesLoading) {
@@ -82,6 +82,8 @@ const SkillsComponent: React.FC<SkillsComponentProps> = ({ projectSkills }) => {
             {frameworks.size > 0 && <TaxListIcon taxonomies={frameworks} title={'Frameworks'} />}
 
             {technologies.size > 0 && <TaxListIcon taxonomies={technologies} title={'Technologies'} />}
+
+            {services.size > 0 && <TaxListIcon taxonomies={services} title={'Services'} />}
         </div>
     )
 }

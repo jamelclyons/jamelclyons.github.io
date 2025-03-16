@@ -41,6 +41,14 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
   }, [project.problem, setProblem]);
 
   useEffect(() => {
+    setContent(project.problem.contentURL);
+  }, [project.problem.contentURL, setContent]);
+
+  useEffect(() => {
+    setGallery(project.problem.gallery);
+  }, [project.problem.gallery, setGallery]);
+
+  useEffect(() => {
     setGallery(problem.gallery);
   }, [problem.gallery, setGallery]);
 
@@ -57,20 +65,13 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
       const { name, value } = target;
 
       if (name === 'problem_content_url') {
-        const contentObject: ContentURLObject = {
-          owner: null,
-          repo: null,
-          path: null,
-          branch: null,
-          url: value,
-          isValid: false
-        }
+        const contentURL = new ContentURL(value);
 
-        setContent(new ContentURL(value));
+        setContent(contentURL);
 
         setProblem(new ProjectProblem({
           gallery: gallery.toGalleryObject(),
-          content_url: contentObject
+          content_url: contentURL.toContentURLObject()
         }));
       }
     } catch (error) {

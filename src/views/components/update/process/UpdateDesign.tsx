@@ -4,22 +4,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../model/store';
 import ProjectDesign, { ProjectDesignObject } from '../../../../model/ProjectDesign';
 import Project, { ProjectObject } from '@/model/Project';
+import Gallery from '@/model/Gallery';
+import CheckList from '@/model/CheckList';
+import Color from '@/model/Color';
+import ContentURL, { ContentURLObject } from '@/model/ContentURL';
 
 import {
   setMessage,
   setMessageType,
   setShowStatusBar,
-} from '../../../../controllers/messageSlice';
-
-import { updateProject } from '../../../../controllers/updateSlice';
+} from '@/controllers/messageSlice';
+import { updateProject } from '@/controllers/updateSlice';
 
 import UpdateCheckList from '../components/UpdateCheckList';
 import UpdateGallery from '../components/UpdateGallery';
 import UpdateColorsList from '../components/UpdateColorsList';
-import Gallery, { GalleryObject } from '@/model/Gallery';
-import CheckList, { CheckListObject } from '@/model/CheckList';
-import Color from '@/model/Color';
-import ContentURL, { ContentURLObject } from '@/model/ContentURL';
 
 interface UpdateDesignProps {
   project: Project;
@@ -48,11 +47,33 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ project }) => {
     setDesign(project.process.design)
   }, [project.process.design, setDesign]);
 
-  useEffect(() => { setCheckList(design.checkList) }, [design.checkList, setCheckList]);
+  useEffect(() => {
+    setGallery(project.process.design.gallery)
+  }, [project.process.design.gallery, setGallery]);
 
-  useEffect(() => { setGallery(design.gallery) }, [design.gallery, setGallery]);
+  useEffect(() => {
+    setCheckList(project.process.design.checkList)
+  }, [project.process.design.checkList, setCheckList]);
 
-  useEffect(() => { setColorsList(design.colorsList) }, [design.colorsList, setColorsList]);
+  useEffect(() => {
+    setColorsList(project.process.design.colorsList)
+  }, [project.process.design.colorsList, setColorsList]);
+
+  useEffect(() => {
+    setContent(project.process.design.contentURL)
+  }, [project.process.design.contentURL, setContent]);
+
+  useEffect(() => {
+    setCheckList(design.checkList)
+  }, [design.checkList, setCheckList]);
+
+  useEffect(() => {
+    setGallery(design.gallery)
+  }, [design.gallery, setGallery]);
+
+  useEffect(() => {
+    setColorsList(design.colorsList)
+  }, [design.colorsList, setColorsList]);
 
   useEffect(() => {
     if (updatedDesignGallery) {

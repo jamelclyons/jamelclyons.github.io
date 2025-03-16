@@ -6,6 +6,7 @@ import Taxonomy, {
   Language,
   ProjectType,
   ProjectTypeObject,
+  Service,
   TaxonomyObject,
   Technology,
 } from './Taxonomy';
@@ -15,6 +16,7 @@ export type ProjectSkillsObject = {
   languages: Array<TaxonomyObject>;
   frameworks: Array<TaxonomyObject>;
   technologies: Array<TaxonomyObject>;
+  services: Array<TaxonomyObject>;
 };
 
 export type ProjectSkillsDataObject = {
@@ -22,6 +24,7 @@ export type ProjectSkillsDataObject = {
   languages: Array<string>;
   frameworks: Array<string>;
   technologies: Array<string>;
+  services: Array<string>;
 };
 
 class ProjectSkills extends Model {
@@ -29,6 +32,7 @@ class ProjectSkills extends Model {
   languages: Set<Language>;
   frameworks: Set<Framework>;
   technologies: Set<Technology>;
+  services: Set<Service>;
   count: number;
 
   constructor(data: Record<string, any> | ProjectSkillsObject = {}) {
@@ -38,6 +42,7 @@ class ProjectSkills extends Model {
     this.languages = this.getLanguages(data.languages);
     this.frameworks = this.getFrameworks(data.frameworks);
     this.technologies = this.getTechnologies(data.technologies);
+    this.services = this.getServices(data.services);
 
     this.count = this.getCount();
   }
@@ -56,12 +61,16 @@ class ProjectSkills extends Model {
     const technologySkills = Array.from(skills.technologies).filter((skill) =>
       skillsData.technologies.includes(skill.id)
     );
+    const serviceSkills = Array.from(skills.services).filter((skill) =>
+      skillsData.services.includes(skill.id)
+    );
 
     const projectSkills = new ProjectSkills();
     projectSkills.types = new Set(typeSkills);
     projectSkills.languages = new Set(languageSkills);
     projectSkills.frameworks = new Set(frameworkSkills);
     projectSkills.technologies = new Set(technologySkills);
+    projectSkills.services = new Set(serviceSkills);
 
     this.add(projectSkills);
   }
@@ -82,6 +91,10 @@ class ProjectSkills extends Model {
     Array.from(skills.technologies).map((technology) => {
       const exists = existsInSet(technology, this.technologies);
       return exists ? this.technologies : this.technologies.add(technology);
+    });
+    Array.from(skills.services).map((service) => {
+      const exists = existsInSet(service, this.services);
+      return exists ? this.services : this.services.add(service);
     });
   }
 
@@ -131,6 +144,18 @@ class ProjectSkills extends Model {
     }
 
     return technologies;
+  }
+
+  getServices(data: Array<Record<string, any>> = []) {
+    let services: Set<Service> = new Set();
+
+    if (data.length > 0) {
+      data.forEach((service) => {
+        services.add(new Service(service));
+      });
+    }
+
+    return services;
   }
 
   filter(taxonomy: string, term: string) {
@@ -262,6 +287,12 @@ class ProjectSkills extends Model {
               technology.toTechnologyObject()
             )
           : [],
+      services:
+        this.services.size > 0
+          ? Array.from(this.services).map((service) =>
+              service.toServiceObject()
+            )
+          : [],
     };
   }
 
@@ -282,6 +313,10 @@ class ProjectSkills extends Model {
       technologies:
         this.technologies.size > 0
           ? Array.from(this.technologies).map((technology) => technology.id)
+          : [],
+      services:
+        this.services.size > 0
+          ? Array.from(this.services).map((service) => service.id)
           : [],
     };
   }

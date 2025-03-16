@@ -27,9 +27,6 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
   const [details, setDetails] = useState<ProjectDetails>(project.details);
   const [privacy, setPrivacy] = useState<string>(project.details.privacy);
   const [clientID, setClientID] = useState<string>(project.details.clientID);
-  const [clientName, setClientName] = useState<string>(project.details.clientName);
-  const [startDate, setStartDate] = useState<string>(project.details.startDate ?? '');
-  const [endDate, setEndDate] = useState<string>(project.details.endDate ?? '');
   const [content, setContent] = useState<ContentURL | null>(project.details.content);
 
   useEffect(() => {
@@ -40,18 +37,12 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
     setDetails(project.details);
     setPrivacy(project.details.privacy)
     setClientID(project.details.clientID)
-    setClientName(project.details.clientName)
-    setStartDate(project.details.startDate ?? '')
-    setEndDate(project.details.endDate ?? '')
     setContent(project.details.content)
   }, [
     project.details,
     setDetails,
     setPrivacy,
     setClientID,
-    setClientName,
-    setStartDate,
-    setEndDate,
     setContent
   ]);
 
@@ -83,18 +74,6 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
         setClientID(value);
       }
 
-      if (name === 'client_name') {
-        setClientName(value);
-      }
-
-      if (name === 'start_date') {
-        setStartDate(value);
-      }
-
-      if (name === 'end_date') {
-        setEndDate(value);
-      }
-
       if (name === 'content_url') {
         setContent(new ContentURL(value));
 
@@ -111,9 +90,6 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
       const detailsObject: ProjectDetailsObject = {
         ...details.toDetailsObject(),
         client_id: clientID,
-        client_name: clientName,
-        start_date: startDate,
-        end_date: endDate,
         content: contentObject
       };
 
@@ -132,9 +108,6 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
       const detailsObject: ProjectDetailsObject = {
         privacy: privacy,
         client_id: clientID,
-        client_name: clientName,
-        start_date: startDate,
-        end_date: endDate,
         content: content ? content?.toContentURLObject() : null,
         team_list: []
       };
@@ -169,21 +142,6 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
         <div className="form-item-flex">
           <label htmlFor="client_id">Client ID:</label>
           <input type="text" id='client_id' name='client_id' value={clientID ?? ''} onChange={handleChange} />
-        </div>
-
-        <div className="form-item-flex">
-          <label htmlFor="client_name">Client Name:</label>
-          <input type="text" id='client_name' name='client_name' value={clientName ?? ''} onChange={handleChange} />
-        </div>
-
-        <div className="form-item-flex">
-          <label htmlFor="start_date">Start Date:</label>
-          <input type="date" id="start_date" name="start_date" value={startDate ?? ''} min="2010-06-16" onChange={handleChange} />
-        </div>
-
-        <div className="form-item-flex">
-          <label htmlFor="end_date">End Date:</label>
-          <input type="date" id="end_date" name="end_date" value={endDate ?? ''} min="2010-06-16" onChange={handleChange} />
         </div>
 
         <div className="form-item-flex">

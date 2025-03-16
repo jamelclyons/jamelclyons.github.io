@@ -3,6 +3,7 @@ import Taxonomy, {
   Framework,
   Language,
   ProjectType,
+  Service,
   Technology,
 } from './Taxonomy';
 import * as skills from '../../skills.json';
@@ -12,6 +13,7 @@ export type SkillsObject = {
   languages: Array<Record<string, any>>;
   frameworks: Array<Record<string, any>>;
   technologies: Array<Record<string, any>>;
+  services: Array<Record<string, any>>;
 };
 
 class Skills extends Model {
@@ -19,12 +21,13 @@ class Skills extends Model {
   languages: Set<Language>;
   frameworks: Set<Framework>;
   technologies: Set<Technology>;
+  services: Set<Service>;
   count: number;
 
   constructor(data: Record<string, any> | SkillsObject = []) {
     super();
 
-    const { types, languages, frameworks, technologies } = skills;
+    const { types, languages, frameworks, technologies, services } = skills;
 
     this.types = data?.types
       ? this.getProjectTypes(data.types)
@@ -38,6 +41,9 @@ class Skills extends Model {
     this.technologies = data?.technologies
       ? this.getTechnologies(data.technologies)
       : this.getTechnologies(technologies);
+      this.services = data?.services
+      ? this.getServices(data.services)
+      : this.getServices(services);
 
     this.count = this.getCount();
   }
@@ -82,6 +88,16 @@ class Skills extends Model {
     return technologies;
   }
 
+  getServices(data: Array<Record<string, any>> = []) {
+    let services: Set<Service> = new Set();
+
+    data.forEach((service) => {
+      services.add(new Service(service));
+    });
+
+    return services;
+  }
+
   filter(taxonomy: string, term: string) {
     if (taxonomy === 'project-types') {
       for (const type of this.types) {
@@ -111,6 +127,14 @@ class Skills extends Model {
       for (const technology of this.technologies) {
         if (technology.id === term) {
           return technology;
+        }
+      }
+    }
+
+    if (taxonomy === 'services') {
+      for (const service of this.services) {
+        if (service.id === term) {
+          return service;
         }
       }
     }
@@ -183,6 +207,7 @@ class Skills extends Model {
       ...this.languages,
       ...this.frameworks,
       ...this.technologies,
+      ...this.services
     ]);
   }
 }

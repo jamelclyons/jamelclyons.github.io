@@ -9,7 +9,6 @@ interface HeaderTaxonomyComponentProps {
 }
 
 const HeaderTaxonomyComponent: React.FC<HeaderTaxonomyComponentProps> = ({ skill }) => {
-
     return (
         <>
             <h1 className="page-title">

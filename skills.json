@@ -605,6 +605,33 @@
             "icon_url": "https://skillicons.dev/icons?i=wordpress",
             "class_name": "",
             "usage": ""
+        },
+        {
+            "id": "nodejs",
+            "type": "technologies",
+            "title": "NodeJS",
+            "path": "technologies",
+            "image": {
+                "id": "nodejs",
+                "title": "NodeJS",
+                "url": "https://skillicons.dev/icons?i=nodejs",
+                "class_name": ""
+            },
+            "usage": ""
+        }
+    ],
+    "services": [
+        {
+            "id": "firebase",
+            "type": "firebase",
+            "title": "Firebase",
+            "path": "services",
+            "image": {
+                "id": "firebase",
+                "title": "Firebase",
+                "url": "https://skillicons.dev/icons?i=firebase",
+                "class_name": ""
+            }
         }
     ]
 }

@@ -12,13 +12,16 @@ const MemberKnowledgeComponent: React.FC<MemberKnowledgeProps> = ({ skills }) =>
   const {
     languages,
     frameworks,
-    technologies
+    technologies,
+    services
   } = skills;
 
   const arrayLang = Array.from(languages);
   const arrayFrame = Array.from(frameworks);
   const arrayTech = Array.from(technologies);
-  const knowledge = [...arrayLang, ...arrayFrame, ...arrayTech];
+  const arrayService = Array.from(services);
+
+  const knowledge = [...arrayLang, ...arrayFrame, ...arrayTech, ...arrayService];
 
   const skillsSlideRef = useRef<HTMLDivElement | null>(null);
 

@@ -92,8 +92,18 @@ class Portfolio extends Model {
 
         if (taxonomy === 'technologies') {
           project.process.development.skills.technologies.forEach(
-            (framework) => {
-              if (framework.id === term) {
+            (technology) => {
+              if (technology.id === term) {
+                updatedProjects.add(project);
+              }
+            }
+          );
+        }
+
+        if (taxonomy === 'services') {
+          project.process.development.skills.services.forEach(
+            (service) => {
+              if (service.id === term) {
                 updatedProjects.add(project);
               }
             }

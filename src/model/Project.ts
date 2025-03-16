@@ -296,23 +296,10 @@ class Project extends Model {
       client_id: data?.details?.client_id
         ? data.details.client_id
         : this.details.clientID,
-      client_name: data?.details?.client_name
-        ? data.details.client_name
-        : this.details.clientName,
-      start_date: data?.details?.start_date
-        ? data.details.start_date
-        : this.process.status.createdAt,
-      end_date: data?.details?.end_date
-        ? data.details.end_date
-        : this.process.status.updatedAt,
       content: this.details.content
         ? this.details.content.toContentURLObject()
         : null,
-      team_list: data?.details?.team_list
-        ? this.details
-            .getTeamList(data.details.team_list)
-            .map((user) => user.toUserObject())
-        : this.details.teamList.map((user) => user.toUserObject()),
+      team_list: this.details.teamList.map((user) => user.toUserObject()),
     };
 
     this.details = new ProjectDetails(projectDetailsObject);

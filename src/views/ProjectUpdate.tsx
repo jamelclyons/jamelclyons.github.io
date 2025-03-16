@@ -46,7 +46,7 @@ const ProjectUpdate: React.FC = () => {
 
     const [project, setProject] = useState<Project>(new Project());
 
-    const [updatedTitle, setUpdatedTitle] = useState<string>(projectID ?? '');
+    const [title, setTitle] = useState<string>(projectID ?? '');
 
     useEffect(() => {
         if (login) {
@@ -136,6 +136,12 @@ const ProjectUpdate: React.FC = () => {
         }
     }, [updateStatusCode]);
 
+    useEffect(() => {
+        if (project) {
+            setTitle(project.title);
+        }
+    }, [project, setTitle]);
+
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         try {
             const target = e.target as HTMLInputElement;
@@ -143,7 +149,7 @@ const ProjectUpdate: React.FC = () => {
             const { name, value } = target;
 
             if (name === 'title') {
-                setUpdatedTitle(value);
+                setTitle(value);
 
                 const updatedProjectObject: ProjectObject = {
                     ...project.toProjectObject(),
@@ -184,7 +190,7 @@ const ProjectUpdate: React.FC = () => {
                         type="text"
                         name="title"
                         placeholder="Title"
-                        value={updatedTitle}
+                        value={title}
                         onChange={handleChange}
                     />
                 </div>
