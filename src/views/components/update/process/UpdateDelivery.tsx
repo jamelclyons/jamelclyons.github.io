@@ -32,7 +32,7 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ project }) => {
   const [delivery, setDelivery] = useState<ProjectDelivery>(project.process.delivery);
   const [gallery, setGallery] = useState<Gallery>(project.process.delivery.gallery);
   const [checkList, setCheckList] = useState<CheckList>(project.process.delivery.checkList);
-  const [content, setContent] = useState<ContentURL | null>(project?.process?.delivery?.contentURL);
+  const [content, setContent] = useState<ContentURL | null>(project.process.delivery?.contentURL);
 
   useEffect(() => { setProjectObject(project.toProjectObject()) }, [project, setProjectObject]);
 
@@ -41,18 +41,19 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ project }) => {
   }, [project.process.delivery, setDelivery]);
 
   useEffect(() => {
-    setGallery(delivery.gallery)
-  }, [delivery.gallery, setGallery]);
+    setGallery(project.process.delivery.gallery)
+  }, [project.process.delivery.gallery, setGallery]);
 
   useEffect(() => {
-    setCheckList(delivery.checkList)
-  }, [delivery.checkList, setCheckList]);
+    setCheckList(project.process.delivery.checkList)
+  }, [project.process.delivery.checkList, setCheckList]);
 
   useEffect(() => {
-    setContent(delivery.contentURL)
-  }, [delivery.contentURL, setContent]);
+    setContent(project.process.delivery?.contentURL)
+  }, [project.process.delivery?.contentURL, setContent]);
 
   useEffect(() => {
+    console.log(updatedDeliveryCheckList)
     if (updatedDeliveryCheckList) {
       setCheckList(new CheckList(updatedDeliveryCheckList));
     }
@@ -71,14 +72,7 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ project }) => {
       const { name, value } = target;
 
       if (name === 'delivery_content_url') {
-        const contentObject: ContentURLObject = {
-          owner: null,
-          repo: null,
-          path: null,
-          branch: null,
-          url: value,
-          isValid: false
-        }
+        const contentObject: ContentURLObject = new ContentURL(value).toContentURLObject();
 
         setContent(new ContentURL(value));
 

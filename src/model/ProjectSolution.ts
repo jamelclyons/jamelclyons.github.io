@@ -61,7 +61,9 @@ class ProjectSolution extends Model {
   toProjectSolutionObject(): ProjectSolutionObject {
     return {
       gallery: this.gallery.toGalleryObject(),
-      features: Array.from(this.features),
+      features: Array.from(this.features).map((feature) =>
+        feature.toFeatureObject()
+      ),
       content_url: this.contentURL
         ? this.contentURL?.toContentURLObject()
         : null,
@@ -70,9 +72,14 @@ class ProjectSolution extends Model {
   }
 
   toProjectSolutionDataObject(): ProjectSolutionDataObject {
+    console.log(
+      Array.from(this.features).map((feature) => feature.toFeatureObject())
+    );
     return {
       gallery: this.gallery.toGalleryObject(),
-      features: Array.from(this.features),
+      features: Array.from(this.features).map((feature) =>
+        feature.toFeatureObject()
+      ),
       content_url: this.contentURL?.url ? this.contentURL.url : null,
       project_urls: this.projectURLs.toProjectURLsDataObject(),
     };

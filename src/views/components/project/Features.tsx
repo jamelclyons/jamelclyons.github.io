@@ -1,25 +1,22 @@
 import React from 'react';
 
-import Feature from '../../../model/Feature';
+import Feature from '@/model/Feature';
 
 interface FeaturesProps {
   features: Set<Feature>
 }
 
 const Features: React.FC<FeaturesProps> = ({ features }) => {
-
   return (
     features.size > 0 && (
       <div className="product-features-card card">
-        <h4>Features</h4>
+        <h3>Features</h3>
 
         <div className="product-features">
           {Array.from(features).map((feature) => (
-            <>
-              <p className="feature-name" id="feature_name" key={feature.id}>
-                {feature.description}
-              </p>
-            </>
+            <p className="product-feature" key={feature.id}>
+              <span className='product-feature-point'>-</span> {feature.description}
+            </p>
           ))}
         </div>
       </div>

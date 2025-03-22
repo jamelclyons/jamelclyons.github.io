@@ -73,8 +73,6 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
     }
   }, [updatedFeatures, setFeatures]);
 
-  
-
   useEffect(() => {
     if (updatedProjectURLs &&
       (updatedProjectURLs.homepage !== undefined || updatedProjectURLs.ios !== undefined || updatedProjectURLs.android !== undefined)) {

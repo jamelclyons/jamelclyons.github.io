@@ -20,6 +20,7 @@ import { ProjectURLsDataObject } from '@/model/ProjectURLs';
 import CheckList, { CheckListObject } from '@/model/CheckList';
 import Feature, { FeatureObject } from '@/model/Feature';
 import Color, { ColorObject } from '@/model/Color';
+import ProjectDelivery from '@/model/ProjectDelivery';
 
 interface UpdateState {
   updateLoading: boolean;
@@ -124,7 +125,7 @@ export const updateDevelopmentCheckList = createAsyncThunk(
 export const updateDeliveryCheckList = createAsyncThunk(
   'update/updateDeliveryCheckList',
   async (checkList: CheckList) => {
-    try {
+    try {console.log(checkList)
       return checkList.toCheckListObject();
     } catch (error) {
       const err = error as Error;
@@ -355,7 +356,7 @@ export const updateDevelopment = createAsyncThunk(
 
 export const updateDelivery = createAsyncThunk(
   'update/updateDelivery',
-  async (data: Record<string, any>) => {
+  async (project: Project) => {
     try {
       const headers: SecureHeaders = await addSecureHeaders();
 
@@ -363,13 +364,13 @@ export const updateDelivery = createAsyncThunk(
         return headers;
       }
 
-      const response = await fetch(`${api}/project/${data?.id}`, {
+      const response = await fetch(`${api}/project/${project?.id}`, {
         method: 'POST',
         headers:
           headers instanceof SecureHeaders
             ? new Headers(headers.toObject())
             : {},
-        body: JSON.stringify(data),
+        body: JSON.stringify(project.toProjectDataObject()),
       });
 
       return await response.json();
@@ -498,6 +499,7 @@ export const updateProject = createAsyncThunk(
       if (headers.errorMessage) {
         return headers;
       }
+
       const response = await fetch(`${api}/project/${project.id}`, {
         method: 'POST',
         headers:
