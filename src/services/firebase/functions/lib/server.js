@@ -16,8 +16,12 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 let origin = process.env.CORS_ORIGIN ?? 'http://localhost:3000';
 if (process.env.NODE_ENV === 'development') {
-    origin = 'http://localhost:3000';
-    console.log(`Server is now accepting request from ${origin}`);
+    if (process.env.DEV_CORS_ORIGIN && process.env.DEV_CORS_ORIGIN_1) {
+        origin = [process.env.DEV_CORS_ORIGIN, process.env.DEV_CORS_ORIGIN_1];
+        origin.forEach((url) => {
+            console.log(`Server is now accepting request from ${url}`);
+        });
+    }
 }
 else {
     if (process.env.CORS_ORIGIN && process.env.CORS_ORIGIN_1) {

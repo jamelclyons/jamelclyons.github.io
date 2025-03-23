@@ -25,8 +25,6 @@
   },
   "license": "ISC",
   "scripts": {
-    "refactor": "./refactor.sh && npm run push",
-    "push": "npm run update-prod",
     "node:dev": "node --watch --env-file=.env ./src/services/firebase/functions/server",
     "dev": "npm-run-all build vite",
     "tsc:dev": "tsc --watch",
@@ -34,11 +32,12 @@
     "vite": "vite -c vite.config.ts",
     "build": "npm-run-all gulp:build vite:build",
     "preview": "vite preview --port 8080",
+    "gulp": "gulp",
     "vite:build": "vite build",
     "gulp:build": "gulp build",
     "update-dev": "git push github-portfolio development",
     "update-prod": "git push github-portfolio",
-    "gulp": "gulp"
+    "refactor": "./refactor.sh && npm run push"
   },
   "dependencies": {
     "@octokit/rest": "^21.0.2",
