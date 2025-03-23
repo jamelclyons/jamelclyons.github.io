@@ -37,7 +37,7 @@
     "gulp:build": "gulp build",
     "update-dev": "git push github-portfolio development",
     "update-prod": "git push github-portfolio",
-    "refactor": "./refactor.sh && npm run push"
+    "refactor": "./refactor.sh && npm run update-prod"
   },
   "dependencies": {
     "@octokit/rest": "^21.0.2",
