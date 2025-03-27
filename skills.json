@@ -74,6 +74,21 @@
             "icon_url": "",
             "class_name": "",
             "usage": ""
+        },
+        {
+            "id": "api",
+            "type": "project_types",
+            "title": "API",
+            "path": "project-types",
+            "image": {
+                "id": "api",
+                "title": "Application Programming Interface",
+                "url": "",
+                "class_name": ""
+            },
+            "icon_url": "",
+            "class_name": "",
+            "usage": ""
         }
     ],
     "languages": [

@@ -47,7 +47,6 @@ export type ProjectObject = {
 export type ProjectDataObject = {
   id: string;
   title: string;
-  description: string;
   solution: ProjectSolutionDataObject;
   process: ProjectProcessDataObject;
   problem: ProjectProblemDataObject;
@@ -160,8 +159,6 @@ class Project extends Model {
 
   fromDocumentData(data: DocumentData) {
     this.title = data?.title ? data.title : this.id;
-
-    this.description = data?.description ? data.description : this.description;
 
     const projectURLsObject: ProjectURLsObject = {
       homepage: data?.solution?.project_urls?.homepage?.url
@@ -336,7 +333,6 @@ class Project extends Model {
       id: this.id,
       owner: this.owner.id,
       title: this.title,
-      description: this.description,
       solution: this.solution.toProjectSolutionDataObject(),
       process: this.process.toProjectProcessDataObject(),
       problem: this.problem.toProjectProblemDataObject(),

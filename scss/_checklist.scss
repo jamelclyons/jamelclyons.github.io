@@ -29,9 +29,12 @@
       left: 2px;
     }
 
-    input[type='checkbox']:disabled {
+    input[type='checkbox']:checked {
       background-color: green;
       border-color: darkgreen;
+    }
+
+    input[type='checkbox']:disabled {
       cursor: not-allowed;
     }
 
