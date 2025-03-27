@@ -53,7 +53,6 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ project }) => {
   }, [project.process.delivery?.contentURL, setContent]);
 
   useEffect(() => {
-    console.log(updatedDeliveryCheckList)
     if (updatedDeliveryCheckList) {
       setCheckList(new CheckList(updatedDeliveryCheckList));
     }

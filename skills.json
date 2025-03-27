@@ -59,6 +59,21 @@
             "icon_url": "",
             "class_name": "",
             "usage": ""
+        },
+        {
+            "id": "cicd",
+            "type": "project_types",
+            "title": "CI/CD",
+            "path": "project-types",
+            "image": {
+                "id": "cicd",
+                "title": "Continuous Integration/Continuous Deployment",
+                "url": "",
+                "class_name": ""
+            },
+            "icon_url": "",
+            "class_name": "",
+            "usage": ""
         }
     ],
     "languages": [
@@ -483,6 +498,21 @@
                 "class_name": ""
             },
             "icon_url": "https://skillicons.dev/icons?i=nginx",
+            "class_name": "",
+            "usage": ""
+        },
+        {
+            "id": "nginx-proxy-manager",
+            "type": "technologies",
+            "title": "NGINX Proxy Manager",
+            "path": "technologies",
+            "image": {
+                "id": "nginx-proxy-manager",
+                "title": "NGINX Proxy Manager",
+                "url": "https://nginxproxymanager.com/logo.svg",
+                "class_name": ""
+            },
+            "icon_url": "https://nginxproxymanager.com/logo.svg",
             "class_name": "",
             "usage": ""
         },

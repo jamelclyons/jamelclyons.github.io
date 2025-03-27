@@ -49,21 +49,37 @@ class ProjectSkills extends Model {
 
   addByID(skillsData: ProjectSkillsDataObject) {
     const skills = new Skills();
-    const typeSkills = Array.from(skills.types).filter((skill) =>
-      skillsData.types.includes(skill.id)
-    );
-    const languageSkills = Array.from(skills.languages).filter((skill) =>
-      skillsData.languages.includes(skill.id)
-    );
-    const frameworkSkills = Array.from(skills.frameworks).filter((skill) =>
-      skillsData.frameworks.includes(skill.id)
-    );
-    const technologySkills = Array.from(skills.technologies).filter((skill) =>
-      skillsData.technologies.includes(skill.id)
-    );
-    const serviceSkills = Array.from(skills.services).filter((skill) =>
-      skillsData.services.includes(skill.id)
-    );
+    const typeSkills =
+      Array.isArray(skillsData.types) && skillsData.types.length > 0
+        ? Array.from(skills.types).filter((skill) =>
+            skillsData.types.includes(skill.id)
+          )
+        : [];
+    const languageSkills =
+      Array.isArray(skillsData.languages) && skillsData.languages.length > 0
+        ? Array.from(skills.languages).filter((skill) =>
+            skillsData.languages.includes(skill.id)
+          )
+        : [];
+    const frameworkSkills =
+      Array.isArray(skillsData.frameworks) && skillsData.frameworks.length > 0
+        ? Array.from(skills.frameworks).filter((skill) =>
+            skillsData.frameworks.includes(skill.id)
+          )
+        : [];
+    const technologySkills =
+      Array.isArray(skillsData.technologies) &&
+      skillsData.technologies.length > 0
+        ? Array.from(skills.technologies).filter((skill) =>
+            skillsData.technologies.includes(skill.id)
+          )
+        : [];
+    const serviceSkills =
+      Array.isArray(skillsData.services) && skillsData.services.length > 0
+        ? Array.from(skills.services).filter((skill) =>
+            skillsData.services.includes(skill.id)
+          )
+        : [];
 
     const projectSkills = new ProjectSkills();
     projectSkills.types = new Set(typeSkills);
