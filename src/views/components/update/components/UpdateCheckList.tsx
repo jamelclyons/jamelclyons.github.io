@@ -46,10 +46,12 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
 
         let description = task.description;
         let status = task.status;
+        let details = task.details;
         let weight = task.weight;
 
         const taskRegex = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}-task$/;
         const statusRegex = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}-status$/;
+        const detailsRegex = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}-details$/;
         const weightRegex = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}-weight$/;
 
         if (taskRegex.test(name)) {
@@ -58,6 +60,10 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
 
         if (statusRegex.test(name)) {
             status = checked;
+        }
+
+        if (detailsRegex.test(name)) {
+            details = value;
         }
 
         if (weightRegex.test(name)) {
@@ -70,6 +76,7 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
                     id: task.id,
                     description: description,
                     status: status,
+                    details: details,
                     weight: weight
                 }) : t
         );
@@ -85,6 +92,7 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
         let id = task.id !== '' ? task.id : crypto.randomUUID();
         let description = task.description;
         let status = task.status;
+        let details = task.details;
         let weight = task.weight;
 
         if (name === 'description') {
@@ -95,6 +103,10 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
             status = checked;
         }
 
+        if (name === 'details') {
+            details = value;
+        }
+
         if (name === 'weight') {
             weight = parseInt(value);
         }
@@ -103,6 +115,7 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
             id: id,
             description: description,
             status: status,
+            details: details,
             weight: weight
         }
 
@@ -186,11 +199,21 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
                             />
                         </div>
                         <div className="form-item-flex">
+                            <label htmlFor={`${task.id}-details`}>Details:</label>
+                            <input
+                                type="text"
+                                placeholder="Details"
+                                value={task.details ?? ''}
+                                name={`${task.id}-details`}
+                                onChange={(e) => handleChange(e, task)}
+                            />
+                        </div>
+                        <div className="form-item-flex">
                             <label htmlFor={`${task.id}-task`}>Task:</label>
                             <input
                                 type="text"
                                 placeholder="Task"
-                                value={task.description}
+                                value={task.description ?? ''}
                                 name={`${task.id}-task`}
                                 onChange={(e) => handleChange(e, task)}
                             />

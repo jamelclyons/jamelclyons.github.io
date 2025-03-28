@@ -2,7 +2,7 @@ import React from 'react';
 
 import Task from '../../../model/Task';
 
-interface CheckListProps{
+interface CheckListProps {
   tasks: Array<Task>
 }
 
@@ -22,7 +22,11 @@ const CheckList: React.FC<CheckListProps> = ({ tasks }) => {
                   checked={task.status}
                   disabled
                 />
-                <h5>{task.description}</h5>
+                {task.details ?
+                  (<a className='task-details' href={task.details} target="_blank">
+                    <h5>{task.description}</h5>
+                  </a>) :
+                  <h5>{task.description}</h5>}
               </span>
             ))}
         </div>
