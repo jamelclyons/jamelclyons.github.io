@@ -13,7 +13,6 @@ class DocumentURL extends Model {
     super();
 
     this.isValid = false;
-    this.url = null;
 
     try {
       if (typeof url !== 'string') {
@@ -24,6 +23,8 @@ class DocumentURL extends Model {
     } catch (error) {
       const err = error as Error;
       console.error('Error fetching content:', err);
+      this.url = null;
+
     }
 
     this.isValid = true;

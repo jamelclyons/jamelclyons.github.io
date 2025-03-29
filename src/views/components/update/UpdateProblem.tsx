@@ -11,10 +11,10 @@ import { updateProject } from '@/controllers/updateSlice';
 import type { AppDispatch, RootState } from '@/model/store';
 import Gallery from '@/model/Gallery';
 import Project, { ProjectObject } from '@/model/Project';
-import ProjectProblem from '@/model/ProjectProblem';
 import DocumentURL, { DocumentURLObject } from '@/model/DocumentURL';
 
 import UpdateGallery from './components/UpdateGallery';
+import ContentURL from '@/model/ContentURL';
 
 interface UpdateProblemProps {
   project: Project;
@@ -27,30 +27,30 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
     (state: RootState) => state.update
   );
 
-  const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject());
-  const [problem, setProblem] = useState<ProjectProblem>(project.problem);
+  const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject())
   const [gallery, setGallery] = useState<Gallery>(project.problem.gallery);
-  const [whitepaperURL, setWhitepaperURL] = useState<DocumentURL | null>(project.problem.whitepaperURL);
+  const [contentURL, setContentURL] = useState<string>(project.problem.contentURL?.url ?? '');
+  const [whitepaperURL, setWhitepaperURL] = useState<string>(project.problem.whitepaperURL?.url ?? '');
 
   useEffect(() => {
-    setProjectObject(project.toProjectObject())
+    setProjectObject(project.toProjectObject());
   }, [project, setProjectObject]);
-
-  useEffect(() => {
-    setProblem(project.problem);
-  }, [project.problem, setProblem]);
-
-  useEffect(() => {
-    setWhitepaperURL(project.problem.whitepaperURL);
-  }, [project.problem.whitepaperURL, setWhitepaperURL]);
 
   useEffect(() => {
     setGallery(project.problem.gallery);
   }, [project.problem.gallery, setGallery]);
 
   useEffect(() => {
-    setGallery(problem.gallery);
-  }, [problem.gallery, setGallery]);
+    if (project.problem.contentURL?.url) {
+      setContentURL(project.problem.contentURL.url);
+    }
+  }, [project.problem.contentURL, setContentURL]);
+
+  useEffect(() => {
+    if (project.problem.whitepaperURL?.url) {
+      setWhitepaperURL(project.problem.whitepaperURL.url);
+    }
+  }, [project.problem.whitepaperURL, setWhitepaperURL]);
 
   useEffect(() => {
     if (updatedProblemGallery) {
@@ -65,14 +65,23 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
       const { name, value } = target;
 
       if (name === 'problem_content_url') {
-        const contentURL = new DocumentURL(value);
+        setContentURL(value);
+      }
+    } catch (error) {
+      const err = error as Error;
+      dispatch(setMessage(err.message));
+      dispatch(setMessageType('error'));
+    }
+  };
 
-        setWhitepaperURL(contentURL);
+  const handleWhitepaperURLChange = (e: ChangeEvent<HTMLInputElement>) => {
+    try {
+      const target = e.target as HTMLInputElement;
 
-        setProblem(new ProjectProblem({
-          gallery: gallery.toGalleryObject(),
-          whitepaper_url: whitepaperURL ? whitepaperURL.toDocumentURLObject() : null
-        }));
+      const { name, value } = target;
+      const validDocumentURL = new DocumentURL(value);
+      if (name === 'whitepaper_url') {
+        setWhitepaperURL(value);
       }
     } catch (error) {
       const err = error as Error;
@@ -89,7 +98,8 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
         ...projectObject,
         problem: {
           gallery: gallery.toGalleryObject(),
-          whitepaper_url: whitepaperURL ? whitepaperURL.toDocumentURLObject() : null
+          content_url: new ContentURL(contentURL).toContentURLObject(),
+          whitepaper_url: new DocumentURL(whitepaperURL).toDocumentURLObject()
         },
       };
 
@@ -113,7 +123,12 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
 
       <div className="form-item-flex">
         <label htmlFor="problem_content_url">Problem Content URL:</label>
-        <input type="text" name='problem_content_url' value={whitepaperURL?.url ?? ''} onChange={handleProblemContentURLChange} />
+        <input type="text" name='problem_content_url' value={contentURL} onChange={handleProblemContentURLChange} />
+      </div>
+
+      <div className="form-item-flex">
+        <label htmlFor="whitepaper_url">Whitepaper URL:</label>
+        <input type="text" name='whitepaper_url' value={whitepaperURL} onChange={handleWhitepaperURLChange} />
       </div>
 
       <button onClick={handleUpdateProblem}>

@@ -32,6 +32,7 @@ import ProjectDelivery, { ProjectDeliveryObject } from './ProjectDelivery';
 import ProjectURL from './ProjectURL';
 
 import { DocumentData } from 'firebase/firestore';
+import DocumentURL from './DocumentURL';
 
 export type ProjectObject = {
   id: string;
@@ -262,12 +263,15 @@ class Project extends Model {
     this.process.delivery = new ProjectDelivery(deliveryObject);
 
     const problemObject: ProjectProblemObject = {
-      whitepaper_url: this.problem.whitepaperURL
-        ? this.problem.whitepaperURL.toDocumentURLObject()
-        : null,
       gallery: data?.problem.gallery
         ? new Gallery(data?.problem.gallery).toGalleryObject()
         : this.problem.gallery.toGalleryObject(),
+      content_url: this.problem.contentURL
+        ? this.problem.contentURL.toContentURLObject()
+        : null,
+      whitepaper_url: data?.problem.whitepaper_url
+        ? new DocumentURL(data?.problem.whitepaper_url).toDocumentURLObject()
+        : null,
     };
 
     this.problem = new ProjectProblem(problemObject);

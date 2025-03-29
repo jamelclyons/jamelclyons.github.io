@@ -1,47 +1,64 @@
 import Model from './Model';
 import Gallery, { GalleryObject } from './Gallery';
 import DocumentURL, { DocumentURLObject } from '@/model/DocumentURL';
+import ContentURL, { ContentURLObject } from './ContentURL';
 
 export type ProjectProblemObject = {
-  whitepaper_url: DocumentURLObject | null;
   gallery: GalleryObject;
+  content_url: ContentURLObject | null;
+  whitepaper_url: DocumentURLObject | null;
 };
 
 export type ProjectProblemDataObject = {
-  whitepaper_url: string | null;
   gallery: GalleryObject;
+  content_url: ContentURLObject | null;
+  whitepaper_url: string | null;
 };
 
 class ProjectProblem extends Model {
-  whitepaperURL: DocumentURL | null;
   gallery: Gallery;
+  contentURL: ContentURL | null;
+  whitepaperURL: DocumentURL | null;
 
   constructor(data: Record<string, any> = {}) {
     super();
 
-    this.whitepaperURL = data?.whitepaper_url
-      ? new DocumentURL(data.whitepaper_url)
-      : null;
     this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
+    this.contentURL = data?.content_url?.url
+      ? new ContentURL(data.content_url.url)
+      : null;
+    this.whitepaperURL = data?.whitepaper_url?.url
+      ? new DocumentURL(data.whitepaper_url.url)
+      : null;
   }
 
   setContentURL(url: string) {
+    this.contentURL = new ContentURL(url);
+  }
+
+  setWhitepaperURL(url: string) {
     this.whitepaperURL = new DocumentURL(url);
   }
 
   toProjectProblemObject(): ProjectProblemObject {
     return {
+      gallery: this.gallery.toGalleryObject(),
+      content_url: this.contentURL
+        ? this.contentURL.toContentURLObject()
+        : null,
       whitepaper_url: this.whitepaperURL
         ? this.whitepaperURL.toDocumentURLObject()
         : null,
-      gallery: this.gallery.toGalleryObject(),
     };
   }
 
   toProjectProblemDataObject(): ProjectProblemDataObject {
     return {
-      whitepaper_url: this.whitepaperURL?.url ? this.whitepaperURL.url : null,
       gallery: this.gallery.toGalleryObject(),
+      content_url: this.contentURL
+        ? this.contentURL.toContentURLObject()
+        : null,
+      whitepaper_url: this.whitepaperURL?.url ? this.whitepaperURL.url : null,
     };
   }
 }
