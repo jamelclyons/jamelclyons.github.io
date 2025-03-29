@@ -87,7 +87,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
         {skills && <SkillsComponent projectSkills={skills} />}
 
-        {tasks.size > 0 && <CheckList tasks={Array.from(tasks)} />}
+        {tasks.size > 0 && <CheckList title='' tasks={Array.from(tasks)} />}
 
         {contentURL && <ContentComponent title={''} content={contentURL} />}
 

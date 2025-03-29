@@ -1,6 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import User from '../model/User';
+import User from '@/model/User';
+import DocumentURL from '@/model/DocumentURL';
+
+import DocumentComponent from '@/views/components/DocumentComponent';
 
 interface ResumeProps {
   user: User;
@@ -8,15 +11,19 @@ interface ResumeProps {
 
 const Resume: React.FC<ResumeProps> = ({ user }) => {
 
+  const [resume, setResume] = useState<DocumentURL>(new DocumentURL(user.resume));
+
   useEffect(() => {
     document.title = `Resume - ${user.name}`
   }, []);
 
+  useEffect(() => {
+    setResume(new DocumentURL(user.resume))
+  }, [user, setResume]);
+
   return (
     <section className="resume">
-      <main>
-        <iframe id="pdfViewer" src={user.resume}></iframe>
-      </main>
+      <DocumentComponent documentURL={resume} />
     </section>
   );
 }

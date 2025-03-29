@@ -1,7 +1,6 @@
 import React, { useEffect, useState, ChangeEvent, MouseEvent, FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '@/model/store';
-
 import Task, { TaskObject } from '@/model/Task';
 import CheckList, { CheckListObject, existsInSet } from '@/model/CheckList';
 
@@ -11,6 +10,8 @@ import {
     setShowStatusBar,
 } from '@/controllers/messageSlice';
 import { updateDesignCheckList, updateDevelopmentCheckList, updateDeliveryCheckList } from '@/controllers/updateSlice';
+
+import { v4 as uuidv4 } from 'uuid';
 
 interface UpdateCheckListProps {
     location: string;
@@ -89,7 +90,7 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
     const handleTaskChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value, checked } = e.target;
 
-        let id = task.id !== '' ? task.id : crypto.randomUUID();
+        let id = task.id !== '' ? task.id : uuidv4();
         let description = task.description;
         let status = task.status;
         let details = task.details;

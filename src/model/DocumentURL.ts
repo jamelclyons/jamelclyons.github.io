@@ -1,0 +1,40 @@
+import Model from './Model';
+
+export type DocumentURLObject = {
+  url: string | null;
+  isValid: boolean;
+};
+
+class DocumentURL extends Model {
+  url: string | null;
+  isValid: boolean;
+
+  constructor(url: string) {
+    super();
+
+    this.isValid = false;
+    this.url = null;
+
+    try {
+      if (typeof url !== 'string') {
+        throw new Error('URL must be a string.');
+      }
+
+      this.url = new URL(url).href;
+    } catch (error) {
+      const err = error as Error;
+      console.error('Error fetching content:', err);
+    }
+
+    this.isValid = true;
+  }
+
+  toDocumentURLObject(): DocumentURLObject {
+    return {
+      url: this.url,
+      isValid: this.isValid,
+    };
+  }
+}
+
+export default DocumentURL;

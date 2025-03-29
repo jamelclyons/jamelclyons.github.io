@@ -25,7 +25,7 @@ const Delivery: React.FC<DeliveryProps> = ({ delivery }) => {
       <div className="project-process-delivery" id="project_process_delivery">
         <h3 className="title">delivery</h3>
 
-        {tasks.size > 0 && <CheckList tasks={Array.from(tasks)} />}
+        {tasks.size > 0 && <CheckList title='' tasks={Array.from(tasks)} />}
 
         {gallery.images.length > 0 && <Gallery gallery={gallery.images} title="" />}
 

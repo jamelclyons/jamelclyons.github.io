@@ -2,8 +2,11 @@ import React, { useEffect, useState, MouseEvent, ChangeEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '@/model/store';
-import ProjectDelivery, { ProjectDeliveryObject } from '@/model/ProjectDelivery';
+import { ProjectDeliveryObject } from '@/model/ProjectDelivery';
 import Project, { ProjectObject } from '@/model/Project';
+import Gallery from '@/model/Gallery';
+import CheckList from '@/model/CheckList';
+import ContentURL from '@/model/ContentURL';
 
 import {
   setMessage,
@@ -13,10 +16,7 @@ import {
 import { updateProject } from '@/controllers/updateSlice';
 
 import UpdateGallery from '../components/UpdateGallery';
-import Gallery from '@/model/Gallery';
 import UpdateCheckList from '../components/UpdateCheckList';
-import CheckList from '@/model/CheckList';
-import ContentURL, { ContentURLObject } from '@/model/ContentURL';
 
 interface UpdateDeliveryProps {
   project: Project;
@@ -29,7 +29,6 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ project }) => {
 
   const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject());
 
-  const [delivery, setDelivery] = useState<ProjectDelivery>(project.process.delivery);
   const [gallery, setGallery] = useState<Gallery>(project.process.delivery.gallery);
   const [checkList, setCheckList] = useState<CheckList>(project.process.delivery.checkList);
   const [content, setContent] = useState<ContentURL | null>(project.process.delivery?.contentURL);
@@ -37,15 +36,11 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ project }) => {
   useEffect(() => { setProjectObject(project.toProjectObject()) }, [project, setProjectObject]);
 
   useEffect(() => {
-    setDelivery(project.process.delivery)
-  }, [project.process.delivery, setDelivery]);
-
-  useEffect(() => {
     setGallery(project.process.delivery.gallery)
   }, [project.process.delivery.gallery, setGallery]);
 
   useEffect(() => {
-    setCheckList(project.process.delivery.checkList)
+    setCheckList(new CheckList(project.process.delivery.checkList))
   }, [project.process.delivery.checkList, setCheckList]);
 
   useEffect(() => {
@@ -71,15 +66,7 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ project }) => {
       const { name, value } = target;
 
       if (name === 'delivery_content_url') {
-        const contentObject: ContentURLObject = new ContentURL(value).toContentURLObject();
-
         setContent(new ContentURL(value));
-
-        setDelivery(new ProjectDelivery({
-          check_list: checkList.toCheckListObject(),
-          gallery: gallery.toGalleryObject(),
-          content_url: contentObject
-        }));
       }
     } catch (error) {
       const err = error as Error;

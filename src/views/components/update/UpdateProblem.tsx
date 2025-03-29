@@ -12,9 +12,9 @@ import type { AppDispatch, RootState } from '@/model/store';
 import Gallery from '@/model/Gallery';
 import Project, { ProjectObject } from '@/model/Project';
 import ProjectProblem from '@/model/ProjectProblem';
+import DocumentURL, { DocumentURLObject } from '@/model/DocumentURL';
 
 import UpdateGallery from './components/UpdateGallery';
-import ContentURL, { ContentURLObject } from '@/model/ContentURL';
 
 interface UpdateProblemProps {
   project: Project;
@@ -30,7 +30,7 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
   const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject());
   const [problem, setProblem] = useState<ProjectProblem>(project.problem);
   const [gallery, setGallery] = useState<Gallery>(project.problem.gallery);
-  const [content, setContent] = useState<ContentURL | null>(project.problem.contentURL);
+  const [whitepaperURL, setWhitepaperURL] = useState<DocumentURL | null>(project.problem.whitepaperURL);
 
   useEffect(() => {
     setProjectObject(project.toProjectObject())
@@ -41,8 +41,8 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
   }, [project.problem, setProblem]);
 
   useEffect(() => {
-    setContent(project.problem.contentURL);
-  }, [project.problem.contentURL, setContent]);
+    setWhitepaperURL(project.problem.whitepaperURL);
+  }, [project.problem.whitepaperURL, setWhitepaperURL]);
 
   useEffect(() => {
     setGallery(project.problem.gallery);
@@ -65,13 +65,13 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
       const { name, value } = target;
 
       if (name === 'problem_content_url') {
-        const contentURL = new ContentURL(value);
+        const contentURL = new DocumentURL(value);
 
-        setContent(contentURL);
+        setWhitepaperURL(contentURL);
 
         setProblem(new ProjectProblem({
           gallery: gallery.toGalleryObject(),
-          content_url: contentURL.toContentURLObject()
+          whitepaper_url: whitepaperURL ? whitepaperURL.toDocumentURLObject() : null
         }));
       }
     } catch (error) {
@@ -89,7 +89,7 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
         ...projectObject,
         problem: {
           gallery: gallery.toGalleryObject(),
-          content_url: content ? content.toContentURLObject() : null
+          whitepaper_url: whitepaperURL ? whitepaperURL.toDocumentURLObject() : null
         },
       };
 
@@ -113,7 +113,7 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
 
       <div className="form-item-flex">
         <label htmlFor="problem_content_url">Problem Content URL:</label>
-        <input type="text" name='problem_content_url' value={content?.url ?? ''} onChange={handleProblemContentURLChange} />
+        <input type="text" name='problem_content_url' value={whitepaperURL?.url ?? ''} onChange={handleProblemContentURLChange} />
       </div>
 
       <button onClick={handleUpdateProblem}>

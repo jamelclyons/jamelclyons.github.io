@@ -3,15 +3,19 @@ import React from 'react';
 import Task from '../../../model/Task';
 
 interface CheckListProps {
-  tasks: Array<Task>
+  title: string;
+  tasks: Array<Task>;
 }
 
-const CheckList: React.FC<CheckListProps> = ({ tasks }) => {
+const CheckList: React.FC<CheckListProps> = ({ title, tasks }) => {
 
   return (
     <>
       {tasks ? (
         <div className="checklist">
+
+          {title && <h4>{title}</h4>}
+          
           {Array.isArray(tasks) &&
             tasks.map((task, index) => (
               <span className='task' key={index}>

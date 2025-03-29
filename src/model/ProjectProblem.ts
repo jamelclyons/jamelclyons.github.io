@@ -1,38 +1,38 @@
 import Model from './Model';
 import Gallery, { GalleryObject } from './Gallery';
-import ContentURL, { ContentURLObject } from './ContentURL';
+import DocumentURL, { DocumentURLObject } from '@/model/DocumentURL';
 
 export type ProjectProblemObject = {
-  content_url: ContentURLObject | null;
+  whitepaper_url: DocumentURLObject | null;
   gallery: GalleryObject;
 };
 
 export type ProjectProblemDataObject = {
-  content_url: string | null;
+  whitepaper_url: string | null;
   gallery: GalleryObject;
 };
 
 class ProjectProblem extends Model {
-  contentURL: ContentURL | null;
+  whitepaperURL: DocumentURL | null;
   gallery: Gallery;
 
   constructor(data: Record<string, any> = {}) {
     super();
 
-    this.contentURL = data?.content_url?.url
-      ? new ContentURL(data.content_url.url)
+    this.whitepaperURL = data?.whitepaper_url
+      ? new DocumentURL(data.whitepaper_url)
       : null;
     this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
   }
 
   setContentURL(url: string) {
-    this.contentURL = new ContentURL(url);
+    this.whitepaperURL = new DocumentURL(url);
   }
 
   toProjectProblemObject(): ProjectProblemObject {
     return {
-      content_url: this.contentURL
-        ? this.contentURL.toContentURLObject()
+      whitepaper_url: this.whitepaperURL
+        ? this.whitepaperURL.toDocumentURLObject()
         : null,
       gallery: this.gallery.toGalleryObject(),
     };
@@ -40,7 +40,7 @@ class ProjectProblem extends Model {
 
   toProjectProblemDataObject(): ProjectProblemDataObject {
     return {
-      content_url: this.contentURL?.url ? this.contentURL.url : null,
+      whitepaper_url: this.whitepaperURL?.url ? this.whitepaperURL.url : null,
       gallery: this.gallery.toGalleryObject(),
     };
   }

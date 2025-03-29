@@ -30,7 +30,7 @@ const Design: React.FC<DesignProps> = ({ design }) => {
         <div className="project-process-design" id="project_process_design">
           <h3 className="title">design</h3>
 
-          {tasks.size > 0 && <CheckList tasks={Array.from(tasks)} />}
+          {tasks.size > 0 && <CheckList title='Pages' tasks={Array.from(tasks)} />}
 
           {colorsList.length > 0 && <Colors colors={colorsList} />}
 

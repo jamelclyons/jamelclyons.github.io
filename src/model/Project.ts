@@ -72,9 +72,9 @@ class Project extends Model {
     this.description = data?.description ?? 'No Description Provided.';
     this.solution = new ProjectSolution(data?.solution);
     this.process = new ProjectProcess(data?.process);
-    this.problem = new ProjectProblem(data?.problem);
     this.owner = new Owner(data?.owner);
     this.details = new ProjectDetails(data?.details);
+    this.problem = new ProjectProblem(data?.problem);
   }
 
   create(repo_url: string, title: string) {
@@ -262,8 +262,8 @@ class Project extends Model {
     this.process.delivery = new ProjectDelivery(deliveryObject);
 
     const problemObject: ProjectProblemObject = {
-      content_url: this.problem.contentURL
-        ? this.problem.contentURL.toContentURLObject()
+      whitepaper_url: this.problem.whitepaperURL
+        ? this.problem.whitepaperURL.toDocumentURLObject()
         : null,
       gallery: data?.problem.gallery
         ? new Gallery(data?.problem.gallery).toGalleryObject()

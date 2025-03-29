@@ -31,9 +31,9 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ user, project }) =>
 
         <TheProcess process={process} />
 
-        <TheProblem problem={problem} />
-
         <Details user={user} details={details} />
+
+        <TheProblem problem={problem} />
       </main>
     </>
   );
