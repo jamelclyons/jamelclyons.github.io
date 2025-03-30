@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Gallery from '../Gallery';
+import Gallery from '../GalleryComponent';
 import DocumentComponent from '@/views/components/DocumentComponent';
 import ProjectProblem from '@/model/ProjectProblem';
 import ContentComponent from '../content/ContentComponent';

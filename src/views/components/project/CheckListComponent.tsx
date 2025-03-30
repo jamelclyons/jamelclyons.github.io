@@ -1,21 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Task from '../../../model/Task';
+import CheckList from '@/model/CheckList';
 
 interface CheckListProps {
-  title: string;
-  tasks: Array<Task>;
+  checkList: CheckList;
 }
 
-const CheckList: React.FC<CheckListProps> = ({ title, tasks }) => {
+const CheckListComponent: React.FC<CheckListProps> = ({ checkList }) => {
+  const [id, setId] = useState<string>(checkList.id);
+  const [title, setTitle] = useState<string | null>(checkList.title);
+  const [tasks, setTasks] = useState<Set<Task>>(checkList.tasks);
+
+  useEffect(() => { setId(checkList.id) }, [checkList.id, setId]);
+  useEffect(() => { setTitle(checkList.title) }, [checkList.id, setTitle]);
+  useEffect(() => { setTasks(checkList.tasks) }, [checkList.id, setId]);
 
   return (
     <>
       {tasks ? (
-        <div className="checklist">
+        <div className="checklist" id={id}>
 
           {title && <h4>{title}</h4>}
-          
+
           {Array.isArray(tasks) &&
             tasks.map((task, index) => (
               <span className='task' key={index}>
@@ -41,4 +48,4 @@ const CheckList: React.FC<CheckListProps> = ({ title, tasks }) => {
   );
 }
 
-export default CheckList;
+export default CheckListComponent;

@@ -10,11 +10,14 @@ const projectRoutes = express_1.default.Router();
 const saveProject = async (req, res) => {
     try {
         const id = req.params.projectID;
+        const repoURL = req.body.process.development.repo_url;
         const data = await (0, database_1.postData)('portfolio', id, req.body);
         if (!data) {
             throw new ResponseError_1.default(`Project with the #ID: ${id} could not be updated.`, 400);
         }
         res.json({
+            id: id,
+            repo_url: repoURL,
             success_message: `Project with the #ID: ${id} was updated at ${data}.`,
         });
     }

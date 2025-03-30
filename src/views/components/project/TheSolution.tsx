@@ -4,7 +4,7 @@ import ProjectSolution from '@/model/ProjectSolution';
 
 import FeaturesComponent from './Features';
 import ProjectURLsComponent from './ProjectURLsComponent';
-import GalleryComponent from '../Gallery';
+import GalleryComponent from '../GalleryComponent';
 import ContentComponent from '../content/ContentComponent';
 
 interface SolutionProps {

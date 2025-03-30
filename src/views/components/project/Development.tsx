@@ -4,19 +4,23 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '@/model/store';
 import ProjectDevelopment from '@/model/ProjectDevelopment';
 import Image from '@/model/Image';
+import Task from '@/model/Task';
+import ProjectSkills from '@/model/ProjectSkills';
+import CheckList from '@/model/CheckList';
+import ContentURL from '@/model/ContentURL';
+import ProjectVersions from '@/model/ProjectVersions';
 
-import CheckList from './CheckList';
-import ContentComponent from '../content/ContentComponent';
+import CheckListComponent from './CheckListComponent';
 import Versions from './Versions';
+
+import ContentComponent from '../content/ContentComponent';
+import StatusBar from '../StatusBar';
 import ImageComponent from '../ImageComponent';
 import SkillsComponent from '../SkillsComponent';
 
 import {
   signInWithGitHubPopup
 } from '@/controllers/authSlice';
-import StatusBar from '../StatusBar';
-import Task from '@/model/Task';
-import ProjectSkills from '@/model/ProjectSkills';
 
 interface DevelopmentProps {
   development: ProjectDevelopment;
@@ -25,46 +29,59 @@ interface DevelopmentProps {
 const Development: React.FC<DevelopmentProps> = ({ development }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { checkList, contentURL, repoURL, versionsList } = development;
+  const [skills, setSkills] = useState<ProjectSkills>(development.skills);
+  const [checkList, setCheckList] = useState<CheckList>(development.checkList);
+  const [tasks, setTasks] = useState<Set<Task>>(development.checkList.tasks);
+  const [contentURL, setContentURL] = useState<ContentURL | null>(development.contentURL);
+  const [repoURL, setRepoURL] = useState(development.repoURL);
+  const [versionsList, setVersionsList] = useState<ProjectVersions>(development.versionsList);
+  const [buttonTitle, setButtonTitle] = useState<string>();
+  const [messageType, setMessageType] = useState<string>('info');
+  const [message, setMessage] = useState<string>('Click Log in with GitHub to gain access to the code.');
+
   const { isAuthenticated } = useSelector(
     (state: RootState) => state.auth
   );
 
-  const [showStatusBar, setShowStatusBar] = useState<string>('hide');
-  const [messageType, setMessageType] = useState<string>('info');
-  const [message, setMessage] = useState<string>('Click Log in with GitHub to gain access to the code.');
-  const [skills, setSkills] = useState<ProjectSkills>(development.skills);
-
-  const [tasks, setTasks] = useState<Set<Task>>(checkList.tasks);
+  useEffect(() => {
+    setSkills(development.skills);
+  }, [development.skills, setSkills]);
 
   useEffect(() => {
-    setTasks(checkList.tasks)
-  }, [checkList, setTasks])
+    setCheckList(development.checkList)
+  }, [development.checkList, setCheckList]);
+
+  useEffect(() => {
+    setTasks(development.checkList.tasks)
+  }, [development.checkList.tasks, setTasks]);
+
+  useEffect(() => {
+    setContentURL(development.contentURL)
+  }, [development.contentURL, setContentURL]);
+
+  useEffect(() => {
+    setRepoURL(development.repoURL)
+  }, [development.repoURL, setRepoURL]);
+
+  useEffect(() => {
+    setVersionsList(development.versionsList)
+  }, [development.versionsList, setVersionsList]);
 
   useEffect(() => {
     if (!isAuthenticated) {
+      setButtonTitle('Log in with GitHub');
       setMessage('Click Log in with GitHub to gain access to the code.');
       setMessageType('info');
     }
-  }, []);
+  }, [isAuthenticated, setMessage, setMessageType]);
 
   useEffect(() => {
     if (isAuthenticated) {
+      setButtonTitle('See Code');
       setMessage('Gain access to the source code on GitHub.');
       setMessageType('info');
     }
-  }, []);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      setMessage('Click Log in with GitHub to gain access to the code.');
-      setMessageType('info');
-    }
-  }, []);
-
-  useEffect(() => {
-    setSkills(development.skills);
-  }, [development]);
+  }, [isAuthenticated, setMessage, setMessageType]);
 
   const handleSeeCode = () => {
     if (isAuthenticated) {
@@ -87,7 +104,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
         {skills && <SkillsComponent projectSkills={skills} />}
 
-        {tasks.size > 0 && <CheckList title='' tasks={Array.from(tasks)} />}
+        {tasks.size > 0 && <CheckListComponent checkList={checkList} />}
 
         {contentURL && <ContentComponent title={''} content={contentURL} />}
 
@@ -95,13 +112,10 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
 
         <button className='repo' onClick={handleSeeCode}>
           <ImageComponent image={new Image({ title: 'GitHub', url: '', class_name: 'fa fa-github fa-fw' })} />
-          <h3 className='title'>{
-            isAuthenticated ?
-              'See Code' : 'Login with GitHub'
-          }</h3>
+          <h3 className='title'>{buttonTitle}</h3>
         </button>
 
-        <StatusBar show={showStatusBar} messageType={messageType} message={message} />
+        <StatusBar show={'hide'} messageType={messageType} message={message} />
       </div>
     }
     </>

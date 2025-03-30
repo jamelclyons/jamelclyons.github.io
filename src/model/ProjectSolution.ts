@@ -72,9 +72,6 @@ class ProjectSolution extends Model {
   }
 
   toProjectSolutionDataObject(): ProjectSolutionDataObject {
-    console.log(
-      Array.from(this.features).map((feature) => feature.toFeatureObject())
-    );
     return {
       gallery: this.gallery.toGalleryObject(),
       features: Array.from(this.features).map((feature) =>

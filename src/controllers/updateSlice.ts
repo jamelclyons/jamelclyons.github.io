@@ -441,7 +441,7 @@ export const updateDetails = createAsyncThunk(
 export const updateSkills = createAsyncThunk(
   'update/updateSkills',
   async (skills: Skills) => {
-    try {
+    try {console.log(skills.toObject())
       return skills.toObject();
     } catch (error) {
       const err = error as Error;

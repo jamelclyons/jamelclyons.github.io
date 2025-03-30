@@ -1,23 +1,34 @@
 import Model from './Model';
 import Task, { TaskDataObject, TaskObject } from './Task';
 
+import { v4 as uuidv4 } from 'uuid';
+
 export type CheckListObject = {
+  id: string;
+  title: string | null;
   tasks: Array<TaskObject>;
   weight: number;
 };
 
 export type CheckListDataObject = {
+  id: string;
+  title: string | null;
   tasks: Array<TaskDataObject>;
   weight: number;
 };
 
 class CheckList extends Model {
+  id: string;
+  title: string | null;
   tasks: Set<Task>;
   weight: number;
   totalWeight: number;
 
   constructor(data: Record<string, any> | CheckListObject = {}) {
     super();
+
+    this.id = data?.id ?? uuidv4();
+    this.title = data?.title ?? null;
 
     if (data?.tasks && Array.isArray(data?.tasks)) {
       this.tasks = this.getTasks(data.tasks);
@@ -86,6 +97,8 @@ class CheckList extends Model {
     const taskArray = Array.from(this.tasks);
 
     return {
+      id: this.id,
+      title: this.title,
       tasks: taskArray.map((task) => task.toTaskObject()),
       weight: this.weight,
     };
@@ -95,6 +108,8 @@ class CheckList extends Model {
     const taskArray = Array.from(this.tasks);
 
     return {
+      id: this.id,
+      title: this.title,
       tasks: taskArray.map((task) => task.toTaskObject()),
       weight: this.weight,
     };

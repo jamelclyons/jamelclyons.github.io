@@ -12,6 +12,7 @@ const saveProject: Express.RequestHandler = async (
 ): Promise<void> => {
   try {
     const id = req.params.projectID;
+    const repoURL = req.body.process.development.repo_url;
     const data = await postData('portfolio', id, req.body);
 
     if (!data) {
@@ -22,6 +23,8 @@ const saveProject: Express.RequestHandler = async (
     }
 
     res.json({
+      id: id,
+      repo_url: repoURL,
       success_message: `Project with the #ID: ${id} was updated at ${data}.`,
     });
   } catch (error) {

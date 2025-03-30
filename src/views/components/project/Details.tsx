@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import ProjectDetails from '@/model/ProjectDetails';
 
@@ -12,7 +12,21 @@ interface ProjectDetailsProps {
 }
 
 const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ user, details }) => {
-  const { privacy, teamList, content } = details;
+  const [privacy, setPrivacy] = useState(details.privacy);
+  const [teamList, setTeamList] = useState(details.teamList);
+  const [content, setContent] = useState(details.content);
+
+  useEffect(() => {
+    setPrivacy(details.privacy)
+  }, [details.privacy, setPrivacy]);
+
+  useEffect(() => {
+    setTeamList(details.teamList)
+  }, [details.teamList, setTeamList]);
+
+  useEffect(() => {
+    setContent(details.content)
+  }, [details.content, setContent]);
 
   return (
     <>

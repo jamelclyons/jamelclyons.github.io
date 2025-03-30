@@ -21,6 +21,7 @@ import Project, { ProjectObject } from '@/model/Project';
 import Owner from '@/model/Owner';
 import Portfolio from '@/model/Portfolio';
 import GitHubRepoQuery from '@/model/GitHubRepoQuery';
+import RepoURL from '@/model/RepoURL';
 
 const ProjectUpdate: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -170,7 +171,18 @@ const ProjectUpdate: React.FC = () => {
         e.preventDefault();
 
         try {
-            dispatch(updateProject(project));
+            dispatch(updateProject(project))
+                .then((res) => {
+                    if (res.meta.requestStatus === 'fulfilled') {
+                        let id = res.payload.id;
+                        let repoURL = new RepoURL(res.payload.repo_url);
+
+                        if (repoURL.owner) {
+                            const repoQuery = new GitHubRepoQuery(repoURL.owner, id);
+                            dispatch(getProjectPage(repoQuery));
+                        }
+                    }
+                });
         } catch (error) {
             const err = error as Error;
             dispatch(setMessageType('error'));

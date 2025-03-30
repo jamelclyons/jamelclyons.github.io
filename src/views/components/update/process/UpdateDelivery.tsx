@@ -40,7 +40,7 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ project }) => {
   }, [project.process.delivery.gallery, setGallery]);
 
   useEffect(() => {
-    setCheckList(new CheckList(project.process.delivery.checkList))
+    setCheckList(project.process.delivery.checkList)
   }, [project.process.delivery.checkList, setCheckList]);
 
   useEffect(() => {

@@ -1,25 +1,46 @@
 import React, { useEffect, useState } from 'react';
 
-import CheckList from './CheckList';
+import CheckListComponent from './CheckListComponent';
 import Colors from './Colors';
-import Gallery from '../Gallery';
+import Gallery from '../GalleryComponent';
 import ContentComponent from '../content/ContentComponent';
 import ProjectDesign from '../../../model/ProjectDesign';
 import Task from '@/model/Task';
+import CheckList from '@/model/CheckList';
+import ContentURL from '@/model/ContentURL';
 
 interface DesignProps {
   design: ProjectDesign;
 }
 
 const Design: React.FC<DesignProps> = ({ design }) => {
-  const { checkList, colorsList, gallery, contentURL } = design;
+  const [checkList, setCheckList] = useState<CheckList>(design.checkList);
+  const [tasks, setTasks] = useState<Set<Task>>(design.checkList.tasks);
+  const [colorsList, setColorsList] = useState(design.colorsList);
+  const [gallery, setGallery] = useState(design.gallery);
+  const [contentURL, setContentURL] = useState<ContentURL | null>(design.contentURL);
+
   const { logos, icons, animations, umlDiagrams } = gallery;
 
-  const [tasks, setTasks] = useState<Set<Task>>(checkList.tasks);
+  useEffect(() => {
+    setCheckList(design.checkList)
+  }, [design.checkList, setCheckList]);
 
   useEffect(() => {
-    setTasks(checkList.tasks)
-  }, [checkList, setTasks])
+    setTasks(design.checkList.tasks)
+  }, [design.checkList.tasks, setTasks]);
+
+  useEffect(() => {
+    setColorsList(design.colorsList)
+  }, [design.colorsList, setColorsList]);
+
+  useEffect(() => {
+    setGallery(design.gallery)
+  }, [design.gallery, setGallery]);
+
+  useEffect(() => {
+    setContentURL(design.contentURL)
+  }, [design.contentURL, setContentURL]);
 
   return (
     <>
@@ -30,7 +51,7 @@ const Design: React.FC<DesignProps> = ({ design }) => {
         <div className="project-process-design" id="project_process_design">
           <h3 className="title">design</h3>
 
-          {tasks.size > 0 && <CheckList title='Pages' tasks={Array.from(tasks)} />}
+          {tasks.size > 0 && <CheckListComponent checkList={checkList} />}
 
           {colorsList.length > 0 && <Colors colors={colorsList} />}
 

@@ -37,7 +37,7 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
 
     useEffect(() => {
         setSelectedTasks(selectedTasks);
-    }, [selectedTasks, setSelectedTasks]);
+    }, [selectedTasks, task, setSelectedTasks]);
 
     const handleChange = (
         e: ChangeEvent<HTMLInputElement>,
@@ -123,9 +123,10 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
         setTask(new Task(taskObject))
     }
 
-    const handleAddToCheckList = (e: MouseEvent<HTMLButtonElement>) => {
+    const handleAddToCheckList = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
+
             if (task.description !== '') {
                 setTasks((prevTasks) => {
                     const exists = existsInSet(task, tasks);
@@ -231,7 +232,7 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
                     </div>)
                 )) : (<h3>There are no {location} task at this time.</h3>)}
 
-                <form action="">
+                <form id={`add_task_${location}`} onSubmit={handleAddToCheckList}>
                     <hr />
 
                     <h4>Add Task</h4>
@@ -252,7 +253,7 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
                             <input type="number" name='weight' value={task.weight} onChange={handleTaskChange} />
                         </div>
 
-                        <button type="submit" onClick={handleAddToCheckList}>
+                        <button type="submit">
                             <h3>Add Task</h3>
                         </button>
                     </div>
