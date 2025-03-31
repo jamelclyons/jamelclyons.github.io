@@ -41,6 +41,10 @@ class CheckList extends Model {
     }
   }
 
+  setTitle(title: string) {
+    this.title = title;
+  }
+
   getTasks(data: Array<Record<string, any>> | Array<TaskObject>) {
     const tasks: Set<Task> = new Set();
 

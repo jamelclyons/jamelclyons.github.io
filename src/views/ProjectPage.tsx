@@ -8,7 +8,7 @@ import ProjectComponent from './components/project/ProjectComponent';
 import { setMessage, setMessageType, setShowStatusBar } from '../controllers/messageSlice';
 import { getProjectPage } from '@/controllers/projectSlice';
 
-import type { AppDispatch, RootState } from '../model/store';
+import type { AppDispatch, RootState } from '@/model/store';
 import Project from '../model/Project';
 import GitHubRepoQuery from '../model/GitHubRepoQuery';
 import Portfolio from '@/model/Portfolio';

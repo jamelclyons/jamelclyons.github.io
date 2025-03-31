@@ -23,6 +23,7 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
 
     const [checkListObject, setCheckListObject] = useState<CheckListObject>(checkList.toCheckListObject());
 
+    const [title, setTitle] = useState<string>(checkList.title ?? '');
     const [tasks, setTasks] = useState<Set<Task>>(checkList.tasks);
     const [task, setTask] = useState<Task>(new Task());
     const [selectedTasks, setSelectedTasks] = useState<Set<Task>>(Array.isArray(checkListObject.tasks) && checkListObject.tasks.length > 0 ? new Set(checkListObject.tasks.map((task) => new Task(task))) : new Set());
@@ -30,6 +31,12 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
     useEffect(() => {
         setCheckListObject(checkList.toCheckListObject());
     }, [checkList, setCheckListObject]);
+
+    useEffect(() => {
+        if (checkList.title) {
+            setTitle(checkList.title)
+        }
+    }, [title, setTitle]);
 
     useEffect(() => {
         setSelectedTasks(new Set(checkListObject.tasks.map((task) => new Task(task))));
@@ -123,6 +130,15 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
         setTask(new Task(taskObject))
     }
 
+    const handleCheckListNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+
+        if (name === 'check_list_title') {
+            setTitle(value);
+            checkList.setTitle(value);
+        }
+    };
+
     const handleAddToCheckList = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
@@ -172,7 +188,7 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
 
     return (
         <details>
-            <summary>Check List</summary>
+            <summary>{title} Check List</summary>
 
             <br />
 
@@ -261,7 +277,14 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
 
                 <hr />
 
-                <button type="button" onClick={handleUpdateTasks}><h3>Update Tasks</h3></button>
+                <div className='form-item-flex'>
+                    <label htmlFor="check_list_title">Check List Title:</label>
+                    <input type="text" value={title} name='check_list_title' onChange={handleCheckListNameChange} />
+                </div>
+
+                <button type="button" onClick={handleUpdateTasks}>
+                    <h3>Update Tasks</h3>
+                </button>
             </div>
         </details>
     )
