@@ -26,7 +26,7 @@ const ButtonIconExternal: React.FC<ButtonIconExternalProps> = ({ buttonProps }) 
                 <button
                     onClick={() => window.open(url, '_blank')}
                     title={buttonProps.description}>
-                    <IconComponent image={buttonProps.image} />
+                    <IconComponent imageClass={buttonProps.image} />
                     <h3>{`${buttonProps.name}`}</h3>
                 </button>
             }

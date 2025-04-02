@@ -61,8 +61,9 @@ const MemberKnowledgeComponent: React.FC<MemberKnowledgeProps> = ({ skills }) =>
           {Array.isArray(knowledge) &&
             knowledge.length > 0 &&
             knowledge.map((knowledge: Taxonomy, index) => (
+
               <a href={`/#/projects/${knowledge.path}/${knowledge.id}`} key={index} >
-                <IconComponent image={knowledge.image} />
+                {knowledge.image && <IconComponent imageClass={knowledge.image} />}
               </a>
             ))}
         </div>

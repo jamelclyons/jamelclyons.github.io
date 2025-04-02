@@ -1,13 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import Taxonomy from '../../model/Taxonomy';
+import Taxonomy from '@/model/Taxonomy';
 
 interface TaxListProps {
-  taxonomies: Set<Taxonomy>;
-  title: string;
+  taxonomiesSet: Set<Taxonomy>;
+  taxonomiesTitle: string;
 }
 
-const TaxList: React.FC<TaxListProps> = ({ taxonomies, title }) =>{
+const TaxList: React.FC<TaxListProps> = ({ taxonomiesSet, taxonomiesTitle }) => {
+  const [taxonomies, setTaxonomies] = useState<Array<Taxonomy>>(Array.from(taxonomiesSet));
+  const [title, setTitle] = useState<string>(taxonomiesTitle);
+
+  useEffect(() => {
+    setTaxonomies(Array.from(taxonomiesSet))
+  }, [taxonomiesSet, setTaxonomies]);
+
+  useEffect(() => {
+    setTitle(taxonomiesTitle)
+  }, [taxonomiesTitle, setTitle]);
 
   const handleClick = (taxonomy: Taxonomy) => {
     handleSkills();
@@ -23,12 +33,12 @@ const TaxList: React.FC<TaxListProps> = ({ taxonomies, title }) =>{
   };
 
   return (
-    taxonomies && taxonomies?.size > 0 && (
+    taxonomies && taxonomies.length > 0 && (
       <div className="tax-list">
         <h5 className="title">{title}</h5>
 
         <div className="tax-row">
-          {Array.from(taxonomies).map((taxonomy, index) =>
+          {taxonomies.map((taxonomy, index) =>
             taxonomy && taxonomy.title ? (
               <button
                 key={index}

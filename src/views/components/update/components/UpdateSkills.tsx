@@ -30,11 +30,11 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ projectSkills }) => {
     (state: RootState) => state.taxonomies
   );
 
-  const [selectedProjectTypes, setSelectedProjectTypes] = useState<Set<ProjectType>>(projectSkills.types);
-  const [selectedLanguages, setSelectedLanguages] = useState<Set<Language>>(projectSkills.languages);
-  const [selectedFrameworks, setSelectedFrameworks] = useState<Set<Framework>>(projectSkills.frameworks);
-  const [selectedTechnologies, setSelectedTechnologies] = useState<Set<Technology>>(projectSkills.technologies);
-  const [selectedServices, setSelectedServices] = useState<Set<Service>>(projectSkills.services);
+  const [selectedProjectTypes, setSelectedProjectTypes] = useState<Set<ProjectType>>(projectSkills.types ?? new Set());
+  const [selectedLanguages, setSelectedLanguages] = useState<Set<Language>>(projectSkills.languages ?? new Set());
+  const [selectedFrameworks, setSelectedFrameworks] = useState<Set<Framework>>(projectSkills.frameworks ?? new Set());
+  const [selectedTechnologies, setSelectedTechnologies] = useState<Set<Technology>>(projectSkills.technologies ?? new Set());
+  const [selectedServices, setSelectedServices] = useState<Set<Service>>(projectSkills.services ?? new Set());
 
   const [skills, setSkills] = useState<Skills>(new Skills());
 
@@ -55,23 +55,33 @@ const UpdateSkills: React.FC<UpdateSkillsProps> = ({ projectSkills }) => {
   }, []);
 
   useEffect(() => {
-    setSelectedProjectTypes(projectSkills.types);
+    if (projectSkills.types) {
+      setSelectedProjectTypes(projectSkills.types);
+    }
   }, [projectSkills.types, setSelectedProjectTypes]);
 
   useEffect(() => {
-    setSelectedLanguages(projectSkills.languages);
+    if (projectSkills.languages) {
+      setSelectedLanguages(projectSkills.languages);
+    }
   }, [projectSkills.languages, setSelectedLanguages]);
 
   useEffect(() => {
-    setSelectedFrameworks(projectSkills.frameworks);
+    if (projectSkills.frameworks) {
+      setSelectedFrameworks(projectSkills.frameworks);
+    }
   }, [projectSkills.frameworks, setSelectedFrameworks]);
 
   useEffect(() => {
-    setSelectedTechnologies(projectSkills.technologies);
+    if (projectSkills.technologies) {
+      setSelectedTechnologies(projectSkills.technologies);
+    }
   }, [projectSkills.technologies, setSelectedTechnologies]);
 
   useEffect(() => {
-    setSelectedServices(projectSkills.services);
+    if (projectSkills.services) {
+      setSelectedServices(projectSkills.services);
+    }
   }, [projectSkills.services, setSelectedServices]);
 
   const handleProjectTypesCheckboxChange = (type: ProjectType) => {

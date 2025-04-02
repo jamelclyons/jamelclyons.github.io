@@ -8,7 +8,6 @@ import type { AppDispatch, RootState } from '@/model/store';
 import Skills from '@/model/Skills';
 
 import { setMessage, setMessageType } from '@/controllers/messageSlice';
-import { getSkills } from '@/controllers/taxonomiesSlice';
 import ProjectSkills from '@/model/ProjectSkills';
 import { Framework, Language, ProjectType, Service, Technology } from '@/model/Taxonomy';
 
@@ -21,18 +20,11 @@ const SkillsComponent: React.FC<SkillsComponentProps> = ({ projectSkills }) => {
 
     const { taxonomiesLoading } = useSelector((state: RootState) => state.taxonomies);
 
-    const [skills, setSkills] = useState<ProjectSkills | Skills>(projectSkills ?? new Skills());
-    const [types, setTypes] = useState<Set<ProjectType>>(skills.types);
-    const [languages, setLanguages] = useState<Set<Language>>(skills.languages);
-    const [frameworks, setFrameworks] = useState<Set<Framework>>(skills.frameworks);
-    const [technologies, setTechnologies] = useState<Set<Technology>>(skills.technologies);
-    const [services, setServices] = useState<Set<Service>>(skills.services);
-
-    useEffect(() => {
-        if (projectSkills) {
-            setSkills(projectSkills)
-        }
-    }, [projectSkills, setSkills]);
+    const [types, setTypes] = useState<Set<ProjectType>>();
+    const [languages, setLanguages] = useState<Set<Language>>();
+    const [frameworks, setFrameworks] = useState<Set<Framework>>();
+    const [technologies, setTechnologies] = useState<Set<Technology>>();
+    const [services, setServices] = useState<Set<Service>>();
 
     useEffect(() => {
         if (projectSkills?.types) {
@@ -75,15 +67,15 @@ const SkillsComponent: React.FC<SkillsComponentProps> = ({ projectSkills }) => {
         <div className="skills" id="skills">
             <h4 className="title">skills</h4>
 
-            {types.size > 0 && <TaxList taxonomies={types} title={'Project Types'} />}
+            {types && types.size > 0 && <TaxListIcon taxonomiesSet={types} taxonomiesTitle={'Project Types'} />}
 
-            {languages.size > 0 && <TaxListIcon taxonomies={languages} title={'Languages'} />}
+            {languages && languages.size > 0 && <TaxListIcon taxonomiesSet={languages} taxonomiesTitle={'Languages'} />}
 
-            {frameworks.size > 0 && <TaxListIcon taxonomies={frameworks} title={'Frameworks'} />}
+            {frameworks && frameworks.size > 0 && <TaxListIcon taxonomiesSet={frameworks} taxonomiesTitle={'Frameworks'} />}
 
-            {technologies.size > 0 && <TaxListIcon taxonomies={technologies} title={'Technologies'} />}
+            {technologies && technologies.size > 0 && <TaxListIcon taxonomiesSet={technologies} taxonomiesTitle={'Technologies'} />}
 
-            {services.size > 0 && <TaxListIcon taxonomies={services} title={'Services'} />}
+            {services && services.size > 0 && <TaxListIcon taxonomiesSet={services} taxonomiesTitle={'Services'} />}
         </div>
     )
 }

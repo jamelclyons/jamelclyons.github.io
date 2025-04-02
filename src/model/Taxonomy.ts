@@ -8,7 +8,7 @@ export type TaxonomyObject = {
   type: string;
   title: string;
   path: string;
-  image: ImageObject;
+  image: ImageObject | null;
   usage: number;
 };
 
@@ -17,7 +17,7 @@ class Taxonomy extends Model {
   type: string;
   title: string;
   path: string;
-  image: Image;
+  image: Image | null = new Image();
   usage: number;
 
   constructor(data: Record<string, any> | TaxonomyObject = {}) {
@@ -30,12 +30,14 @@ class Taxonomy extends Model {
       ? snakeCaseToPath(data.path)
       : snakeCaseToPath(this.type);
     this.usage = data?.usage ? data.usage : '';
-    this.image = new Image({
-      id: data?.image?.id,
-      title: data?.image?.title,
-      url: data?.image?.url,
-      class_name: data?.image?.class_name,
-    });
+    this.image = data?.image
+      ? new Image({
+          id: data?.image?.id,
+          title: data?.image?.title,
+          url: data?.image?.url,
+          class_name: data?.image?.class_name,
+        })
+      : null;
   }
 
   isValid(): boolean {
@@ -68,7 +70,7 @@ class Taxonomy extends Model {
       type: this.type,
       title: this.title,
       path: this.path,
-      image: this.image.toImageObject(),
+      image: this.image ? this.image.toImageObject() : null,
       usage: this.usage,
     };
   }
@@ -81,7 +83,7 @@ export type ProjectTypeObject = {
   type: string;
   title: string;
   path: string;
-  image: ImageObject;
+  image: ImageObject | null;
   usage: number;
 };
 
@@ -99,7 +101,7 @@ export class ProjectType extends Taxonomy {
       type: this.type,
       title: this.title,
       path: this.path,
-      image: this.image.toImageObject(),
+      image: this.image ? this.image.toImageObject() : null,
       usage: this.usage,
     };
   }
@@ -110,7 +112,7 @@ export type LanguageObject = {
   type: string;
   title: string;
   path: string;
-  image: ImageObject;
+  image: ImageObject | null;
   usage: number;
 };
 
@@ -128,7 +130,7 @@ export class Language extends Taxonomy {
       type: this.type,
       title: this.title,
       path: this.path,
-      image: this.image.toImageObject(),
+      image: this.image ? this.image.toImageObject() : null,
       usage: this.usage,
     };
   }
@@ -139,7 +141,7 @@ export type FrameworkObject = {
   type: string;
   title: string;
   path: string;
-  image: ImageObject;
+  image: ImageObject | null;
   usage: number;
 };
 
@@ -157,7 +159,7 @@ export class Framework extends Taxonomy {
       type: this.type,
       title: this.title,
       path: this.path,
-      image: this.image.toImageObject(),
+      image: this.image ? this.image.toImageObject() : null,
       usage: this.usage,
     };
   }
@@ -168,7 +170,7 @@ export type TechnologyObject = {
   type: string;
   title: string;
   path: string;
-  image: ImageObject;
+  image: ImageObject | null;
   usage: number;
 };
 
@@ -186,7 +188,7 @@ export class Technology extends Taxonomy {
       type: this.type,
       title: this.title,
       path: this.path,
-      image: this.image.toImageObject(),
+      image: this.image ? this.image.toImageObject() : null,
       usage: this.usage,
     };
   }
@@ -197,7 +199,7 @@ export type ServiceObject = {
   type: string;
   title: string;
   path: string;
-  image: ImageObject;
+  image: ImageObject | null;
   usage: number;
 };
 
@@ -215,7 +217,7 @@ export class Service extends Taxonomy {
       type: this.type,
       title: this.title,
       path: this.path,
-      image: this.image.toImageObject(),
+      image: this.image ? this.image.toImageObject() : null,
       usage: this.usage,
     };
   }

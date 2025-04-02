@@ -122,8 +122,6 @@ export const getTaxImages = createAsyncThunk<
       taxonomies.forEach((taxonomy) => {
         if (taxonomy.id === doc.id) {
           let tax = new Taxonomy(taxonomy);
-          tax.image.setClassName(data?.class_name);
-          tax.image.setURL(data?.icon_url);
           updatedTaxonomies.push(tax.toTaxonomyObject());
         }
       });

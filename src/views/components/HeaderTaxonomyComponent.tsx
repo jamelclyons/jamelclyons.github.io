@@ -12,7 +12,7 @@ const HeaderTaxonomyComponent: React.FC<HeaderTaxonomyComponentProps> = ({ skill
     return (
         <>
             <h1 className="page-title">
-                <IconComponent image={skill.image} />
+                {skill.image && <IconComponent imageClass={skill.image} />}
                 {skill.title}
             </h1>
         </>

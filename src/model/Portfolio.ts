@@ -66,7 +66,7 @@ class Portfolio extends Model {
 
     if (taxonomy && term) {
       Array.from(this.projects).forEach((project: Project) => {
-        if (taxonomy === 'project-types') {
+        if (taxonomy === 'project-types' && project.process.development.skills.types) {
           project.process.development.skills.types.forEach((type) => {
             if (type.id === term) {
               updatedProjects.add(project);
@@ -74,7 +74,7 @@ class Portfolio extends Model {
           });
         }
 
-        if (taxonomy == 'languages') {
+        if (taxonomy == 'languages' && project.process.development.skills.languages) {
           project.process.development.skills.languages.forEach((language) => {
             if (language.id === term) {
               updatedProjects.add(project);
@@ -82,7 +82,7 @@ class Portfolio extends Model {
           });
         }
 
-        if (taxonomy === 'frameworks') {
+        if (taxonomy === 'frameworks' && project.process.development.skills.frameworks) {
           project.process.development.skills.frameworks.forEach((framework) => {
             if (framework.id === term) {
               updatedProjects.add(project);
@@ -90,7 +90,7 @@ class Portfolio extends Model {
           });
         }
 
-        if (taxonomy === 'technologies') {
+        if (taxonomy === 'technologies' && project.process.development.skills.technologies) {
           project.process.development.skills.technologies.forEach(
             (technology) => {
               if (technology.id === term) {
@@ -100,7 +100,7 @@ class Portfolio extends Model {
           );
         }
 
-        if (taxonomy === 'services') {
+        if (taxonomy === 'services' && project.process.development.skills.services) {
           project.process.development.skills.services.forEach(
             (service) => {
               if (service.id === term) {

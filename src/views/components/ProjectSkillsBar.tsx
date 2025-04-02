@@ -1,14 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import Taxonomy from '../../model/Taxonomy';
+import Taxonomy from '@/model/Taxonomy';
 
 import IconComponent from './IconComponent';
 
 interface ProjectSkillsProp {
-  skills: Set<Taxonomy>;
+  skillsSet: Set<Taxonomy>;
 }
 
-const ProjectSkills: React.FC<ProjectSkillsProp> = ({ skills }) => {
+const ProjectSkills: React.FC<ProjectSkillsProp> = ({ skillsSet }) => {
+  const [skills, setSkills] = useState<Set<Taxonomy>>();
+
+  useEffect(() => {
+    setSkills(skillsSet);
+  }, [skillsSet, setSkills]);
+
   const handleClick = (skill: Taxonomy) => {
     handleSkills();
     window.location.href = `/#/projects/${skill.path}/${skill.id}`;
@@ -24,16 +30,23 @@ const ProjectSkills: React.FC<ProjectSkillsProp> = ({ skills }) => {
 
   return (
     <>
-      {skills.size > 0 && (
+      {skills && skills.size > 0 && (
         <div className="project-skills-bar">
           {Array.from(skills).map((skill, index) => (
             <div className="icon" key={index}>
-              <button
-                key={index}
-                className="skills-button"
-                onClick={() => handleClick(skill)}>
-                <IconComponent image={skill.image} />
-              </button>
+              {skill.image &&
+                (skill.image.className !== '' || skill.image.url !== '')
+                ? <button
+                  key={index}
+                  className="skills-button"
+                  onClick={() => handleClick(skill)}>
+                  <IconComponent imageClass={skill.image} />
+                </button> : <button
+                  key={index}
+                  className="tag"
+                  onClick={() => handleClick(skill)}>
+                  <h6>{skill.title}</h6>
+                </button>}
             </div>
           ))}
         </div>
