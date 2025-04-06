@@ -12,9 +12,9 @@ const CheckListComponent: React.FC<CheckListProps> = ({ checkList }) => {
   const [title, setTitle] = useState<string | null>(null);
   const [tasks, setTasks] = useState<Set<Task> | null>(null);
 
-  useEffect(() => { setId(checkList.id) }, [checkList, setId]);
-  useEffect(() => { setTitle(checkList.title) }, [checkList, setTitle]);
-  useEffect(() => { setTasks(checkList.tasks) }, [checkList, setId]);
+  useEffect(() => { setId(checkList.id) }, [checkList]);
+  useEffect(() => { setTitle(checkList.title) }, [checkList]);
+  useEffect(() => { setTasks(checkList.tasks) }, [checkList]);
 
   return (
     <>

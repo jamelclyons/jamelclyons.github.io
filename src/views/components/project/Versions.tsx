@@ -1,13 +1,13 @@
 import React from "react";
 
-import ProjectVersions from '../../../model/ProjectVersions';
+import ProjectVersions from '@/model/ProjectVersions';
 
 interface VersionsProps {
   projectVersions: ProjectVersions;
 }
 
 const Versions: React.FC<VersionsProps> = ({ projectVersions }) => {
-
+console.log(projectVersions)
   return (
     <>
       {!projectVersions.isEmpty ? (

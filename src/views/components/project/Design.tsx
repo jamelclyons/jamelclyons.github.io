@@ -1,63 +1,45 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import CheckListComponent from './CheckListComponent';
 import Colors from './Colors';
 import GalleryComponent from '../GalleryComponent';
 import ContentComponent from '../content/ContentComponent';
 
-import ProjectDesign from '@/model/ProjectDesign';
-import CheckList from '@/model/CheckList';
-import ContentURL from '@/model/ContentURL';
-import Color from '@/model/Color';
-import Gallery from '@/model/Gallery';
+import Project from '@/model/Project';
 
 interface DesignProps {
-  design: ProjectDesign;
+  project: Project;
 }
 
-const Design: React.FC<DesignProps> = ({ design }) => {
-  const [checkList, setCheckList] = useState<CheckList | null>(null);
-  const [colorsList, setColorsList] = useState<Array<Color> | null>(null);
-  const [gallery, setGallery] = useState<Gallery | null>(null);
-  const [contentURL, setContentURL] = useState<ContentURL | null>(null);
-
-  useEffect(() => {
-    setCheckList(design.checkList)
-  }, [design, setCheckList]);
-
-  useEffect(() => {
-    setColorsList(design.colorsList)
-  }, [design, setColorsList]);
-
-  useEffect(() => {
-    setGallery(design.gallery)
-  }, [design, setGallery]);
-
-  useEffect(() => {
-    setContentURL(design.contentURL)
-  }, [design, setContentURL]);
-
-  const hasContent = checkList || colorsList || gallery || contentURL;
+const Design: React.FC<DesignProps> = ({ project }) => {
+  const hasContent = project.process?.design?.checkList || project.process?.design?.colorsList || project.process?.design?.gallery || project.process?.design?.contentURL;
 
   return (
     <>
-      {hasContent &&
+      {project.process && project.process.design && hasContent &&
         <div className="project-process-design" id="project_process_design">
           <h3 className="title">design</h3>
 
-          {checkList && <CheckListComponent checkList={checkList} />}
+          {project.process.design.checkList &&
+            <CheckListComponent checkList={project.process.design.checkList} />}
 
-          {colorsList && colorsList.length > 0 && <Colors colors={colorsList} />}
+          {project.process.design.colorsList && project.process.design.colorsList.length > 0 &&
+            <Colors colors={project.process.design.colorsList} />}
 
-          {gallery && gallery.logos && gallery.logos.length > 0 && <GalleryComponent title={'Logos'} gallery={gallery.logos} />}
+          {project.process.design.gallery && project.process.design.gallery.logos && project.process.design.gallery.logos.length > 0 &&
+            <GalleryComponent title={'Logos'} gallery={project.process.design.gallery.logos} />}
 
-          {gallery && gallery.icons && gallery.icons.length > 0 && <GalleryComponent title={'icons'} gallery={gallery.icons} />}
+          {project.process.design.gallery && project.process.design.gallery.icons && project.process.design.gallery.icons.length > 0 &&
+            <GalleryComponent title={'icons'} gallery={project.process.design.gallery.icons} />}
 
-          {gallery && gallery.animations && gallery.animations.length > 0 && <GalleryComponent title={'animations'} gallery={gallery.animations} />}
+          {project.process.design.gallery && project.process.design.gallery.animations && project.process.design.gallery.animations.length > 0 &&
+            <GalleryComponent title={'animations'} gallery={project.process.design.gallery.animations} />}
 
-          {gallery && gallery.umlDiagrams && gallery.umlDiagrams.length > 0 && <GalleryComponent title={'uml diagrams'} gallery={gallery.umlDiagrams} />}
+          {project.process.design.gallery && project.process.design.gallery.umlDiagrams && project.process.design.gallery.umlDiagrams.length > 0 &&
+            <GalleryComponent title={'uml diagrams'} gallery={project.process.design.gallery.umlDiagrams} />}
 
-          {contentURL && <ContentComponent title={null} content={contentURL} />}
+          {project.process.design.contentURL &&
+            <ContentComponent title={null} content={project.process.design.contentURL} />}
         </div>
       }
     </>

@@ -1,44 +1,40 @@
 import React, { useEffect, useState } from 'react';
-
-import ProjectDetails from '@/model/ProjectDetails';
+import { useSelector } from 'react-redux';
 
 import ProjectTeamComponent from './Team';
-import User from '@/model/User';
 import ContentComponent from '../content/ContentComponent';
+
+import type { RootState } from '@/model/store';
+import User from '@/model/User';
+import Project from '@/model/Project';
 
 interface ProjectDetailsProps {
   user: User;
-  details: ProjectDetails;
+  project: Project;
 }
 
-const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ user, details }) => {
-  const [privacy, setPrivacy] = useState(details.privacy);
-  const [teamList, setTeamList] = useState(details.teamList);
-  const [content, setContent] = useState(details.content);
+const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ user, project }) => {
+  const [privacy, setPrivacy] = useState(project.details?.privacy);
+
+  const { isAuthenticated } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   useEffect(() => {
-    setPrivacy(details.privacy)
-  }, [details.privacy, setPrivacy]);
-
-  useEffect(() => {
-    setTeamList(details.teamList)
-  }, [details.teamList, setTeamList]);
-
-  useEffect(() => {
-    setContent(details.content)
-  }, [details.content, setContent]);
+    setPrivacy(project.details?.privacy ?? 'private')
+  }, [project]);
 
   return (
     <>
-      {privacy === 'public' && (
+      {(isAuthenticated || privacy === 'public') && (
         <div className="project-details">
           <h3 className="title">the details</h3>
 
-          {content && <ContentComponent title={null} content={content} />}
+          {project && project.details && project.details.content &&
+            <ContentComponent title={null} content={project.details.content} />}
 
-          {teamList &&
-            <ProjectTeamComponent user={user} projectTeam={teamList} />
-          }
+          {project && project.details && project.details.teamList &&
+            <ProjectTeamComponent user={user} projectTeam={project.details.teamList} />}
         </div>
       )}
     </>

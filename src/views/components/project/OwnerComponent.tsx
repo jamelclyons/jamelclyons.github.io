@@ -1,30 +1,30 @@
 import React, { useEffect, useState } from 'react'
 
-import Owner from '@/model/Owner'
+import Project from '@/model/Project';
 
 interface OwnerComponentProps {
-    owner: Owner;
+    project: Project;
 }
 
-const OwnerComponent: React.FC<OwnerComponentProps> = ({ owner }) => {
+const OwnerComponent: React.FC<OwnerComponentProps> = ({ project }) => {
     const [type, setType] = useState<string | null>(null);
     const [login, setLogin] = useState<string | null>(null);
     const [avatarURL, setAvatarURL] = useState<string | null>(null);
     const [name, setName] = useState<string | null>(null);
 
-    useEffect(() => { setType(owner.type.toLowerCase()) }, [owner, setType]);
+    useEffect(() => { setType(project.owner.type.toLowerCase()) }, [project]);
 
-    useEffect(() => { setLogin(owner.login) }, [owner, setLogin]);
+    useEffect(() => { setLogin(project.owner.login) }, [project]);
 
-    useEffect(() => { setAvatarURL(owner.avatarURL) }, [owner, setAvatarURL]);
+    useEffect(() => { setAvatarURL(project.owner.avatarURL) }, [project]);
 
     useEffect(() => {
-        if (owner.type === 'User') {
-            setName(owner.name)
-        } else if (owner.type === 'Organization') {
-            setName(owner.company ? owner.company : owner.name)
+        if (project.owner.type === 'User') {
+            setName(project.owner.name)
+        } else if (project.owner.type === 'Organization') {
+            setName(project.owner.company ? project.owner.company : project.owner.name)
         }
-    }, [owner, setName]);
+    }, [project]);
 
     const handleClick = () => {
         window.location.href = `/#/${type}/${login}`;

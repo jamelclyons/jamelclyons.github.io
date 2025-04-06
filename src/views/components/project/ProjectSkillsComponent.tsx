@@ -7,60 +7,22 @@ import { setMessage, setMessageType } from '@/controllers/messageSlice';
 
 import type { AppDispatch, RootState } from '@/model/store';
 import ProjectSkills from '@/model/ProjectSkills';
-import { Framework, Language, ProjectType, Service, Technology } from '@/model/Taxonomy';
-import Skills from '@/model/Skills';
+import Project from '@/model/Project';
 
 interface ProjectSkillsComponentProps {
-    projectSkills: ProjectSkills;
+    project: Project;
 }
 
-const ProjectSkillsComponent: React.FC<ProjectSkillsComponentProps> = ({ projectSkills }) => {
+const ProjectSkillsComponent: React.FC<ProjectSkillsComponentProps> = ({ project }) => {
     const dispatch = useDispatch<AppDispatch>();
 
     const { taxonomiesLoading } = useSelector((state: RootState) => state.taxonomies);
 
-    const [skills, setSkills] = useState<ProjectSkills>(new ProjectSkills);
-    const [types, setTypes] = useState<Set<ProjectType> | null>(null);
-    const [languages, setLanguages] = useState<Set<Language> | null>(null);
-    const [frameworks, setFrameworks] = useState<Set<Framework> | null>(null);
-    const [technologies, setTechnologies] = useState<Set<Technology> | null>(null);
-    const [services, setServices] = useState<Set<Service> | null>(null);
+    const [skills, setSkills] = useState<ProjectSkills | null>(null);
 
     useEffect(() => {
-        if (projectSkills) {
-            setSkills(skills.show(projectSkills));
-        }
-    }, [projectSkills, setSkills]);
-
-    useEffect(() => {
-        if (projectSkills?.types && projectSkills.types.size > 0) {
-            setTypes(skills.types)
-        }
-    }, [projectSkills, setTypes]);
-
-    useEffect(() => {
-        if (projectSkills?.languages && projectSkills.languages.size > 0) {
-            setLanguages(skills.languages)
-        }
-    }, [projectSkills, setLanguages]);
-
-    useEffect(() => {
-        if (projectSkills?.frameworks && projectSkills.frameworks.size > 0) {
-            setFrameworks(skills.frameworks)
-        }
-    }, [projectSkills, setFrameworks]);
-
-    useEffect(() => {
-        if (projectSkills?.technologies && projectSkills?.technologies.size > 0) {
-            setTechnologies(skills.technologies)
-        }
-    }, [projectSkills, setTechnologies]);
-
-    useEffect(() => {
-        if (projectSkills?.services && projectSkills.services.size > 0) {
-            setServices(skills.services)
-        }
-    }, [projectSkills, setServices]);
+        setSkills(project.process?.development?.skills ? new ProjectSkills().show(project.process.development.skills) : new ProjectSkills);
+    }, [project]);
 
     useEffect(() => {
         if (taxonomiesLoading) {
@@ -69,20 +31,25 @@ const ProjectSkillsComponent: React.FC<ProjectSkillsComponentProps> = ({ project
         }
     }, [taxonomiesLoading]);
 
+    const hasContent = skills?.types || skills?.languages || skills?.frameworks || skills?.technologies || skills?.services;
+
     return (
-        <div className="skills" id="skills">
-            <h4 className="title">skills</h4>
+        <>
+            {project.process && project.process.development && project.process.development.skills && hasContent &&
+                <div className="skills" id="skills">
+                    <h4 className="title">skills</h4>
 
-            {types && types.size > 0 && <TaxListIcon taxonomiesSet={types} taxonomiesTitle={'Project Types'} />}
+                    {skills.types && skills.types.size > 0 && <TaxListIcon taxonomiesSet={skills.types} taxonomiesTitle={'Project Types'} />}
 
-            {languages && languages.size > 0 && <TaxListIcon taxonomiesSet={languages} taxonomiesTitle={'Languages'} />}
+                    {skills.languages && skills.languages.size > 0 && <TaxListIcon taxonomiesSet={skills.languages} taxonomiesTitle={'Languages'} />}
 
-            {frameworks && frameworks.size > 0 && <TaxListIcon taxonomiesSet={frameworks} taxonomiesTitle={'Frameworks'} />}
+                    {skills.frameworks && skills.frameworks.size > 0 && <TaxListIcon taxonomiesSet={skills.frameworks} taxonomiesTitle={'Frameworks'} />}
 
-            {technologies && technologies.size > 0 && <TaxListIcon taxonomiesSet={technologies} taxonomiesTitle={'Technologies'} />}
+                    {skills.technologies && skills.technologies.size > 0 && <TaxListIcon taxonomiesSet={skills.technologies} taxonomiesTitle={'Technologies'} />}
 
-            {services && services.size > 0 && <TaxListIcon taxonomiesSet={services} taxonomiesTitle={'Services'} />}
-        </div>
+                    {skills.services && skills.services.size > 0 && <TaxListIcon taxonomiesSet={skills.services} taxonomiesTitle={'Services'} />}
+                </div>}
+        </>
     )
 }
 

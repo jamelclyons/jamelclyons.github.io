@@ -18,19 +18,19 @@ const ProjectURLsComponent: React.FC<ProjectURLsProps> = ({ projectUrls }) => {
     if (projectUrls.homepage) {
       setHomepage(projectUrls.homepage);
     }
-  }, [projectUrls.homepage, setHomepage]);
+  }, [projectUrls.homepage]);
 
   useEffect(() => {
     if (projectUrls.ios) {
       setIos(projectUrls.ios);
     }
-  }, [projectUrls.ios, setIos]);
+  }, [projectUrls.ios]);
 
   useEffect(() => {
     if (projectUrls.android) {
       setAndroid(projectUrls.android);
     }
-  }, [projectUrls.android, setAndroid]);
+  }, [projectUrls.android]);
 
   return (
     <>

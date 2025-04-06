@@ -30,39 +30,39 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
     (state: RootState) => state.project
   );
 
-  const [portfolio, setPortfolio] = useState<Portfolio>();
-  const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery>();
-  const [project, setProject] = useState<Project>();
+  const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
+  const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery | null>(null);
+  const [project, setProject] = useState<Project | null>(null);
 
   useEffect(() => {
     if (portfolioObject) {
       setPortfolio(new Portfolio(portfolioObject));
     }
-  }, [portfolioObject, setPortfolio]);
+  }, [portfolioObject]);
 
   useEffect(() => {
-    if (projectID && portfolio && portfolio?.size > 0) {
+    if (projectID && portfolio && portfolio.size > 0) {
       setProject(portfolio.filterProject(projectID));
     }
-  }, [projectID, portfolio, setProject]);
+  }, [projectID, portfolio]);
 
   useEffect(() => {
     if (owner && projectID) {
       setRepoQuery(new GitHubRepoQuery(owner, projectID))
     }
-  }, [owner, projectID, setRepoQuery]);
+  }, [owner, projectID]);
 
   useEffect(() => {
     if (repoQuery) {
       dispatch(getProjectPage(repoQuery));
     }
-  }, [repoQuery, dispatch]);
+  }, [repoQuery]);
 
   useEffect(() => {
     if (projectPageObject) {
       setProject(new Project(projectPageObject));
     }
-  }, [projectPageObject, setProject]);
+  }, [projectPageObject]);
 
   useEffect(() => {
     if (project) {
@@ -76,7 +76,7 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
       dispatch(setMessage(projectErrorMessage));
       dispatch(setShowStatusBar(true));
     }
-  }, [projectErrorMessage, dispatch]);
+  }, [projectErrorMessage]);
 
   return (
     <section>

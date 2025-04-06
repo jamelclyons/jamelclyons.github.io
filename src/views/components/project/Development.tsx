@@ -2,12 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '@/model/store';
-import ProjectDevelopment from '@/model/ProjectDevelopment';
 import Image from '@/model/Image';
-import ProjectSkills from '@/model/ProjectSkills';
-import CheckList from '@/model/CheckList';
-import ContentURL from '@/model/ContentURL';
-import ProjectVersions from '@/model/ProjectVersions';
 import RepoURL from '@/model/RepoURL';
 
 import ProjectSkillsComponent from './ProjectSkillsComponent';
@@ -22,19 +17,16 @@ import {
   signInWithGitHubPopup
 } from '@/controllers/authSlice';
 
+import Project from '@/model/Project';
+
 interface DevelopmentProps {
-  development: ProjectDevelopment;
+  project: Project;
 }
 
-const Development: React.FC<DevelopmentProps> = ({ development }) => {
+const Development: React.FC<DevelopmentProps> = ({ project }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const [skills, setSkills] = useState<ProjectSkills | null>(null);
-  const [checkList, setCheckList] = useState<CheckList | null>(null);
-  const [contentURL, setContentURL] = useState<ContentURL | null>(null);
   const [repoURL, setRepoURL] = useState<RepoURL | null>(null);
-  const [image, setImage] = useState<Image | null>(null);
-  const [versionsList, setVersionsList] = useState<ProjectVersions | null>(null);
   const [buttonTitle, setButtonTitle] = useState<string | null>(null);
   const [messageType, setMessageType] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -44,40 +36,8 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
   );
 
   useEffect(() => {
-    if (development.skills) {
-      setSkills(development.skills);
-    }
-  }, [development.skills, setSkills]);
-
-  useEffect(() => {
-    if (development.checkList && development.checkList.tasks.size > 0) {
-      setCheckList(development.checkList)
-    }
-  }, [development, setCheckList]);
-
-  useEffect(() => {
-    if (development.contentURL && development.contentURL.url) {
-      setContentURL(development.contentURL)
-    }
-  }, [development, setContentURL]);
-
-  useEffect(() => {
-    if (development.repoURL && development.repoURL.url) {
-      setRepoURL(development.repoURL)
-    }
-  }, [development, setRepoURL]);
-
-  useEffect(() => {
-    if (development.repoURL && development.repoURL.url) {
-      setImage(new Image())
-    }
-  }, [development, setRepoURL]);
-
-  useEffect(() => {
-    if (development.versionsList && development.versionsList.current) {
-      setVersionsList(development.versionsList)
-    }
-  }, [development, setVersionsList]);
+    setRepoURL(project.process?.development?.repoURL ?? null)
+  }, [project]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -85,7 +45,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
       setMessage('Click Log in with GitHub to gain access to the code.');
       setMessageType('info');
     }
-  }, [isAuthenticated, setMessage, setMessageType]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -93,7 +53,7 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
       setMessage('Gain access to the source code on GitHub.');
       setMessageType('info');
     }
-  }, [isAuthenticated, setMessage, setMessageType]);
+  }, [isAuthenticated]);
 
   const handleSeeCode = () => {
     if (isAuthenticated && repoURL && repoURL.url) {
@@ -103,21 +63,21 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
     }
   };
 
-  const hasContent = skills || checkList || contentURL || versionsList || repoURL;
+  const hasContent = project.process?.development?.skills || project.process?.development?.checkList || project.process?.development?.contentURL || project.process?.development?.versionsList || project.process?.development?.repoURL;
 
   return (
-    <>{hasContent &&
+    <>{project.process && project.process.development && hasContent &&
       <div className="project-process-development" id="project_process_development">
 
         <h3 className="title">development</h3>
 
-        {skills && <ProjectSkillsComponent projectSkills={skills} />}
+        {project.process.development.skills && <ProjectSkillsComponent project={project} />}
 
-        {checkList && <CheckListComponent checkList={checkList} />}
+        {project.process.development.checkList && <CheckListComponent checkList={project.process.development.checkList} />}
 
-        {contentURL && <ContentComponent title={''} content={contentURL} />}
+        {project.process.development.contentURL && <ContentComponent title={''} content={project.process.development.contentURL} />}
 
-        {versionsList && <Versions projectVersions={versionsList} />}
+        {project.process.development.versionsList && <Versions projectVersions={project.process.development.versionsList} />}
 
         {repoURL && buttonTitle &&
           <button className='repo' onClick={handleSeeCode}>

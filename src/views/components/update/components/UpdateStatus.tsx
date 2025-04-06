@@ -87,7 +87,7 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ project }) => {
 
     return (
         <>
-            {projectStatus && <Status projectStatus={projectStatus} />}
+            {project.process && project.process.status && <Status project={project} />}
         </>
     )
 }

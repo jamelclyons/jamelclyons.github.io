@@ -1,47 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import GalleryComponent from '../GalleryComponent';
 import ContentComponent from '../content/ContentComponent';
 import CheckListComponent from './CheckListComponent';
 
-import ProjectDelivery from '@/model/ProjectDelivery';
-import Gallery from '@/model/Gallery';
-import CheckList from '@/model/CheckList';
-import ContentURL from '@/model/ContentURL';
+import Project from '@/model/Project';
 
 interface DeliveryProps {
-  delivery: ProjectDelivery;
+  project: Project;
 }
 
-const Delivery: React.FC<DeliveryProps> = ({ delivery }) => {
-  const [checkList, setCheckList] = useState<CheckList | null>(null);
-  const [gallery, setGallery] = useState<Gallery | null>(null);
-  const [contentURL, setContentURL] = useState<ContentURL | null>(null);
-
-  useEffect(() => {
-    setCheckList(delivery.checkList);
-  }, [delivery, setCheckList]);
-
-  useEffect(() => {
-    setGallery(delivery.gallery);
-  }, [delivery, setGallery]);
-
-  useEffect(() => {
-    setContentURL(delivery.contentURL);
-  }, [delivery, setContentURL]);
-
-  const hasContent = checkList || gallery || contentURL;
+const Delivery: React.FC<DeliveryProps> = ({ project }) => {
+  const hasContent = project.process?.delivery?.checkList || project.process?.delivery?.gallery || project.process?.delivery?.contentURL;
 
   return (
+    project.process &&
+    project.process.delivery &&
     hasContent && (
       <div className="project-process-delivery" id="project_process_delivery">
         <h3 className="title">delivery</h3>
 
-        {checkList && <CheckListComponent checkList={checkList} />}
+        {project.process.delivery.checkList &&
+          <CheckListComponent checkList={project.process.delivery.checkList} />}
 
-        {gallery && gallery.images && gallery.images.length > 0 && <GalleryComponent gallery={gallery.images} title="" />}
+        {project.process.delivery.gallery && project.process.delivery.gallery.images && project.process.delivery.gallery.images.length > 0 &&
+          <GalleryComponent gallery={project.process.delivery.gallery.images} title="" />}
 
-        {contentURL && <ContentComponent title={null} content={contentURL} />}
+        {project.process.delivery.contentURL && <ContentComponent title={null} content={project.process.delivery.contentURL} />}
       </div>
     )
   );

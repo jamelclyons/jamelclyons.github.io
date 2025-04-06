@@ -4,41 +4,31 @@ import GalleryComponent from '../GalleryComponent';
 import DocumentComponent from '@/views/components/DocumentComponent';
 import ContentComponent from '../content/ContentComponent';
 
-import ProjectProblem from '@/model/ProjectProblem';
 import Gallery from '@/model/Gallery';
 import ContentURL from '@/model/ContentURL';
 import DocumentURL from '@/model/DocumentURL';
+import Project from '@/model/Project';
 
 interface ProblemProps {
-  problem: ProjectProblem
+  project: Project;
 }
 
-const TheProblem: React.FC<ProblemProps> = ({ problem }) => {
-  const [gallery, setGallery] = useState<Gallery | null>(null);
-  const [contentURL, setContentURL] = useState<ContentURL | null>(null);
-  const [whitepaperURL, setwhitepaperURL] = useState<DocumentURL | null>(null);
-
-  useEffect(() => { if (problem.gallery) { setGallery(problem.gallery) } }, [problem, setGallery]);
-
-  useEffect(() => { if (problem.contentURL) { setContentURL(problem.contentURL) } }, [problem, setContentURL]);
-
-  useEffect(() => { if (problem.whitepaperURL) { setwhitepaperURL(problem.whitepaperURL) } }, [problem, setwhitepaperURL]);
-
-  const hasContent = gallery || contentURL || whitepaperURL;
+const TheProblem: React.FC<ProblemProps> = ({ project }) => {
+  const hasContent = project.problem?.gallery || project.problem?.contentURL || project.problem?.whitepaperURL;
 
   return (
     <>
-      {hasContent &&
+      {project.problem && hasContent &&
         <>
           <div className="project-section project-problem" id="project_problem">
             <h2 className="title">the problem</h2>
 
-            {gallery && gallery.images && gallery.images.length > 0 && < GalleryComponent title={'Problem'} gallery={gallery.images} />}
+            {project.problem.gallery && project.problem.gallery.images && project.problem.gallery.images.length > 0 && < GalleryComponent title={'Problem'} gallery={project.problem.gallery.images} />}
 
-            {contentURL && <ContentComponent title='' content={contentURL} />}
+            {project.problem.contentURL && <ContentComponent title='' content={project.problem.contentURL} />}
           </div>
 
-          {whitepaperURL && <DocumentComponent documentURL={whitepaperURL} />}
+          {project.problem && project.problem.whitepaperURL && <DocumentComponent documentURL={project.problem.whitepaperURL} />}
         </>
       }
     </>
