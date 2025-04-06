@@ -33,47 +33,30 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ project }) => {
 
   const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject());
 
-  const [design, setDesign] = useState<ProjectDesign>(project.process.design);
-  const [gallery, setGallery] = useState<Gallery>(project.process.design.gallery);
-  const [checkList, setCheckList] = useState<CheckList>(project.process.design.checkList);
-  const [colorsList, setColorsList] = useState<Array<Color>>(project.process.design.colorsList);
-  const [content, setContent] = useState<ContentURL | null>(project.process.design.contentURL);
+  const [gallery, setGallery] = useState<Gallery>(new Gallery);
+  const [checkList, setCheckList] = useState<CheckList>(new CheckList);
+  const [colorsList, setColorsList] = useState<Array<Color>>([]);
+  const [content, setContent] = useState<ContentURL | null>(null);
 
   useEffect(() => {
     setProjectObject(project.toProjectObject())
   }, [project, setProjectObject]);
 
   useEffect(() => {
-    setDesign(project.process.design)
-  }, [project.process.design, setDesign]);
+    setGallery(project.process?.design?.gallery ?? new Gallery)
+  }, [project.process?.design?.gallery, setGallery]);
 
   useEffect(() => {
-    setGallery(project.process.design.gallery)
-  }, [project.process.design.gallery, setGallery]);
+    setCheckList(project.process?.design?.checkList ?? new CheckList)
+  }, [project.process?.design?.checkList, setCheckList]);
 
   useEffect(() => {
-    setCheckList(project.process.design.checkList)
-  }, [project.process.design.checkList, setCheckList]);
+    setColorsList(project.process?.design?.colorsList ?? [])
+  }, [project.process?.design?.colorsList, setColorsList]);
 
   useEffect(() => {
-    setColorsList(project.process.design.colorsList)
-  }, [project.process.design.colorsList, setColorsList]);
-
-  useEffect(() => {
-    setContent(project.process.design.contentURL)
-  }, [project.process.design.contentURL, setContent]);
-
-  useEffect(() => {
-    setCheckList(design.checkList)
-  }, [design.checkList, setCheckList]);
-
-  useEffect(() => {
-    setGallery(design.gallery)
-  }, [design.gallery, setGallery]);
-
-  useEffect(() => {
-    setColorsList(design.colorsList)
-  }, [design.colorsList, setColorsList]);
+    setContent(project.process?.design?.contentURL ?? null)
+  }, [project.process?.design?.contentURL, setContent]);
 
   useEffect(() => {
     if (updatedDesignGallery) {
@@ -109,13 +92,6 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ project }) => {
       }
 
       setContent(new ContentURL(value));
-
-      setDesign(new ProjectDesign({
-        gallery: gallery.toGalleryObject(),
-        check_list: checkList.toCheckListObject(),
-        colors_list: colorsList.map((color) => color.toColorObject()),
-        content_url: contentObject
-      }))
     }
   }
 
@@ -124,17 +100,19 @@ const UpdateDesign: React.FC<UpdateDesignProps> = ({ project }) => {
 
     try {
       const projectDesignObject: ProjectDesignObject = {
-        gallery: gallery.toGalleryObject(),
-        check_list: checkList.toCheckListObject(),
+        gallery: gallery ? gallery.toGalleryObject() : null,
+        check_list: checkList ? checkList.toCheckListObject() : null,
         colors_list: colorsList.map((color) => color.toColorObject()),
-        content_url: content ? content?.toContentURLObject() : null
+        content_url: content ? content.url : null
       };
 
       const updatedProjectObject: ProjectObject = {
         ...projectObject,
         process: {
-          ...projectObject.process,
-          design: projectDesignObject
+          design: projectDesignObject,
+          development: projectObject.process?.development ?? null,
+          delivery: projectObject.process?.delivery ?? null,
+          status: projectObject.process?.status ?? null
         }
       };
 

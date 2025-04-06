@@ -24,10 +24,10 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
 
   const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject());
 
-  const [details, setDetails] = useState<ProjectDetails>(project.details);
-  const [privacy, setPrivacy] = useState<string>(project.details.privacy);
-  const [clientID, setClientID] = useState<string>(project.details.clientID);
-  const [content, setContent] = useState<ContentURL | null>(project.details.content);
+  const [details, setDetails] = useState<ProjectDetails | null>(null);
+  const [privacy, setPrivacy] = useState<string | null>(null);
+  const [clientID, setClientID] = useState<string | null>(null);
+  const [content, setContent] = useState<ContentURL | null>(null);
 
   useEffect(() => {
     setProjectObject(project.toProjectObject())
@@ -35,9 +35,9 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
 
   useEffect(() => {
     setDetails(project.details);
-    setPrivacy(project.details.privacy)
-    setClientID(project.details.clientID)
-    setContent(project.details.content)
+    setPrivacy(project.details?.privacy ?? null)
+    setClientID(project.details?.clientID ?? null)
+    setContent(project.details?.content ?? null)
   }, [
     project.details,
     setDetails,
@@ -54,7 +54,6 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
 
       if (name === 'privacy') {
         setPrivacy(privacyFromString(value));
-        setDetails(new ProjectDetails({ ...details.toDetailsObject(), privacy: value }));
       }
     } catch (error) {
       const err = error as Error;
@@ -86,14 +85,6 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
           isValid: false
         }
       }
-
-      const detailsObject: ProjectDetailsObject = {
-        ...details.toDetailsObject(),
-        client_id: clientID,
-        content: contentObject
-      };
-
-      setDetails(new ProjectDetails(detailsObject));
     } catch (error) {
       const err = error as Error;
       dispatch(setMessage(err.message));
@@ -133,7 +124,7 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
       <form action="" id='update_details'>
         <div className="form-item-flex">
           <label htmlFor="privacy">Privacy:</label>
-          <select id="privacy" name='privacy' value={privacy} onChange={handleChangeSelect}>
+          <select id="privacy" name='privacy' value={privacy ?? ''} onChange={handleChangeSelect}>
             <option value={Privacy.Private}>Private</option>
             <option value={Privacy.Public}>Public</option>
           </select>

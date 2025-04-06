@@ -6,49 +6,48 @@ import ProjectSkills, { ProjectSkillsDataObject } from './ProjectSkills';
 import { ProjectSkillsObject } from './ProjectSkills';
 import Gallery, { GalleryObject } from './Gallery';
 import CheckList, { CheckListObject } from './CheckList';
-import ContentURL, { ContentURLObject } from './ContentURL';
+import ContentURL from './ContentURL';
+import RepoURL from './RepoURL';
 
 export type ProjectDevelopmentObject = {
-  gallery: GalleryObject;
+  gallery: GalleryObject | null;
   repo_url: string | null;
-  content_url: ContentURLObject | null;
-  skills: ProjectSkillsObject;
-  check_list: CheckListObject;
-  versions_list: ProjectVersionsObject;
+  content_url: string | null;
+  skills: ProjectSkillsObject | null;
+  check_list: CheckListObject | null;
+  versions_list: ProjectVersionsObject | null;
 };
 
 export type ProjectDevelopmentDataObject = {
-  gallery: GalleryObject;
+  gallery: GalleryObject | null;
   repo_url: string | null;
   content_url: string | null;
-  skills: ProjectSkillsDataObject;
-  check_list: CheckListObject;
-  versions_list: ProjectVersionsObject;
+  skills: ProjectSkillsDataObject | null;
+  check_list: CheckListObject | null;
+  versions_list: ProjectVersionsObject | null;
 };
 
 class ProjectDevelopment extends Model {
-  gallery: Gallery;
-  repoURL: string;
+  gallery: Gallery | null;
+  repoURL: RepoURL | null;
   contentURL: ContentURL | null;
-  skills: ProjectSkills;
-  checkList: CheckList;
-  versionsList: ProjectVersions;
+  skills: ProjectSkills | null;
+  checkList: CheckList | null;
+  versionsList: ProjectVersions | null;
 
   constructor(data: Record<string, any> | ProjectDevelopmentObject = {}) {
     super();
 
-    this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
-    this.repoURL = data?.repo_url || '';
+    this.gallery = data?.gallery ? new Gallery(data.gallery) : null;
+    this.repoURL = data?.repo_url ? new RepoURL(data.repo_url) : null;
     this.contentURL = data?.content_url?.url
       ? new ContentURL(data.content_url.url)
       : null;
-    this.skills = data?.skills
-      ? new ProjectSkills(data.skills)
-      : new ProjectSkills();
-    this.checkList = new CheckList(data?.check_list);
+    this.skills = data?.skills ? new ProjectSkills(data.skills) : null;
+    this.checkList = data?.check_list ? new CheckList(data.check_list) : null;
     this.versionsList = data?.versions_list
       ? new ProjectVersions(data.versions_list)
-      : new ProjectVersions();
+      : null;
   }
 
   toArrayTask(data: Array<Record<string, any>>) {
@@ -70,27 +69,27 @@ class ProjectDevelopment extends Model {
 
   toProjectDevelopmentObject(): ProjectDevelopmentObject {
     return {
-      gallery: this.gallery.toGalleryObject(),
-      repo_url: this.repoURL,
-      content_url: this.contentURL
-        ? this.contentURL?.toContentURLObject()
+      gallery: this.gallery ? this.gallery.toGalleryObject() : null,
+      repo_url: this.repoURL ? this.repoURL.url : null,
+      content_url: this.contentURL ? this.contentURL.url : null,
+      skills: this.skills ? this.skills.toProjectSkillsObject() : null,
+      check_list: this.checkList ? this.checkList.toCheckListObject() : null,
+      versions_list: this.versionsList
+        ? this.versionsList.toProjectVersionsObject()
         : null,
-      skills: this.skills.toProjectSkillsObject(),
-      check_list: this.checkList.toCheckListObject(),
-      versions_list: this.versionsList.toProjectVersionsObject(),
     };
   }
 
   toProjectDevelopmentDataObject(): ProjectDevelopmentDataObject {
     return {
-      gallery: this.gallery.toGalleryObject(),
-      repo_url: this.repoURL,
-      content_url: this.contentURL?.url
-        ? this.contentURL.url
+      gallery: this.gallery ? this.gallery.toGalleryObject() : null,
+      repo_url: this.repoURL ? this.repoURL.url : null,
+      content_url: this.contentURL ? this.contentURL.url : null,
+      skills: this.skills ? this.skills.toProjectSkillsDataObject() : null,
+      check_list: this.checkList ? this.checkList.toCheckListObject() : null,
+      versions_list: this.versionsList
+        ? this.versionsList.toProjectVersionsObject()
         : null,
-      skills: this.skills.toProjectSkillsDataObject(),
-      check_list: this.checkList.toCheckListObject(),
-      versions_list: this.versionsList.toProjectVersionsObject(),
     };
   }
 }

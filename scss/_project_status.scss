@@ -10,16 +10,24 @@
 .status-details {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1rem;
+}
+
+.status-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
 progress {
   appearance: none;
   border: none;
-  height: 1.5rem;
+  height: 2rem;
   background-color: white;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow) inset;
+  width: 50vw;
 }
 
 progress::-webkit-progress-bar {

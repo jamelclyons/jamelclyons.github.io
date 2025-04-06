@@ -28,29 +28,25 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
   );
 
   const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject())
-  const [gallery, setGallery] = useState<Gallery>(project.problem.gallery);
-  const [contentURL, setContentURL] = useState<string>(project.problem.contentURL?.url ?? '');
-  const [whitepaperURL, setWhitepaperURL] = useState<string>(project.problem.whitepaperURL?.url ?? '');
+  const [gallery, setGallery] = useState<Gallery | null>(null);
+  const [contentURL, setContentURL] = useState<string | null>(null);
+  const [whitepaperURL, setWhitepaperURL] = useState<string | null>(null);
 
   useEffect(() => {
     setProjectObject(project.toProjectObject());
   }, [project, setProjectObject]);
 
   useEffect(() => {
-    setGallery(project.problem.gallery);
-  }, [project.problem.gallery, setGallery]);
+    setGallery(project.problem?.gallery ?? null);
+  }, [project, setGallery]);
 
   useEffect(() => {
-    if (project.problem.contentURL?.url) {
-      setContentURL(project.problem.contentURL.url);
-    }
-  }, [project.problem.contentURL, setContentURL]);
+    setContentURL(project.problem?.contentURL?.url ?? '');
+  }, [project, setContentURL]);
 
   useEffect(() => {
-    if (project.problem.whitepaperURL?.url) {
-      setWhitepaperURL(project.problem.whitepaperURL.url);
-    }
-  }, [project.problem.whitepaperURL, setWhitepaperURL]);
+    setWhitepaperURL(project.problem?.whitepaperURL?.url ?? null);
+  }, [project.problem?.whitepaperURL, setWhitepaperURL]);
 
   useEffect(() => {
     if (updatedProblemGallery) {
@@ -97,9 +93,9 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
       const updatedProjectObject: ProjectObject = {
         ...projectObject,
         problem: {
-          gallery: gallery.toGalleryObject(),
-          content_url: new ContentURL(contentURL).toContentURLObject(),
-          whitepaper_url: new DocumentURL(whitepaperURL).toDocumentURLObject()
+          gallery: gallery ? gallery.toGalleryObject() : null,
+          content_url: contentURL ? contentURL : null,
+          whitepaper_url: whitepaperURL ? whitepaperURL : null
         },
       };
 
@@ -117,18 +113,18 @@ const UpdateProblem: React.FC<UpdateProblemProps> = ({ project }) => {
 
       <h2 className="title">Problem</h2>
 
-      <UpdateGallery location='problem' gallery={gallery} />
+      {gallery && <UpdateGallery location='problem' gallery={gallery} />}
 
       <hr />
 
       <div className="form-item-flex">
         <label htmlFor="problem_content_url">Problem Content URL:</label>
-        <input type="text" name='problem_content_url' value={contentURL} onChange={handleProblemContentURLChange} />
+        <input type="text" name='problem_content_url' value={contentURL ?? ''} onChange={handleProblemContentURLChange} />
       </div>
 
       <div className="form-item-flex">
         <label htmlFor="whitepaper_url">Whitepaper URL:</label>
-        <input type="text" name='whitepaper_url' value={whitepaperURL} onChange={handleWhitepaperURLChange} />
+        <input type="text" name='whitepaper_url' value={whitepaperURL ?? ''} onChange={handleWhitepaperURLChange} />
       </div>
 
       <button onClick={handleUpdateProblem}>

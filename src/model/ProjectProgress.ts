@@ -8,13 +8,15 @@ export type ProjectProgressObject = {
 class ProjectProgress extends Model {
   completion: number;
 
-  constructor(projectCheckList?: ProjectCheckList | ProjectCheckListObject) {
+  constructor(data?: ProjectCheckList | number) {
     super();
 
     this.completion =
-      projectCheckList instanceof ProjectCheckList
-        ? this.getCompletion(projectCheckList)
-        : this.getCompletion(new ProjectCheckList(projectCheckList));
+      data instanceof ProjectCheckList
+        ? this.getCompletion(data)
+        : typeof data === 'number'
+        ? data
+        : 0;
   }
 
   getCompletion(projectCheckList: ProjectCheckList) {
@@ -24,9 +26,15 @@ class ProjectProgress extends Model {
 
     if (totalWeight > 0) {
       percentageComplete =
-        ((projectCheckList.designCheckList.weight +
-          projectCheckList.developmentCheckList.weight +
-          projectCheckList.deliveryCheckList.weight) /
+        (((projectCheckList.designCheckList
+          ? projectCheckList.designCheckList.weight
+          : 0) +
+          (projectCheckList.developmentCheckList
+            ? projectCheckList.developmentCheckList.weight
+            : 0) +
+          (projectCheckList.deliveryCheckList
+            ? projectCheckList.deliveryCheckList.weight
+            : 0)) /
           totalWeight) *
         100;
     }

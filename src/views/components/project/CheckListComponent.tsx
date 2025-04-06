@@ -8,17 +8,17 @@ interface CheckListProps {
 }
 
 const CheckListComponent: React.FC<CheckListProps> = ({ checkList }) => {
-  const [id, setId] = useState<string>(checkList.id);
-  const [title, setTitle] = useState<string | null>(checkList.title);
-  const [tasks, setTasks] = useState<Set<Task>>(checkList.tasks);
+  const [id, setId] = useState<string | null>(null);
+  const [title, setTitle] = useState<string | null>(null);
+  const [tasks, setTasks] = useState<Set<Task> | null>(null);
 
-  useEffect(() => { setId(checkList.id) }, [checkList.id, setId]);
-  useEffect(() => { setTitle(checkList.title) }, [checkList.title, setTitle]);
-  useEffect(() => { setTasks(checkList.tasks) }, [checkList.tasks, setId]);
+  useEffect(() => { setId(checkList.id) }, [checkList, setId]);
+  useEffect(() => { setTitle(checkList.title) }, [checkList, setTitle]);
+  useEffect(() => { setTasks(checkList.tasks) }, [checkList, setId]);
 
   return (
     <>
-      {tasks.size > 0 ? (
+      {tasks && tasks.size > 0 && id ? (
         <div className="checklist" id={id}>
 
           {title && <h4>{title}</h4>}

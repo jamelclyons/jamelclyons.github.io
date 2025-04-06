@@ -280,7 +280,7 @@ export const getRepoDetails = createAsyncThunk(
 
         return {
           ...repo.toObject(),
-          owner: repo.owner.toObject(),
+          owner: repo.owner ? repo.owner.toObject() : null,
           skills: skills,
           contents: contents,
           contributors: contributors,
@@ -575,7 +575,6 @@ export const getOrganizationDetails = createAsyncThunk(
         getOrganizationAccount.fulfilled.match(orgResponse) &&
         orgResponse.payload
       ) {
-
         const organization = new Organization();
         let repos: Array<Record<string, any>> = [];
         let contactMethods: Record<string, any> = {};

@@ -9,13 +9,13 @@ interface ProjectCardProps {
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
-    const { title, description, solution } = project;
+    const { title, description, solution, subtitle } = project;
 
     return (
         <div className="project-card card">
             <h2>{title}</h2>
 
-            {Array.isArray(solution.gallery.images) &&
+            {solution && solution.gallery && Array.isArray(solution.gallery.images) &&
                 solution.gallery.images.length > 0 ? (
                 <img
                     className="photo"
@@ -26,7 +26,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                 ''
             )}
 
-            <ProjectDescription description={description} />
+            {subtitle && <h3>{subtitle}</h3>}
+
+            {description && <ProjectDescription description={description} />}
         </div>
     )
 }

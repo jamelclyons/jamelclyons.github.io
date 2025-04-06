@@ -11,32 +11,32 @@ export interface RepoObject {
   id: string;
   privacy: boolean;
   size: number;
-  owner: OwnerObject;
+  owner: OwnerObject | null;
   created_at: string;
   updated_at: string;
   homepage: string;
   description: string;
   repo_url: string;
-  skills: ProjectSkillsObject;
-  contents: RepoContentsObject;
-  contributors_url: string;
-  contributors: ContributorsObject;
+  skills: ProjectSkillsObject | null;
+  contents: RepoContentsObject | null;
+  contributors_url: string | null;
+  contributors: ContributorsObject | null;
 }
 
 class Repo extends Model {
   id: string;
   privacy: boolean;
   size: number;
-  owner: Owner;
+  owner: Owner | null;
   createdAt: string;
   updatedAt: string;
   homepage: string;
   description: string;
   repoURL: string;
-  skills: ProjectSkills;
-  contents: RepoContents;
+  skills: ProjectSkills | null;
+  contents: RepoContents | null;
   contributorsURL: string;
-  contributors: Contributors = new Contributors();
+  contributors: Contributors | null;
 
   constructor(data: Record<string, any> | RepoObject = {}) {
     super();
@@ -44,7 +44,7 @@ class Repo extends Model {
     this.id = data?.id;
     this.privacy = data?.privacy;
     this.size = data?.size;
-    this.owner = data?.owner ? new Owner(data.owner) : new Owner();
+    this.owner = data?.owner ? new Owner(data.owner) : null;
     this.createdAt = data?.created_at;
     this.updatedAt = data?.updated_at;
     this.homepage = data?.homepage;
@@ -57,14 +57,16 @@ class Repo extends Model {
       ? new RepoContents(data.contents)
       : new RepoContents();
     this.contributorsURL = data?.contributors_url;
-    this.setContributors(data?.contributors);
+    this.contributors = new Contributors(
+      this.setContributors(data?.contributors)
+    );
   }
 
   fromGitHub(data: Record<string, any>) {
     this.id = data?.name;
     this.privacy = data?.private;
     this.size = data?.size;
-    this.owner = data?.owner ? new Owner(data.owner) : new Owner();
+    this.owner = data?.owner ? new Owner(data.owner) : null;
     this.createdAt = data?.created_at;
     this.updatedAt = data?.pushed_at;
     this.homepage = data?.homepage;
@@ -234,12 +236,24 @@ class Repo extends Model {
   }
 
   setContents(contentsObject: Record<string, any>) {
-    this.contents.setSolution(new RepoContent(contentsObject.solution));
-    this.contents.setDesign(new RepoContent(contentsObject.design));
-    this.contents.setDevelopment(new RepoContent(contentsObject.development));
-    this.contents.setDelivery(new RepoContent(contentsObject.delivery));
-    this.contents.setProblem(new RepoContent(contentsObject.problem));
-    this.contents.setDetails(new RepoContent(contentsObject.details));
+    if (
+      contentsObject &&
+      (contentsObject.solution ||
+        contentsObject.design ||
+        contentsObject.development ||
+        contentsObject.delivery ||
+        contentsObject.problem ||
+        contentsObject.details)
+    ) {
+      this.contents ? this.contents : (this.contents = new RepoContents());
+
+      this.contents.setSolution(new RepoContent(contentsObject.solution));
+      this.contents.setDesign(new RepoContent(contentsObject.design));
+      this.contents.setDevelopment(new RepoContent(contentsObject.development));
+      this.contents.setDelivery(new RepoContent(contentsObject.delivery));
+      this.contents.setProblem(new RepoContent(contentsObject.problem));
+      this.contents.setDetails(new RepoContent(contentsObject.details));
+    }
   }
 
   filterContents(contentsObject: Array<Record<string, any>>) {
@@ -299,7 +313,7 @@ class Repo extends Model {
         contributors.push(user);
       });
 
-      this.contributors = new Contributors(contributors);
+      return contributors;
     }
   }
 }

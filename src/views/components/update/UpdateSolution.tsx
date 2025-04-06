@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '@/model/store';
 import Project, { ProjectObject } from '@/model/Project';
-import ProjectSolution, { ProjectSolutionObject } from '@/model/ProjectSolution';
+import { ProjectSolutionObject } from '@/model/ProjectSolution';
 import Gallery from '@/model/Gallery';
 import Feature from '@/model/Feature';
 import ProjectURLs from '@/model/ProjectURLs';
@@ -31,35 +31,26 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
     (state: RootState) => state.update
   );
 
-  const [solution, setSolution] = useState<ProjectSolution>(project.solution);
-  const [gallery, setGallery] = useState<Gallery>(project.solution.gallery);
-  const [features, setFeatures] = useState<Set<Feature>>(project.solution.features);
-  const [content, setContent] = useState<ContentURL | null>(project.solution.contentURL);
-  const [projectURLs, setProjectURLs] = useState<ProjectURLs>(project.solution.projectURLs);
+  const [gallery, setGallery] = useState<Gallery>(new Gallery);
+  const [features, setFeatures] = useState<Set<Feature>>(new Set);
+  const [content, setContent] = useState<ContentURL | null>(null);
+  const [projectURLs, setProjectURLs] = useState<ProjectURLs>(new ProjectURLs);
 
   useEffect(() => {
-    setSolution(project.solution)
-  }, [project.solution, setSolution]);
+    setGallery(project.solution?.gallery ?? new Gallery);
+  }, [project, setGallery]);
 
   useEffect(() => {
-    setGallery(project.solution.gallery);
-  }, [project.solution.gallery, setGallery]);
+    setFeatures(project.solution?.features ?? new Set);
+  }, [project, setFeatures]);
 
   useEffect(() => {
-    setFeatures(project.solution.features);
-  }, [project.solution.features, setFeatures]);
+    setContent(project.solution?.contentURL ?? null);
+  }, [project, setContent]);
 
   useEffect(() => {
-    setContent(project.solution.contentURL);
-  }, [project.solution.contentURL, setContent]);
-
-  useEffect(() => {
-    setProjectURLs(project.solution.projectURLs);
-  }, [project.solution.projectURLs, setProjectURLs]);
-
-  useEffect(() => {
-    setGallery(solution.gallery);
-  }, [solution.gallery, setGallery]);
+    setProjectURLs(project.solution?.projectURLs ?? new ProjectURLs);
+  }, [project, setProjectURLs]);
 
   useEffect(() => {
     if (updatedSolutionGallery) {
@@ -85,7 +76,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
     }
   }, [updatedProjectURLs, setProjectURLs]);
 
-  
+
   const handleSolutionContentURLChange = (e: ChangeEvent<HTMLInputElement>) => {
     try {
       const target = e.target as HTMLInputElement;
@@ -93,23 +84,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
       const { name, value } = target;
 
       if (name === 'solution_content_url') {
-        const contentURLObject: ContentURLObject = {
-          owner: null,
-          repo: null,
-          path: null,
-          branch: null,
-          url: value,
-          isValid: false
-        }
-
         setContent(new ContentURL(value));
-
-        setSolution(new ProjectSolution({
-          gallery: gallery,
-          features: features,
-          content_url: contentURLObject,
-          project_urls: projectURLs
-        }));
       }
     } catch (error) {
       const err = error as Error;

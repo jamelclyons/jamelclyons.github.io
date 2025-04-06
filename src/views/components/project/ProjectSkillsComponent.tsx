@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 
-import TaxListIcon from './TaxListIcon';
+import TaxListIcon from '../TaxListIcon';
 
 import { setMessage, setMessageType } from '@/controllers/messageSlice';
 
@@ -10,58 +10,57 @@ import ProjectSkills from '@/model/ProjectSkills';
 import { Framework, Language, ProjectType, Service, Technology } from '@/model/Taxonomy';
 import Skills from '@/model/Skills';
 
-interface SkillsComponentProps {
-    projectSkills: ProjectSkills | null
+interface ProjectSkillsComponentProps {
+    projectSkills: ProjectSkills;
 }
 
-const SkillsComponent: React.FC<SkillsComponentProps> = ({ projectSkills }) => {
+const ProjectSkillsComponent: React.FC<ProjectSkillsComponentProps> = ({ projectSkills }) => {
     const dispatch = useDispatch<AppDispatch>();
 
     const { taxonomiesLoading } = useSelector((state: RootState) => state.taxonomies);
 
-    const [skills, setSkills] = useState<Skills | ProjectSkills>(new Skills());
-    const [types, setTypes] = useState<Set<ProjectType> | null>(skills.types);
-    const [languages, setLanguages] = useState<Set<Language> | null>(skills.languages);
-    const [frameworks, setFrameworks] = useState<Set<Framework> | null>(skills.frameworks);
-    const [technologies, setTechnologies] = useState<Set<Technology> | null>(skills.technologies);
+    const [skills, setSkills] = useState<ProjectSkills>(new ProjectSkills);
+    const [types, setTypes] = useState<Set<ProjectType> | null>(null);
+    const [languages, setLanguages] = useState<Set<Language> | null>(null);
+    const [frameworks, setFrameworks] = useState<Set<Framework> | null>(null);
+    const [technologies, setTechnologies] = useState<Set<Technology> | null>(null);
     const [services, setServices] = useState<Set<Service> | null>(null);
 
     useEffect(() => {
         if (projectSkills) {
-            console.log(projectSkills)
-            setSkills(skills.show(projectSkills))
+            setSkills(skills.show(projectSkills));
         }
     }, [projectSkills, setSkills]);
 
     useEffect(() => {
-        if (skills?.types) {
+        if (projectSkills?.types && projectSkills.types.size > 0) {
             setTypes(skills.types)
         }
-    }, [skills?.types, setTypes]);
+    }, [projectSkills, setTypes]);
 
     useEffect(() => {
-        if (skills?.languages) {
+        if (projectSkills?.languages && projectSkills.languages.size > 0) {
             setLanguages(skills.languages)
         }
-    }, [skills?.languages, setLanguages]);
+    }, [projectSkills, setLanguages]);
 
     useEffect(() => {
-        if (skills?.frameworks) {
+        if (projectSkills?.frameworks && projectSkills.frameworks.size > 0) {
             setFrameworks(skills.frameworks)
         }
-    }, [skills?.frameworks, setFrameworks]);
+    }, [projectSkills, setFrameworks]);
 
     useEffect(() => {
-        if (skills?.technologies) {
+        if (projectSkills?.technologies && projectSkills?.technologies.size > 0) {
             setTechnologies(skills.technologies)
         }
-    }, [skills?.technologies, setTechnologies]);
+    }, [projectSkills, setTechnologies]);
 
     useEffect(() => {
-        if (skills?.services) {
+        if (projectSkills?.services && projectSkills.services.size > 0) {
             setServices(skills.services)
         }
-    }, [skills?.services, setServices]);
+    }, [projectSkills, setServices]);
 
     useEffect(() => {
         if (taxonomiesLoading) {
@@ -87,4 +86,4 @@ const SkillsComponent: React.FC<SkillsComponentProps> = ({ projectSkills }) => {
     )
 }
 
-export default SkillsComponent
+export default ProjectSkillsComponent;

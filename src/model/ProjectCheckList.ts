@@ -2,39 +2,51 @@ import CheckList, { CheckListObject } from './CheckList';
 import Model from './Model';
 
 export type ProjectCheckListObject = {
-  design_check_list: CheckListObject;
-  development_check_list: CheckListObject;
-  delivery_check_list: CheckListObject;
+  design_check_list: CheckListObject | null;
+  development_check_list: CheckListObject | null;
+  delivery_check_list: CheckListObject | null;
 };
 
 class ProjectCheckList extends Model {
-  designCheckList: CheckList;
-  developmentCheckList: CheckList;
-  deliveryCheckList: CheckList;
+  designCheckList: CheckList | null;
+  developmentCheckList: CheckList | null;
+  deliveryCheckList: CheckList | null;
   totalWeight: number;
 
   constructor(data?: ProjectCheckListObject) {
     super();
 
-    this.designCheckList = new CheckList(data?.design_check_list);
-    this.developmentCheckList = new CheckList(data?.development_check_list);
-    this.deliveryCheckList = new CheckList(data?.delivery_check_list);
+    this.designCheckList = data?.design_check_list
+      ? new CheckList(data.design_check_list)
+      : null;
+    this.developmentCheckList = data?.development_check_list
+      ? new CheckList(data.development_check_list)
+      : null;
+    this.deliveryCheckList = data?.delivery_check_list
+      ? new CheckList(data.delivery_check_list)
+      : null;
     this.totalWeight = this.getTotalWeight();
   }
 
   getTotalWeight(): number {
     return (
-      this.designCheckList.totalWeight +
-      this.developmentCheckList.totalWeight +
-      this.deliveryCheckList.totalWeight
+      (this.designCheckList ? this.designCheckList.totalWeight : 0) +
+      (this.developmentCheckList ? this.developmentCheckList.totalWeight : 0) +
+      (this.deliveryCheckList ? this.deliveryCheckList.totalWeight : 0)
     );
   }
 
   toProjectCheckListObject(): ProjectCheckListObject {
     return {
-      design_check_list: this.designCheckList.toCheckListObject(),
-      development_check_list: this.designCheckList.toCheckListObject(),
-      delivery_check_list: this.designCheckList.toCheckListObject(),
+      design_check_list: this.designCheckList
+        ? this.designCheckList.toCheckListObject()
+        : null,
+      development_check_list: this.developmentCheckList
+        ? this.developmentCheckList.toCheckListObject()
+        : null,
+      delivery_check_list: this.deliveryCheckList
+        ? this.deliveryCheckList.toCheckListObject()
+        : null,
     };
   }
 }

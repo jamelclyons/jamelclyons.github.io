@@ -20,44 +20,24 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ project }) => {
         (state: RootState) => state.update
     );
 
-    const [designCheckList, setDesignCheckList] = useState<CheckList>(project.process.design.checkList)
-    const [developmentCheckList, setDevelopmentCheckList] = useState<CheckList>(project.process.development.checkList)
-    const [deliveryCheckList, setDeliveryCheckList] = useState<CheckList>(new CheckList(project.process.delivery.checkList))
-    const [checkList, setCheckList] = useState<ProjectCheckList>(new ProjectCheckList(
-        {
-            design_check_list: project.process.design.checkList.toCheckListObject(),
-            development_check_list: project.process.development.checkList.toCheckListObject(),
-            delivery_check_list: project.process.delivery.checkList.toCheckListObject()
-        }
-    ));
-    const [progress, setProgress] = useState<ProjectProgress>(project.process.status.progress);
-    const [projectStatus, setProjectStatus] = useState<ProjectStatus>(project.process.status);
+    const [designCheckList, setDesignCheckList] = useState<CheckList | null>(null)
+    const [developmentCheckList, setDevelopmentCheckList] = useState<CheckList | null>(null)
+    const [deliveryCheckList, setDeliveryCheckList] = useState<CheckList | null>(null)
+    const [checkList, setCheckList] = useState<ProjectCheckList | null>(null);
+    const [progress, setProgress] = useState<ProjectProgress | null>(null);
+    const [projectStatus, setProjectStatus] = useState<ProjectStatus | null>(null);
 
     useEffect(() => {
-        if (project.process.design.checkList) {
-            setDesignCheckList(project.process.design.checkList)
-        }
-    }, [project.process.design.checkList, setDesignCheckList]);
+        setDesignCheckList(project.process?.design?.checkList ?? null)
+    }, [project.process?.design?.checkList, setDesignCheckList]);
 
     useEffect(() => {
-        if (project.process.development.checkList) {
-            setDevelopmentCheckList(project.process.development.checkList)
-        }
-    }, [project.process.development.checkList, setDevelopmentCheckList]);
+        setDevelopmentCheckList(project.process?.development?.checkList ?? null)
+    }, [project.process?.development?.checkList, setDevelopmentCheckList]);
 
     useEffect(() => {
-        if (project.process.delivery.checkList) {
-            setDeliveryCheckList(project.process.delivery.checkList)
-        }
-    }, [project.process.delivery.checkList, setDeliveryCheckList]);
-
-    useEffect(() => {
-        setProgress(project.process.status.progress);
-    }, [project.process.status.progress, setProgress]);
-
-    useEffect(() => {
-        setProjectStatus(project.process.status);
-    }, [project.process.status, setProjectStatus]);
+        setDeliveryCheckList(project.process?.delivery?.checkList ?? null)
+    }, [project.process?.delivery?.checkList, setDeliveryCheckList]);
 
     useEffect(() => {
         if (updatedDesignCheckList) {
@@ -80,22 +60,25 @@ const UpdateStatus: React.FC<UpdateStatusProps> = ({ project }) => {
     useEffect(() => {
         setCheckList(new ProjectCheckList(
             {
-                design_check_list: designCheckList.toCheckListObject(),
-                development_check_list: developmentCheckList.toCheckListObject(),
-                delivery_check_list: deliveryCheckList.toCheckListObject()
+                design_check_list: designCheckList ? designCheckList.toCheckListObject() : null,
+                development_check_list: developmentCheckList ? developmentCheckList.toCheckListObject() : null,
+                delivery_check_list: deliveryCheckList ? deliveryCheckList.toCheckListObject() : null
             }
         ))
     }, [designCheckList, developmentCheckList, deliveryCheckList, setCheckList]);
 
     useEffect(() => {
-        setProgress(new ProjectProgress(checkList));
+        if (checkList) {
+            setProgress(new ProjectProgress(checkList));
+        }
     }, [checkList, setProgress]);
 
     useEffect(() => {
         if (progress) {
             const projectStatusObject: ProjectStatusObject = {
-                created_at: project.process.status.createdAt,
-                updated_at: project.process.status.updatedAt
+                created_at: project?.process?.status?.createdAt ?? null,
+                updated_at: project?.process?.status?.updatedAt ?? null,
+                progress: progress.completion
             }
 
             setProjectStatus(new ProjectStatus(projectStatusObject, progress));

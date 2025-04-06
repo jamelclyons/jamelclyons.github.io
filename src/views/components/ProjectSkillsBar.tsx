@@ -9,7 +9,7 @@ interface ProjectSkillsProp {
 }
 
 const ProjectSkills: React.FC<ProjectSkillsProp> = ({ skillsSet }) => {
-  const [skills, setSkills] = useState<Set<Taxonomy>>();
+  const [skills, setSkills] = useState<Set<Taxonomy>>(skillsSet);
 
   useEffect(() => {
     setSkills(skillsSet);

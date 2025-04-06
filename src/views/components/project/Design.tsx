@@ -2,66 +2,60 @@ import React, { useEffect, useState } from 'react';
 
 import CheckListComponent from './CheckListComponent';
 import Colors from './Colors';
-import Gallery from '../GalleryComponent';
+import GalleryComponent from '../GalleryComponent';
 import ContentComponent from '../content/ContentComponent';
-import ProjectDesign from '../../../model/ProjectDesign';
-import Task from '@/model/Task';
+
+import ProjectDesign from '@/model/ProjectDesign';
 import CheckList from '@/model/CheckList';
 import ContentURL from '@/model/ContentURL';
+import Color from '@/model/Color';
+import Gallery from '@/model/Gallery';
 
 interface DesignProps {
   design: ProjectDesign;
 }
 
 const Design: React.FC<DesignProps> = ({ design }) => {
-  const [checkList, setCheckList] = useState<CheckList>(design.checkList);
-  const [tasks, setTasks] = useState<Set<Task>>(design.checkList.tasks);
-  const [colorsList, setColorsList] = useState(design.colorsList);
-  const [gallery, setGallery] = useState(design.gallery);
-  const [contentURL, setContentURL] = useState<ContentURL | null>(design.contentURL);
-
-  const { logos, icons, animations, umlDiagrams } = gallery;
+  const [checkList, setCheckList] = useState<CheckList | null>(null);
+  const [colorsList, setColorsList] = useState<Array<Color> | null>(null);
+  const [gallery, setGallery] = useState<Gallery | null>(null);
+  const [contentURL, setContentURL] = useState<ContentURL | null>(null);
 
   useEffect(() => {
     setCheckList(design.checkList)
-  }, [design.checkList, setCheckList]);
-
-  useEffect(() => {
-    setTasks(design.checkList.tasks)
-  }, [design.checkList.tasks, setTasks]);
+  }, [design, setCheckList]);
 
   useEffect(() => {
     setColorsList(design.colorsList)
-  }, [design.colorsList, setColorsList]);
+  }, [design, setColorsList]);
 
   useEffect(() => {
     setGallery(design.gallery)
-  }, [design.gallery, setGallery]);
+  }, [design, setGallery]);
 
   useEffect(() => {
     setContentURL(design.contentURL)
-  }, [design.contentURL, setContentURL]);
+  }, [design, setContentURL]);
+
+  const hasContent = checkList || colorsList || gallery || contentURL;
 
   return (
     <>
-      {(tasks.size > 0 ||
-        colorsList.length > 0 ||
-        logos.length > 0 || icons.length > 0 || animations.length > 0 || umlDiagrams.length > 0 ||
-        contentURL) &&
+      {hasContent &&
         <div className="project-process-design" id="project_process_design">
           <h3 className="title">design</h3>
 
-          {tasks.size > 0 && <CheckListComponent checkList={checkList} />}
+          {checkList && <CheckListComponent checkList={checkList} />}
 
-          {colorsList.length > 0 && <Colors colors={colorsList} />}
+          {colorsList && colorsList.length > 0 && <Colors colors={colorsList} />}
 
-          {logos.length > 0 && <Gallery title={'Logos'} gallery={logos} />}
+          {gallery && gallery.logos && gallery.logos.length > 0 && <GalleryComponent title={'Logos'} gallery={gallery.logos} />}
 
-          {icons.length > 0 && <Gallery title={'icons'} gallery={icons} />}
+          {gallery && gallery.icons && gallery.icons.length > 0 && <GalleryComponent title={'icons'} gallery={gallery.icons} />}
 
-          {animations.length > 0 && <Gallery title={'animations'} gallery={animations} />}
+          {gallery && gallery.animations && gallery.animations.length > 0 && <GalleryComponent title={'animations'} gallery={gallery.animations} />}
 
-          {umlDiagrams.length > 0 && <Gallery title={'uml diagrams'} gallery={umlDiagrams} />}
+          {gallery && gallery.umlDiagrams && gallery.umlDiagrams.length > 0 && <GalleryComponent title={'uml diagrams'} gallery={gallery.umlDiagrams} />}
 
           {contentURL && <ContentComponent title={null} content={contentURL} />}
         </div>

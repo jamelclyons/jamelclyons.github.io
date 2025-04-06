@@ -17,18 +17,18 @@ interface ProcessProps {
 }
 
 const TheProcess: React.FC<ProcessProps> = ({ process }) => {
-  const [status, setStatus] = useState<ProjectStatus>(process.status);
-  const [design, setDesign] = useState<ProjectDesign>(process.design);
-  const [development, setDevelopment] = useState<ProjectDevelopment>(process.development);
-  const [delivery, setDelivery] = useState<ProjectDelivery>(process.delivery);
+  const [status, setStatus] = useState<ProjectStatus | null>(null);
+  const [design, setDesign] = useState<ProjectDesign | null>(null);
+  const [development, setDevelopment] = useState<ProjectDevelopment | null>(null);
+  const [delivery, setDelivery] = useState<ProjectDelivery | null>(null);
 
-  useEffect(() => { setStatus(process.status) }, [process.status, setStatus]);
+  useEffect(() => { if (process.status) { setStatus(process.status) } }, [process, setStatus]);
 
-  useEffect(() => { setDesign(process.design) }, [process.design, setDesign]);
+  useEffect(() => { if (process.design) { setDesign(process.design) } }, [process, setDesign]);
 
-  useEffect(() => { setDevelopment(process.development) }, [process.development, setDevelopment]);
+  useEffect(() => { if (process.development) { setDevelopment(process.development) } }, [process, setDevelopment]);
 
-  useEffect(() => { setDelivery(process.delivery) }, [process.delivery, setDelivery]);
+  useEffect(() => { if (process.delivery) { setDelivery(process.delivery) } }, [process, setDelivery]);
 
   const hasContent = status || design || development || delivery;
 

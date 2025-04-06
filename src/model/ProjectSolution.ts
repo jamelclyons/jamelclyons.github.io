@@ -8,24 +8,24 @@ import Gallery, { GalleryObject } from './Gallery';
 import ContentURL, { ContentURLObject } from './ContentURL';
 
 export type ProjectSolutionObject = {
-  gallery: GalleryObject;
-  features: Array<FeatureObject>;
+  gallery: GalleryObject | null;
+  features: Array<FeatureObject> | null;
   content_url: ContentURLObject | null;
-  project_urls: ProjectURLsObject;
+  project_urls: ProjectURLsObject | null;
 };
 
 export type ProjectSolutionDataObject = {
-  gallery: GalleryObject;
-  features: Array<FeatureObject>;
+  gallery: GalleryObject | null;
+  features: Array<FeatureObject> | null;
   content_url: string | null;
-  project_urls: ProjectURLsDataObject;
+  project_urls: ProjectURLsDataObject | null;
 };
 
 class ProjectSolution extends Model {
-  gallery: Gallery;
-  features: Set<Feature>;
+  gallery: Gallery | null;
+  features: Set<Feature> | null;
   contentURL: ContentURL | null;
-  projectURLs: ProjectURLs;
+  projectURLs: ProjectURLs | null;
 
   constructor(data: Record<string, any> | ProjectSolutionObject = {}) {
     super();
@@ -60,25 +60,29 @@ class ProjectSolution extends Model {
 
   toProjectSolutionObject(): ProjectSolutionObject {
     return {
-      gallery: this.gallery.toGalleryObject(),
-      features: Array.from(this.features).map((feature) =>
-        feature.toFeatureObject()
-      ),
+      gallery: this.gallery ? this.gallery.toGalleryObject() : null,
+      features: this.features
+        ? Array.from(this.features).map((feature) => feature.toFeatureObject())
+        : null,
       content_url: this.contentURL
         ? this.contentURL?.toContentURLObject()
         : null,
-      project_urls: this.projectURLs.toProjectURLsObject(),
+      project_urls: this.projectURLs
+        ? this.projectURLs.toProjectURLsObject()
+        : null,
     };
   }
 
   toProjectSolutionDataObject(): ProjectSolutionDataObject {
     return {
-      gallery: this.gallery.toGalleryObject(),
-      features: Array.from(this.features).map((feature) =>
-        feature.toFeatureObject()
-      ),
+      gallery: this.gallery ? this.gallery.toGalleryObject() : null,
+      features: this.features
+        ? Array.from(this.features).map((feature) => feature.toFeatureObject())
+        : null,
       content_url: this.contentURL?.url ? this.contentURL.url : null,
-      project_urls: this.projectURLs.toProjectURLsDataObject(),
+      project_urls: this.projectURLs
+        ? this.projectURLs.toProjectURLsDataObject()
+        : null,
     };
   }
 }

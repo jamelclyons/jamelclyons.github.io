@@ -69,6 +69,7 @@ class ProjectSkills extends Model {
   }
 
   addByID(skillsData: ProjectSkillsDataObject) {
+
     if (
       skillsData.types &&
       Array.isArray(skillsData.types) &&
@@ -148,53 +149,51 @@ class ProjectSkills extends Model {
   add(skills: ProjectSkills) {
     skills.types
       ? Array.from(skills.types).map((type) => {
-          const exists =
-            this.types && this.types.size > 0
-              ? existsInSet(type, this.types)
-              : false;
-          return exists ? this.types : this.types?.add(type);
+          return this.types &&
+            this.types.size > 0 &&
+            !existsInSet(type, this.types)
+            ? this.types.add(type)
+            : (this.types = new Set([type]));
         })
       : this.types;
 
     skills.languages
       ? Array.from(skills.languages).map((language) => {
-          const exists =
-            this.languages && this.languages.size > 0
-              ? existsInSet(language, this.languages)
-              : false;
-          return exists ? this.languages : this.languages?.add(language);
+          return this.languages &&
+            this.languages.size > 0 &&
+            !existsInSet(language, this.languages)
+            ? this.languages.add(language)
+            : (this.languages = new Set([language]));
         })
       : this.languages;
 
     skills.frameworks
       ? Array.from(skills.frameworks).map((framework) => {
-          const exists =
-            this.frameworks && this.frameworks.size > 0
-              ? existsInSet(framework, this.frameworks)
-              : false;
-          return exists ? this.frameworks : this.frameworks?.add(framework);
+          return this.frameworks &&
+            this.frameworks.size > 0 &&
+            !existsInSet(framework, this.frameworks)
+            ? this.frameworks.add(framework)
+            : (this.frameworks = new Set([framework]));
         })
       : this.frameworks;
 
     skills.technologies
       ? Array.from(skills.technologies).map((technology) => {
-          const exists =
-            this.technologies && this.technologies.size > 0
-              ? existsInSet(technology, this.technologies)
-              : false;
-          return exists
-            ? this.technologies
-            : this.technologies?.add(technology);
+          return this.technologies &&
+            this.technologies.size > 0 &&
+            !existsInSet(technology, this.technologies)
+            ? this.technologies.add(technology)
+            : (this.technologies = new Set([technology]));
         })
       : this.technologies;
 
     skills.services
       ? Array.from(skills.services).map((service) => {
-          const exists =
-            this.services && this.services.size > 0
-              ? existsInSet(service, this.services)
-              : false;
-          return exists ? this.services : this.services?.add(service);
+          return this.services &&
+            this.services.size > 0 &&
+            !existsInSet(service, this.services)
+            ? this.services.add(service)
+            : (this.services = new Set([service]));
         })
       : this.services;
   }

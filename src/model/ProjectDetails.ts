@@ -4,24 +4,24 @@ import User, { UserObject } from './User';
 import ContentURL, { ContentURLObject } from './ContentURL';
 
 export type ProjectDetailsObject = {
-  privacy: string;
-  client_id: string;
+  privacy: string | null;
+  client_id: string | null;
   content: ContentURLObject | null;
-  team_list: Array<UserObject>;
+  team_list: Array<UserObject> | null;
 };
 
 export type ProjectDetailsDataObject = {
-  privacy: string;
-  client_id: string;
+  privacy: string | null;
+  client_id: string | null;
   content: string | null;
-  team_list: Array<string>;
+  team_list: Array<string> | null;
 };
 
 class ProjectDetails extends Model {
-  privacy: string;
-  clientID: string;
+  privacy: string | null;
+  clientID: string | null;
   content: ContentURL | null;
-  teamList: Array<User>;
+  teamList: Array<User> | null;
 
   constructor(data: Record<string, any> | ProjectDetailsObject = {}) {
     super();
@@ -29,7 +29,11 @@ class ProjectDetails extends Model {
     this.privacy = data?.privacy ? data.privacy : 'private';
     this.clientID = data?.client_id ? data.client_id : '0';
     this.content = data?.content?.url ? new ContentURL(data.content.url) : null;
-    this.teamList = data?.team_list ? this.getTeamList(data.team_list) : [];
+    this.teamList = data?.team_list ? this.getTeamList(data.team_list) : null;
+  }
+
+  setClientID(id: string | null) {
+    this.clientID = id;
   }
 
   setContentURL(url: string) {
@@ -52,7 +56,9 @@ class ProjectDetails extends Model {
       privacy: this.privacy,
       client_id: this.clientID,
       content: this.content ? this.content?.toContentURLObject() : null,
-      team_list: this.teamList.map((user) => user.toUserObject()),
+      team_list: this.teamList
+        ? this.teamList.map((user) => user.toUserObject())
+        : null,
     };
   }
 
@@ -61,7 +67,7 @@ class ProjectDetails extends Model {
       privacy: this.privacy,
       client_id: this.clientID,
       content: this.content?.url ? this.content.url : null,
-      team_list: this.teamList.map((user) => user.id),
+      team_list: this.teamList ? this.teamList.map((user) => user.id) : null,
     };
   }
 }

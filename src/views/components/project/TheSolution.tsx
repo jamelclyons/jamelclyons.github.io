@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import ProjectSolution from '@/model/ProjectSolution';
 
@@ -6,18 +6,30 @@ import FeaturesComponent from './Features';
 import ProjectURLsComponent from './ProjectURLsComponent';
 import GalleryComponent from '../GalleryComponent';
 import ContentComponent from '../content/ContentComponent';
+import Feature from '@/model/Feature';
+import ProjectURLs from '@/model/ProjectURLs';
+import Gallery from '@/model/Gallery';
+import ContentURL from '@/model/ContentURL';
 
 interface SolutionProps {
   solution: ProjectSolution
 }
 
 const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
-  const { features, projectURLs, gallery, contentURL } = solution;
+  const [features, setFeatures] = useState<Set<Feature> | null>(null);
+  const [projectURLs, setProjectURLs] = useState<ProjectURLs | null>(null);
+  const [gallery, setGallery] = useState<Gallery | null>(null);
+  const [contentURL, setContentURL] = useState<ContentURL | null>(null);
 
-  const hasContent = features.size > 0 ||
-    (projectURLs.homepage.url || projectURLs.ios.url || projectURLs.android.url) ||
-    gallery.images.length > 0 ||
-    contentURL;
+  useEffect(() => { if (solution.features) { setFeatures(solution.features) } }, [solution, setFeatures]);
+
+  useEffect(() => { if (solution.projectURLs) { setProjectURLs(solution.projectURLs) } }, [solution, setProjectURLs]);
+
+  useEffect(() => { if (solution.gallery) { setGallery(solution.gallery) } }, [solution, setGallery]);
+
+  useEffect(() => { if (solution.contentURL) { setContentURL(solution.contentURL) } }, [solution, setContentURL]);
+
+  const hasContent = features || projectURLs || gallery || contentURL;
 
   return (
     <>
@@ -25,9 +37,9 @@ const TheSolution: React.FC<SolutionProps> = ({ solution }) => {
         <div className="project-section project-solution" id="project_solution">
           <h2>THE SOLUTION</h2>
 
-          {gallery.images.length > 0 && <GalleryComponent gallery={gallery.images} title='' />}
+          {gallery && gallery.images && gallery.images.length > 0 && <GalleryComponent gallery={gallery.images} title='' />}
 
-          {features.size > 0 && <FeaturesComponent features={features} />}
+          {features && features.size > 0 && <FeaturesComponent features={features} />}
 
           {projectURLs && <ProjectURLsComponent projectUrls={projectURLs} />}
 

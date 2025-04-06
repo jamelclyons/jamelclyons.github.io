@@ -29,23 +29,23 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ project }) => {
 
   const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject());
 
-  const [gallery, setGallery] = useState<Gallery>(project.process.delivery.gallery);
-  const [checkList, setCheckList] = useState<CheckList>(project.process.delivery.checkList);
-  const [content, setContent] = useState<ContentURL | null>(project.process.delivery?.contentURL);
+  const [gallery, setGallery] = useState<Gallery>(new Gallery);
+  const [checkList, setCheckList] = useState<CheckList>(new CheckList);
+  const [content, setContent] = useState<ContentURL | null>(null);
 
   useEffect(() => { setProjectObject(project.toProjectObject()) }, [project, setProjectObject]);
 
   useEffect(() => {
-    setGallery(project.process.delivery.gallery)
-  }, [project.process.delivery.gallery, setGallery]);
+    setGallery(project.process?.delivery?.gallery ?? new Gallery)
+  }, [project.process?.delivery?.gallery, setGallery]);
 
   useEffect(() => {
-    setCheckList(project.process.delivery.checkList)
-  }, [project.process.delivery.checkList, setCheckList]);
+    setCheckList(project.process?.delivery?.checkList ?? new CheckList)
+  }, [project.process?.delivery?.checkList, setCheckList]);
 
   useEffect(() => {
-    setContent(project.process.delivery?.contentURL)
-  }, [project.process.delivery?.contentURL, setContent]);
+    setContent(project.process?.delivery?.contentURL ?? null)
+  }, [project.process?.delivery?.contentURL, setContent]);
 
   useEffect(() => {
     if (updatedDeliveryCheckList) {
@@ -88,8 +88,10 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ project }) => {
       const updatedProjectObject: ProjectObject = {
         ...projectObject,
         process: {
-          ...projectObject.process,
-          delivery: updatedDeliveryObject
+          design: projectObject.process?.design ?? null,
+          development: projectObject.process?.development ?? null,
+          delivery: updatedDeliveryObject,
+          status: projectObject.process?.status ?? null
         }
       };
 

@@ -7,6 +7,7 @@ import Taxonomy, {
   Technology,
 } from './Taxonomy';
 import * as skills from '../../skills.json';
+import ProjectSkills from './ProjectSkills';
 
 export type SkillsObject = {
   types: Array<Record<string, any>>;
@@ -41,7 +42,7 @@ class Skills extends Model {
     this.technologies = data?.technologies
       ? this.getTechnologies(data.technologies)
       : this.getTechnologies(technologies);
-      this.services = data?.services
+    this.services = data?.services
       ? this.getServices(data.services)
       : this.getServices(services);
 
@@ -142,54 +143,76 @@ class Skills extends Model {
     return new Taxonomy();
   }
 
-  show(skillsUsed: Skills) {
-    const filteredSkills: Skills = new Skills();
-
-    if (skillsUsed.count > 0) {
-      if (skillsUsed.types.size > 0) {
-        skillsUsed.types.forEach((typeUsed) => {
-          this.types.forEach((type) => {
-            if (typeUsed.id === type.id) {
-              filteredSkills.types.add(type);
-            }
-          });
+  show(skillsUsed: ProjectSkills) {
+    const filteredSkills: ProjectSkills = new ProjectSkills();
+console.log(skillsUsed)
+    if (skillsUsed.types && skillsUsed.types.size > 0) {
+      skillsUsed.types.forEach((typeUsed) => {
+        this.types.forEach((type) => {
+          if (typeUsed.id === type.id) {
+            filteredSkills.types
+              ? filteredSkills.types
+              : (filteredSkills.types = new Set<ProjectType>());
+            console.log(type);
+            filteredSkills.types.add(type);
+          }
         });
-      }
-
-      if (skillsUsed.languages.size > 0) {
-        skillsUsed.languages.forEach((languageUsed) => {
-          this.languages.forEach((language) => {
-            if (languageUsed.id === language.id) {
-              filteredSkills.languages.add(language);
-            }
-          });
-        });
-      }
-
-      if (skillsUsed.frameworks.size > 0) {
-        skillsUsed.frameworks.forEach((frameworkUsed) => {
-          this.frameworks.forEach((framework) => {
-            if (frameworkUsed.id === framework.id) {
-              filteredSkills.frameworks.add(framework);
-            }
-          });
-        });
-      }
-
-      if (skillsUsed.technologies.size > 0) {
-        skillsUsed.technologies.forEach((technologyUsed) => {
-          this.technologies.forEach((technology) => {
-            if (technologyUsed.id === technology.id) {
-              filteredSkills.technologies.add(technology);
-            }
-          });
-        });
-      }
-
-      return filteredSkills;
+      });
     }
 
-    return this;
+    if (skillsUsed.languages && skillsUsed.languages.size > 0) {
+      skillsUsed.languages.forEach((languageUsed) => {
+        this.languages.forEach((language) => {
+          if (languageUsed.id === language.id) {
+            filteredSkills.languages
+              ? filteredSkills.languages
+              : (filteredSkills.languages = new Set<Language>());
+            filteredSkills.languages.add(language);
+          }
+        });
+      });
+    }
+
+    if (skillsUsed.frameworks && skillsUsed.frameworks.size > 0) {
+      skillsUsed.frameworks.forEach((frameworkUsed) => {
+        this.frameworks.forEach((framework) => {
+          if (frameworkUsed.id === framework.id) {
+            filteredSkills.frameworks
+              ? filteredSkills.frameworks
+              : (filteredSkills.frameworks = new Set<Framework>());
+            filteredSkills.frameworks.add(framework);
+          }
+        });
+      });
+    }
+
+    if (skillsUsed.technologies && skillsUsed.technologies.size > 0) {
+      skillsUsed.technologies.forEach((technologyUsed) => {
+        this.technologies.forEach((technology) => {
+          if (technologyUsed.id === technology.id) {
+            filteredSkills.technologies
+              ? filteredSkills.technologies
+              : (filteredSkills.technologies = new Set<Technology>());
+            filteredSkills.technologies.add(technology);
+          }
+        });
+      });
+    }
+
+    if (skillsUsed.services && skillsUsed.services.size > 0) {
+      skillsUsed.services.forEach((serviceUsed) => {
+        this.services.forEach((service) => {
+          if (serviceUsed.id === service.id) {
+            filteredSkills.services
+              ? filteredSkills.services
+              : (filteredSkills.services = new Set<Service>());
+            filteredSkills.services.add(service);
+          }
+        });
+      });
+    }
+    console.log(filteredSkills);
+    return filteredSkills;
   }
 
   getCount(): number {
@@ -207,7 +230,7 @@ class Skills extends Model {
       ...this.languages,
       ...this.frameworks,
       ...this.technologies,
-      ...this.services
+      ...this.services,
     ]);
   }
 }

@@ -23,9 +23,9 @@ const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLs }) => {
 
     const dispatch = useDispatch<AppDispatch>();
 
-    const [homepageURL, setHomepageURL] = useState<string | null>(projectURLs.homepage.url);
-    const [iosURL, setIosURL] = useState<string | null>(projectURLs.ios.url);
-    const [androidURL, setAndroidURL] = useState<string | null>(projectURLs.android.url);
+    const [homepageURL, setHomepageURL] = useState<string | null>(null);
+    const [iosURL, setIosURL] = useState<string | null>(null);
+    const [androidURL, setAndroidURL] = useState<string | null>(null);
 
     useEffect(() => {
         if (projectURLs.homepage) {

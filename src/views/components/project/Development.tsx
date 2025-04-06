@@ -4,19 +4,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '@/model/store';
 import ProjectDevelopment from '@/model/ProjectDevelopment';
 import Image from '@/model/Image';
-import Task from '@/model/Task';
 import ProjectSkills from '@/model/ProjectSkills';
 import CheckList from '@/model/CheckList';
 import ContentURL from '@/model/ContentURL';
 import ProjectVersions from '@/model/ProjectVersions';
+import RepoURL from '@/model/RepoURL';
 
+import ProjectSkillsComponent from './ProjectSkillsComponent';
 import CheckListComponent from './CheckListComponent';
 import Versions from './Versions';
 
 import ContentComponent from '../content/ContentComponent';
 import StatusBar from '../StatusBar';
 import ImageComponent from '../ImageComponent';
-import SkillsComponent from '../SkillsComponent';
 
 import {
   signInWithGitHubPopup
@@ -29,43 +29,55 @@ interface DevelopmentProps {
 const Development: React.FC<DevelopmentProps> = ({ development }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const [skills, setSkills] = useState<ProjectSkills>(development.skills);
-  const [checkList, setCheckList] = useState<CheckList>(development.checkList);
-  const [tasks, setTasks] = useState<Set<Task>>(development.checkList.tasks);
-  const [contentURL, setContentURL] = useState<ContentURL | null>(development.contentURL);
-  const [repoURL, setRepoURL] = useState(development.repoURL);
-  const [versionsList, setVersionsList] = useState<ProjectVersions>(development.versionsList);
-  const [buttonTitle, setButtonTitle] = useState<string>();
-  const [messageType, setMessageType] = useState<string>('info');
-  const [message, setMessage] = useState<string>('Click Log in with GitHub to gain access to the code.');
+  const [skills, setSkills] = useState<ProjectSkills | null>(null);
+  const [checkList, setCheckList] = useState<CheckList | null>(null);
+  const [contentURL, setContentURL] = useState<ContentURL | null>(null);
+  const [repoURL, setRepoURL] = useState<RepoURL | null>(null);
+  const [image, setImage] = useState<Image | null>(null);
+  const [versionsList, setVersionsList] = useState<ProjectVersions | null>(null);
+  const [buttonTitle, setButtonTitle] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
   const { isAuthenticated } = useSelector(
     (state: RootState) => state.auth
   );
 
   useEffect(() => {
-    setSkills(development.skills);
+    if (development.skills) {
+      setSkills(development.skills);
+    }
   }, [development.skills, setSkills]);
 
   useEffect(() => {
-    setCheckList(development.checkList)
-  }, [development.checkList, setCheckList]);
+    if (development.checkList && development.checkList.tasks.size > 0) {
+      setCheckList(development.checkList)
+    }
+  }, [development, setCheckList]);
 
   useEffect(() => {
-    setTasks(development.checkList.tasks)
-  }, [development.checkList.tasks, setTasks]);
+    if (development.contentURL && development.contentURL.url) {
+      setContentURL(development.contentURL)
+    }
+  }, [development, setContentURL]);
 
   useEffect(() => {
-    setContentURL(development.contentURL)
-  }, [development.contentURL, setContentURL]);
+    if (development.repoURL && development.repoURL.url) {
+      setRepoURL(development.repoURL)
+    }
+  }, [development, setRepoURL]);
 
   useEffect(() => {
-    setRepoURL(development.repoURL)
-  }, [development.repoURL, setRepoURL]);
+    if (development.repoURL && development.repoURL.url) {
+      setImage(new Image())
+    }
+  }, [development, setRepoURL]);
 
   useEffect(() => {
-    setVersionsList(development.versionsList)
-  }, [development.versionsList, setVersionsList]);
+    if (development.versionsList && development.versionsList.current) {
+      setVersionsList(development.versionsList)
+    }
+  }, [development, setVersionsList]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -84,38 +96,36 @@ const Development: React.FC<DevelopmentProps> = ({ development }) => {
   }, [isAuthenticated, setMessage, setMessageType]);
 
   const handleSeeCode = () => {
-    if (isAuthenticated) {
-      window.open(repoURL, '_blank');
+    if (isAuthenticated && repoURL && repoURL.url) {
+      window.open(repoURL.url, '_blank');
     } else {
       dispatch(signInWithGitHubPopup());
     }
   };
 
+  const hasContent = skills || checkList || contentURL || versionsList || repoURL;
+
   return (
-    <>{(
-      skills ||
-      tasks.size > 0 ||
-      (typeof contentURL === 'string' && contentURL !== '') ||
-      (versionsList?.current !== '' && versionsList?.history.size > 0) ||
-      repoURL !== '') &&
+    <>{hasContent &&
       <div className="project-process-development" id="project_process_development">
 
         <h3 className="title">development</h3>
 
-        {skills && <SkillsComponent projectSkills={skills} />}
+        {skills && <ProjectSkillsComponent projectSkills={skills} />}
 
-        {tasks.size > 0 && <CheckListComponent checkList={checkList} />}
+        {checkList && <CheckListComponent checkList={checkList} />}
 
         {contentURL && <ContentComponent title={''} content={contentURL} />}
 
-        <Versions projectVersions={development?.versionsList} />
+        {versionsList && <Versions projectVersions={versionsList} />}
 
-        <button className='repo' onClick={handleSeeCode}>
-          <ImageComponent image={new Image({ title: 'GitHub', url: '', class_name: 'fa fa-github fa-fw' })} />
-          <h3 className='title'>{buttonTitle}</h3>
-        </button>
+        {repoURL && buttonTitle &&
+          <button className='repo' onClick={handleSeeCode}>
+            <ImageComponent image={new Image({ title: 'GitHub', url: '', class_name: 'fa fa-github fa-fw' })} />
+            <h3 className='title'>{buttonTitle}</h3>
+          </button>}
 
-        <StatusBar show={'hide'} messageType={messageType} message={message} />
+        {messageType && message && <StatusBar show={'hide'} messageType={messageType} message={message} />}
       </div>
     }
     </>

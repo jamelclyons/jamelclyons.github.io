@@ -1,29 +1,29 @@
 import Model from './Model';
 import Gallery, { GalleryObject } from './Gallery';
-import DocumentURL, { DocumentURLObject } from '@/model/DocumentURL';
-import ContentURL, { ContentURLObject } from './ContentURL';
+import DocumentURL from '@/model/DocumentURL';
+import ContentURL from './ContentURL';
 
 export type ProjectProblemObject = {
-  gallery: GalleryObject;
-  content_url: ContentURLObject | null;
-  whitepaper_url: DocumentURLObject | null;
+  gallery: GalleryObject | null;
+  content_url: string | null;
+  whitepaper_url: string | null;
 };
 
 export type ProjectProblemDataObject = {
-  gallery: GalleryObject;
-  content_url: ContentURLObject | null;
+  gallery: GalleryObject | null;
+  content_url: string | null;
   whitepaper_url: string | null;
 };
 
 class ProjectProblem extends Model {
-  gallery: Gallery;
+  gallery: Gallery | null;
   contentURL: ContentURL | null;
   whitepaperURL: DocumentURL | null;
 
   constructor(data: Record<string, any> = {}) {
     super();
 
-    this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
+    this.gallery = data?.gallery ? new Gallery(data.gallery) : null;
     this.contentURL = data?.content_url?.url
       ? new ContentURL(data.content_url.url)
       : null;
@@ -42,21 +42,21 @@ class ProjectProblem extends Model {
 
   toProjectProblemObject(): ProjectProblemObject {
     return {
-      gallery: this.gallery.toGalleryObject(),
+      gallery: this.gallery ? this.gallery.toGalleryObject() : null,
       content_url: this.contentURL
-        ? this.contentURL.toContentURLObject()
+        ? this.contentURL.url
         : null,
       whitepaper_url: this.whitepaperURL
-        ? this.whitepaperURL.toDocumentURLObject()
+        ? this.whitepaperURL.url
         : null,
     };
   }
 
   toProjectProblemDataObject(): ProjectProblemDataObject {
     return {
-      gallery: this.gallery.toGalleryObject(),
+      gallery: this.gallery ? this.gallery.toGalleryObject() : null,
       content_url: this.contentURL
-        ? this.contentURL.toContentURLObject()
+        ? this.contentURL.url
         : null,
       whitepaper_url: this.whitepaperURL?.url ? this.whitepaperURL.url : null,
     };

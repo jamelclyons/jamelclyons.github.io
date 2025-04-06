@@ -15,32 +15,74 @@ export type ProjectURLsDataObject = {
 };
 
 class ProjectURLs extends Model {
-  homepage: ProjectURL;
-  ios: ProjectURL;
-  android: ProjectURL;
+  homepage: ProjectURL | null;
+  ios: ProjectURL | null;
+  android: ProjectURL | null;
 
   constructor(data: Record<string, any> | ProjectURLsObject = {}) {
     super();
 
+    this.homepage = null;
+    this.ios = null;
+    this.android = null;
+
+    data?.homepage?.url ? this.setHomepage(data.homepage.url) : this.homepage;
+    data?.ios?.url ? this.setIos(data.ios.url) : this.ios;
+    data?.android?.url ? this.setAndroid(data.android.url) : this.android;
+  }
+
+  setHomepage(url: string) {
+    if (!url) {
+      this.homepage = null;
+    }
+
+    let name = 'Homepage';
+
     this.homepage = new ProjectURL({
-      name: 'Homepage',
+      id: name.toLowerCase(),
+      name: name,
       description: 'Website of the project',
-      url: data?.homepage?.url ? data.homepage.url : null,
-      image: new Image({ class_name: 'fa-solid fa-house' }).toImageObject(),
-    });
-    this.ios = new ProjectURL({
-      name: 'Apple App Store',
-      description: 'Link to iOS application',
-      url: data?.ios?.url ? data.ios.url : null,
+      url: url,
       image: new Image({
+        id: name.toLowerCase(),
+        class_name: 'fa-solid fa-house',
+      }).toImageObject(),
+    });
+  }
+
+  setIos(url: string) {
+    if (!url) {
+      this.ios = null;
+    }
+
+    let name = 'Apple App Store';
+
+    this.ios = new ProjectURL({
+      id: name.toLowerCase(),
+      name: name,
+      description: 'Link to iOS application',
+      url: url,
+      image: new Image({
+        id: name.toLowerCase(),
         class_name: 'fa-brands fa-app-store-ios',
       }).toImageObject(),
     });
+  }
+
+  setAndroid(url: string) {
+    if (!url) {
+      this.android = null;
+    }
+
+    let name = 'Google Play Store';
+
     this.android = new ProjectURL({
-      name: 'Google Play Store',
+      id: name.toLowerCase(),
+      name: name,
       description: 'Link to Android application',
-      url: data?.android?.url ? data.android.url : null,
+      url: url,
       image: new Image({
+        id: name.toLowerCase(),
         class_name: 'fa-brands fa-google-play',
       }).toImageObject(),
     });

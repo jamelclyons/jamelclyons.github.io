@@ -21,6 +21,7 @@ import UpdateCheckList from '../components/UpdateCheckList';
 import UpdateSkills from '../components/UpdateSkills';
 import UpdateProjectVersions from '../components/UpdateProjectVersions';
 import UpdateGallery from '../components/UpdateGallery';
+import RepoURL from '@/model/RepoURL';
 
 interface UpdateDevelopmentProps {
   project: Project;
@@ -35,40 +36,40 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ project }) => {
 
   const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject());
 
-  const [gallery, setGallery] = useState<Gallery>(project.process.development.gallery);
-  const [checkList, setCheckList] = useState<CheckList>(project.process.development.checkList);
-  const [projectSkills, setProjectSkills] = useState<ProjectSkills>(project.process.development.skills);
-  const [repoURL, setRepoURL] = useState<string>(project.process.development.repoURL);
-  const [content, setContent] = useState<ContentURL | null>(project.process.development.contentURL);
-  const [projectVersions, setProjectVersions] = useState<ProjectVersions>(project.process.development.versionsList);
+  const [gallery, setGallery] = useState<Gallery>(new Gallery);
+  const [checkList, setCheckList] = useState<CheckList>(new CheckList);
+  const [projectSkills, setProjectSkills] = useState<ProjectSkills>(new ProjectSkills);
+  const [repoURL, setRepoURL] = useState<RepoURL | null>(null);
+  const [content, setContent] = useState<ContentURL | null>(null);
+  const [projectVersions, setProjectVersions] = useState<ProjectVersions>(new ProjectVersions);
 
   useEffect(() => {
     setProjectObject(project.toProjectObject())
   }, [project, setProjectObject]);
 
   useEffect(() => {
-    setGallery(project.process.development.gallery)
-  }, [project.process.development.gallery, setGallery])
+    setGallery(project.process?.development?.gallery ?? new Gallery)
+  }, [project?.process?.development?.gallery, setGallery])
 
   useEffect(() => {
-    setCheckList(project.process.development.checkList)
-  }, [project.process.development.checkList, setCheckList]);
+    setCheckList(project.process?.development?.checkList ?? new CheckList)
+  }, [project, setCheckList]);
 
   useEffect(() => {
-    setProjectSkills(project.process.development.skills)
-  }, [project.process.development.skills, setProjectSkills]);
+    setProjectSkills(project.process?.development?.skills ?? new ProjectSkills)
+  }, [project, setProjectSkills]);
 
   useEffect(() => {
-    setRepoURL(project.process.development.repoURL)
-  }, [project.process.development.repoURL, setRepoURL]);
+    setRepoURL(project.process?.development?.repoURL ?? null)
+  }, [project, setRepoURL]);
 
   useEffect(() => {
-    setContent(project.process.development.contentURL)
-  }, [project.process.development.contentURL, setContent]);
+    setContent(project.process?.development?.contentURL ?? null)
+  }, [project, setContent]);
 
   useEffect(() => {
-    setProjectVersions(project.process.development.versionsList)
-  }, [project.process.development.versionsList, setProjectVersions]);
+    setProjectVersions(project.process?.development?.versionsList ?? new ProjectVersions)
+  }, [project, setProjectVersions]);
 
   useEffect(() => {
     if (updatedDevelopmentGallery) {
@@ -104,7 +105,7 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ project }) => {
     const { name, value } = target;
 
     if (name === 'repo_url') {
-      setRepoURL(value)
+      setRepoURL(new RepoURL(value))
     }
   }
 
@@ -124,8 +125,8 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ project }) => {
     try {
       const updatedDevelopment: ProjectDevelopmentObject = {
         gallery: gallery.toGalleryObject(),
-        repo_url: repoURL,
-        content_url: content ? content.toContentURLObject() : null,
+        repo_url: repoURL ? repoURL.url : null,
+        content_url: content ? content.url : null,
         skills: projectSkills.toProjectSkillsObject(),
         check_list: checkList.toCheckListObject(),
         versions_list: projectVersions.toProjectVersionsObject()
@@ -135,7 +136,10 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ project }) => {
         ...projectObject,
         process: {
           ...projectObject.process,
-          development: updatedDevelopment
+          design: projectObject.process?.design ?? null,
+          development: updatedDevelopment,
+          delivery: projectObject.process?.delivery ?? null,
+          status: projectObject.process?.status ?? null
         }
       }
 
@@ -170,7 +174,7 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ project }) => {
 
       <div className="form-item-flex">
         <label htmlFor="repo_url">Repo URL:</label>
-        <input type="text" name='repo_url' value={repoURL ?? ''} onChange={handleRepoURLChange} />
+        <input type="text" name='repo_url' value={repoURL && repoURL.url ? repoURL.url : ''} onChange={handleRepoURLChange} />
       </div>
 
       <div className="form-item-flex">

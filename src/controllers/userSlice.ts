@@ -77,9 +77,11 @@ export const getAuthenticatedUserAccount = createAsyncThunk(
         organizations = user.organizations.list.map((organization) => ({
           ...organization.toObject(),
           repos: organization.repos.collection.map((repo) => repo.toObject()),
-          contributors: organization.repos.collection.map((repo) =>
-            repo.contributors.toObject()
-          ),
+          contributors: organization.repos.collection.map((repo) => {
+            if (repo.contributors) {
+              repo.contributors.toObject();
+            }
+          }),
         }));
 
         repos =
@@ -88,6 +90,7 @@ export const getAuthenticatedUserAccount = createAsyncThunk(
             ? user.repos.collection?.map((repo) => ({
                 ...repo.toObject(),
                 contributors:
+                  repo.contributors &&
                   Array.isArray(repo.contributors.users) &&
                   repo.contributors.users.length > 0
                     ? repo.contributors.users?.map((contributor) => {

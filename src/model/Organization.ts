@@ -64,7 +64,9 @@ class Organization extends Model {
     this.email = contact.email.value ?? data?.email;
     this.url = data?.url;
     this.github = data?.github;
-    this.contactMethods = contact ? new ContactMethods(contact) : new ContactMethods(data?.contact_methods);
+    this.contactMethods = contact
+      ? new ContactMethods(contact)
+      : new ContactMethods(data?.contact_methods);
     this.contactMethods.setContactEmail({ value: this.email });
     this.contactMethods.setContactWebsite({ url: this.blog });
     this.reposURL = repos_url ?? data?.repos_url;
@@ -77,16 +79,36 @@ class Organization extends Model {
     return repos.collection.map((repo) => {
       return {
         ...repo.toObject(),
-        skills: repo.skills.toObject(),
+        skills: repo.skills ? repo.skills.toObject() : null,
         contents: {
-          solution: repo.contents.solution?.toObject() || null,
-          design: repo.contents.design?.toObject() || null,
-          development: repo.contents.development?.toObject() || null,
-          delivery: repo.contents.delivery?.toObject() || null,
-          problem: repo.contents.problem?.toObject() || null,
+          solution:
+            repo.contents && repo.contents.solution
+              ? repo.contents.solution.toObject()
+              : null,
+          design:
+            repo.contents && repo.contents.design
+              ? repo.contents.design?.toObject()
+              : null,
+          development:
+            repo.contents && repo.contents.development
+              ? repo.contents.development.toObject()
+              : null,
+          delivery:
+            repo.contents && repo.contents.delivery
+              ? repo.contents.delivery.toObject()
+              : null,
+          problem:
+            repo.contents && repo.contents.problem
+              ? repo.contents.problem.toObject()
+              : null,
         },
         contributors: {
-          users: repo.contributors.users.map((user) => user.toObject()),
+          users:
+            repo.contributors &&
+            Array.isArray(repo.contributors.users) &&
+            repo.contributors.users.length > 0
+              ? repo.contributors.users.map((user) => user.toObject())
+              : null,
         },
       };
     });
@@ -98,16 +120,36 @@ class Organization extends Model {
     return repos.collection.map((repo) => {
       return {
         ...repo.toObject(),
-        skills: repo.skills.toObject(),
+        skills: repo.skills ? repo.skills.toObject() : null,
         contents: {
-          solution: repo.contents.solution?.toObject() || null,
-          design: repo.contents.design?.toObject() || null,
-          development: repo.contents.development?.toObject() || null,
-          delivery: repo.contents.delivery?.toObject() || null,
-          problem: repo.contents.problem?.toObject() || null,
+          solution:
+            repo.contents && repo.contents.solution
+              ? repo.contents.solution.toObject()
+              : null,
+          design:
+            repo.contents && repo.contents.design
+              ? repo.contents.design.toObject()
+              : null,
+          development:
+            repo.contents && repo.contents.development
+              ? repo.contents.development.toObject()
+              : null,
+          delivery:
+            repo.contents && repo.contents.delivery
+              ? repo.contents.delivery.toObject()
+              : null,
+          problem:
+            repo.contents && repo.contents.problem
+              ? repo.contents.problem.toObject()
+              : null,
         },
         contributors: {
-          users: repo.contributors.users.map((user) => user.toObject()),
+          users:
+            repo.contributors &&
+            Array.isArray(repo.contributors.users) &&
+            repo.contributors.users.length > 0
+              ? repo.contributors.users.map((user) => user.toObject())
+              : null,
         },
       };
     });
