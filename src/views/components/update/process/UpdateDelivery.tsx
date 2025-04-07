@@ -82,7 +82,7 @@ const UpdateDelivery: React.FC<UpdateDeliveryProps> = ({ project }) => {
       const updatedDeliveryObject: ProjectDeliveryObject = {
         check_list: checkList.toCheckListObject(),
         gallery: gallery.toGalleryObject(),
-        content_url: content ? content?.toContentURLObject() : null
+        content_url: content ? content.url : null
       };
 
       const updatedProjectObject: ProjectObject = {

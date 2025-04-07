@@ -1,33 +1,31 @@
 import Model from './Model';
 
 export type ProjectVersionsObject = {
-  current: string;
   history: Array<string>;
+  current: string;
+  future: Array<string>;
 };
 
 class ProjectVersions extends Model {
-  current: string;
   history: Set<string>;
+  current: string;
+  future: Set<string>;
 
   constructor(data: Record<string, any> | ProjectVersionsObject = {}) {
     super();
 
+    this.history = data?.history ? new Set(data?.history) : new Set();
     this.current = data?.current ?? '1.0.0';
-    this.history = data?.history ?? [];
+    this.future = data?.future ? new Set(data?.future) : new Set();
   }
-  
+
   toProjectVersionsObject(): ProjectVersionsObject {
     return {
-      current: this.current,
       history: Array.from(this.history),
+      current: this.current,
+      future: Array.from(this.future),
     };
   }
 }
 
 export default ProjectVersions;
-
-// export const existsInSet = (taxonomy: Taxonomy, set: Set<Taxonomy>) => {
-//   const map = new Map(Array.from(set).map((tax) => [tax.id, tax]));
-
-//   return map.has(taxonomy.id);
-// };

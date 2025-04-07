@@ -86,6 +86,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Home user={user} skills={skills} />} />
             <Route path="/about" element={<About user={user} skills={skills} />} />
+            <Route path={`/user/${user.login}`} element={<About user={user} skills={skills} />} />
             <Route path="/organization/:login" element={<OrganizationPage />} />
             <Route path="/user/:login" element={<UserPage />} />
             <Route path="/portfolio" element={<PortfolioPage user={user} />} />
@@ -122,7 +123,7 @@ const App: React.FC = () => {
         </Suspense>
       </Router >
       <FooterComponent
-        contactMethods={contactMethods}
+        user={user}
       />
     </>
   );

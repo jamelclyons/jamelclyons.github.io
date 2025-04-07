@@ -13,6 +13,16 @@ class Contributors extends Model {
 
     this.users = users || [];
   }
+
+  set(users: Array<User>) {
+    this.users = users;
+  }
+
+  toContributorsObject(): ContributorsObject {
+    return {
+      users: this.users.map((user) => user.toUserObject()),
+    };
+  }
 }
 
 export default Contributors;

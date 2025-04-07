@@ -24,9 +24,7 @@ import ProjectDesign from './ProjectDesign';
 import Gallery from './Gallery';
 import CheckList from './CheckList';
 import Color from './Color';
-import ProjectDevelopment, {
-  ProjectDevelopmentObject,
-} from './ProjectDevelopment';
+import ProjectDevelopment from './ProjectDevelopment';
 import ProjectDelivery from './ProjectDelivery';
 import ProjectStatus from './ProjectStatus';
 import User from './User';
@@ -147,13 +145,13 @@ class Project extends Model {
       this.process.status.createdAt = repo.createdAt;
       this.process.status.updatedAt = repo.updatedAt;
 
-      repo.contents?.design?.downloadURL
-        ? this.process.design
-          ? this.process.design.setContentURL(repo.contents.design.downloadURL)
-          : (this.process.design = new ProjectDesign({
-              content_url: repo.contents.design.downloadURL,
-            }))
-        : this.process;
+      if (repo.contents?.design?.downloadURL) {
+        this.process.design
+          ? this.process.design
+          : (this.process.design = new ProjectDesign());
+
+        this.process.design.setContentURL(repo.contents.design.downloadURL);
+      }
 
       if (
         repo.contents?.development?.downloadURL ||
@@ -187,7 +185,7 @@ class Project extends Model {
     }
 
     if (repo.contents?.problem?.downloadURL) {
-      this.problem = new ProjectProblem();
+      this.problem ? this.problem : (this.problem = new ProjectProblem());
       this.problem.setContentURL(repo.contents.problem.downloadURL);
     }
 
@@ -351,32 +349,6 @@ class Project extends Model {
         ? this.problem.setWhitepaperURL(data?.problem.whitepaper_url)
         : null;
     }
-
-    // if (data?.owner) {
-    //   this.owner ? this.owner : (this.owner = new Owner());
-
-    //   data?.owner?.id ? (this.owner.id = data.owner.id) : null;
-
-    //   data?.owner?.type ? (this.owner.type = data.owner.type) : null;
-
-    //   data?.owner?.login ? (this.owner.login = data.owner.login) : null;
-
-    //   data?.owner?.name ? (this.owner.name = data.owner.name) : null;
-
-    //   data?.owner?.company ? (this.owner.company = data.owner.company) : null;
-
-    //   data?.owner?.email ? (this.owner.email = data.owner.email) : null;
-
-    //   data?.owner?.avatar_url
-    //     ? (this.owner.avatarURL = data.owner.avatar_url)
-    //     : null;
-
-    //   data?.owner?.url ? (this.owner.url = data.owner.url) : null;
-
-    //   data?.owner?.repos_url
-    //     ? (this.owner.reposURL = data.owner.repos_url)
-    //     : null;
-    // }
 
     if (data?.details) {
       this.details ? this.details : (this.details = new ProjectDetails());

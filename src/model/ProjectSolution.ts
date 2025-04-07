@@ -10,7 +10,7 @@ import ContentURL, { ContentURLObject } from './ContentURL';
 export type ProjectSolutionObject = {
   gallery: GalleryObject | null;
   features: Array<FeatureObject> | null;
-  content_url: ContentURLObject | null;
+  content_url: string | null;
   project_urls: ProjectURLsObject | null;
 };
 
@@ -35,7 +35,7 @@ class ProjectSolution extends Model {
       ? this.setFeatures(data.features)
       : new Set<Feature>();
     this.contentURL = data?.content_url
-      ? new ContentURL(data.content_url.url)
+      ? new ContentURL(data.content_url)
       : null;
     this.projectURLs = data?.project_urls
       ? new ProjectURLs(data.project_urls)
@@ -65,7 +65,7 @@ class ProjectSolution extends Model {
         ? Array.from(this.features).map((feature) => feature.toFeatureObject())
         : null,
       content_url: this.contentURL
-        ? this.contentURL?.toContentURLObject()
+        ? this.contentURL.url
         : null,
       project_urls: this.projectURLs
         ? this.projectURLs.toProjectURLsObject()

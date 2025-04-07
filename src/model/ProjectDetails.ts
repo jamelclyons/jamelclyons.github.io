@@ -6,7 +6,7 @@ import ContentURL, { ContentURLObject } from './ContentURL';
 export type ProjectDetailsObject = {
   privacy: string | null;
   client_id: string | null;
-  content: ContentURLObject | null;
+  content: string | null;
   team_list: Array<UserObject> | null;
 };
 
@@ -28,7 +28,7 @@ class ProjectDetails extends Model {
 
     this.privacy = data?.privacy ? data.privacy : 'private';
     this.clientID = data?.client_id ? data.client_id : '0';
-    this.content = data?.content?.url ? new ContentURL(data.content.url) : null;
+    this.content = data?.content ? new ContentURL(data.content) : null;
     this.teamList = data?.team_list ? this.getTeamList(data.team_list) : null;
   }
 
@@ -55,7 +55,7 @@ class ProjectDetails extends Model {
     return {
       privacy: this.privacy,
       client_id: this.clientID,
-      content: this.content ? this.content?.toContentURLObject() : null,
+      content: this.content ? this.content.url : null,
       team_list: this.teamList
         ? this.teamList.map((user) => user.toUserObject())
         : null,
@@ -66,7 +66,7 @@ class ProjectDetails extends Model {
     return {
       privacy: this.privacy,
       client_id: this.clientID,
-      content: this.content?.url ? this.content.url : null,
+      content: this.content ? this.content.url : null,
       team_list: this.teamList ? this.teamList.map((user) => user.id) : null,
     };
   }

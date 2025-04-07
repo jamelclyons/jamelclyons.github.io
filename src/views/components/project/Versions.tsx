@@ -7,35 +7,33 @@ interface VersionsProps {
 }
 
 const Versions: React.FC<VersionsProps> = ({ projectVersions }) => {
-console.log(projectVersions)
   return (
     <>
-      {!projectVersions.isEmpty ? (
+      {projectVersions && (projectVersions.current || projectVersions.history.size > 0) &&
         <div className="versions">
-          <span className="current-version">
-            <h4>Current Version</h4>
-            {projectVersions.current}
-          </span>
+          {projectVersions.current &&
+            <span className="current-version">
+              <h4>Current Version</h4>
+              {projectVersions.current}
+            </span>}
 
-          <span className="upcoming-versions">
+          {projectVersions.history.size > 0 && <span className="upcoming-versions">
             <h4>Upcoming Versions</h4>
             <table>
               <tbody>
-                {/* {Array.isArray(projectVersions.previous) &&
-                  projectVersions.previous.map((version, index) => (
+                {Array.isArray(projectVersions.history) &&
+                  projectVersions.history.map((version, index) => (
                     <tr key={index}>
                       <td className="feature">{version.title}</td>
                       <td>-</td>
                       <td>{version.version}</td>
                     </tr>
-                  ))} */}
+                  ))}
               </tbody>
             </table>
-          </span>
+          </span>}
         </div>
-      ) : (
-        ''
-      )}
+      }
     </>
   );
 }

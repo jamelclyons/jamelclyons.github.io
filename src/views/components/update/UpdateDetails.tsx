@@ -99,7 +99,7 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
       const detailsObject: ProjectDetailsObject = {
         privacy: privacy,
         client_id: clientID,
-        content: content ? content?.toContentURLObject() : null,
+        content: content ? content.url : null,
         team_list: []
       };
 

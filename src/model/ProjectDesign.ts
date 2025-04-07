@@ -32,8 +32,8 @@ class ProjectDesign extends Model {
     this.colorsList = data?.colors_list
       ? this.toArrayColor(data.colors_list)
       : null;
-    this.contentURL = data?.content_url?.url
-      ? new ContentURL(data.content_url.url)
+    this.contentURL = data?.content_url
+      ? new ContentURL(data.content_url)
       : null;
   }
 

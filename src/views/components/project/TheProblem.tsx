@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import GalleryComponent from '../GalleryComponent';
-import DocumentComponent from '@/views/components/DocumentComponent';
 import ContentComponent from '../content/ContentComponent';
 
-import Gallery from '@/model/Gallery';
-import ContentURL from '@/model/ContentURL';
-import DocumentURL from '@/model/DocumentURL';
+import DocumentComponent from '@/views/components/DocumentComponent';
+
 import Project from '@/model/Project';
 
 interface ProblemProps {

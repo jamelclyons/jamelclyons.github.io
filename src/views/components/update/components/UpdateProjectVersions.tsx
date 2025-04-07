@@ -20,8 +20,9 @@ const UpdateProjectVersions: React.FC<UpdateProjectVersionsProps> = ({ projectVe
 
     const [projectVersionsObject, setProjectVersionsObject] = useState<ProjectVersionsObject>(projectVersions.toProjectVersionsObject());
 
-    const [currentVersion, setCurrentVersion] = useState<string>(projectVersions.current);
     const [history, setHistory] = useState<Set<string>>(projectVersions.history);
+    const [currentVersion, setCurrentVersion] = useState<string>(projectVersions.current);
+    const [future, setFuture] = useState<Set<string>>(projectVersions.future);
 
     useEffect(() => {
         setProjectVersionsObject(projectVersions.toProjectVersionsObject());
@@ -29,8 +30,9 @@ const UpdateProjectVersions: React.FC<UpdateProjectVersionsProps> = ({ projectVe
 
     useEffect(() => {
         const updatedProjectVersions: ProjectVersionsObject = {
+            history: Array.from(history),
             current: currentVersion,
-            history: Array.from(history)
+            future: Array.from(future)
         };
         setProjectVersionsObject(updatedProjectVersions);
     }, [currentVersion, history, setProjectVersionsObject]);

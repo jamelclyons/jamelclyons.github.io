@@ -50,12 +50,8 @@ class Repo extends Model {
     this.homepage = data?.homepage;
     this.description = data?.description;
     this.repoURL = data?.repo_url;
-    this.skills = data?.skills
-      ? this.setSkills(data.skills)
-      : new ProjectSkills();
-    this.contents = data?.contents
-      ? new RepoContents(data.contents)
-      : new RepoContents();
+    this.skills = data?.skills ? this.getSkills(data.skills) : null;
+    this.contents = data?.contents ? new RepoContents(data.contents) : null;
     this.contributorsURL = data?.contributors_url;
     this.contributors = new Contributors(
       this.setContributors(data?.contributors)
@@ -145,55 +141,11 @@ class Repo extends Model {
         languages.push(skill);
       });
 
-      return languages;
+       this.setSkills(languages);
     }
-
-    return [];
   }
 
   getSkills(repoSkills: Array<Record<string, any>>) {
-    let types: Array<Record<string, any>> = [];
-    let languages: Array<Record<string, any>> = [];
-    let frameworks: Array<Record<string, any>> = [];
-    let technologies: Array<Record<string, any>> = [];
-
-    if (repoSkills && Array.isArray(repoSkills) && repoSkills.length > 0) {
-      repoSkills.forEach((skill) => {
-        if (skill.type === 'technology') {
-          technologies.push(
-            new Technology({
-              id: skill.id,
-              title: skill.title,
-              icon_url: skill.icon_url,
-              class_name: skill.class_name,
-              usage: skill.usage,
-            }).toObject()
-          );
-        }
-
-        if (skill.type === 'language') {
-          languages.push(
-            new Language({
-              id: skill.id.toLowerCase(),
-              title: skill.title.toUpperCase(),
-              icon_url: skill.icon_url,
-              class_name: skill.class_name,
-              usage: skill.usage,
-            }).toObject()
-          );
-        }
-      });
-    }
-
-    return {
-      types: types,
-      languages: languages,
-      frameworks: frameworks,
-      technologies: technologies,
-    };
-  }
-
-  setSkills(repoSkills: Array<Record<string, any>>) {
     let types: Array<Record<string, any>> = [];
     let languages: Array<Record<string, any>> = [];
     let frameworks: Array<Record<string, any>> = [];
@@ -235,6 +187,48 @@ class Repo extends Model {
     });
   }
 
+  setSkills(repoSkills: Array<Record<string, any>>) {
+    let types: Array<Record<string, any>> = [];
+    let languages: Array<Record<string, any>> = [];
+    let frameworks: Array<Record<string, any>> = [];
+    let technologies: Array<Record<string, any>> = [];
+
+    if (repoSkills && Array.isArray(repoSkills) && repoSkills.length > 0) {
+      repoSkills.forEach((skill) => {
+        if (skill.type === 'technology') {
+          technologies.push(
+            new Technology({
+              id: skill.id,
+              title: skill.title,
+              icon_url: skill.icon_url,
+              class_name: skill.class_name,
+              usage: skill.usage,
+            }).toObject()
+          );
+        }
+
+        if (skill.type === 'language') {
+          languages.push(
+            new Language({
+              id: skill.id.toLowerCase(),
+              title: skill.title.toUpperCase(),
+              icon_url: skill.icon_url,
+              class_name: skill.class_name,
+              usage: skill.usage,
+            }).toObject()
+          );
+        }
+      });
+    }
+
+    this.skills = new ProjectSkills({
+      types: types,
+      languages: languages,
+      frameworks: frameworks,
+      technologies: technologies,
+    });
+  }
+
   setContents(contentsObject: Record<string, any>) {
     if (
       contentsObject &&
@@ -257,51 +251,52 @@ class Repo extends Model {
   }
 
   filterContents(contentsObject: Array<Record<string, any>>) {
-    const contents: Record<string, any> = {};
+    const contents = new RepoContents();
 
     if (Array.isArray(contentsObject) && contentsObject.length > 0) {
       contentsObject.forEach((content) => {
+        this.contents ? this.contents : (this.contents = new RepoContents());
+
         if (content.type === 'file') {
           switch (content.name) {
             case 'TheSolution.md':
-              contents.solution = new RepoContent(content).toObject();
+              this.contents.setSolution(new RepoContent(content));
               break;
             case 'Design.md':
-              contents.design = new RepoContent(content).toObject();
+              this.contents.setDesign(new RepoContent(content));
               break;
             case 'Development.md':
-              contents.development = new RepoContent(content).toObject();
+              this.contents.setDevelopment(new RepoContent(content));
               break;
             case 'Delivery.md':
-              contents.delivery = new RepoContent(content).toObject();
+              this.contents.setDelivery(new RepoContent(content));
               break;
             case 'TheProblem.md':
-              contents.problem = new RepoContent(content).toObject();
+              this.contents.setProblem(new RepoContent(content));
               break;
             case 'Details.md':
-              contents.details = new RepoContent(content).toObject();
+              this.contents.setDetails(new RepoContent(content));
               break;
           }
         }
       });
     }
-
-    return contents;
   }
 
   contributorsFromGitHub(data?: Array<Record<string, any>>) {
-    if (data && Array.isArray(data) && data.length > 0) {
-      const contributors: Array<Record<string, any>> = [];
+    const contributors: Array<User> = [];
 
+    if (data && Array.isArray(data) && data.length > 0) {
       data.forEach((contributor) => {
-        const user = new User(contributor).toObject();
+        const user = new User(contributor);
         contributors.push(user);
       });
 
-      return contributors;
+      this.contributors
+        ? this.contributors
+        : (this.contributors = new Contributors());
+      this.contributors.set(contributors);
     }
-
-    return [];
   }
 
   setContributors(data?: Array<Record<string, any>>) {
@@ -315,6 +310,26 @@ class Repo extends Model {
 
       return contributors;
     }
+  }
+
+  toRepoObject(): RepoObject {
+    return {
+      id: this.id,
+      privacy: this.privacy,
+      size: this.size,
+      owner: this.owner ? this.owner.toOwnerObject() : null,
+      created_at: this.createdAt,
+      updated_at: this.updatedAt,
+      homepage: this.homepage,
+      description: this.description,
+      repo_url: this.repoURL,
+      skills: this.skills ? this.skills.toProjectSkillsObject() : null,
+      contents: this.contents ? this.contents.toRepoContentsObject() : null,
+      contributors_url: this.contributorsURL,
+      contributors: this.contributors
+        ? this.contributors.toContributorsObject()
+        : null,
+    };
   }
 }
 

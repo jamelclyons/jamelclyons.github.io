@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import type { AppDispatch } from '@/model/store';
+import { marked } from 'marked';
 
 import { getRepoFile } from '@/controllers/githubSlice';
 
-import { marked } from 'marked';
+import type { AppDispatch } from '@/model/store';
 import ContentURL from '@/model/ContentURL';
 
 interface ContentComponentProps {
@@ -17,23 +17,14 @@ const ContentComponent: React.FC<ContentComponentProps> = ({ title, content }) =
   const dispatch = useDispatch<AppDispatch>();
 
   const [html, setHTML] = useState<string | object | null>(null);
-  const [url, setURL] = useState<string>();
 
   useEffect(() => {
-    if (content.url) {
-      setURL(content.url)
-    }
-  }, [content, setURL]);
-
-  useEffect(() => {
-    if (!url) return;
-
     let isMounted = true;
     const controller = new AbortController();
 
     const fetchContent = async () => {
       try {
-        const query = new ContentURL(url).toRepoContentQuery();
+        const query = content.toRepoContentQuery();
 
         if (query) {
           const contentObject = await dispatch(getRepoFile(query)).unwrap();
@@ -54,7 +45,7 @@ const ContentComponent: React.FC<ContentComponentProps> = ({ title, content }) =
       isMounted = false;
       controller.abort();
     };
-  }, [url, dispatch]);
+  }, [content]);
 
   return (
     <>

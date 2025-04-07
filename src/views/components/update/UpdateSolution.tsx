@@ -100,7 +100,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
       const updatedSolution: ProjectSolutionObject = {
         gallery: gallery.toGalleryObject(),
         features: Array.from(features),
-        content_url: content,
+        content_url: content ? content.url : null,
         project_urls: projectURLs.toProjectURLsObject()
       };
 

@@ -238,16 +238,12 @@ export const getRepoDetails = createAsyncThunk(
         const repo = new Repo();
         repo.fromGitHub(repoResponse.payload);
 
-        let skills: Array<Record<string, any>> = [];
-        let contents: Record<string, any> = {};
-        let contributors: Array<Record<string, any>> = [];
-
         const langResponse = await thunkAPI
           .dispatch(getRepoLanguages(query))
           .unwrap();
 
         if (langResponse) {
-          skills = repo.languagesFromGithub(langResponse);
+          repo.languagesFromGithub(langResponse);
         }
 
         if (Number.isInteger(repo.size) && repo.size > 0) {
@@ -256,7 +252,7 @@ export const getRepoDetails = createAsyncThunk(
             .unwrap();
 
           if (contentsResponse) {
-            contents = repo.filterContents(contentsResponse);
+            repo.filterContents(contentsResponse);
           }
         }
 
@@ -274,17 +270,11 @@ export const getRepoDetails = createAsyncThunk(
               contributorsArray.push(new User(contributor).toObject());
             });
 
-            contributors = repo.contributorsFromGitHub(contributorsArray);
+            repo.contributorsFromGitHub(contributorsArray);
           }
         }
 
-        return {
-          ...repo.toObject(),
-          owner: repo.owner ? repo.owner.toObject() : null,
-          skills: skills,
-          contents: contents,
-          contributors: contributors,
-        };
+        return repo.toRepoObject();
       }
 
       return null;

@@ -54,6 +54,21 @@ class RepoContents extends Model {
   setDetails(details: RepoContent) {
     this.details = details;
   }
+
+  toRepoContentsObject(): RepoContentsObject {
+    return {
+      solution: this.solution ? this.solution.toRepoContentObject() : null,
+      design: this.design ? this.design.toRepoContentObject() : null,
+      development: this.development
+        ? this.development.toRepoContentObject()
+        : null,
+      delivery: this.development
+        ? this.development.toRepoContentObject()
+        : null,
+      problem: this.problem ? this.problem.toRepoContentObject() : null,
+      details: this.details ? this.details.toRepoContentObject() : null,
+    };
+  }
 }
 
 export default RepoContents;

@@ -1,7 +1,7 @@
 import ContentURL from './ContentURL';
 import Model from './Model';
 
-export interface RepoContentObject extends Model {
+export interface RepoContentObject {
   id: string;
   name: string;
   path: string;
@@ -26,7 +26,20 @@ class RepoContent extends Model {
     this.path = data?.path ?? '';
     this.type = data?.type ?? '';
     this.size = data?.size ?? 0;
-    this.downloadURL = data?.download_url ? new ContentURL(data.download_url).url : null;
+    this.downloadURL = data?.download_url
+      ? new ContentURL(data.download_url).url
+      : null;
+  }
+
+  toRepoContentObject(): RepoContentObject {
+    return {
+      id: this.id,
+      name: this.name,
+      path: this.path,
+      type: this.type,
+      size: this.size,
+      download_url: this.downloadURL,
+    };
   }
 }
 

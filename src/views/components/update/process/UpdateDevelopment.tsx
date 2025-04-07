@@ -92,8 +92,9 @@ const UpdateDevelopment: React.FC<UpdateDevelopmentProps> = ({ project }) => {
   useEffect(() => {
     if (updatedVersionsList) {
       const projectVersionsObject: ProjectVersionsObject = {
+        history: updatedVersionsList?.history,
         current: updatedVersionsList?.current,
-        history: updatedVersionsList?.history
+        future: updatedVersionsList?.future
       }
       setProjectVersions(new ProjectVersions(projectVersionsObject))
     }

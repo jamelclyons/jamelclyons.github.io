@@ -40,8 +40,8 @@ class ProjectDevelopment extends Model {
 
     this.gallery = data?.gallery ? new Gallery(data.gallery) : null;
     this.repoURL = data?.repo_url ? new RepoURL(data.repo_url) : null;
-    this.contentURL = data?.content_url?.url
-      ? new ContentURL(data.content_url.url)
+    this.contentURL = data?.content_url
+      ? new ContentURL(data.content_url)
       : null;
     this.skills = data?.skills ? new ProjectSkills(data.skills) : null;
     this.checkList = data?.check_list ? new CheckList(data.check_list) : null;
