@@ -7,6 +7,7 @@ export type GalleryObject = {
   animations: Array<ImageObject> | null;
   uml_diagrams: Array<ImageObject> | null;
   screenshots: Array<ImageObject> | null;
+  previews: Array<ImageObject> | null;
 };
 
 class Gallery extends Model {
@@ -15,6 +16,7 @@ class Gallery extends Model {
   animations: Array<Image> | null;
   umlDiagrams: Array<Image> | null;
   screenshots: Array<Image> | null;
+  previews: Array<Image> | null;
   images: Array<Image> | null;
 
   constructor(data: Record<string, any> | GalleryObject = {}) {
@@ -35,12 +37,16 @@ class Gallery extends Model {
     this.screenshots = Array.isArray(data?.screenshots)
       ? this.toArrayImage(data.screenshots)
       : null;
+    this.previews = Array.isArray(data?.previews)
+      ? this.toArrayImage(data.previews)
+      : null;
     this.images = [
       ...(this.logos ?? []),
       ...(this.icons ?? []),
       ...(this.animations ?? []),
       ...(this.umlDiagrams ?? []),
       ...(this.screenshots ?? []),
+      ...(this.previews ?? []),
     ];
   }
 
@@ -100,6 +106,10 @@ class Gallery extends Model {
       screenshots:
         Array.isArray(this.screenshots) && this.screenshots.length > 0
           ? this.screenshots.map((screenshot) => screenshot.toImageObject())
+          : null,
+      previews:
+        Array.isArray(this.previews) && this.previews.length > 0
+          ? this.previews.map((preview) => preview.toImageObject())
           : null,
     };
   }

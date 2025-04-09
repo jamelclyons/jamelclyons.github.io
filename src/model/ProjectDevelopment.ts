@@ -8,6 +8,7 @@ import Gallery, { GalleryObject } from './Gallery';
 import CheckList, { CheckListObject } from './CheckList';
 import ContentURL from './ContentURL';
 import RepoURL from './RepoURL';
+import Roadmap from './Roadmap';
 
 export type ProjectDevelopmentObject = {
   gallery: GalleryObject | null;
@@ -34,6 +35,7 @@ class ProjectDevelopment extends Model {
   skills: ProjectSkills | null;
   checkList: CheckList | null;
   versionsList: ProjectVersions | null;
+  roadmap: Roadmap | null;
 
   constructor(data: Record<string, any> | ProjectDevelopmentObject = {}) {
     super();
@@ -48,6 +50,7 @@ class ProjectDevelopment extends Model {
     this.versionsList = data?.versions_list
       ? new ProjectVersions(data.versions_list)
       : null;
+    this.roadmap = this.versionsList ? new Roadmap(this.versionsList) : null;
   }
 
   toArrayTask(data: Array<Record<string, any>>) {
@@ -59,6 +62,7 @@ class ProjectDevelopment extends Model {
 
     return checkList;
   }
+  
   setContentURL(url: string) {
     this.contentURL = new ContentURL(url);
   }

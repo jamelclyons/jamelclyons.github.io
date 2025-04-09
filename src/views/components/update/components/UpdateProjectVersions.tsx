@@ -18,24 +18,21 @@ interface UpdateProjectVersionsProps {
 const UpdateProjectVersions: React.FC<UpdateProjectVersionsProps> = ({ projectVersions }) => {
     const dispatch = useDispatch<AppDispatch>();
 
-    const [projectVersionsObject, setProjectVersionsObject] = useState<ProjectVersionsObject>(projectVersions.toProjectVersionsObject());
-
-    const [history, setHistory] = useState<Set<string>>(projectVersions.history);
-    const [currentVersion, setCurrentVersion] = useState<string>(projectVersions.current);
-    const [future, setFuture] = useState<Set<string>>(projectVersions.future);
+    const [history, setHistory] = useState<Set<string>>(new Set());
+    const [currentVersion, setCurrentVersion] = useState<string>('1.0.0');
+    const [future, setFuture] = useState<Set<string>>(new Set());
 
     useEffect(() => {
-        setProjectVersionsObject(projectVersions.toProjectVersionsObject());
-    }, [projectVersions, setProjectVersionsObject]);
+        if (projectVersions.history) {
+            setHistory(projectVersions.history)
+        }
+    }, [projectVersions]);
 
     useEffect(() => {
-        const updatedProjectVersions: ProjectVersionsObject = {
-            history: Array.from(history),
-            current: currentVersion,
-            future: Array.from(future)
-        };
-        setProjectVersionsObject(updatedProjectVersions);
-    }, [currentVersion, history, setProjectVersionsObject]);
+        if (projectVersions.future) {
+            setFuture(projectVersions.future)
+        }
+    }, [projectVersions]);
 
     const handleCurrentVersionChange = (e: ChangeEvent<HTMLInputElement>) => {
         try {
@@ -73,9 +70,10 @@ const UpdateProjectVersions: React.FC<UpdateProjectVersionsProps> = ({ projectVe
 
     const handleUpdateCurrentVersion = () => {
         try {
-            const updatedPreviousVersion = [currentVersion, ...history];
 
             if (!history.has(currentVersion)) {
+                let updatedPreviousVersion = [ currentVersion, ...history];
+
                 setHistory(new Set(updatedPreviousVersion));
             }
         } catch (error) {
@@ -87,7 +85,13 @@ const UpdateProjectVersions: React.FC<UpdateProjectVersionsProps> = ({ projectVe
 
     const handleUpdateVersions = () => {
         try {
-            dispatch(updateVersions(new ProjectVersions(projectVersions)));
+            const updatedProjectVersions: ProjectVersionsObject = {
+                history: Array.from(history),
+                current: currentVersion,
+                future: Array.from(future)
+            };
+
+            dispatch(updateVersions(new ProjectVersions(updatedProjectVersions)));
         } catch (error) {
             const err = error as Error;
             dispatch(setMessage(err.message));

@@ -1,9 +1,6 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
 import { useDispatch } from 'react-redux';
 
-import type { AppDispatch } from '@/model/store';
-import ProjectURLs from '@/model/ProjectURLs';
-
 import { updateProjectURLs } from '@/controllers/updateSlice';
 import {
     setMessage,
@@ -11,8 +8,11 @@ import {
     setShowStatusBar,
 } from '@/controllers/messageSlice';
 
+import type { AppDispatch } from '@/model/store';
+import ProjectURLs from '@/model/ProjectURLs';
+
 interface UpdateProjectURLProps {
-    projectURLs: ProjectURLs
+    projectURLs: ProjectURLs | undefined | null;
 }
 
 const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLs }) => {
@@ -28,22 +28,22 @@ const UpdateProjectURL: React.FC<UpdateProjectURLProps> = ({ projectURLs }) => {
     const [androidURL, setAndroidURL] = useState<string | null>(null);
 
     useEffect(() => {
-        if (projectURLs.homepage) {
+        if (projectURLs?.homepage) {
             setHomepageURL(projectURLs.homepage.url);
         }
-    }, [projectURLs.homepage, setHomepageURL]);
+    }, [projectURLs?.homepage, setHomepageURL]);
 
     useEffect(() => {
-        if (projectURLs.ios) {
+        if (projectURLs?.ios) {
             setIosURL(projectURLs.ios.url);
         }
-    }, [projectURLs.ios, setIosURL]);
+    }, [projectURLs?.ios, setIosURL]);
 
     useEffect(() => {
-        if (projectURLs.android) {
+        if (projectURLs?.android) {
             setAndroidURL(projectURLs.android.url);
         }
-    }, [projectURLs.android, setAndroidURL]);
+    }, [projectURLs?.android, setAndroidURL]);
 
     const handleHomepageChange = (e: ChangeEvent<HTMLInputElement>) => {
         try {

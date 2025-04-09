@@ -14,33 +14,33 @@ import { updateDeliveryGallery, updateDesignGallery, updateDevelopmentGallery, u
 
 interface UpdateGalleryProps {
     location: string;
-    gallery: Gallery;
+    gallery: Gallery | undefined | null;
 }
 
 const UpdateGallery: React.FC<UpdateGalleryProps> = ({ location, gallery }) => {
     const dispatch = useDispatch<AppDispatch>();
 
-    const [galleryObject, setGalleryObject] = useState<GalleryObject>(gallery.toGalleryObject());
+    const [galleryObject, setGalleryObject] = useState<GalleryObject | null>(null);
 
     const [logos, setLogos] = useState<Array<ImageObject>>([]);
     const [icons, setIcons] = useState<Array<ImageObject>>([]);
     const [animations, setAnimations] = useState<Array<ImageObject>>([]);
     const [umlDiagrams, setUmlDiagrams] = useState<Array<ImageObject>>([]);
-    const [screenshots, setScreenshot] = useState<Array<ImageObject>>([]);
+    const [screenshots, setScreenshots] = useState<Array<ImageObject>>([]);
+    const [previews, setPreviews] = useState<Array<ImageObject>>([]);
 
     const [newLogo, setNewLogo] = useState<ImageObject>({ id: '', title: '', url: '', class_name: '' });
     const [newIcon, setNewIcon] = useState<ImageObject>({ id: '', title: '', url: '', class_name: '' });
     const [newAnimation, setNewAnimation] = useState<ImageObject>({ id: '', title: '', url: '', class_name: '' });
     const [newUmlDiagram, setNewUmlDiagram] = useState<ImageObject>({ id: '', title: '', url: '', class_name: '' });
     const [newScreenshot, setNewScreenshot] = useState<ImageObject>({ id: '', title: '', url: '', class_name: '' });
+    const [newPreview, setNewPreview] = useState<ImageObject>({ id: '', title: '', url: '', class_name: '' });
 
     useEffect(() => {
-        setGalleryObject(gallery.toGalleryObject());
+        if (gallery) {
+            setGalleryObject(gallery.toGalleryObject());
+        }
     }, [gallery, setGalleryObject]);
-
-    useEffect(() => {
-        setGalleryObject(galleryObject);
-    }, [galleryObject, setGalleryObject]);
 
     const handleNewLogo = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -49,7 +49,9 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ location, gallery }) => {
 
     const handleAddNewLogo = () => {
         if (newLogo && newLogo.title && (newLogo.url || newLogo.class_name)) {
-            setLogos((prev: Array<ImageObject>) => [...prev, { ...newLogo }]);
+            setLogos((prev) =>
+                prev ? [...prev, { ...newLogo }] : [{ ...newLogo }]
+            );
             setNewLogo({ id: '', title: '', url: '', class_name: '' });
         };
     }
@@ -61,7 +63,9 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ location, gallery }) => {
 
     const handleAddNewIcon = () => {
         if (newIcon && newIcon.title && (newIcon.url || newIcon.class_name)) {
-            setIcons((prev: Array<ImageObject>) => [...prev, { ...newIcon }]);
+            setIcons((prev) =>
+                prev ? [...prev, { ...newIcon }] : [{ ...newIcon }]
+            );
             setNewIcon({ id: '', title: '', url: '', class_name: '' });
         };
     }
@@ -73,7 +77,9 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ location, gallery }) => {
 
     const handleAddNewAnimation = () => {
         if (newAnimation && newAnimation.title && (newAnimation.url || newAnimation.class_name)) {
-            setAnimations((prev: Array<ImageObject>) => [...prev, { ...newAnimation }]);
+            setAnimations((prev) =>
+                prev ? [...prev, { ...newAnimation }] : [{ ...newAnimation }]
+            );
             setNewAnimation({ id: '', title: '', url: '', class_name: '' });
         };
     }
@@ -85,7 +91,9 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ location, gallery }) => {
 
     const handleAddNewUmlDiagram = () => {
         if (newUmlDiagram && newUmlDiagram.title && (newUmlDiagram.url || newUmlDiagram.class_name)) {
-            setUmlDiagrams((prev: Array<ImageObject>) => ([...prev, { ...newUmlDiagram }]));
+            setUmlDiagrams((prev) =>
+                prev ? [...prev, { ...newUmlDiagram }] : [{ ...newUmlDiagram }]
+            );
             setNewUmlDiagram({ id: '', title: '', url: '', class_name: '' });
         };
     }
@@ -97,15 +105,31 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ location, gallery }) => {
 
     const handleAddNewScreenshot = () => {
         if (newScreenshot && newScreenshot.title && (newScreenshot.url || newScreenshot.class_name)) {
-            setScreenshot((prev: Array<ImageObject>) => ([...prev, { ...newScreenshot }]));
+            setScreenshots((prev) =>
+                prev ? [...prev, { ...newScreenshot }] : [{ ...newScreenshot }]
+            );
             setNewScreenshot({ id: '', title: '', url: '', class_name: '' });
+        };
+    }
+
+    const handleNewPreview = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setNewPreview((prev) => ({ ...prev, id: crypto.randomUUID(), [name]: value }));
+    };
+
+    const handleAddNewPreview = () => {
+        if (newPreview && newPreview.title && (newPreview.url || newPreview.class_name)) {
+            setPreviews((prev) =>
+                prev ? [...prev, { ...newPreview }] : [{ ...newPreview }]
+            );
+            setNewPreview({ id: '', title: '', url: '', class_name: '' });
         };
     }
 
     const handleChange = (
         e: ChangeEvent<HTMLInputElement>,
         state: any[],
-        setState: React.Dispatch<React.SetStateAction<any[]>>
+        setState: React.Dispatch<React.SetStateAction<ImageObject[]>>
     ) => {
         const { name, value, dataset } = e.target;
         const index = dataset.index ? parseInt(dataset.index, 10) : -1;
@@ -123,11 +147,12 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ location, gallery }) => {
 
         try {
             const updatedGalleryObject: GalleryObject = {
-                logos: logos,
-                icons: icons,
-                animations: animations,
-                uml_diagrams: umlDiagrams,
-                screenshots: screenshots
+                logos: logos.length > 0 ? logos : null,
+                icons: icons.length > 0 ? icons : null,
+                animations: animations.length > 0 ? animations : null,
+                uml_diagrams: umlDiagrams.length > 0 ? umlDiagrams : null,
+                screenshots: screenshots.length > 0 ? screenshots : null,
+                previews: previews.length > 0 ? previews : null
             };
 
             if (location === 'solution') {
@@ -468,7 +493,7 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ location, gallery }) => {
                                             value={item.title ?? ""}
                                             name="title"
                                             data-index={index}
-                                            onChange={(e) => handleChange(e, screenshots, setScreenshot)}
+                                            onChange={(e) => handleChange(e, screenshots, setScreenshots)}
                                         />
                                     </div>
 
@@ -480,7 +505,7 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ location, gallery }) => {
                                             value={item.url ?? ""}
                                             name="url"
                                             data-index={index}
-                                            onChange={(e) => handleChange(e, screenshots, setScreenshot)}
+                                            onChange={(e) => handleChange(e, screenshots, setScreenshots)}
                                         />
                                     </div>
 
@@ -492,7 +517,7 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ location, gallery }) => {
                                             value={item.class_name ?? ""}
                                             name="class_name"
                                             data-index={index}
-                                            onChange={(e) => handleChange(e, screenshots, setScreenshot)}
+                                            onChange={(e) => handleChange(e, screenshots, setScreenshots)}
                                         />
                                     </div>
                                 </div>
@@ -509,6 +534,76 @@ const UpdateGallery: React.FC<UpdateGalleryProps> = ({ location, gallery }) => {
                         <input type="text" name="url" placeholder="URL" value={newScreenshot.url} onChange={handleNewScreenshot} />
                         <input type="text" name="class_name" placeholder="Class Name" value={newScreenshot.class_name} onChange={handleNewScreenshot} />
                         <button type="button" onClick={handleAddNewScreenshot}><h3>Add Screenshot</h3></button>
+                    </div>
+                </form>
+
+                <form onSubmit={(e) => e.preventDefault()} id='update_gallery_previews'>
+                    {Array.isArray(previews) && previews.length > 0 && (
+                        <>
+                            <h3>Previews</h3>
+
+                            {previews && previews.map((item: ImageObject, index: number) => (
+                                <div className="form-item" key={item.id}>
+                                    <div className="form-item-flex">
+                                        <label htmlFor="id">ID:</label>
+                                        <input
+                                            type="text"
+                                            placeholder="ID"
+                                            value={item.id ?? ""}
+                                            name="id"
+                                            disabled
+                                        />
+                                    </div>
+
+                                    <div className="form-item-flex">
+                                        <label htmlFor="title">Title:</label>
+                                        <input
+                                            type="text"
+                                            placeholder="Title"
+                                            value={item.title ?? ""}
+                                            name="title"
+                                            data-index={index}
+                                            onChange={(e) => handleChange(e, previews, setPreviews)}
+                                        />
+                                    </div>
+
+                                    <div className="form-item-flex">
+                                        <label htmlFor="url">URL:</label>
+                                        <input
+                                            type="text"
+                                            placeholder="URL"
+                                            value={item.url ?? ""}
+                                            name="url"
+                                            data-index={index}
+                                            onChange={(e) => handleChange(e, previews, setPreviews)}
+                                        />
+                                    </div>
+
+                                    <div className="form-item-flex">
+                                        <label htmlFor="class_name">Class Name:</label>
+                                        <input
+                                            type="text"
+                                            placeholder="Class Name"
+                                            value={item.class_name ?? ""}
+                                            name="class_name"
+                                            data-index={index}
+                                            onChange={(e) => handleChange(e, previews, setPreviews)}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </>
+                    )}
+
+                    <hr />
+
+                    <h4>Add New Preview</h4>
+
+                    <div className='form-item'>
+                        <input type="text" name="title" placeholder="Title" value={newScreenshot.title} onChange={handleNewPreview} />
+                        <input type="text" name="url" placeholder="URL" value={newScreenshot.url} onChange={handleNewPreview} />
+                        <input type="text" name="class_name" placeholder="Class Name" value={newScreenshot.class_name} onChange={handleNewPreview} />
+                        <button type="button" onClick={handleAddNewPreview}><h3>Add Preview</h3></button>
                     </div>
                 </form>
 

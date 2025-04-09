@@ -169,7 +169,6 @@ class Project extends Model {
           this.process.development.skills
             ? this.process.development.skills
             : (this.process.development.skills = new ProjectSkills());
-
           this.process.development.skills.add(repo.skills);
         }
 
@@ -210,6 +209,12 @@ class Project extends Model {
     if (data?.solution) {
       this.solution ? this.solution : (this.solution = new ProjectSolution());
 
+      if (data?.solution?.features) {
+        this.solution.features = new Set(
+          data.solution.features.map((feature) => new Feature(feature))
+        );
+      }
+
       if (data?.solution?.project_urls) {
         this.solution.projectURLs
           ? this.solution.projectURLs
@@ -234,10 +239,6 @@ class Project extends Model {
 
       data.solution?.gallery
         ? (this.solution.gallery = new Gallery(data?.solution?.gallery))
-        : null;
-
-      data.solution?.features
-        ? this.solution.setFeatures(data?.solution?.features)
         : null;
     }
 
@@ -284,7 +285,6 @@ class Project extends Model {
         this.process.development
           ? this.process.development
           : (this.process.development = new ProjectDevelopment());
-
         if (data?.process?.development?.skills) {
           this.process.development.skills
             ? this.process.development.skills

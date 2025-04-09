@@ -1,8 +1,5 @@
 import React, { useEffect, useState, ChangeEvent, MouseEvent, FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '@/model/store';
-
-import Feature, { FeatureObject } from '@/model/Feature';
 
 import {
     setMessage,
@@ -11,22 +8,32 @@ import {
 } from '@/controllers/messageSlice';
 import { updateFeatures } from '@/controllers/updateSlice';
 
+import type { AppDispatch } from '@/model/store';
+import Feature, { FeatureObject } from '@/model/Feature';
+import ProjectVersion from '@/model/ProjectVersion';
+
 interface UpdateFeaturesProps {
-    features: Set<Feature>;
+    features: Set<Feature> | undefined | null;
 }
 
 const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ features }) => {
     const dispatch = useDispatch<AppDispatch>();
 
-    const [featuresObject, setFeaturesObject] = useState<Array<FeatureObject>>(Array.from(features).map((feature) => feature.toFeatureObject()));
+    const [featuresObject, setFeaturesObject] = useState<Array<FeatureObject> | null>(null);
     const [feature, setFeature] = useState<Feature>(new Feature());
+
+    useEffect(() => {
+        if (features) {
+            setFeaturesObject(Array.from(features).map((feature) => feature.toFeatureObject()))
+        }
+    }, [features]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>, feature: FeatureObject) => {
         const { name, value } = e.target;
 
-        const updatedFeatures = featuresObject.map((f) =>
+        const updatedFeatures = featuresObject ? featuresObject.map((f) =>
             f.id === feature.id ? { ...feature, [name]: value } : f
-        );
+        ) : null;
 
         setFeaturesObject(updatedFeatures);
     };
@@ -36,14 +43,20 @@ const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ features }) => {
 
         let id = feature.id !== '' ? feature.id : crypto.randomUUID();
         let description = feature.description;
+        let version = feature.version;
 
         if (name === 'description') {
             description = value;
         }
 
+        if (name === 'version') {
+            version = value;
+        }
+
         let featureObject: FeatureObject = {
             id: id,
-            description: description
+            description: description,
+            version: version
         }
 
         setFeature(new Feature(featureObject));
@@ -57,11 +70,9 @@ const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ features }) => {
                 throw new Error('A description is required');
             }
 
-            setFeaturesObject(prevFeatures => {
-                const updatedFeatures = [...prevFeatures, feature];
-                dispatch(updateFeatures(new Set(updatedFeatures.map((f) => new Feature(f)))));
-                return updatedFeatures;
-            });
+            const updatedFeatures = featuresObject ? [...featuresObject, feature.toFeatureObject()] : [feature.toFeatureObject()];
+
+            setFeaturesObject(updatedFeatures);
 
             setFeature(new Feature());
         } catch (error) {
@@ -76,7 +87,7 @@ const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ features }) => {
         e.preventDefault();
 
         try {
-            if (featuresObject.length === 0) {
+            if (!featuresObject || featuresObject.length === 0) {
                 throw new Error('No features added');
             }
 
@@ -93,7 +104,7 @@ const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ features }) => {
         <div className="update" id="update_features">
             <h3>Features</h3>
 
-            {featuresObject.map((feature) => (
+            {featuresObject && featuresObject.map((feature) => (
                 <div className="form-item" key={feature.id}>
                     <div className="form-item-flex">
                         <label htmlFor="">ID:</label>
@@ -103,6 +114,11 @@ const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ features }) => {
                     <div className="form-item-flex">
                         <label htmlFor="">Feature</label>
                         <input type="text" value={feature.description} placeholder='Description' name='description' onChange={(e) => handleChange(e, feature)} />
+                    </div>
+
+                    <div className="form-item-flex">
+                        <label htmlFor="">Version</label>
+                        <input type="text" value={feature?.version ?? ''} placeholder='Version' name='version' onChange={(e) => handleChange(e, feature)} />
                     </div>
                 </div>
             ))}
@@ -120,6 +136,11 @@ const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ features }) => {
                 <div className="form-item-flex">
                     <label htmlFor="">Feature</label>
                     <input type="text" value={feature.description} placeholder='Description' name='description' onChange={handleFeatureChange} />
+                </div>
+
+                <div className="form-item-flex">
+                    <label htmlFor="">Version</label>
+                    <input type="text" value={feature.version ?? ''} placeholder='Version' name='version' onChange={handleFeatureChange} />
                 </div>
 
                 <button onClick={handleAddFeature}>

@@ -7,7 +7,7 @@ import { ProjectSolutionObject } from '@/model/ProjectSolution';
 import Gallery from '@/model/Gallery';
 import Feature from '@/model/Feature';
 import ProjectURLs from '@/model/ProjectURLs';
-import ContentURL, { ContentURLObject } from '@/model/ContentURL';
+import ContentURL from '@/model/ContentURL';
 
 import { updateProject } from '@/controllers/updateSlice';
 import {
@@ -39,10 +39,6 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
   useEffect(() => {
     setGallery(project.solution?.gallery ?? new Gallery);
   }, [project, setGallery]);
-
-  useEffect(() => {
-    setFeatures(project.solution?.features ?? new Set);
-  }, [project, setFeatures]);
 
   useEffect(() => {
     setContent(project.solution?.contentURL ?? null);
@@ -99,7 +95,7 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
     try {
       const updatedSolution: ProjectSolutionObject = {
         gallery: gallery.toGalleryObject(),
-        features: Array.from(features),
+        features: Array.from(features).map((feature) => feature.toFeatureObject()),
         content_url: content ? content.url : null,
         project_urls: projectURLs.toProjectURLsObject()
       };
@@ -122,15 +118,15 @@ const UpdateSolution: React.FC<UpdateSolutionProps> = ({ project }) => {
     <div className='update' id='update_solution'>
       <h1 className="title">solution</h1>
 
-      <UpdateGallery location='solution' gallery={gallery} />
+      <UpdateGallery location='solution' gallery={project.solution?.gallery} />
 
       <br />
 
-      <UpdateFeatures features={features} />
+      <UpdateFeatures features={project.solution?.features} />
 
       <br />
 
-      <UpdateProjectURL projectURLs={projectURLs} />
+      <UpdateProjectURL projectURLs={project.solution?.projectURLs} />
 
       <hr />
 

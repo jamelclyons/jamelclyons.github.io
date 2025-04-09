@@ -145,7 +145,7 @@ class Skills extends Model {
 
   show(skillsUsed: ProjectSkills) {
     const filteredSkills: ProjectSkills = new ProjectSkills();
-console.log(skillsUsed)
+
     if (skillsUsed.types && skillsUsed.types.size > 0) {
       skillsUsed.types.forEach((typeUsed) => {
         this.types.forEach((type) => {
@@ -211,7 +211,7 @@ console.log(skillsUsed)
         });
       });
     }
-    console.log(filteredSkills);
+
     return filteredSkills;
   }
 

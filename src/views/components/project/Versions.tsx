@@ -21,12 +21,10 @@ const Versions: React.FC<VersionsProps> = ({ projectVersions }) => {
             <h4>Upcoming Versions</h4>
             <table>
               <tbody>
-                {Array.isArray(projectVersions.history) &&
-                  projectVersions.history.map((version, index) => (
+                {projectVersions.order().length > 0 &&
+                  projectVersions.order().map((version, index) => (
                     <tr key={index}>
-                      <td className="feature">{version.title}</td>
-                      <td>-</td>
-                      <td>{version.version}</td>
+                      <td>{version}</td>
                     </tr>
                   ))}
               </tbody>

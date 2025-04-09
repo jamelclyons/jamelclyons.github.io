@@ -84,6 +84,7 @@ class Repo extends Model {
   }
 
   languagesFromGithub(data: Array<Record<string, any>>) {
+
     if (Array.isArray(data) && data.length > 0) {
       let languages: Array<Record<string, any>> = [];
 
@@ -141,7 +142,7 @@ class Repo extends Model {
         languages.push(skill);
       });
 
-       this.setSkills(languages);
+      this.setSkills(languages);
     }
   }
 
