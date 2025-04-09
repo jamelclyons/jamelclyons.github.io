@@ -16,20 +16,6 @@ const Versions: React.FC<VersionsProps> = ({ projectVersions }) => {
               <h4>Current Version</h4>
               {projectVersions.current}
             </span>}
-
-          {projectVersions.history.size > 0 && <span className="upcoming-versions">
-            <h4>Upcoming Versions</h4>
-            <table>
-              <tbody>
-                {projectVersions.order().length > 0 &&
-                  projectVersions.order().map((version, index) => (
-                    <tr key={index}>
-                      <td>{version}</td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          </span>}
         </div>
       }
     </>

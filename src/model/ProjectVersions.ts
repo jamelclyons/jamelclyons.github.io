@@ -28,8 +28,7 @@ class ProjectVersions extends Model {
       .sort((a, b) => a.major - b.major)
       .sort((a, b) => a.minor - b.minor)
       .sort((a, b) => a.patch - b.patch)
-      .map((v) => v.toString())
-      .filter((v) => v !== this.current);
+      .map((v) => v.toString());
   }
 
   toProjectVersionsObject(): ProjectVersionsObject {

@@ -1,5 +1,3 @@
-import Model from './Model';
-
 class Version {
   major: number;
   minor: number;

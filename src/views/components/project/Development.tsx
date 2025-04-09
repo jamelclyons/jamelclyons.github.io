@@ -18,6 +18,8 @@ import {
 } from '@/controllers/authSlice';
 
 import Project from '@/model/Project';
+import RoadmapComponent from './RoadmapComponent';
+import FeaturesRoadmap from '@/model/FeaturesRoadmap';
 
 interface DevelopmentProps {
   project: Project;
@@ -78,6 +80,8 @@ const Development: React.FC<DevelopmentProps> = ({ project }) => {
         {project.process.development.contentURL && <ContentComponent title={''} content={project.process.development.contentURL} />}
 
         {project.process.development.versionsList && <Versions projectVersions={project.process.development.versionsList} />}
+
+        {project.solution && project.solution.features && <RoadmapComponent roadmap={new FeaturesRoadmap(project.solution.features)} />}
 
         {repoURL && buttonTitle &&
           <button className='repo' onClick={handleSeeCode}>

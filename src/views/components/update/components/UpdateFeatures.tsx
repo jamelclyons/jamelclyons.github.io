@@ -10,7 +10,7 @@ import { updateFeatures } from '@/controllers/updateSlice';
 
 import type { AppDispatch } from '@/model/store';
 import Feature, { FeatureObject } from '@/model/Feature';
-import ProjectVersion from '@/model/ProjectVersion';
+import Version from '@/model/Version';
 
 interface UpdateFeaturesProps {
     features: Set<Feature> | undefined | null;
@@ -50,13 +50,13 @@ const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ features }) => {
         }
 
         if (name === 'version') {
-            version = value;
+            version = new Version(value);
         }
 
         let featureObject: FeatureObject = {
             id: id,
             description: description,
-            version: version
+            version: version.toString()
         }
 
         setFeature(new Feature(featureObject));
@@ -140,7 +140,7 @@ const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ features }) => {
 
                 <div className="form-item-flex">
                     <label htmlFor="">Version</label>
-                    <input type="text" value={feature.version ?? ''} placeholder='Version' name='version' onChange={handleFeatureChange} />
+                    <input type="text" value={feature.version ? feature.version.toString() : ''} placeholder='Version' name='version' onChange={handleFeatureChange} />
                 </div>
 
                 <button onClick={handleAddFeature}>
