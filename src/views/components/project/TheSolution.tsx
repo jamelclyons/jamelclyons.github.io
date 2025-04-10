@@ -21,16 +21,16 @@ const TheSolution: React.FC<SolutionProps> = ({ project }) => {
         <div className="project-section project-solution" id="project_solution">
           <h2>THE SOLUTION</h2>
 
-          {project.solution && project.solution.gallery && project.solution.gallery.images && project.solution.gallery.images.length > 0 &&
+          {project.solution.gallery && project.solution.gallery.images && project.solution.gallery.images.length > 0 &&
             <GalleryComponent gallery={project.solution.gallery.images} title='' />}
 
-          {project.solution && project.solution.features && project.solution.features.size > 0 && project.process && project.process.development && project.process.development.versionsList &&
+          {project.solution.features && project.solution.features.size > 0 && project.process && project.process.development && project.process.development.versionsList &&
             <FeaturesComponent features={project.solution.features} currentVersion={new Version(project.process.development.versionsList.current)} />}
 
-          {project.solution && project.solution.projectURLs &&
+          {project.solution.projectURLs &&
             <ProjectURLsComponent projectUrls={project.solution.projectURLs} />}
 
-          {project.solution && project.solution.contentURL &&
+          {project.solution.contentURL &&
             <ContentComponent title={null} content={project.solution.contentURL} />}
         </div>
       }

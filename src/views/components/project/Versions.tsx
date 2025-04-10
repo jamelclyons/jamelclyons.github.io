@@ -14,7 +14,7 @@ const Versions: React.FC<VersionsProps> = ({ projectVersions }) => {
           {projectVersions.current &&
             <span className="current-version">
               <h4>Current Version</h4>
-              {projectVersions.current}
+              <h5>{projectVersions.current}</h5>
             </span>}
         </div>
       }

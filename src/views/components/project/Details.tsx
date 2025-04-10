@@ -23,20 +23,22 @@ const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ user, project 
   useEffect(() => {
     setPrivacy(project.details?.privacy ?? 'private')
   }, [project]);
-
+  
   return (
     <>
-      {(isAuthenticated || privacy === 'public') && (
-        <div className="project-details">
-          <h3 className="title">the details</h3>
+      {(isAuthenticated || privacy === 'public') &&
+        project && project.details &&
+        (project.details.content || (project.details.teamList && project.details.teamList.length > 0)) && (
+          <div className="project-details">
+            <h3 className="title">the details</h3>
 
-          {project && project.details && project.details.content &&
-            <ContentComponent title={null} content={project.details.content} />}
+            {project.details.content &&
+              <ContentComponent title={null} content={project.details.content} />}
 
-          {project && project.details && project.details.teamList &&
-            <ProjectTeamComponent user={user} projectTeam={project.details.teamList} />}
-        </div>
-      )}
+            {project.details.teamList &&
+              <ProjectTeamComponent user={user} projectTeam={project.details.teamList} />}
+          </div>
+        )}
     </>
   );
 }

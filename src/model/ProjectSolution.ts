@@ -5,7 +5,7 @@ import ProjectURLs, {
   ProjectURLsObject,
 } from './ProjectURLs';
 import Gallery, { GalleryObject } from './Gallery';
-import ContentURL, { ContentURLObject } from './ContentURL';
+import ContentURL from './ContentURL';
 
 export type ProjectSolutionObject = {
   gallery: GalleryObject | null;
@@ -31,15 +31,15 @@ class ProjectSolution extends Model {
     super();
 
     this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
-    this.features = data?.features
-      ? this.setFeatures(data.features)
-      : new Set<Feature>();
+    this.features = data?.features ? this.setFeatures(data.features) : null;
     this.contentURL = data?.content_url
       ? new ContentURL(data.content_url)
       : null;
-    this.projectURLs = data?.project_urls
-      ? new ProjectURLs(data.project_urls)
-      : new ProjectURLs();
+    this.projectURLs =
+      data?.project_urls &&
+      (data.project_urls.homepage || data.project_urls.ios || data.project_urls.android)
+        ? new ProjectURLs(data.project_urls)
+        : null;
   }
 
   setContentURL(url: string) {
@@ -64,9 +64,7 @@ class ProjectSolution extends Model {
       features: this.features
         ? Array.from(this.features).map((feature) => feature.toFeatureObject())
         : null,
-      content_url: this.contentURL
-        ? this.contentURL.url
-        : null,
+      content_url: this.contentURL ? this.contentURL.url : null,
       project_urls: this.projectURLs
         ? this.projectURLs.toProjectURLsObject()
         : null,

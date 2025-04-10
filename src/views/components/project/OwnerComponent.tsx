@@ -31,7 +31,9 @@ const OwnerComponent: React.FC<OwnerComponentProps> = ({ project }) => {
     };
 
     return (
-        <div className="organization">
+        <div className="project-owner">
+            <h2 className="title">project owner</h2>
+
             <button
                 className="organizations-button"
                 onClick={handleClick}>
