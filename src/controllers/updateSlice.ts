@@ -500,7 +500,7 @@ export const updateProject = createAsyncThunk(
         return headers;
       }
 
-      const response = await fetch(`${api}/project/${project.id}`, {
+      const response = await fetch(`${api}/saveProject/${project.id}`, {
         method: 'POST',
         headers:
           headers instanceof SecureHeaders

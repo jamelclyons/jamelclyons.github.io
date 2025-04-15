@@ -1,31 +1,31 @@
-import Express from 'express';
-import { Request, Response, NextFunction } from "express";
+// import Express from 'express';
+// import { Request, Response, NextFunction } from "express";
 
-import checkToken from './token';
+// import checkToken from './token';
 
-const checkAdmin: Express.RequestHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const idToken = await checkToken(req);
+// const checkAdmin: Express.RequestHandler = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ): Promise<void> => {
+//   try {
+//     const idToken = await checkToken(req);
 
-    if (!idToken || typeof idToken !== "string") {
-      throw new Error("Unauthorized: Invalid token");
-    }
+//     if (!idToken || typeof idToken !== "string") {
+//       throw new Error("Unauthorized: Invalid token");
+//     }
 
-    req.headers.authorization = `Bearer ${idToken}`;
+//     req.headers.authorization = `Bearer ${idToken}`;
 
-    next();
-  } catch (error) {
-    console.error("Auth Error:", error);
+//     next();
+//   } catch (error) {
+//     console.error("Auth Error:", error);
 
-    res.status(403).json({
-      error_message: (error as Error).message || "Unauthorized",
-      status_code: 403,
-    });
-  }
-};
+//     res.status(403).json({
+//       error_message: (error as Error).message || "Unauthorized",
+//       status_code: 403,
+//     });
+//   }
+// };
 
-export default checkAdmin;
+// export default checkAdmin;
