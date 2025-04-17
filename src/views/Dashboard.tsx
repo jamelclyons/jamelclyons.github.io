@@ -3,13 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '@/model/store';
+import User from '@/model/User';
 
 import { logout } from '@/controllers/authSlice';
 import { setMessage, setMessageType, setShowStatusBar } from '@/controllers/messageSlice';
 
 import { checkHeaders } from '@/utilities/Headers';
 
-const Dashboard: React.FC = () => {
+interface DashboardProps {
+    user: User;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
 

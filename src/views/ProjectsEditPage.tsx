@@ -16,50 +16,20 @@ interface PortfolioEditPageProps {
 }
 
 const PortfolioEditPage: React.FC<PortfolioEditPageProps> = ({ user }) => {
-    const dispatch = useDispatch<AppDispatch>();
-
-    const { portfolioLoading, portfolioObject, portfolioErrorMessage } = useSelector((state: RootState) => state.portfolio);
-
-    const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject ?? []));
-    const [projects, setProjects] = useState<Set<Project>>(portfolio.projects);
+    const [portfolio, setPortfolio] = useState<Portfolio | null>(user.repos ? new Portfolio(user.repos) : null);
+    const [projects, setProjects] = useState<Set<Project>>(portfolio && portfolio.projects ? portfolio.projects : new Set);
 
     useEffect(() => {
-        if (portfolioLoading) {
-            dispatch(setMessage('Now Loading Portfolio'));
-            dispatch(setShowStatusBar('show'));
+        if (user.repos) {
+            setPortfolio(new Portfolio(user.repos));
         }
-    }, [portfolioLoading]);
+    }, [user]);
 
     useEffect(() => {
-        if (portfolioObject === null) {
-            dispatch(getPortfolio(user.repoQueries));
+        if (portfolio && portfolio.projects) {
+            setProjects(portfolio.projects);
         }
-    }, [portfolioObject, user, dispatch]);
-
-    useEffect(() => {
-        if (portfolioLoading) {
-            dispatch(setMessageType('info'));
-            dispatch(setMessage('Now Loading Portfolio'));
-        }
-    }, [portfolioLoading]);
-
-    useEffect(() => {
-        if (portfolioObject) {
-            setPortfolio(new Portfolio(portfolioObject));
-        }
-    }, [portfolioObject]);
-
-    useEffect(() => {
-        setProjects(portfolio.projects);
     }, [portfolio]);
-
-    useEffect(() => {
-        if (portfolioErrorMessage) {
-            dispatch(setMessage(portfolioErrorMessage));
-            dispatch(setMessageType('error'));
-            dispatch(setShowStatusBar(Date.now()));
-        }
-    }, [portfolioErrorMessage]);
 
     return (
         <section>

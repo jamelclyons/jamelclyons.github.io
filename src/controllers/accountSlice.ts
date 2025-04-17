@@ -79,12 +79,14 @@ export const getAccount = createAsyncThunk(
         if (Array.isArray(repos) && repos.length > 0) {
           await thunkAPI.dispatch(setMessage('Now Loading Portfolio'));
           const user = new User(accountResponse.payload);
-console.log(user)
-          const portfolioResponse = await thunkAPI.dispatch(
-            getPortfolio(user.repoQueries)
-          );
+
+          const portfolioResponse =
+            user.repoQueries && user.repoQueries.length > 0
+              ? await thunkAPI.dispatch(getPortfolio(user.repoQueries))
+              : null;
 
           if (
+            portfolioResponse &&
             getPortfolio.fulfilled.match(portfolioResponse) &&
             portfolioResponse.payload
           ) {

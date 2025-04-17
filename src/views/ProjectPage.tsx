@@ -23,22 +23,19 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
 
   const { owner, projectID } = useParams<string>();
 
-  const { portfolioObject } = useSelector(
-    (state: RootState) => state.portfolio
-  );
   const { projectErrorMessage, projectPageObject } = useSelector(
     (state: RootState) => state.project
   );
 
-  const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
+  const [portfolio, setPortfolio] = useState<Portfolio | null>(user.repos ? new Portfolio(user.repos) : null);
   const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery | null>(null);
   const [project, setProject] = useState<Project | null>(null);
 
   useEffect(() => {
-    if (portfolioObject) {
-      setPortfolio(new Portfolio(portfolioObject));
+    if (user.repos) {
+      setPortfolio(new Portfolio(user.repos));
     }
-  }, [portfolioObject]);
+  }, [user]);
 
   useEffect(() => {
     if (projectID && portfolio && portfolio.size > 0) {

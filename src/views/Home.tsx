@@ -10,10 +10,10 @@ import LoadingComponent from './components/LoadingComponent';
 import type { AppDispatch, RootState } from '@/model/store';
 import User from '@/model/User';
 import Skills from '@/model/Skills';
-import Portfolio from '@/model/Portfolio';
+
+import userJson from '../../user.json';
 
 import { setMessage, setMessageType } from '@/controllers/messageSlice';
-import { getPortfolio } from '@/controllers/portfolioSlice';
 
 interface HomeProps {
   user: User;
@@ -23,50 +23,26 @@ interface HomeProps {
 const Home: React.FC<HomeProps> = ({ user, skills }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { accountLoading } = useSelector((state: RootState) => state.account);
-  const { userLoading } = useSelector((state: RootState) => state.user);
-  const { portfolioLoading, portfolioObject } = useSelector((state: RootState) => state.portfolio);
+  const { githubLoading } = useSelector((state: RootState) => state.github);
 
-  const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject ?? []));
+  useEffect(() => { 
+    if(!user.title){
+      user.setTitle(userJson.title)
+    }
+  }, [user]);
 
   useEffect(() => {
-    if (user) {
+    if (user.name) {
       document.title = user.name;
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
-    if (accountLoading) {
-      dispatch(setMessageType('info'));
-      dispatch(setMessage('Now Loading Home Page'));
-    }
-  }, [accountLoading, dispatch]);
-
-  useEffect(() => {
-    if (userLoading) {
-      dispatch(setMessageType('info'));
-      dispatch(setMessage('Now Loading User'));
-    }
-  }, [userLoading, dispatch]);
-
-  useEffect(() => {
-    if (portfolioObject === null) {
-      dispatch(getPortfolio(user.repoQueries));
-    }
-  }, [portfolioObject, user, dispatch]);
-
-  useEffect(() => {
-    if (portfolioLoading) {
+    if (githubLoading) {
       dispatch(setMessageType('info'));
       dispatch(setMessage('Now Loading Portfolio'));
     }
-  }, [portfolioLoading]);
-
-  useEffect(() => {
-    if (portfolioObject) {
-      setPortfolio(new Portfolio(portfolioObject));
-    }
-  }, [portfolioObject]);
+  }, [githubLoading]);
 
   return (
     <>
@@ -77,7 +53,7 @@ const Home: React.FC<HomeProps> = ({ user, skills }) => {
 
         <MemberKnowledgeComponent skills={skills} />
 
-        {portfolio.size > 0 ? <PortfolioComponent account={user} /> : <LoadingComponent />}
+        {user ? <PortfolioComponent account={user} /> : <LoadingComponent />}
 
         <ContactComponent user={user} />
       </section>

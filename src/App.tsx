@@ -31,6 +31,8 @@ import Dashboard from './views/Dashboard';
 
 import { getAuthenticatedUserAccount } from '@/controllers/userSlice';
 
+import userJson from '../user.json';
+
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -38,9 +40,8 @@ const App: React.FC = () => {
   const { skillsObject } = useSelector((state: RootState) => state.taxonomies);
 
   const [user, setUser] = useState<User>(new User(authenticatedUserObject ?? {}));
+  const [avatarURL, setAvatarURL] = useState<string | null>(user.avatarURL ?? userJson.avatar_url);
   const [skills, setSkills] = useState<Skills>(new Skills());
-
-  const { name, avatarURL, contactMethods } = user;
 
   useEffect(() => {
     if (authenticatedUserObject === null) {
@@ -53,6 +54,12 @@ const App: React.FC = () => {
       setUser(new User(authenticatedUserObject));
     }
   }, [authenticatedUserObject]);
+
+  useEffect(() => {
+    if (user.avatarURL) {
+      setAvatarURL(user.avatarURL);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (skillsObject) {
@@ -80,7 +87,7 @@ const App: React.FC = () => {
 
   return (
     <>
-      <HeaderComponent name={name} />
+      <HeaderComponent user={user} />
       <Router>
         <Suspense fallback={<LoadingComponent />}>
           <Routes>
@@ -97,7 +104,7 @@ const App: React.FC = () => {
 
             <Route path="/admin/dashboard" element={
               <ProtectedRoute>
-                <Dashboard />
+                <Dashboard user={user} />
               </ProtectedRoute>
             } />
             <Route path="/admin/update/portfolio" element={
@@ -107,14 +114,14 @@ const App: React.FC = () => {
             } />
             <Route path="/admin/update/project/:login/:projectID" element={
               <ProtectedRoute>
-                <ProjectUpdate />
+                <ProjectUpdate user={user} />
               </ProtectedRoute>
             } />
-            <Route path="/admin/add/skill" element={
+            {/* <Route path="/admin/add/skill" element={
               <ProtectedRoute>
-                <AddSkill />
+                <AddSkill user={user} />
               </ProtectedRoute>
-            } />
+            } /> */}
 
             <Route path="/login" element={<LoginPage />} />
 

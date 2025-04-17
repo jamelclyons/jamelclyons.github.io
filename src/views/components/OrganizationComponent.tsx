@@ -1,5 +1,7 @@
+import React, { useEffect, useState } from 'react'
+
 import Organization from '@/model/Organization'
-import React from 'react'
+
 import DescriptionComponent from './DescriptionComponent';
 
 interface HeaderOrganizationComponentProps {
@@ -7,16 +9,36 @@ interface HeaderOrganizationComponentProps {
 }
 
 const OrganizationComponent: React.FC<HeaderOrganizationComponentProps> = ({ organization }) => {
-    const { avatarURL, name } = organization;
+    const [avatarURL, setAvatarURL] = useState<string | null>(null);
+    const [name, setName] = useState<string | null>(null);
+    const [description, setDescription] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (organization.avatarURL) {
+            setAvatarURL(organization.avatarURL)
+        }
+    }, [organization]);
+
+    useEffect(() => {
+        if (organization.name) {
+            setName(organization.name)
+        }
+    }, [organization]);
+
+    useEffect(() => {
+        if (organization.description) {
+            setDescription(organization.description)
+        }
+    }, [organization]);
 
     return (
         <div className='organization organization-header'>
-            <img
+            {avatarURL && <img
                 src={avatarURL}
                 alt={`${name} avatar`}
-            />
-            <h2 className='title'>{name}</h2>
-            <DescriptionComponent description={organization.description} />
+            />}
+            {name && <h2 className='title'>{name}</h2>}
+            {description && <DescriptionComponent description={description} />}
         </div>
     )
 }

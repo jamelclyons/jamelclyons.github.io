@@ -19,13 +19,13 @@ const OrganizationPage: React.FC = () => {
     const { organizationObject } = useSelector(
         (state: RootState) => state.organization);
 
-    const [organization, setOrganization] = useState<Organization>();
+    const [organization, setOrganization] = useState<Organization | null>(null);
 
     useEffect(() => {
         if (organizationObject === null && login) {
             dispatch(getOrganization(login));
         }
-    }, [dispatch, login, organizationObject]);
+    }, [login, organizationObject]);
 
     useEffect(() => {
         if (organizationObject) {
@@ -34,7 +34,7 @@ const OrganizationPage: React.FC = () => {
     }, [organizationObject]);
 
     useEffect(() => {
-        if (organization) {
+        if (organization && organization.name) {
             document.title = organization.name
         }
     }, [organization]);
@@ -44,9 +44,9 @@ const OrganizationPage: React.FC = () => {
             <>
                 {organization && <OrganizationComponent organization={organization} />}
 
-                {organization && <ContactBar contactMethods={organization.contactMethods} location='' />}
+                {organization && organization.contactMethods && <ContactBar contactMethods={organization.contactMethods} location='' />}
 
-                {organization && <PortfolioComponent account={organization}/>}
+                {organization && <PortfolioComponent account={organization} />}
             </>
         </section>
     )

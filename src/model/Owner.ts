@@ -32,7 +32,7 @@ class Owner extends Model {
     this.login = data?.login;
     this.name = data?.name ?? UserJSON.name;
     this.company = data?.company ?? UserJSON.company.name;
-    this.email = data?.email ?? UserJSON.contact.email;
+    this.email = data?.email ?? UserJSON.contact_methods.email;
     this.avatarURL = data?.avatar_url ? data.avatar_url : null;
     this.url = data?.url ?? UserJSON.website;
     this.reposURL = data?.repos_url ?? UserJSON.repos;

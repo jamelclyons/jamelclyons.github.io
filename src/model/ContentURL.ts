@@ -1,7 +1,7 @@
 import Model from './Model';
 import RepoContentQuery from './RepoContentQuery';
 
-export type ContentURLObject = {
+export interface ContentURLObject {
   owner: string | null;
   repo: string | null;
   path: string | null;

@@ -2,34 +2,28 @@ import Model from './Model';
 import Image, { ImageObject } from './Image';
 
 export interface ContactObject {
-  id: string;
-  title: string;
-  url: string;
-  image: ImageObject;
-  value: string;
+  id: string | null;
+  title: string | null;
+  url: string | null;
+  image: ImageObject | null;
+  value: string | null;
 }
 
 class Contact extends Model {
-  id: string;
-  title: string;
-  url: string;
-  image: Image;
-  value: string;
+  id: string | null;
+  title: string | null;
+  url: string | null;
+  image: Image | null;
+  value: string | null;
 
-  constructor(
-    id: string,
-    title: string,
-    url: string,
-    image: Image,
-    value: string
-  ) {
+  constructor(data: ContactObject) {
     super();
 
-    this.id = id;
-    this.title = title;
-    this.url = url;
-    this.image = image;
-    this.value = value;
+    this.id = data.id ? data.id : null;
+    this.title = data.title ? data.title : null;
+    this.url = data.url ? data.url : null;
+    this.image = data.image ? new Image(data.image) : null;
+    this.value = data.value ? data.value : null;
   }
 
   toContactObject(): ContactObject {
@@ -37,7 +31,7 @@ class Contact extends Model {
       id: this.id,
       title: this.title,
       url: this.url,
-      image: this.image.toImageObject(),
+      image: this.image ? this.image.toImageObject() : null,
       value: this.value,
     };
   }

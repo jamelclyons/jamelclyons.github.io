@@ -11,19 +11,27 @@ interface ResumeProps {
 
 const Resume: React.FC<ResumeProps> = ({ user }) => {
 
-  const [resume, setResume] = useState<DocumentURL>(new DocumentURL(user.resume));
+  const [resume, setResume] = useState<DocumentURL | null>(null);
 
   useEffect(() => {
-    document.title = `Resume - ${user.name}`
-  }, []);
+    if (user.name) {
+      document.title = `Resume - ${user.name}`
+    }
+  }, [user]);
 
   useEffect(() => {
-    setResume(new DocumentURL(user.resume))
-  }, [user, setResume]);
+    if (user.resume) {
+      setResume(new DocumentURL(user.resume))
+    }
+  }, [user]);
 
   return (
     <section className="resume">
-      <DocumentComponent documentURL={resume} />
+      {resume ? (
+        <DocumentComponent documentURL={resume} />
+      ) : (
+        <h1>No resume available</h1>
+      )}
     </section>
   );
 }

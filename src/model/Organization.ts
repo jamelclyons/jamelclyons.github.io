@@ -1,48 +1,49 @@
 import Model from './Model';
-import ContactMethods from './ContactMethods';
+import ContactMethods, { ContactMethodsObject } from './ContactMethods';
 import Repos from './Repos';
 
 import * as organization from '../../organization.json';
 
-import GitHubRepoQuery from './GitHubRepoQuery';
+import GitHubRepoQuery, { GitHubRepoQueryObject } from './GitHubRepoQuery';
+import { RepoObject } from './Repo';
 
-export interface OrganizationObject extends Model {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  avatarURL: string;
-  login: string;
-  description: string;
-  name: string;
-  company: string;
-  blog: string;
-  location: string;
-  email: string;
-  url: string;
-  github: string;
-  contactMethods: ContactMethods;
-  reposURL: string;
-  repos: Repos;
-  repoQueries: Array<GitHubRepoQuery>;
-}
+export type OrganizationObject = {
+  id: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+  avatar_url: string | null;
+  login: string | null;
+  description: string | null;
+  name: string | null;
+  company: string | null;
+  blog: string | null;
+  location: string | null;
+  email: string | null;
+  url: string | null;
+  github: string | null;
+  contactMethods: ContactMethodsObject | null;
+  reposURL: string | null;
+  repos: Array<RepoObject> | null;
+  repoQueries: Array<GitHubRepoQueryObject> | null;
+};
 
 class Organization extends Model {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  avatarURL: string;
-  login: string;
-  description: string;
-  name: string;
-  company: string;
-  blog: string;
-  location: string;
-  email: string;
-  url: string;
-  github: string;
-  contactMethods: ContactMethods;
-  reposURL: string;
-  repos: Repos;
+  id: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+  avatarURL: string | null;
+  login: string | null;
+  description: string | null;
+  name: string | null;
+  company: string | null;
+  blog: string | null;
+  location: string | null;
+  email: string | null;
+  url: string | null;
+  github: string | null;
+  contactMethods: ContactMethods | null;
+  reposURL: string | null;
+  repos: Repos | null;
   repoQueries: Array<GitHubRepoQuery>;
 
   constructor(data: Record<string, any> = {}) {
@@ -64,11 +65,15 @@ class Organization extends Model {
     this.email = contact.email.value ?? data?.email;
     this.url = data?.url;
     this.github = data?.github;
-    this.contactMethods = contact
-      ? new ContactMethods(contact)
-      : new ContactMethods(data?.contact_methods);
-    this.contactMethods.setContactEmail({ value: this.email });
-    this.contactMethods.setContactWebsite({ url: this.blog });
+    this.contactMethods = data?.contact_methods
+      ? new ContactMethods(data?.contact_methods)
+      : null;
+    this.contactMethods
+      ? this.contactMethods.setContactEmail({ value: this.email })
+      : null;
+    this.contactMethods
+      ? this.contactMethods.setContactWebsite({ url: this.blog })
+      : null;
     this.reposURL = repos_url ?? data?.repos_url;
     this.repos = data?.repos ? new Repos(data.repos) : new Repos();
     this.repoQueries = this.setRepoQueries(data?.repo_queries);
@@ -112,6 +117,12 @@ class Organization extends Model {
         },
       };
     });
+  }
+
+  setReposFromGitHub(data: Array<Record<string, any>>) {
+    const repos = new Repos();
+    repos.fromGitHub(data);
+    this.repos = repos;
   }
 
   getReposFromGitHub(data: Array<Record<string, any>>) {
@@ -201,6 +212,36 @@ class Organization extends Model {
     }
 
     return repoQueries;
+  }
+
+  toOrganizationObject(): OrganizationObject {
+    return {
+      id: this.id,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+      avatar_url: this.avatarURL,
+      login: this.login,
+      description: this.description,
+      name: this.name,
+      company: this.company,
+      blog: this.blog,
+      location: this.location,
+      email: this.email,
+      url: this.url,
+      github: this.github,
+      contactMethods: this.contactMethods
+        ? this.contactMethods.toContactMethodsObject()
+        : null,
+      reposURL: this.reposURL,
+      repos: this.repos
+        ? this.repos.collection.map((repo) => repo.toRepoObject())
+        : null,
+      repoQueries: this.repoQueries
+        ? this.repoQueries.map((repoQuery) =>
+            repoQuery.toGitHubRepoQueryObject()
+          )
+        : null,
+    };
   }
 }
 

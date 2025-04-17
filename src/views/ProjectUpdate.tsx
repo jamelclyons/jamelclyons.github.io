@@ -22,8 +22,13 @@ import Owner from '@/model/Owner';
 import Portfolio from '@/model/Portfolio';
 import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 import RepoURL from '@/model/RepoURL';
+import User from '@/model/User';
 
-const ProjectUpdate: React.FC = () => {
+interface ProjectUpdateProps {
+    user: User;
+}
+
+const ProjectUpdate: React.FC<ProjectUpdateProps> = ({ user }) => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
@@ -39,7 +44,7 @@ const ProjectUpdate: React.FC = () => {
         (state: RootState) => state.update
     );
 
-    const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio());
+    const [portfolio, setPortfolio] = useState<Portfolio | null>(user.repos ? new Portfolio(user.repos) : null);
 
     const [owner, setOwner] = useState<Owner>(new Owner());
     const [id, setId] = useState<string>();
@@ -53,25 +58,25 @@ const ProjectUpdate: React.FC = () => {
         if (login) {
             setOwner(new Owner({ login: login }))
         }
-    }, [login, setOwner]);
+    }, [login]);
 
     useEffect(() => {
         if (projectID) {
             setId(projectID);
         }
-    }, [projectID, setId]);
+    }, [projectID]);
 
     useEffect(() => {
-        if (portfolioObject) {
-            setPortfolio(new Portfolio(portfolioObject));
+        if (user.repos) {
+            setPortfolio(new Portfolio(user.repos));
         }
-    }, [portfolioObject, setPortfolio]);
+    }, [user]);
 
     useEffect(() => {
-        if (portfolio.size > 0 && id) {
+        if (portfolio && portfolio.size > 0 && id) {
             setProject(portfolio.filterProject(id));
         }
-    }, [id, portfolio, setProject]);
+    }, [id, portfolio]);
 
     useEffect(() => {
         if (id) {
@@ -83,7 +88,7 @@ const ProjectUpdate: React.FC = () => {
         if (repoQuery) {
             dispatch(getProjectPage(repoQuery));
         }
-    }, [dispatch, repoQuery]);
+    }, [repoQuery]);
 
     useEffect(() => {
         if (projectLoading && projectLoadingMessage) {
@@ -91,7 +96,7 @@ const ProjectUpdate: React.FC = () => {
             dispatch(setMessageType('info'));
             dispatch(setShowStatusBar(Date.now()));
         }
-    }, [projectLoading, projectLoadingMessage, dispatch]);
+    }, [projectLoading, projectLoadingMessage]);
 
     useEffect(() => {
         if (projectErrorMessage) {
@@ -99,13 +104,13 @@ const ProjectUpdate: React.FC = () => {
             dispatch(setMessageType('info'));
             dispatch(setShowStatusBar(Date.now));
         }
-    }, [projectErrorMessage, dispatch]);
+    }, [projectErrorMessage]);
 
     useEffect(() => {
-        if (projectPageObject) {
-            setProject(new Project(projectPageObject));
+        if (user.repos) {
+            setProject(new Project(user.repos));
         }
-    }, [projectPageObject, setProject]);
+    }, [user]);
 
     useEffect(() => {
         if (updateLoading && updateLoadingMessage) {
@@ -113,7 +118,7 @@ const ProjectUpdate: React.FC = () => {
             dispatch(setMessageType('info'));
             dispatch(setShowStatusBar(Date.now()));
         }
-    }, [updateLoading, updateLoadingMessage, dispatch]);
+    }, [updateLoading, updateLoadingMessage]);
 
     useEffect(() => {
         if (updateErrorMessage) {
@@ -121,7 +126,7 @@ const ProjectUpdate: React.FC = () => {
             dispatch(setMessageType('error'));
             dispatch(setShowStatusBar(Date.now()));
         }
-    }, [updateErrorMessage, dispatch]);
+    }, [updateErrorMessage]);
 
     useEffect(() => {
         if (updateSuccessMessage) {
@@ -129,7 +134,7 @@ const ProjectUpdate: React.FC = () => {
             dispatch(setMessageType('success'));
             dispatch(setShowStatusBar(Date.now()));
         }
-    }, [updateSuccessMessage, dispatch]);
+    }, [updateSuccessMessage]);
 
     useEffect(() => {
         if (updateStatusCode === 403) {
@@ -141,7 +146,7 @@ const ProjectUpdate: React.FC = () => {
         if (project) {
             setTitle(project.title);
         }
-    }, [project, setTitle]);
+    }, [project]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         try {

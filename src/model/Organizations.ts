@@ -1,11 +1,11 @@
 import Model from './Model';
-import Organization from './Organization';
+import Organization, { OrganizationObject } from './Organization';
 
 class Organizations extends Model {
   list: Array<Organization>;
   count: number;
 
-  constructor(data?: Array<Record<string, any>>) {
+  constructor(data: Array<Record<string, any>> | Array<OrganizationObject>) {
     super();
 
     let organizations: Array<Organization> = [];

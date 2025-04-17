@@ -62,8 +62,6 @@ export const getAuthenticatedUserAccount = createAsyncThunk(
         userResponse.payload
       ) {
         const user = new User(userResponse.payload);
-        let organizations = [];
-        let repos = [];
 
         const databaseResponse = await thunkAPI.dispatch(getUserData(user.id));
 
@@ -74,41 +72,7 @@ export const getAuthenticatedUserAccount = createAsyncThunk(
           user.fromDB(databaseResponse.payload.data);
         }
 
-        organizations = user.organizations.list.map((organization) => ({
-          ...organization.toObject(),
-          repos: organization.repos.collection.map((repo) => repo.toObject()),
-          contributors: organization.repos.collection.map((repo) => {
-            if (repo.contributors) {
-              repo.contributors.toObject();
-            }
-          }),
-        }));
-
-        repos =
-          Array.isArray(user.repos.collection) &&
-          user.repos.collection.length > 0
-            ? user.repos.collection?.map((repo) => ({
-                ...repo.toObject(),
-                contributors:
-                  repo.contributors &&
-                  Array.isArray(repo.contributors.users) &&
-                  repo.contributors.users.length > 0
-                    ? repo.contributors.users?.map((contributor) => {
-                        contributor.toObject();
-                      })
-                    : [],
-              }))
-            : [];
-
-        return {
-          ...user.toObject(),
-          organizations: organizations,
-          repos: repos,
-          repo_queries:
-            Array.isArray(repos) && repos.length > 0
-              ? user.getRepoQueries(repos)
-              : [],
-        };
+        return user.toUserObject();
       }
 
       return null;

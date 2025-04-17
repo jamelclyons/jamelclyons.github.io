@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
+import User from '@/model/User';
+
+import userJson from '../../../user.json';
 
 interface HeaderComponentProps {
-  name: string;
+  user: User;
 }
 
-const HeaderComponent: React.FC<HeaderComponentProps> = ({ name }) => {
-
+const HeaderComponent: React.FC<HeaderComponentProps> = ({ user }) => {
+  const [name, setName] = useState<string>(userJson.name);
   const [dropdown, setDropdown] = useState('hide');
+
+  useEffect(() => {
+    if (user.name) {
+      setName(user.name)
+    }
+  }, [user]);
 
   const toggleMenu = () => {
     if (dropdown == 'hide') {

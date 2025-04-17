@@ -114,6 +114,7 @@ class Project extends Model {
 
   fromRepo(repo: Repo) {
     this.id = repo.id;
+    this.title = this.title ? this.title : this.getTitle(repo.id);
     this.description = repo.description;
 
     if (repo.contents?.solution?.downloadURL || repo?.homepage) {
@@ -197,9 +198,17 @@ class Project extends Model {
       this.details.teamList = repo.contributors.users;
     }
 
-    if (repo.contents?.details?.downloadURL) {
+    if (
+      repo.contents?.details?.downloadURL ||
+      repo.contents?.story?.downloadURL
+    ) {
       this.details = new ProjectDetails();
-      this.details.setContentURL(repo.contents.details.downloadURL);
+      repo.contents?.details?.downloadURL
+        ? this.details.setContentURL(repo.contents.details.downloadURL)
+        : null;
+      repo.contents?.story?.downloadURL
+        ? this.details.setStory(repo.contents.story.downloadURL)
+        : null;
     }
   }
 

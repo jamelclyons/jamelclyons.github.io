@@ -17,6 +17,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@types/firebase": "^2.4.32",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "firebase": "^11.1.0",
     "firebase-admin": "^13.1.0",

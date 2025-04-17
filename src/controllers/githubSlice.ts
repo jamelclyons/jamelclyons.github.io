@@ -16,21 +16,17 @@ import GitHubRepoQuery from '../model/GitHubRepoQuery';
 import RepoContentQuery from '@/model/RepoContentQuery';
 import Organization from '@/model/Organization';
 
-import Repo from '@/model/Repo';
+import Repo, { RepoObject } from '@/model/Repo';
 import User from '@/model/User';
 
 import { setMessage } from './messageSlice';
 import Repos from '@/model/Repos';
+import ContactMethods from '@/model/ContactMethods';
 
 type OctokitResponse<T = any, S = number> = {
   data: T;
   status: S;
 };
-
-type RepoLanguagesQuery =
-  RestEndpointMethodTypes['repos']['listLanguages']['parameters'];
-type RepoLanguages =
-  RestEndpointMethodTypes['repos']['listLanguages']['response'];
 
 const octokit = instance;
 
@@ -47,7 +43,7 @@ interface GithubState {
   repos: Array<Record<string, any>>;
   repoDetailsList: Array<Record<string, any>> | null;
   socialAccounts: OctokitResponse | null;
-  repoObject: Record<string, any>;
+  repoObject: Record<string, any> | null;
   repoLanguages: Array<Record<string, any>>;
   contents: Array<Record<string, any>> | null;
   file: string | null;
@@ -67,7 +63,7 @@ const initialState: GithubState = {
   repos: [],
   repoDetailsList: null,
   socialAccounts: null,
-  repoObject: {},
+  repoObject: null,
   repoLanguages: [],
   contents: null,
   file: null,
@@ -98,12 +94,16 @@ export const getRepo = createAsyncThunk(
   'github/getRepo',
   async (query: GitHubRepoQuery) => {
     try {
-      const repo: RepoResponse = await octokit.rest.repos.get({
-        owner: query.owner,
-        repo: query.repo,
-      });
+      if (query.owner && query.repo) {
+        const repo: RepoResponse = await octokit.rest.repos.get({
+          owner: query.owner,
+          repo: query.repo,
+        });
 
-      return repo.data as Record<string, any>;
+        return repo.data as Record<string, any>;
+      }
+
+      return null;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -326,7 +326,7 @@ export const getRepoDetailsList = createAsyncThunk(
           }
         }
 
-        return repoDetailsList;
+        return repoDetailsList.map((repo) => new Repo(repo).toRepoObject());
       }
 
       return null;
@@ -342,16 +342,11 @@ export const getAuthenticatedAccount = createAsyncThunk(
   'github/getAccount',
   async (_, thunkAPI) => {
     try {
-      const user = new User();
-      let contactMethods = null;
-      let organizations = null;
-      let repos = null;
-      let repoQueries: Array<Record<string, any>> = [];
-      let story = null;
-
       const { data } = await octokit.users.getAuthenticated();
 
       if (data) {
+        const user = new User();
+
         user.fromGitHub(data);
 
         if (user.organizationsURL) {
@@ -363,7 +358,8 @@ export const getAuthenticatedAccount = createAsyncThunk(
             getOrganizationDetailsList.fulfilled.match(orgResponse) &&
             orgResponse.payload
           ) {
-            organizations = orgResponse.payload;
+            console.log(orgResponse.payload)
+            user.setOrganizations(orgResponse.payload);
           }
         }
 
@@ -373,13 +369,7 @@ export const getAuthenticatedAccount = createAsyncThunk(
           getRepoDetailsList.fulfilled.match(repoResponse) &&
           repoResponse.payload
         ) {
-          repos = repoResponse.payload;
-
-          if (Array.isArray(repos) && repos.length > 0) {
-            repos.forEach((repo) => {
-              repoQueries.push({ owner: repo?.owner?.login, repo: repo?.id });
-            });
-          }
+          user.setRepoQueries(repoResponse.payload);
         }
 
         const contactsResponse = await thunkAPI.dispatch(
@@ -390,23 +380,15 @@ export const getAuthenticatedAccount = createAsyncThunk(
           getSocialAccounts.fulfilled.match(contactsResponse) &&
           contactsResponse.payload
         ) {
-          const contactMethodsObject = user.contactMethods.fromGitHub(
-            contactsResponse.payload
-          );
+          user.contactMethods
+            ? user.contactMethods
+            : (user.contactMethods = new ContactMethods());
 
-          contactMethods = {
-            ...contactMethodsObject,
-            website: user.contactMethods
-              .setContactWebsite({ url: user.website })
-              .toObject(),
-            email: user.contactMethods
-              .setContactEmail({ value: user.email })
-              .toObject(),
-          };
+          user.contactMethods.fromGitHub(contactsResponse.payload);
         }
 
         const contentsResponse = await thunkAPI.dispatch(
-          getRepoContents(new RepoContentQuery(user.id, user.id, '', 'main'))
+          getRepoContents(new GitHubRepoQuery(user.id, user.id))
         );
 
         if (
@@ -417,7 +399,8 @@ export const getAuthenticatedAccount = createAsyncThunk(
             Array.isArray(contentsResponse.payload) &&
             contentsResponse.payload.length > 0
           ) {
-            contentsResponse.payload.map((content) => {
+            const contents = contentsResponse.payload;
+            contents.forEach((content) => {
               if (content.type === 'file') {
                 if (content.name === 'story.md') {
                   user.setStory(content.download_url);
@@ -427,13 +410,20 @@ export const getAuthenticatedAccount = createAsyncThunk(
           }
         }
 
-        return {
-          ...user.toObject(),
-          contact_methods: contactMethods,
-          organizations: organizations,
-          repos: repos,
-          repoQueries: repoQueries,
-        };
+        if (user.repoQueries) {
+          const repos = await Promise.all(
+            user.repoQueries.map(async (repoQuery) => {
+              const reposResponse = await thunkAPI.dispatch(
+                getRepoDetails(repoQuery)
+              );
+              return reposResponse.payload as Record<string, any>;
+            })
+          );
+
+          user.setRepos(repos);
+        }
+
+        return user.toUserObject();
       }
 
       return null;
@@ -489,23 +479,16 @@ export const getUserAccount = createAsyncThunk(
           getSocialAccounts.fulfilled.match(contactsResponse) &&
           contactsResponse.payload
         ) {
-          const contactMethodsObject = user.contactMethods.fromGitHub(
-            contactsResponse.payload
-          );
-          contactMethods = {
-            ...contactMethodsObject,
-            website: user.contactMethods
-              .setContactWebsite({ url: user.website })
-              .toObject(),
-            email: user.contactMethods
-              .setContactEmail({ value: user.email })
-              .toObject(),
-          };
+          user.contactMethods
+            ? user.contactMethods
+            : (user.contactMethods = new ContactMethods());
+          user.contactMethods.fromGitHub(contactsResponse.payload);
+          user.contactMethods.setContactWebsite({ url: user.website });
+          user.contactMethods.setContactEmail({ value: user.email });
         }
 
         return {
           ...user.toObject(),
-          contact_methods: contactMethods,
           organizations: organizations,
           repos: repos,
         };
@@ -541,9 +524,12 @@ export const getOrganizationAccount = createAsyncThunk(
     try {
       const { data } = await octokit.request(`/orgs/${organization}`);
       const org = new Organization(data);
-      const repoQueries = org.getRepoQueries(
-        org.repos.collection.map((repo) => repo.toObject())
-      );
+      const repoQueries =
+        org.repos && org.repos.collection
+          ? org.getRepoQueries(
+              org.repos.collection.map((repo) => repo.toObject())
+            )
+          : null;
 
       return { ...org.toObject(), repo_queries: repoQueries };
     } catch (error) {
@@ -561,55 +547,48 @@ export const getOrganizationDetails = createAsyncThunk(
       const orgResponse = await thunkAPI.dispatch(
         getOrganizationAccount(login)
       );
+
       if (
         getOrganizationAccount.fulfilled.match(orgResponse) &&
         orgResponse.payload
       ) {
         const organization = new Organization();
-        let repos: Array<Record<string, any>> = [];
-        let contactMethods: Record<string, any> = {};
 
         organization.fromGitHub(orgResponse.payload);
 
-        if (new URL(organization.reposURL)) {
+        if (organization.reposURL && new URL(organization.reposURL)) {
           const reposResponse = await fetch(organization.reposURL, {
             headers: headers,
           });
 
           if (reposResponse.status === 200) {
             const reposJson = await reposResponse.json();
-            repos = organization.getReposFromGitHub(reposJson);
+            organization.setReposFromGitHub(reposJson);
           }
         }
 
-        const contactsResponse = await thunkAPI.dispatch(
-          getSocialAccounts(organization.id)
-        );
+        const contactsResponse = organization.id
+          ? await thunkAPI.dispatch(getSocialAccounts(organization.id))
+          : null;
 
         if (
+          contactsResponse &&
           getSocialAccounts.fulfilled.match(contactsResponse) &&
           contactsResponse.payload
         ) {
-          const contactMethodsObject = organization.contactMethods.fromGitHub(
-            contactsResponse.payload
-          );
+          organization.contactMethods = new ContactMethods();
 
-          contactMethods = {
-            ...contactMethodsObject,
-            website: organization.contactMethods
-              .setContactWebsite({ url: organization.blog })
-              .toObject(),
-            email: organization.contactMethods
-              .setContactEmail({ value: organization.email })
-              .toObject(),
-          };
+          organization.contactMethods.fromGitHub(contactsResponse.payload);
+
+          organization.contactMethods.setContactWebsite({
+            url: organization.blog,
+          });
+          organization.contactMethods.setContactEmail({
+            value: organization.email,
+          });
         }
 
-        return {
-          ...organization.toObject(),
-          repos: repos,
-          contact_methods: contactMethods,
-        };
+        return organization.toOrganizationObject();
       }
 
       return null;

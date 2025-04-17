@@ -1,104 +1,123 @@
-import Model from './Model';
-import Image, { ImageObject } from './Image';
-import ContactMethods, { ContactMethodsObject } from './ContactMethods';
-
+import Model from '@/model/Model';
+import Image, { ImageObject } from '@/model/Image';
+import ContactMethods, { ContactMethodsObject } from '@/model/ContactMethods';
 import Organizations from '@/model/Organizations';
 import Repos from '@/model/Repos';
-
-import GitHubRepoQuery from './GitHubRepoQuery';
-import { RepoObject } from './Repo';
+import GitHubRepoQuery, {
+  GitHubRepoQueryObject,
+} from '@/model/GitHubRepoQuery';
+import { RepoObject } from '@/model/Repo';
 import { OrganizationObject } from './Organization';
+import ContentURL from '@/model/ContentURL';
 
 import user from '../../user.json';
-import ContentURL, { ContentURLObject } from './ContentURL';
 
 export interface UserObject {
   id: string;
   login: string;
-  avatar_url: string;
-  name: string;
-  title: string;
-  bio: string;
-  email: string;
-  phone: string;
-  resume: string;
-  website: string;
-  contact_methods: ContactMethodsObject;
-  images: Array<ImageObject>;
-  organizations_url: string;
-  organizations: Array<OrganizationObject>;
-  repos_url: string;
-  repos: Array<RepoObject>;
-  repo_queries: Array<GitHubRepoQuery>;
-  story: ContentURLObject | null;
+  avatar_url: string | null;
+  name: string | null;
+  title: string | null;
+  bio: string | null;
+  email: string | null;
+  phone: string | null;
+  resume: string | null;
+  website: string | null;
+  contact_methods: ContactMethodsObject | null;
+  images: Array<ImageObject> | null;
+  organizations_url: string | null;
+  organizations: Array<OrganizationObject> | null;
+  repos_url: string | null;
+  repos: Array<RepoObject> | null;
+  repo_queries: Array<GitHubRepoQueryObject> | null;
+  story: string | null;
 }
 
 class User extends Model {
   id: string;
   login: string;
-  avatarURL: string;
-  name: string;
-  title: string;
-  bio: string;
-  email: string;
-  phone: string;
-  resume: string;
-  website: string;
-  contactMethods: ContactMethods;
+  avatarURL: string | null;
+  name: string | null;
+  title: string | null;
+  bio: string | null;
+  email: string | null;
+  phone: string | null;
+  resume: string | null;
+  website: string | null;
+  contactMethods: ContactMethods | null;
   images: Array<Image>;
-  organizationsURL: string;
-  organizations: Organizations = new Organizations();
-  reposURL: string;
-  repos: Repos = new Repos();
-  repoQueries: Array<GitHubRepoQuery>;
+  organizationsURL: string | null;
+  organizations: Organizations | null;
+  reposURL: string | null;
+  repos: Repos | null;
+  repoQueries: Array<GitHubRepoQuery> | null;
   story: ContentURL | null;
 
-  constructor(data: Record<string, any> = {}) {
+  constructor(data: Record<string, any> | UserObject = {}) {
     super();
-
-    const { name, title, website, contact, resume, avatar_url } = user;
 
     this.id = data?.id || this.getID();
     this.login = data?.login;
-    this.avatarURL = data?.avatar_url || avatar_url;
-    this.name = data?.name || name;
-    this.title = data?.title || title;
+    this.avatarURL = data?.avatar_url || null;
+    this.name = data?.name || null;
+    this.title = data?.title || null;
     this.bio = data?.bio;
-    this.email = data?.email || contact.email;
-    this.phone = data?.phone || contact.phone;
-    this.resume = data?.resume || resume;
-    this.website = data?.website || website;
-    this.contactMethods = contact
-      ? new ContactMethods(contact)
-      : new ContactMethods(data.contact_methods);
-    this.images = data?.images || '';
+    this.email = data?.email || null;
+    this.phone = data?.phone || null;
+    this.resume = data?.resume || null;
+    this.website = data?.website || null;
+    this.contactMethods = data?.contact_methods
+      ? new ContactMethods(data.contact_methods)
+      : null;
+    this.images = data?.images
+      ? data.images.map((image: ImageObject) => new Image(image))
+      : null;
     this.organizationsURL = data?.organizations_url;
     this.organizations = data?.organizations
       ? new Organizations(data.organizations)
-      : new Organizations();
+      : null;
     this.reposURL = data?.repos_url;
     this.repos = data?.repos ? new Repos(data.repos) : new Repos();
     this.repoQueries = data?.repo_queries
-      ? this.setRepoQueries(data.repo_queries)
-      : [];
-    this.story = data?.story || null;
+      ? this.getRepoQueries(data.repo_queries)
+      : null;
+    this.story =
+      data?.story && typeof data.story === 'string'
+        ? new ContentURL(data?.story)
+        : null;
   }
 
   getID() {
-    const githubURL = user.contact.github.url;
+    const githubURL = user.contact_methods.github.url;
     const path = new URL(githubURL);
     const pathname = path.pathname.split('/');
     return pathname[1];
   }
 
+  setTitle(title: string) {
+    this.title = title;
+  }
+
+  setAvatarURL(url: string) {
+    this.avatarURL = url;
+  }
+
   setRepos(data: Array<Record<string, any>>) {
+    this.repos = new Repos(data);
+  }
+
+  getRepos(data: Array<Record<string, any>>) {
     const repos = new Repos(data);
     return repos.collection.map((repo) => repo.toObject());
   }
 
+  setOrganizations(organizations: Array<Record<string, any>>) {
+    this.organizations = new Organizations(organizations);
+  }
+
   getOrganizations(organizations: Array<Record<string, any>>) {
     const orgs = new Organizations(organizations);
-    return orgs.list.map((org) => org.toObject());
+    return orgs.list.map((org) => org.toOrganizationObject());
   }
 
   fromGitHub(data: Record<string, any>) {
@@ -127,32 +146,34 @@ class User extends Model {
   }
 
   getRepoQueries(data: Array<Record<string, any>>) {
-    let repoQueries: Array<Record<string, any>> = [];
+    let repoQueries: Array<GitHubRepoQuery> = [];
 
     if (Array.isArray(data) && data.length > 0) {
       data.forEach((query) => {
-        const repoQuery = new GitHubRepoQuery(
-          query.owner.login,
-          query.id
-        ).toObject();
-        repoQueries.push(repoQuery);
+        repoQueries.push(new GitHubRepoQuery(query.owner?.login, query.id));
       });
     }
 
     return repoQueries;
   }
 
-  setRepoQueries(data: Array<Record<string, any>>) {
+  setRepoQueries(repos: Array<RepoObject>) {
     let repoQueries: Array<GitHubRepoQuery> = [];
 
-    if (Array.isArray(data) && data.length > 0) {
-      data.forEach((query) => {
-        const repoQuery = new GitHubRepoQuery(query.owner, query.repo);
-        repoQueries.push(repoQuery);
+    if (repos.length > 0) {
+      repos.forEach((repo) => {
+        const repoQuery =
+          repo?.owner?.login && repo?.id
+            ? new GitHubRepoQuery(repo?.owner?.login, repo?.id)
+            : null;
+
+        if (repoQuery) {
+          repoQueries.push(repoQuery);
+        }
       });
     }
 
-    return repoQueries;
+    this.repoQueries = repoQueries;
   }
 
   setStory(url: string) {
@@ -171,17 +192,30 @@ class User extends Model {
       phone: this.phone,
       resume: this.resume,
       website: this.website,
-      contact_methods: this.contactMethods.toContactMethodsObject(),
+      contact_methods: this.contactMethods
+        ? this.contactMethods.toContactMethodsObject()
+        : null,
       images:
-        this.images.length > 0
+        this.images && this.images.length > 0
           ? this.images.map((image) => image.toImageObject())
-          : [],
+          : null,
       organizations_url: this.organizationsURL,
-      organizations: [],
+      organizations:
+        this.organizations && this.organizations.list.length > 0
+          ? this.organizations.list.map((org) => org.toOrganizationObject())
+          : null,
       repos_url: this.reposURL,
-      repos: [],
-      repo_queries: [],
-      story: this.story,
+      repos:
+        this.repos && this.repos.collection.length > 0
+          ? this.repos.collection.map((repo) => repo.toRepoObject())
+          : null,
+      repo_queries:
+        this.repoQueries && this.repoQueries.length > 0
+          ? this.repoQueries
+              .filter((repoQuery) => repoQuery.owner && repoQuery.repo)
+              .map((repoQuery) => repoQuery.toGitHubRepoQueryObject())
+          : null,
+      story: this.story ? this.story.url : null,
     };
   }
 }

@@ -36,7 +36,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.user = exports.saveProject = exports.project = exports.check = void 0;
+exports.organization = exports.user = exports.saveProject = exports.project = exports.check = void 0;
+const cors_1 = __importDefault(require("cors"));
 const functions = __importStar(require("firebase-functions/v1"));
 const database_1 = require("./controllers/database");
 const ResponseError_1 = __importDefault(require("./model/ResponseError"));
@@ -62,6 +63,7 @@ const corsOptions = {
     methods: ['GET', 'POST', 'PUT'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Refresh-Token'],
 };
+const cors = (0, cors_1.default)(corsOptions);
 exports.check = functions.https.onRequest(async (req, res) => {
     try {
         console.log(req);
@@ -76,72 +78,87 @@ exports.check = functions.https.onRequest(async (req, res) => {
         });
     }
 });
-const corsCheck = (headers) => {
-    let isAllowed = false;
-    if (Array.isArray(corsOptions.origin)) {
-        const corsOrigins = corsOptions.origin;
-        if (headers.origin) {
-            isAllowed = corsOrigins.includes(headers.origin);
-        }
-    }
-    if (corsOptions.origin === headers.origin) {
-        isAllowed = true;
-    }
-    if (!isAllowed) {
-        throw new ResponseError_1.default(`Access denied request from ${origin} is not allowed.`, 204);
-    }
-    return isAllowed;
-};
 exports.project = functions.https.onRequest(async (req, res) => {
-    try {
-        corsCheck(req.headers);
-        const projectID = req.params[0];
-        const data = await (0, database_1.getData)('portfolio', projectID);
-        if (data === null) {
-            throw new ResponseError_1.default(`${projectID} could not be found.`, 404);
+    cors(req, res, async () => {
+        try {
+            const projectID = req.params[0];
+            const data = await (0, database_1.getData)('portfolio', projectID);
+            if (data === null) {
+                throw new ResponseError_1.default(`${projectID} could not be found.`, 404);
+            }
+            res.json({ data: data });
         }
-        res.json({ data: data });
-    }
-    catch (error) {
-        const err = error;
-        res.json({
-            error_message: err.message,
-            status_code: err.statusCode,
-        });
-    }
+        catch (error) {
+            const err = error;
+            res.json({
+                error_message: err.message,
+                status_code: err.statusCode,
+            });
+        }
+    });
 });
 exports.saveProject = functions.https.onRequest(async (req, res) => {
-    corsCheck(req.headers);
-    const id = req.params[0];
-    let repoURL = null;
-    if (req.body.process) {
-        repoURL = req.body.process.development.repo_url;
-    }
-    const data = await (0, database_1.postData)('portfolio', id, req.body);
-    if (!data) {
-        throw new ResponseError_1.default(`Project with the #ID: ${id} could not be updated.`, 400);
-    }
-    res.json({
-        id: id,
-        repo_url: repoURL,
-        success_message: `Project with the #ID: ${id} was updated at ${data}.`,
+    cors(req, res, async () => {
+        try {
+            const id = req.params[0];
+            let repoURL = null;
+            if (req.body.process) {
+                repoURL = req.body.process.development.repo_url;
+            }
+            const data = await (0, database_1.postData)('portfolio', id, req.body);
+            if (!data) {
+                throw new ResponseError_1.default(`Project with the #ID: ${id} could not be updated.`, 400);
+            }
+            res.json({
+                id: id,
+                repo_url: repoURL,
+                success_message: `Project with the #ID: ${id} was updated at ${data}.`,
+            });
+        }
+        catch (error) {
+            const err = error;
+            res.json({
+                error_message: err.message,
+                status_code: err.statusCode,
+            });
+        }
     });
 });
 exports.user = functions.https.onRequest(async (req, res) => {
-    try {
-        corsCheck(req.headers);
-        const id = req.params[0];
-        const data = await (0, database_1.getData)('user', id);
-        if (data === null) {
-            throw new ResponseError_1.default(`${id} could not be found.`, 404);
+    cors(req, res, async () => {
+        try {
+            const id = req.params[0];
+            const data = await (0, database_1.getData)('user', id);
+            if (data === null) {
+                throw new ResponseError_1.default(`${id} could not be found.`, 404);
+            }
+            res.json({ data: data });
         }
-        res.json({ data: data });
-    }
-    catch (error) {
-        const err = error;
-        res.json({
-            error_message: err.message,
-            status_code: err.statusCode,
-        });
-    }
+        catch (error) {
+            const err = error;
+            res.json({
+                error_message: err.message,
+                status_code: err.statusCode,
+            });
+        }
+    });
+});
+exports.organization = functions.https.onRequest(async (req, res) => {
+    cors(req, res, async () => {
+        try {
+            const id = req.params[0];
+            const data = await (0, database_1.getData)('organization', id);
+            if (data === null) {
+                throw new ResponseError_1.default(`${id} could not be found.`, 404);
+            }
+            res.json({ data: data });
+        }
+        catch (error) {
+            const err = error;
+            res.json({
+                error_message: err.message,
+                status_code: err.statusCode,
+            });
+        }
+    });
 });

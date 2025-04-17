@@ -8,6 +8,7 @@ export interface RepoContentsObject {
   delivery: RepoContentObject | null;
   problem: RepoContentObject | null;
   details: RepoContentObject | null;
+  story: RepoContentObject | null;
 }
 
 class RepoContents extends Model {
@@ -17,6 +18,7 @@ class RepoContents extends Model {
   delivery: RepoContent | null;
   problem: RepoContent | null;
   details: RepoContent | null;
+  story: RepoContent | null;
 
   constructor(data: Record<string, any> | RepoContentsObject = {}) {
     super();
@@ -29,6 +31,7 @@ class RepoContents extends Model {
     this.delivery = data?.delivery ? new RepoContent(data.delivery) : null;
     this.problem = data?.problem ? new RepoContent(data.problem) : null;
     this.details = data?.details ? new RepoContent(data.details) : null;
+    this.story = data?.story ? new RepoContent(data.story) : null;
   }
 
   setSolution(solution: RepoContent) {
@@ -55,6 +58,10 @@ class RepoContents extends Model {
     this.details = details;
   }
 
+  setStory(story: RepoContent) {
+    this.story = story;
+  }
+
   toRepoContentsObject(): RepoContentsObject {
     return {
       solution: this.solution ? this.solution.toRepoContentObject() : null,
@@ -67,6 +74,7 @@ class RepoContents extends Model {
         : null,
       problem: this.problem ? this.problem.toRepoContentObject() : null,
       details: this.details ? this.details.toRepoContentObject() : null,
+      story: this.story ? this.story.toRepoContentObject() : null,
     };
   }
 }

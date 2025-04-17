@@ -26,7 +26,7 @@ const PortfolioPage: React.FC<PortfolioProps> = ({ user }) => {
   }, [portfolioLoading]);
 
   useEffect(() => {
-    if (portfolioObject === null) {
+    if (user.repoQueries && portfolioObject === null) {
       dispatch(getPortfolio(user.repoQueries));
     }
   }, [portfolioObject, user, dispatch]);

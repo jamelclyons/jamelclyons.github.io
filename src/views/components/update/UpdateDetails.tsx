@@ -3,7 +3,9 @@ import { useDispatch } from 'react-redux';
 
 import type { AppDispatch } from '@/model/store';
 import Project, { ProjectObject } from '@/model/Project';
-import ProjectDetails, { ProjectDetailsObject } from '@/model/ProjectDetails';
+import { ProjectDetailsObject } from '@/model/ProjectDetails';
+import { Privacy, privacyFromString } from '@/model/enum/Enums';
+import ContentURL from '@/model/ContentURL';
 
 import {
   setMessage,
@@ -11,9 +13,7 @@ import {
   setShowStatusBar,
 } from '@/controllers/messageSlice';
 import { updateProject } from '@/controllers/updateSlice';
-
-import { Privacy, privacyFromString } from '@/model/enum/Enums';
-import ContentURL, { ContentURLObject } from '@/model/ContentURL';
+import { UserObject } from '@/model/User';
 
 interface UpdateDetailsProps {
   project: Project;
@@ -24,27 +24,23 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
 
   const [projectObject, setProjectObject] = useState<ProjectObject>(project.toProjectObject());
 
-  const [details, setDetails] = useState<ProjectDetails | null>(null);
-  const [privacy, setPrivacy] = useState<string | null>(null);
-  const [clientID, setClientID] = useState<string | null>(null);
+  const [privacy, setPrivacy] = useState<string>('private');
+  const [clientID, setClientID] = useState<string>('0');
   const [content, setContent] = useState<ContentURL | null>(null);
+  const [team, setTeam] = useState<Array<UserObject>>([]);
+  const [story, setStory] = useState<ContentURL | null>(null);
 
   useEffect(() => {
     setProjectObject(project.toProjectObject())
   }, [project, setProjectObject]);
 
   useEffect(() => {
-    setDetails(project.details);
-    setPrivacy(project.details?.privacy ?? null)
-    setClientID(project.details?.clientID ?? null)
+    setPrivacy(project.details?.privacy ?? 'private')
+    setClientID(project.details?.clientID ?? '0')
     setContent(project.details?.content ?? null)
-  }, [
-    project.details,
-    setDetails,
-    setPrivacy,
-    setClientID,
-    setContent
-  ]);
+    setTeam(project.details?.teamList ? project.details?.teamList?.map((user) => user.toUserObject()) : [])
+    setStory(project.details?.story ?? null)
+  }, [project.details]);
 
   const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
     try {
@@ -67,23 +63,16 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
       const target = e.target;
       const { name, value } = target;
 
-      let contentObject: ContentURLObject | null = content ? content?.toContentURLObject() : null;
-
       if (name === 'client_id') {
         setClientID(value);
       }
 
       if (name === 'content_url') {
         setContent(new ContentURL(value));
+      }
 
-        contentObject = {
-          owner: null,
-          repo: null,
-          path: null,
-          branch: null,
-          url: value,
-          isValid: false
-        }
+      if (name === 'story') {
+        setStory(new ContentURL(value));
       }
     } catch (error) {
       const err = error as Error;
@@ -100,7 +89,8 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
         privacy: privacy,
         client_id: clientID,
         content: content ? content.url : null,
-        team_list: []
+        team_list: team,
+        story: story ? story.url : null
       };
 
       const updatedProjectObject: ProjectObject = {
@@ -138,6 +128,11 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
         <div className="form-item-flex">
           <label htmlFor="content_url">Content URL:</label>
           <input type="string" id="content_url" name="content_url" value={content?.url ?? ''} onChange={handleChange} />
+        </div>
+
+        <div className="form-item-flex">
+          <label htmlFor="story">Story URL:</label>
+          <input type="string" id="story" name="story" value={story?.url ?? ''} onChange={handleChange} />
         </div>
 
         <button onClick={handleUpdateDetails}>

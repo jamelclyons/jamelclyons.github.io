@@ -17,6 +17,7 @@ import { getPortfolio } from '@/controllers/portfolioSlice';
 import ProjectsComponent from './components/portfolio/ProjectsComponent';
 import SkillsComponent from './components/SkillsComponent';
 import HeaderTaxonomyComponent from './components/HeaderTaxonomyComponent';
+import Project from '@/model/Project';
 
 interface SearchProps {
   user: User;
@@ -24,17 +25,10 @@ interface SearchProps {
 }
 
 const Search: React.FC<SearchProps> = ({ user, skills }) => {
-  const dispatch = useDispatch<AppDispatch>();
-
   const { taxonomy, term } = useParams<string>();
 
-  const { portfolioLoading, portfolioErrorMessage, portfolioObject } = useSelector(
-    (state: RootState) => state.portfolio
-  );
-
-  const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject ?? []));
-
-  const { projects } = portfolio;
+  const [portfolio, setPortfolio] = useState<Portfolio | null>(user.repos ? new Portfolio(user.repos) : null);
+  const [projects, setProjects] = useState<Set<Project>>(new Set);
 
   useEffect(() => {
     if (term) {
@@ -45,42 +39,26 @@ const Search: React.FC<SearchProps> = ({ user, skills }) => {
   }, [term]);
 
   useEffect(() => {
-    if (portfolioObject === null) {
-      dispatch(getPortfolio(user.repoQueries));
+    if (user.repos) {
+      setPortfolio(new Portfolio(user.repos));
     }
-  }, [portfolioObject, user, dispatch]);
+  }, [user]);
 
   useEffect(() => {
-    if (portfolioLoading) {
-      dispatch(setMessageType('info'));
-      dispatch(setMessage('Now Loading Portfolio'));
+    if (portfolio && taxonomy && term) {
+      setProjects(portfolio.filterProjects(taxonomy, term));
     }
-  }, [portfolioLoading]);
-
-  useEffect(() => {
-    if (portfolioErrorMessage) {
-      dispatch(setMessage(portfolioErrorMessage));
-      dispatch(setMessageType('error'));
-      dispatch(setShowStatusBar(Date.now()));
-    }
-  }, [portfolioErrorMessage]);
-
-  useEffect(() => {
-    if (portfolioObject) {
-      setPortfolio(new Portfolio(portfolioObject));
-    }
-  }, [portfolioObject]);
+  }, [portfolio, taxonomy, term]);
 
   return (
     <section className="search" id="top">
       <>
         {taxonomy && term && <HeaderTaxonomyComponent skill={skills.filter(taxonomy, term)} />}
 
-        {
+        {portfolio &&
           projects &&
-          projects.size > 0 &&
           (taxonomy && term) &&
-          <ProjectsComponent projects={portfolio.filterProjects(taxonomy, term)} />
+          <ProjectsComponent projects={projects} />
         }
 
         <SkillsComponent projectSkills={null} />

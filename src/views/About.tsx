@@ -13,8 +13,6 @@ import Skills from '@/model/Skills';
 import Portfolio from '@/model/Portfolio';
 
 import { setMessage, setMessageType, setShowStatusBar } from '@/controllers/messageSlice';
-import { getPortfolio } from '@/controllers/portfolioSlice';
-import ContentURL from '@/model/ContentURL';
 
 interface AboutProps {
   user: User;
@@ -25,17 +23,11 @@ const About: React.FC<AboutProps> = ({ user, skills }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { githubLoading } = useSelector((state: RootState) => state.github);
-  const { portfolioLoading, portfolioObject, portfolioErrorMessage } = useSelector((state: RootState) => state.portfolio);
 
-  const [story, setStory] = useState<ContentURL | null>(user.story);
-  const [portfolio, setPortfolio] = useState<Portfolio>(new Portfolio(portfolioObject ?? []));
+  const [portfolio, setPortfolio] = useState<Portfolio | null>(user.repos ? new Portfolio(user.repos) : null);
 
   useEffect(() => {
     document.title = `About - ${user.name}`;
-  }, [user]);
-
-  useEffect(() => {
-    setStory(user.story)
   }, [user]);
 
   useEffect(() => {
@@ -46,31 +38,10 @@ const About: React.FC<AboutProps> = ({ user, skills }) => {
   }, [githubLoading]);
 
   useEffect(() => {
-    if (portfolioObject === null) {
-      dispatch(getPortfolio(user.repoQueries));
+    if (user.repos) {
+      setPortfolio(new Portfolio(user.repos));
     }
-  }, [portfolioObject, user, dispatch]);
-
-  useEffect(() => {
-    if (portfolioLoading) {
-      dispatch(setMessageType('info'));
-      dispatch(setMessage('Now Loading Portfolio'));
-    }
-  }, [portfolioLoading]);
-
-  useEffect(() => {
-    if (portfolioErrorMessage) {
-      dispatch(setMessage(portfolioErrorMessage));
-      dispatch(setMessageType('error'));
-      dispatch(setShowStatusBar(Date.now()));
-    }
-  }, [portfolioErrorMessage]);
-
-  useEffect(() => {
-    if (portfolioObject) {
-      setPortfolio(new Portfolio(portfolioObject));
-    }
-  }, [portfolioObject]);
+  }, [user]);
 
   const handleProjects = () => {
     window.location.href = '/#/portfolio';
@@ -108,9 +79,10 @@ const About: React.FC<AboutProps> = ({ user, skills }) => {
 
           <div className="stats-bar">
             <div className="badge">
+              {portfolio && portfolio.projects.size && 
               <div className="badge-number">
                 <h5>{portfolio.projects.size}</h5>
-              </div>
+              </div>}
 
               <button onClick={handleProjects}>
                 <h3 className="title">projects</h3>
@@ -139,9 +111,9 @@ const About: React.FC<AboutProps> = ({ user, skills }) => {
 
         <SkillsComponent projectSkills={null} />
 
-        {story ? <StoryComponent story={story} /> : <LoadingComponent />}
+        {user.story ? <StoryComponent story={user.story} /> : <LoadingComponent />}
 
-        <OrganizationsComponent organizations={user.organizations} />
+        {user.organizations && <OrganizationsComponent organizations={user.organizations} />}
       </section>
     </>
   );

@@ -7,6 +7,7 @@ import { getRepoFile } from '@/controllers/githubSlice';
 
 import type { AppDispatch } from '@/model/store';
 import ContentURL from '@/model/ContentURL';
+import RepoContentQuery from '@/model/RepoContentQuery';
 
 interface ContentComponentProps {
   title: string | null;
@@ -16,7 +17,14 @@ interface ContentComponentProps {
 const ContentComponent: React.FC<ContentComponentProps> = ({ title, content }) => {
   const dispatch = useDispatch<AppDispatch>();
 
+  const [query, setQuery] = useState<RepoContentQuery | null>(null);
   const [html, setHTML] = useState<string | object | null>(null);
+
+  useEffect(() => {
+    if (content) {
+      setQuery(content.toRepoContentQuery())
+    }
+  }, [content]);
 
   useEffect(() => {
     let isMounted = true;
@@ -24,8 +32,6 @@ const ContentComponent: React.FC<ContentComponentProps> = ({ title, content }) =
 
     const fetchContent = async () => {
       try {
-        const query = content.toRepoContentQuery();
-
         if (query) {
           const contentObject = await dispatch(getRepoFile(query)).unwrap();
 
@@ -45,7 +51,7 @@ const ContentComponent: React.FC<ContentComponentProps> = ({ title, content }) =
       isMounted = false;
       controller.abort();
     };
-  }, [content]);
+  }, [query]);
 
   return (
     <>

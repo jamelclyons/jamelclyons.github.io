@@ -41,13 +41,13 @@ const OrganizationsComponent: React.FC<OrganizationsComponentProps> = ({ organiz
                 key={index}
                 className="organizations-button"
                 onClick={() => handleClick(organization)}>
-                <img
+                {organization.avatarURL && <img
                   src={organization.avatarURL}
                   alt={`${organization.name} avatar`}
-                />
+                />}
               </button>
               <h3>{organization.name}</h3>
-              <DescriptionComponent description={organization.description} />
+              {organization.description && <DescriptionComponent description={organization.description} />}
             </div>
           ))}
         </div>

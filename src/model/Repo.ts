@@ -84,7 +84,6 @@ class Repo extends Model {
   }
 
   languagesFromGithub(data: Array<Record<string, any>>) {
-
     if (Array.isArray(data) && data.length > 0) {
       let languages: Array<Record<string, any>> = [];
 
@@ -238,7 +237,8 @@ class Repo extends Model {
         contentsObject.development ||
         contentsObject.delivery ||
         contentsObject.problem ||
-        contentsObject.details)
+        contentsObject.details ||
+        contentsObject.story)
     ) {
       this.contents ? this.contents : (this.contents = new RepoContents());
 
@@ -248,6 +248,7 @@ class Repo extends Model {
       this.contents.setDelivery(new RepoContent(contentsObject.delivery));
       this.contents.setProblem(new RepoContent(contentsObject.problem));
       this.contents.setDetails(new RepoContent(contentsObject.details));
+      this.contents.setStory(new RepoContent(contentsObject.story));
     }
   }
 
@@ -277,6 +278,9 @@ class Repo extends Model {
               break;
             case 'Details.md':
               this.contents.setDetails(new RepoContent(content));
+              break;
+            case 'Story.md':
+              this.contents.setStory(new RepoContent(content));
               break;
           }
         }
