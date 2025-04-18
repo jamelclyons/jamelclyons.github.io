@@ -8,6 +8,7 @@ import Portfolio from '@/model/Portfolio';
 import Project from '@/model/Project';
 import User from '@/model/User';
 import Organization from '@/model/Organization';
+import Account from '@/model/Account';
 
 interface PortfolioComponentProps {
   account: User | Organization;
@@ -18,7 +19,7 @@ const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ account }) => {
   const [projects, setProjects] = useState<Set<Project>>(new Set());
 
   useEffect(() => {
-    if ((account instanceof User || account instanceof Organization) && account.repos) {
+    if ((account instanceof Account) && account.repos) {
       setPortfolio(new Portfolio(account.repos));
     }
   }, [account]);

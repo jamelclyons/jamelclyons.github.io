@@ -6,11 +6,12 @@ import * as organization from '../../organization.json';
 
 import GitHubRepoQuery, { GitHubRepoQueryObject } from './GitHubRepoQuery';
 import { RepoObject } from './Repo';
+import Account from './Account';
 
 export type OrganizationObject = {
   id: string | null;
-  createdAt: string | null;
-  updatedAt: string | null;
+  created_at: string | null;
+  updated_at: string | null;
   avatar_url: string | null;
   login: string | null;
   description: string | null;
@@ -20,14 +21,13 @@ export type OrganizationObject = {
   location: string | null;
   email: string | null;
   url: string | null;
-  github: string | null;
-  contactMethods: ContactMethodsObject | null;
-  reposURL: string | null;
+  contact_methods: ContactMethodsObject | null;
+  repos_url: string | null;
   repos: Array<RepoObject> | null;
-  repoQueries: Array<GitHubRepoQueryObject> | null;
+  repo_queries: Array<GitHubRepoQueryObject> | null;
 };
 
-class Organization extends Model {
+class Organization extends Account {
   id: string | null;
   createdAt: string | null;
   updatedAt: string | null;
@@ -40,7 +40,6 @@ class Organization extends Model {
   location: string | null;
   email: string | null;
   url: string | null;
-  github: string | null;
   contactMethods: ContactMethods | null;
   reposURL: string | null;
   repos: Repos | null;
@@ -56,7 +55,7 @@ class Organization extends Model {
     this.createdAt = founded_on ?? data?.created_at;
     this.updatedAt = data?.updated_at;
     this.login = data?.login;
-    this.avatarURL = data?.avatar_url;
+    this.avatarURL = data?.avatar_url ? data?.avatar_url : null;
     this.description = data?.description;
     this.name = name ?? data?.name;
     this.company = company ?? data?.company;
@@ -64,7 +63,6 @@ class Organization extends Model {
     this.location = location ?? data?.location;
     this.email = contact.email.value ?? data?.email;
     this.url = data?.url;
-    this.github = data?.github;
     this.contactMethods = data?.contact_methods
       ? new ContactMethods(data?.contact_methods)
       : null;
@@ -112,7 +110,7 @@ class Organization extends Model {
             repo.contributors &&
             Array.isArray(repo.contributors.users) &&
             repo.contributors.users.length > 0
-              ? repo.contributors.users.map((user) => user.toObject())
+              ? repo.contributors.users.map((user) => user.toUserObject())
               : null,
         },
       };
@@ -159,33 +157,40 @@ class Organization extends Model {
             repo.contributors &&
             Array.isArray(repo.contributors.users) &&
             repo.contributors.users.length > 0
-              ? repo.contributors.users.map((user) => user.toObject())
+              ? repo.contributors.users.map((user) => user.toUserObject())
               : null,
         },
       };
     });
   }
 
-  fromGitHub(data: Record<string, any>) {
-    this.id = data?.login;
-    this.createdAt = data?.created_at;
-    this.updatedAt = data?.updated_at;
-    this.login = data?.login;
-    this.avatarURL = data?.avatar_url;
-    this.name = data?.name;
-    this.company = data?.company;
-    this.description = data?.description;
-    this.email = data?.email;
-    this.blog = data?.blog;
-    this.location = data?.location;
-    this.reposURL = data?.repos_url;
-    this.url = data?.url;
-    this.github = data?.github;
+  fromGitHub(data: Record<string, any>) {console.log(data)
+    this.id = data?.login ? data?.login : this.id;
+    this.createdAt = data?.created_at ? data?.created_at : this.createdAt;
+    this.updatedAt = data?.updated_at ? data?.updated_at : this.updatedAt;
+    this.login = data?.login ? data?.login : this.login;
+    this.avatarURL = data?.avatar_url ? data?.avatar_url : this.avatarURL;
+    this.name = data?.name ? data?.name : this.name;
+    this.company = data?.company ? data?.company : this.company;
+    this.description = data?.description ? data?.description : this.description;
+    this.email = data?.email ? data?.email : this.email;
+    this.blog = data?.blog ? data?.blog : this.blog;
+    this.location = data?.location ? data?.location : this.location;
+    this.reposURL = data?.repos_url ? data?.repos_url : this.reposURL;
+    this.url = data?.url ? data?.url : this.url;
+
+    data?.html_url && this.contactMethods
+      ? this.contactMethods.setContactGitHub({ url: data?.html_url })
+      : (this.contactMethods = new ContactMethods());
+
+    data?.html_url
+      ? this.contactMethods.setContactGitHub({ url: data?.html_url })
+      : null;
   }
 
   fromDB(data: Record<string, any>) {
-    this.company = data?.company;
-    this.avatarURL = data?.avatar_url;
+    this.company = data?.company ? data?.company : this.company;
+    this.avatarURL = data?.avatar_url ? data?.avatar_url : this.avatarURL;
   }
 
   getRepoQueries(data: Array<Record<string, any>>) {
@@ -217,8 +222,8 @@ class Organization extends Model {
   toOrganizationObject(): OrganizationObject {
     return {
       id: this.id,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
+      created_at: this.createdAt,
+      updated_at: this.updatedAt,
       avatar_url: this.avatarURL,
       login: this.login,
       description: this.description,
@@ -228,15 +233,14 @@ class Organization extends Model {
       location: this.location,
       email: this.email,
       url: this.url,
-      github: this.github,
-      contactMethods: this.contactMethods
+      contact_methods: this.contactMethods
         ? this.contactMethods.toContactMethodsObject()
         : null,
-      reposURL: this.reposURL,
+      repos_url: this.reposURL,
       repos: this.repos
         ? this.repos.collection.map((repo) => repo.toRepoObject())
         : null,
-      repoQueries: this.repoQueries
+      repo_queries: this.repoQueries
         ? this.repoQueries.map((repoQuery) =>
             repoQuery.toGitHubRepoQueryObject()
           )

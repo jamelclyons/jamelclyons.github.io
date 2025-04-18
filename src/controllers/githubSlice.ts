@@ -267,7 +267,7 @@ export const getRepoDetails = createAsyncThunk(
             const contributorsArray: Array<Record<string, any>> = [];
 
             contributorsJson.forEach((contributor) => {
-              contributorsArray.push(new User(contributor).toObject());
+              contributorsArray.push(new User(contributor).toUserObject());
             });
 
             repo.contributorsFromGitHub(contributorsArray);
@@ -358,7 +358,7 @@ export const getAuthenticatedAccount = createAsyncThunk(
             getOrganizationDetailsList.fulfilled.match(orgResponse) &&
             orgResponse.payload
           ) {
-            console.log(orgResponse.payload)
+            console.log(orgResponse.payload);
             user.setOrganizations(orgResponse.payload);
           }
         }
@@ -488,7 +488,7 @@ export const getUserAccount = createAsyncThunk(
         }
 
         return {
-          ...user.toObject(),
+          ...user.toUserObject(),
           organizations: organizations,
           repos: repos,
         };
@@ -523,15 +523,11 @@ export const getOrganizationAccount = createAsyncThunk(
   async (organization: string) => {
     try {
       const { data } = await octokit.request(`/orgs/${organization}`);
-      const org = new Organization(data);
-      const repoQueries =
-        org.repos && org.repos.collection
-          ? org.getRepoQueries(
-              org.repos.collection.map((repo) => repo.toObject())
-            )
-          : null;
 
-      return { ...org.toObject(), repo_queries: repoQueries };
+      const org = new Organization();
+      org.fromGitHub(data);
+
+      return org.toOrganizationObject();
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -552,9 +548,7 @@ export const getOrganizationDetails = createAsyncThunk(
         getOrganizationAccount.fulfilled.match(orgResponse) &&
         orgResponse.payload
       ) {
-        const organization = new Organization();
-
-        organization.fromGitHub(orgResponse.payload);
+        const organization = new Organization(orgResponse.payload);
 
         if (organization.reposURL && new URL(organization.reposURL)) {
           const reposResponse = await fetch(organization.reposURL, {
@@ -576,7 +570,9 @@ export const getOrganizationDetails = createAsyncThunk(
           getSocialAccounts.fulfilled.match(contactsResponse) &&
           contactsResponse.payload
         ) {
-          organization.contactMethods = new ContactMethods();
+          organization.contactMethods
+            ? organization.contactMethods
+            : (organization.contactMethods = new ContactMethods());
 
           organization.contactMethods.fromGitHub(contactsResponse.payload);
 

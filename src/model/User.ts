@@ -1,4 +1,3 @@
-import Model from '@/model/Model';
 import Image, { ImageObject } from '@/model/Image';
 import ContactMethods, { ContactMethodsObject } from '@/model/ContactMethods';
 import Organizations from '@/model/Organizations';
@@ -11,6 +10,7 @@ import { OrganizationObject } from './Organization';
 import ContentURL from '@/model/ContentURL';
 
 import user from '../../user.json';
+import Account from './Account';
 
 export interface UserObject {
   id: string;
@@ -33,7 +33,7 @@ export interface UserObject {
   story: string | null;
 }
 
-class User extends Model {
+class User extends Account {
   id: string;
   login: string;
   avatarURL: string | null;
@@ -55,7 +55,7 @@ class User extends Model {
 
   constructor(data: Record<string, any> | UserObject = {}) {
     super();
-
+    console.log(data.contact_methods);
     this.id = data?.id || this.getID();
     this.login = data?.login;
     this.avatarURL = data?.avatar_url || null;
@@ -130,6 +130,22 @@ class User extends Model {
     this.organizationsURL = data?.organizations_url;
     this.reposURL = data?.repos_url;
     this.login = data?.login;
+
+    data?.html_url && this.contactMethods
+      ? this.contactMethods.setContactGitHub({ url: data?.html_url })
+      : (this.contactMethods = new ContactMethods());
+
+    data?.html_url
+      ? this.contactMethods.setContactGitHub({ url: data?.html_url })
+      : null;
+
+    data?.email && this.contactMethods
+      ? this.contactMethods.setContactEmail({ value: data?.email })
+      : (this.contactMethods = new ContactMethods());
+
+    data?.email
+      ? this.contactMethods.setContactEmail({ value: data?.email })
+      : null;
   }
 
   fromDB(data: Record<string, any>) {

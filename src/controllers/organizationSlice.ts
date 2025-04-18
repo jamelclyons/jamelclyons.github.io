@@ -38,17 +38,9 @@ export const getOrganization = createAsyncThunk(
         getOrganizationDetails.fulfilled.match(organizationResponse) &&
         organizationResponse.payload
       ) {
+        console.log(organizationResponse.payload)
         const organization = new Organization(organizationResponse.payload);
-        const repos =
-          organization.repos && organization.repos.collection
-            ? organization.repos.collection.map((repo) => repo.toObject())
-            : null;
-        const repoQueries =
-          repos && repos.length > 0
-            ? organization
-                .getRepoQueries(repos)
-                .map((query) => query.toObject())
-            : null;
+        console.log(organization);
 
         const databaseResponse = organization.id
           ? await thunkAPI.dispatch(getOrganizationData(organization.id))

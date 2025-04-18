@@ -22,7 +22,7 @@ const OrganizationPage: React.FC = () => {
     const [organization, setOrganization] = useState<Organization | null>(null);
 
     useEffect(() => {
-        if (organizationObject === null && login) {
+        if (!organizationObject && login) {
             dispatch(getOrganization(login));
         }
     }, [login, organizationObject]);
