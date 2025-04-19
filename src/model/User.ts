@@ -94,6 +94,10 @@ class User extends Account {
     return pathname[1];
   }
 
+  setName(name: string) {
+    this.name = name;
+  }
+
   setTitle(title: string) {
     this.title = title;
   }

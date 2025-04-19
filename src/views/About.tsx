@@ -12,7 +12,9 @@ import User from '@/model/User';
 import Skills from '@/model/Skills';
 import Portfolio from '@/model/Portfolio';
 
-import { setMessage, setMessageType, setShowStatusBar } from '@/controllers/messageSlice';
+import { setMessage, setShowStatusBar } from '@/controllers/messageSlice';
+
+import userJson from '../../user.json';
 
 interface AboutProps {
   user: User;
@@ -25,6 +27,18 @@ const About: React.FC<AboutProps> = ({ user, skills }) => {
   const { githubLoading } = useSelector((state: RootState) => state.github);
 
   const [portfolio, setPortfolio] = useState<Portfolio | null>(user.repos ? new Portfolio(user.repos) : null);
+
+  useEffect(() => {
+    user.setName(userJson.name)
+  }, []);
+
+  useEffect(() => {
+    user.setAvatarURL(userJson.avatar_url)
+  }, []);
+
+  useEffect(() => {
+    user.setTitle(userJson.title)
+  }, []);
 
   useEffect(() => {
     document.title = `About - ${user.name}`;
@@ -78,18 +92,18 @@ const About: React.FC<AboutProps> = ({ user, skills }) => {
           </div>
 
           <div className="stats-bar">
-            <div className="badge">
-              {portfolio && portfolio.projects.size && 
-              <div className="badge-number">
-                <h5>{portfolio.projects.size}</h5>
+            {portfolio && portfolio.projects.size > 0 &&
+              <div className="badge">
+                <div className="badge-number">
+                  <h5>{portfolio.projects.size}</h5>
+                </div>
+
+                <button onClick={handleProjects}>
+                  <h3 className="title">projects</h3>
+                </button>
               </div>}
 
-              <button onClick={handleProjects}>
-                <h3 className="title">projects</h3>
-              </button>
-            </div>
-
-            <div className="badge">
+            {skills && skills.count > 0 && <div className="badge">
               <div className="badge-number">
                 <h5>{skills.count}</h5>
               </div>
@@ -97,15 +111,15 @@ const About: React.FC<AboutProps> = ({ user, skills }) => {
               <button onClick={handleSkills}>
                 <h3 className="title">skills</h3>
               </button>
-            </div>
+            </div>}
 
-            <button onClick={handleStory}>
+            {user && user.story && <button onClick={handleStory}>
               <h3 className="title">story</h3>
-            </button>
+            </button>}
 
-            <button onClick={handleResume}>
+            {user && user.resume && <button onClick={handleResume}>
               <h3 className="title">resume</h3>
-            </button>
+            </button>}
           </div>
         </div>
 
