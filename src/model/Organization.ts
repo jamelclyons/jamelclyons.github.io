@@ -164,7 +164,7 @@ class Organization extends Account {
     });
   }
 
-  fromGitHub(data: Record<string, any>) {console.log(data)
+  fromGitHub(data: Record<string, any>) {
     this.id = data?.login ? data?.login : this.id;
     this.createdAt = data?.created_at ? data?.created_at : this.createdAt;
     this.updatedAt = data?.updated_at ? data?.updated_at : this.updatedAt;

@@ -358,7 +358,6 @@ export const getAuthenticatedAccount = createAsyncThunk(
             getOrganizationDetailsList.fulfilled.match(orgResponse) &&
             orgResponse.payload
           ) {
-            console.log(orgResponse.payload);
             user.setOrganizations(orgResponse.payload);
           }
         }

@@ -55,13 +55,13 @@ class User extends Account {
 
   constructor(data: Record<string, any> | UserObject = {}) {
     super();
-    console.log(data.contact_methods);
+
     this.id = data?.id || this.getID();
-    this.login = data?.login;
+    this.login = data?.login || null;
     this.avatarURL = data?.avatar_url || null;
     this.name = data?.name || null;
     this.title = data?.title || null;
-    this.bio = data?.bio;
+    this.bio = data?.bio || null;
     this.email = data?.email || null;
     this.phone = data?.phone || null;
     this.resume = data?.resume || null;
