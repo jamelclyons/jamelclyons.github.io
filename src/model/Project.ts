@@ -31,6 +31,7 @@ import User from './User';
 import ProjectProgress from './ProjectProgress';
 import ProjectSkills from './ProjectSkills';
 import RepoURL from './RepoURL';
+import Issue from './Issue';
 
 export type ProjectObject = {
   id: string | null;
@@ -159,7 +160,9 @@ class Project extends Model {
         repo.skills ||
         repo.repoURL
       ) {
-        this.process.development = new ProjectDevelopment();
+        this.process.development
+          ? this.process.development
+          : (this.process.development = new ProjectDevelopment());
         repo.contents?.development?.downloadURL
           ? this.process.development.setContentURL(
               repo.contents.development.downloadURL
@@ -175,6 +178,25 @@ class Project extends Model {
 
         if (repo.repoURL) {
           this.process.development.repoURL = new RepoURL(repo.repoURL);
+        }
+
+        if (repo.issues) {
+          this.solution
+            ? this.solution
+            : (this.solution = new ProjectSolution());
+          const roadMap = repo.issues.list
+            .filter((issue) => issue.id && issue.title && issue.milestone)
+            .map((issue) => {
+              const feature = new Feature();
+              feature.setID(issue.id);
+              feature.setDescription(issue.title);
+              issue.milestone ? feature.setVersion(issue.milestone) : null;
+              return feature;
+            });
+          this.solution.features =
+            roadMap && Array.isArray(roadMap) && roadMap.length > 0
+              ? new Set(roadMap)
+              : null;
         }
       }
 
@@ -218,11 +240,11 @@ class Project extends Model {
     if (data?.solution) {
       this.solution ? this.solution : (this.solution = new ProjectSolution());
 
-      if (data?.solution?.features) {
-        this.solution.features = new Set(
-          data.solution.features.map((feature) => new Feature(feature))
-        );
-      }
+      // if (data?.solution?.features) {
+      //   this.solution.features = new Set(
+      //     data.solution.features.map((feature) => new Feature(feature))
+      //   );
+      // }
 
       if (data?.solution?.project_urls) {
         this.solution.projectURLs

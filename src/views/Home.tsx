@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+
+import { setMessage, setMessageType } from '@/controllers/messageSlice';
 
 import PortfolioComponent from './components/portfolio/PortfolioComponent';
 import MemberIntroductionComponent from './components/member/MemberComponent';
@@ -12,8 +14,6 @@ import User from '@/model/User';
 import Skills from '@/model/Skills';
 
 import userJson from '../../user.json';
-
-import { setMessage, setMessageType } from '@/controllers/messageSlice';
 
 interface HomeProps {
   user: User;

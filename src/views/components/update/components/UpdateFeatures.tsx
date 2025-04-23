@@ -56,7 +56,7 @@ const UpdateFeatures: React.FC<UpdateFeaturesProps> = ({ features }) => {
         let featureObject: FeatureObject = {
             id: id,
             description: description,
-            version: version.toString()
+            version: version ? version.toString() : null
         }
 
         setFeature(new Feature(featureObject));

@@ -6,6 +6,7 @@ import { Language, Technology } from './Taxonomy';
 import Contributors, { ContributorsObject } from './Contributors';
 import User from './User';
 import ProjectSkills, { ProjectSkillsObject } from './ProjectSkills';
+import Issues, { IssuesObject } from './Issues';
 
 export interface RepoObject {
   id: string;
@@ -16,11 +17,13 @@ export interface RepoObject {
   updated_at: string;
   homepage: string;
   description: string;
+  api_url: string;
   repo_url: string;
   skills: ProjectSkillsObject | null;
   contents: RepoContentsObject | null;
   contributors_url: string | null;
   contributors: ContributorsObject | null;
+  issues: IssuesObject | null;
 }
 
 class Repo extends Model {
@@ -32,11 +35,13 @@ class Repo extends Model {
   updatedAt: string;
   homepage: string;
   description: string;
+  apiURL: string;
   repoURL: string;
   skills: ProjectSkills | null;
   contents: RepoContents | null;
   contributorsURL: string;
   contributors: Contributors | null;
+  issues: Issues | null;
 
   constructor(data: Record<string, any> | RepoObject = {}) {
     super();
@@ -49,6 +54,7 @@ class Repo extends Model {
     this.updatedAt = data?.updated_at;
     this.homepage = data?.homepage;
     this.description = data?.description;
+    this.apiURL = data?.api_url;
     this.repoURL = data?.repo_url;
     this.skills = data?.skills ? this.getSkills(data.skills) : null;
     this.contents = data?.contents ? new RepoContents(data.contents) : null;
@@ -56,6 +62,10 @@ class Repo extends Model {
     this.contributors = new Contributors(
       this.setContributors(data?.contributors)
     );
+    this.issues =
+      data.issues && Array.isArray(data.issues.list)
+        ? new Issues(data.issues.list)
+        : null;
   }
 
   fromGitHub(data: Record<string, any>) {
@@ -67,6 +77,7 @@ class Repo extends Model {
     this.updatedAt = data?.pushed_at;
     this.homepage = data?.homepage;
     this.description = data?.description;
+    this.apiURL = data?.url;
     this.repoURL = data?.html_url;
     this.contributorsURL = data?.contributors_url;
   }
@@ -317,6 +328,12 @@ class Repo extends Model {
     }
   }
 
+  setIssues(data: Array<Record<string, any>>) {
+    data && Array.isArray(data) && data.length > 0
+      ? (this.issues = new Issues(data))
+      : null;
+  }
+
   toRepoObject(): RepoObject {
     return {
       id: this.id,
@@ -327,6 +344,7 @@ class Repo extends Model {
       updated_at: this.updatedAt,
       homepage: this.homepage,
       description: this.description,
+      api_url: this.apiURL,
       repo_url: this.repoURL,
       skills: this.skills ? this.skills.toProjectSkillsObject() : null,
       contents: this.contents ? this.contents.toRepoContentsObject() : null,
@@ -334,6 +352,7 @@ class Repo extends Model {
       contributors: this.contributors
         ? this.contributors.toContributorsObject()
         : null,
+      issues: this.issues ? this.issues.toIssuesObject() : null,
     };
   }
 }

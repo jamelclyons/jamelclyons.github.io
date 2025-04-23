@@ -1,18 +1,21 @@
 class Version {
-  major: number;
-  minor: number;
-  patch: number;
+  major: number | null;
+  minor: number | null;
+  patch: number | null;
 
   constructor(projectVersion: string) {
-    const version = this.parse(projectVersion);
+    const version =
+      typeof projectVersion === 'string' ? this.parse(projectVersion) : null;
 
-    this.major = version[0];
-    this.minor = version[1];
-    this.patch = version[2];
+    this.major = version ? version[0] : null;
+    this.minor = version ? version[1] : null;
+    this.patch = version ? version[2] : null;
   }
 
   parse(tag: string) {
-    return tag.split('.').map((s) => parseInt(s));
+    return typeof tag === 'string'
+      ? tag.split('.').map((s) => parseInt(s))
+      : '1.0.0'.split('.').map((s) => parseInt(s));
   }
 
   isEqual(tag: string) {}

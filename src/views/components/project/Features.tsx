@@ -15,10 +15,14 @@ const Features: React.FC<FeaturesProps> = ({ features, currentVersion }) => {
         <h3>Features</h3>
 
         <div className="product-features">
-          {Array.from(features).filter((feature) => (feature.version.major <= currentVersion.major)).map((feature) => (
-          <p className="product-feature" key={feature.id}>
-            <span className='product-feature-point'>-</span> {feature.description}
-          </p>
+          {Array.from(features).filter((feature) => {
+            if (feature.version && feature.version.major && currentVersion.major && feature.version.major <= currentVersion.major) {
+              return feature;
+            }
+          }).map((feature) => (
+            <p className="product-feature" key={feature.id}>
+              <span className='product-feature-point'>-</span> {feature.description}
+            </p>
           ))}
         </div>
       </div>

@@ -25,6 +25,7 @@ const Status: React.FC<ProjectStatusProps> = ({ project }) => {
   }, [project])
 
   const hasContent = createdAt || updatedAt || progress;
+
   return (
     <>
       {hasContent &&
@@ -43,11 +44,12 @@ const Status: React.FC<ProjectStatusProps> = ({ project }) => {
             </div>}
           </div>
 
-          {progress && progress > 0 &&
+          {typeof progress === 'number' && progress > 0 && (
             <div className="status-progress">
-              <progress value={progress} max="100"></progress>
+              <progress value={progress} max={100}></progress>
               <h4>{progress.toFixed(1)}% Completed</h4>
-            </div>}
+            </div>
+          )}
         </div>}
     </>
   );

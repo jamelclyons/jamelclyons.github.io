@@ -25,9 +25,19 @@ class ProjectVersions extends Model {
 
     return path
       .map((v) => new Version(v))
-      .sort((a, b) => a.major - b.major)
-      .sort((a, b) => a.minor - b.minor)
-      .sort((a, b) => a.patch - b.patch)
+      .sort((a, b) => {
+        const majorA = a.major ?? 0;
+        const majorB = b.major ?? 0;
+        if (majorA !== majorB) return majorA - majorB;
+
+        const minorA = a.minor ?? 0;
+        const minorB = b.minor ?? 0;
+        if (minorA !== minorB) return minorA - minorB;
+
+        const patchA = a.patch ?? 0;
+        const patchB = b.patch ?? 0;
+        return patchA - patchB;
+      })
       .map((v) => v.toString());
   }
 

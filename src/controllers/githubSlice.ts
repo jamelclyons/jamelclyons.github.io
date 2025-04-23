@@ -228,6 +228,23 @@ export const getRepoFile = createAsyncThunk(
   }
 );
 
+export const getIssues = createAsyncThunk(
+  'github/getIssues',
+  async (url: string) => {
+    try {
+      const response = await octokit.request(`${url}/issues`, {
+        headers: headers,
+      });
+
+      return response.data as Array<Record<string, any>>;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
 export const getRepoDetails = createAsyncThunk(
   'github/getRepoDetails',
   async (query: GitHubRepoQuery, thunkAPI) => {
@@ -272,6 +289,16 @@ export const getRepoDetails = createAsyncThunk(
 
             repo.contributorsFromGitHub(contributorsArray);
           }
+        }
+
+        const issuesResponse = await thunkAPI
+          .dispatch(getIssues(repo.apiURL));
+
+        if (
+          getIssues.fulfilled.match(issuesResponse) &&
+          issuesResponse.payload
+        ) {
+          repo.setIssues(issuesResponse.payload);
         }
 
         return repo.toRepoObject();
