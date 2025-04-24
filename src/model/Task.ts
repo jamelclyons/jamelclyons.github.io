@@ -1,7 +1,7 @@
 import Model from './Model';
 
 export type TaskObject = {
-  id: string;
+  id: string | number;
   description: string;
   status: boolean;
   details: string;
@@ -9,7 +9,7 @@ export type TaskObject = {
 };
 
 export type TaskDataObject = {
-  id: string;
+  id: string | number;
   description: string;
   status: boolean;
   details: string;
@@ -17,7 +17,7 @@ export type TaskDataObject = {
 };
 
 class Task extends Model {
-  id: string;
+  id: string | number;
   description: string;
   status: boolean;
   details: string;
@@ -31,6 +31,26 @@ class Task extends Model {
     this.status = data?.status ?? false;
     this.details = data?.details ?? '';
     this.weight = data?.weight ?? 0;
+  }
+
+  setID(id: string | number) {
+    this.id = id;
+  }
+
+  setDescription(description: string) {
+    this.description = description;
+  }
+
+  setStatus(status: boolean) {
+    this.status = status;
+  }
+
+  setDetails(details: string) {
+    this.details = details;
+  }
+
+  setWeight(weight: number) {
+    this.weight = weight;
   }
 
   toTaskObject(): TaskObject {

@@ -7,6 +7,8 @@ export interface IssueObject {
   updated_at: string;
   sub_issues_summary: SubIssueSummaryObject | null;
   title: string;
+  state: string;
+  type: string | null;
   milestone: string | null;
   labels: Array<string> | null;
   assignee: UserObject | null;
@@ -19,6 +21,8 @@ class Issue {
   updatedAt: string;
   subIssuesSummary: SubIssueSummary | null;
   title: string;
+  state: string;
+  type: string;
   milestone: string | null;
   labels: Array<string>;
   assignee: User | null;
@@ -32,13 +36,23 @@ class Issue {
       ? new SubIssueSummary(data.sub_issues_summary)
       : null;
     this.title = data.title;
+    this.state = data.state;
+    this.type =
+      data.type && data.type.name
+        ? data.type.name
+        : data.type
+        ? data.type
+        : null;
     this.milestone =
       data.milestone && data.milestone.title
         ? data.milestone.title
         : data.milestone
         ? data.milestone
         : null;
-    this.labels = data.labels && Array.isArray(data.labels) ? data.labels : [];
+    this.labels =
+      data.labels && Array.isArray(data.labels) && data.labels.length > 0
+        ? data.labels.map((label) => (label && label.name ? label.name : label))
+        : [];
     this.assignee = data.assignee ? new User(data.assignee) : null;
     this.assignees =
       data.assignees &&
@@ -57,6 +71,8 @@ class Issue {
         ? this.subIssuesSummary.toSubIssueSummaryObject()
         : null,
       title: this.title,
+      state: this.state,
+      type: this.type,
       milestone: this.milestone,
       labels: this.labels ? this.labels : null,
       assignee: this.assignee ? this.assignee.toUserObject() : null,

@@ -32,6 +32,7 @@ import ProjectProgress from './ProjectProgress';
 import ProjectSkills from './ProjectSkills';
 import RepoURL from './RepoURL';
 import Issue from './Issue';
+import Task from './Task';
 
 export type ProjectObject = {
   id: string | null;
@@ -147,12 +148,104 @@ class Project extends Model {
       this.process.status.createdAt = repo.createdAt;
       this.process.status.updatedAt = repo.updatedAt;
 
-      if (repo.contents?.design?.downloadURL) {
+      if (repo.contents && repo.contents.design) {
         this.process.design
           ? this.process.design
           : (this.process.design = new ProjectDesign());
 
-        this.process.design.setContentURL(repo.contents.design.downloadURL);
+        repo.contents.design.downloadURL
+          ? this.process.design.setContentURL(repo.contents.design.downloadURL)
+          : null;
+      }
+
+      let features = null;
+      let tasks = null;
+      let designIssues = null;
+      let developmentIssues = null;
+      let deliveryIssues = null;
+
+      if (repo.issues && repo.issues.list && repo.issues.list.length > 0) {
+        features = repo.issues.list.filter(
+          (issue) => issue.type && issue.type.includes('Feature')
+        );
+        tasks = repo.issues.list.filter(
+          (issue) => issue.type && issue.type.includes('Task')
+        );
+        designIssues = tasks.filter(
+          (issue) => issue.labels && issue.labels.includes('design')
+        );
+        developmentIssues = tasks.filter(
+          (issue) => issue.labels && issue.labels.includes('development')
+        );
+        deliveryIssues = tasks.filter(
+          (issue) => issue.labels && issue.labels.includes('delivery')
+        );
+      }
+
+      if (designIssues) {
+        const designTask = designIssues
+          .map((issue) => {
+            if (issue.id && issue.title && issue.state) {
+              const task = new Task();
+              task.setID(issue.id);
+              task.setDescription(issue.title);
+              task.setStatus(issue.state === 'closed' ? true : false);
+              return task;
+            }
+            return null;
+          })
+          .filter((task): task is Task => task !== null);
+
+        if (designTask.length > 0) {
+          this.process.design
+            ? this.process.design
+            : (this.process.design = new ProjectDesign());
+          this.process.design.setCheckList(designTask);
+        }
+      }
+
+      if (developmentIssues) {
+        const developmentTask = developmentIssues
+          .map((issue) => {
+            if (issue.id && issue.title && issue.state) {
+              const task = new Task();
+              task.setID(issue.id);
+              task.setDescription(issue.title);
+              task.setStatus(issue.state === 'closed' ? true : false);
+              return task;
+            }
+            return null;
+          })
+          .filter((task): task is Task => task !== null);
+
+        if (developmentTask.length > 0) {
+          this.process.development
+            ? this.process.development
+            : (this.process.development = new ProjectDevelopment());
+          this.process.development.setCheckList(developmentTask);
+        }
+      }
+
+      if (deliveryIssues) {
+        const deliveryTask = deliveryIssues
+          .map((issue) => {
+            if (issue.id && issue.title && issue.state) {
+              const task = new Task();
+              task.setID(issue.id);
+              task.setDescription(issue.title);
+              task.setStatus(issue.state === 'closed' ? true : false);
+              return task;
+            }
+            return null;
+          })
+          .filter((task): task is Task => task !== null);
+
+        if (deliveryTask.length > 0) {
+          this.process.delivery
+            ? this.process.delivery
+            : (this.process.delivery = new ProjectDelivery());
+          this.process.delivery.setCheckList(deliveryTask);
+        }
       }
 
       if (
@@ -180,11 +273,11 @@ class Project extends Model {
           this.process.development.repoURL = new RepoURL(repo.repoURL);
         }
 
-        if (repo.issues) {
+        if (features) {
           this.solution
             ? this.solution
             : (this.solution = new ProjectSolution());
-          const roadMap = repo.issues.list
+          const roadMap = features
             .filter((issue) => issue.id && issue.title && issue.milestone)
             .map((issue) => {
               const feature = new Feature();
@@ -201,7 +294,9 @@ class Project extends Model {
       }
 
       if (repo.contents?.delivery?.downloadURL) {
-        this.process.delivery = new ProjectDelivery();
+        this.process.delivery
+          ? this.process.delivery
+          : (this.process.delivery = new ProjectDelivery());
         this.process.delivery.setContentURL(repo.contents.delivery.downloadURL);
       }
     }
@@ -216,7 +311,7 @@ class Project extends Model {
     }
 
     if (repo.contributors?.users) {
-      this.details = new ProjectDetails();
+      this.details ? this.details : (this.details = new ProjectDetails());
       this.details.teamList = repo.contributors.users;
     }
 
@@ -239,12 +334,6 @@ class Project extends Model {
 
     if (data?.solution) {
       this.solution ? this.solution : (this.solution = new ProjectSolution());
-
-      // if (data?.solution?.features) {
-      //   this.solution.features = new Set(
-      //     data.solution.features.map((feature) => new Feature(feature))
-      //   );
-      // }
 
       if (data?.solution?.project_urls) {
         this.solution.projectURLs
@@ -299,12 +388,6 @@ class Project extends Model {
             ))
           : null;
 
-        data?.process?.design?.check_list
-          ? (this.process.design.checkList = new CheckList(
-              data.process.design.check_list
-            ))
-          : null;
-
         data?.process?.design?.colors_list
           ? (this.process.design.colorsList = Array.from(
               data?.process?.design?.colors_list
@@ -337,12 +420,6 @@ class Project extends Model {
           );
         }
 
-        if (data?.process?.development?.check_list) {
-          this.process.development.checkList = new CheckList(
-            data.process.development.check_list
-          );
-        }
-
         if (data?.process?.development?.versions_list) {
           this.process.development.versionsList = new ProjectVersions(
             data.process.development.versions_list
@@ -354,12 +431,6 @@ class Project extends Model {
         this.process.delivery
           ? this.process.delivery
           : (this.process.delivery = new ProjectDelivery());
-
-        data?.process?.delivery?.check_list
-          ? (this.process.delivery.checkList = new CheckList(
-              data?.process?.delivery?.check_list
-            ))
-          : null;
 
         data?.process?.delivery?.gallery
           ? (this.process.delivery.gallery = new Gallery(

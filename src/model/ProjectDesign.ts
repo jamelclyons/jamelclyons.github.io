@@ -3,6 +3,7 @@ import Gallery, { GalleryObject } from './Gallery';
 import Color, { ColorObject } from './Color';
 import CheckList, { CheckListObject } from './CheckList';
 import ContentURL, { ContentURLObject } from './ContentURL';
+import Task from './Task';
 
 export type ProjectDesignObject = {
   gallery: GalleryObject | null;
@@ -35,6 +36,14 @@ class ProjectDesign extends Model {
     this.contentURL = data?.content_url
       ? new ContentURL(data.content_url)
       : null;
+  }
+
+  setCheckList(tasks: Array<Task>) {
+    if (tasks && Array.isArray(tasks) && tasks.length > 0) {
+      const checkList = new CheckList();
+      checkList.setTasks(new Set(tasks));
+      this.checkList = checkList;
+    }
   }
 
   setContentURL(url: string) {

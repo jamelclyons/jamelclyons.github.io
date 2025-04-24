@@ -72,6 +72,14 @@ class ProjectDevelopment extends Model {
     this.skills = skills;
   }
 
+  setCheckList(tasks: Array<Task>) {
+    if (tasks && Array.isArray(tasks) && tasks.length > 0) {
+      const checkList = new CheckList();
+      checkList.setTasks(new Set(tasks));
+      this.checkList = checkList;
+    }
+  }
+  
   toProjectDevelopmentObject(): ProjectDevelopmentObject {
     return {
       gallery: this.gallery ? this.gallery.toGalleryObject() : null,

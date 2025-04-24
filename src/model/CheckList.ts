@@ -85,9 +85,7 @@ class CheckList extends Model {
     return totalWeight;
   }
 
-  addTasks(tasks: Set<Task>) {
-    this.tasks = tasks;
-
+  setTotalWeight(tasks: Set<Task>) {
     let totalWeight = 0;
 
     tasks.forEach((task) => {
@@ -95,6 +93,18 @@ class CheckList extends Model {
     });
 
     this.totalWeight = totalWeight;
+  }
+
+  setTasks(tasks: Set<Task>) {
+    this.tasks = tasks;
+
+    this.setTotalWeight(tasks);
+  }
+
+  addTasks(tasks: Set<Task>) {
+    this.tasks.union(tasks);
+
+    this.setTotalWeight(this.tasks);
   }
 
   toCheckListObject(): CheckListObject {

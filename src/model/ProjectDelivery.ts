@@ -2,6 +2,7 @@ import Model from './Model';
 import CheckList, { CheckListObject } from './CheckList';
 import Gallery, { GalleryObject } from './Gallery';
 import ContentURL from './ContentURL';
+import Task from './Task';
 
 export type ProjectDeliveryObject = {
   check_list: CheckListObject | null;
@@ -34,6 +35,14 @@ class ProjectDelivery extends Model {
     this.contentURL = new ContentURL(url);
   }
 
+  setCheckList(tasks: Array<Task>) {
+    if (tasks && Array.isArray(tasks) && tasks.length > 0) {
+      const checkList = new CheckList();
+      checkList.setTasks(new Set(tasks));
+      this.checkList = checkList;
+    }
+  }
+  
   toProjectDeliveryObject(): ProjectDeliveryObject {
     return {
       check_list: this.checkList ? this.checkList.toCheckListObject() : null,
