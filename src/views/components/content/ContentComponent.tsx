@@ -55,7 +55,7 @@ const ContentComponent: React.FC<ContentComponentProps> = ({ title, content }) =
 
   return (
     <>
-      {html && (
+      {html && html != "" && (
         <div className='content'>
           {title && <h4 className='title'>{title}</h4>}
           <div className='content-html' dangerouslySetInnerHTML={{ __html: html }}></div>

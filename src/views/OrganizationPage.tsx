@@ -7,6 +7,7 @@ import OrganizationComponent from './components/OrganizationComponent';
 import ContactBar from './components/ContactBar';
 
 import { getOrganization } from '@/controllers/organizationSlice';
+import { getOrganizationProjects } from '@/controllers/githubSlice';
 
 import type { AppDispatch, RootState } from '@/model/store';
 import Organization from '@/model/Organization';
@@ -18,6 +19,9 @@ const OrganizationPage: React.FC = () => {
 
     const { organizationObject } = useSelector(
         (state: RootState) => state.organization);
+
+    const { organizationProjects } = useSelector(
+        (state: RootState) => state.github);
 
     const [organization, setOrganization] = useState<Organization | null>(null);
 
@@ -38,6 +42,12 @@ const OrganizationPage: React.FC = () => {
             document.title = organization.name
         }
     }, [organization]);
+
+    useEffect(() => {
+        if (login) {
+            dispatch(getOrganizationProjects(login));
+        }
+    }, [login]);
 
     return (
         <section className='organization' id='top'>

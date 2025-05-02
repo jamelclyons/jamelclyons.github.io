@@ -48,6 +48,7 @@ interface GithubState {
   contents: Array<Record<string, any>> | null;
   file: string | null;
   contributorsObject: Array<Record<string, any>>;
+  organizationProjects: Array<Record<string, any>>;
 }
 
 const initialState: GithubState = {
@@ -68,6 +69,7 @@ const initialState: GithubState = {
   contents: null,
   file: null,
   contributorsObject: [],
+  organizationProjects: [],
 };
 
 export const getSocialAccounts = createAsyncThunk(
@@ -263,14 +265,12 @@ export const getRepoDetails = createAsyncThunk(
           repo.languagesFromGithub(langResponse);
         }
 
-        if (Number.isInteger(repo.size) && repo.size > 0) {
-          const contentsResponse = await thunkAPI
-            .dispatch(getRepoContents(query))
-            .unwrap();
-
-          if (contentsResponse) {
-            repo.filterContents(contentsResponse);
-          }
+        const contentsResponse = await thunkAPI
+          .dispatch(getRepoContents(query))
+          .unwrap();
+          
+        if (contentsResponse) {
+          repo.filterContents(contentsResponse);
         }
 
         const contributorsResponse = await fetch(repo.contributorsURL, {
@@ -291,8 +291,7 @@ export const getRepoDetails = createAsyncThunk(
           }
         }
 
-        const issuesResponse = await thunkAPI
-          .dispatch(getIssues(repo.apiURL));
+        const issuesResponse = await thunkAPI.dispatch(getIssues(repo.apiURL));
 
         if (
           getIssues.fulfilled.match(issuesResponse) &&
@@ -675,6 +674,70 @@ export const getOrganizationsRepos = createAsyncThunk(
   }
 );
 
+export const getOrganizationProjects = createAsyncThunk(
+  'github/getOrganizationsRepos',
+  async (organization: string) => {
+    try {
+      const { data } = await octokit.request(
+        `/repos/${organization}/orb-swift/issues/19`
+      );
+      const graphql = octokit.graphql.defaults({ headers: headers });
+      const projectNumber = 5;
+
+      // const query = `
+      //   query($organization: String!, $number: Int!) {
+      //     organization(login: $organization) {
+      //       projectV2(number: $number) {
+      //         id
+      //         title
+      //         closed
+      //         fields(first: 10) {
+      //           nodes {
+      //             ... on ProjectV2FieldCommon {
+      //               id
+      //               name
+      //               dataType
+      //             }
+      //           }
+      //         }
+      //       }
+      //     }
+      //   }
+      // `;
+      const query = `
+    query {
+  viewer {
+    projectsV2(first: 100) {
+      nodes {
+        title
+        number
+        id
+        owner {
+          ... on Organization {
+            login
+          }
+        }
+      }
+    }
+  }
+}
+  `;
+      console.log(data);
+      const result = await graphql(query, {
+        organization,
+        number: projectNumber,
+      });
+
+      console.log(JSON.stringify(result, null, 2));
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error);
+      }
+    }
+  }
+);
+
 const githubSliceOptions: CreateSliceOptions<GithubState> = {
   name: 'github',
   initialState,
@@ -748,6 +811,12 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubError = null;
         state.socialAccounts = action.payload;
       })
+      .addCase(getOrganizationProjects.fulfilled, (state, action) => {
+        state.githubLoading = false;
+        state.githubErrorMessage = '';
+        state.githubError = null;
+        state.organizationProjects = action.payload;
+      })
       .addMatcher(
         isAnyOf(
           getAuthenticatedAccount.pending,
@@ -758,7 +827,8 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
           getRepoLanguages.pending,
           getRepoDetailsList.pending,
           getSocialAccounts.pending,
-          getRepoFile.pending
+          getRepoFile.pending,
+          getOrganizationProjects.pending
         ),
         (state) => {
           state.githubLoading = true;
@@ -777,7 +847,8 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
           getRepoLanguages.rejected,
           getRepoDetailsList.rejected,
           getSocialAccounts.rejected,
-          getRepoFile.rejected
+          getRepoFile.rejected,
+          getOrganizationProjects.rejected
         ),
         (state, action) => {
           state.githubLoading = false;

@@ -264,8 +264,6 @@ class Repo extends Model {
   }
 
   filterContents(contentsObject: Array<Record<string, any>>) {
-    const contents = new RepoContents();
-
     if (Array.isArray(contentsObject) && contentsObject.length > 0) {
       contentsObject.forEach((content) => {
         this.contents ? this.contents : (this.contents = new RepoContents());

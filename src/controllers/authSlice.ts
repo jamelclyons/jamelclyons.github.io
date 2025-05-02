@@ -9,11 +9,13 @@ import {
   signInWithCustomToken
 } from 'firebase/auth';
 
-import { auth, api } from '@/services/firebase/config';
+import { auth } from '@/services/firebase/config';
 
 import SecureHeaders from '@/model/SecureHeaders';
 
 import { addSecureHeaders } from '@/utilities/Headers';
+
+const api = import.meta.env.VITE_API_URL;
 
 interface loginState {
   authLoading: boolean;

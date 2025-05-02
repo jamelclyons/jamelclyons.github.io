@@ -5,7 +5,7 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
-import { api } from '@/services/firebase/config';
+const api = import.meta.env.VITE_API_URL;
 
 interface DatabaseState {
   databaseLoading: boolean;

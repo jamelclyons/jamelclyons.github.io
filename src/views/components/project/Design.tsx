@@ -13,7 +13,7 @@ interface DesignProps {
 
 const Design: React.FC<DesignProps> = ({ project }) => {
   const hasContent = project.process?.design?.checkList || project.process?.design?.colorsList || project.process?.design?.gallery || project.process?.design?.contentURL;
-console.log(project?.process?.design?.checkList)
+
   return (
     <>
       {project.process && project.process.design && hasContent &&
