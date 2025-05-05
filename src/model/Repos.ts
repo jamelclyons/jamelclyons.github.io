@@ -1,5 +1,5 @@
 import Model from './Model';
-import Repo from './Repo';
+import Repo, { RepositoryGQL } from './Repo';
 
 class Repos extends Model {
   collection: Array<Repo>;
@@ -18,6 +18,24 @@ class Repos extends Model {
 
     this.collection = repos;
     this.count = repos.length;
+  }
+
+  setCollection(collection: Array<Repo>) {
+    this.collection = collection;
+  }
+
+  fromGitHubGraphQL(repos: Array<RepositoryGQL>) {
+    let repositories: Array<Repo> = [];
+
+    if (Array.isArray(repos)) {
+      repos.forEach((repo) => {
+        const repository = new Repo();
+        repository.fromGitHubGraphQL(repo);
+        repositories.push(repository);
+      });
+    }
+
+    this.collection = repositories;
   }
 
   fromGitHub(data?: Array<Record<string, any>>) {

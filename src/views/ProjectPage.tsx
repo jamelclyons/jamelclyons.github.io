@@ -57,6 +57,7 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
 
   useEffect(() => {
     if (projectPageObject) {
+      console.log(projectPageObject)
       setProject(new Project(projectPageObject));
     }
   }, [projectPageObject]);

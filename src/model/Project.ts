@@ -36,6 +36,7 @@ import Task from './Task';
 
 export type ProjectObject = {
   id: string | null;
+  name: string | null;
   title: string | null;
   subtitle: string | null;
   promotional_text: string | null;
@@ -61,6 +62,7 @@ export type ProjectDataObject = {
 
 class Project extends Model {
   id: string;
+  name: string;
   title: string;
   subtitle: string | null;
   promotionalText: string | null;
@@ -76,7 +78,8 @@ class Project extends Model {
 
     try {
       this.id = data?.id;
-      this.title = data?.title ? data.title : this.getTitle(data.id);
+      this.name = data?.name;
+      this.title = data?.title ? data.title : this.getTitle(this.name);
       this.subtitle = data?.subtitle ?? null;
       this.promotionalText = data?.promotional_text ?? null;
       this.description = data?.description ?? null;
@@ -116,7 +119,8 @@ class Project extends Model {
 
   fromRepo(repo: Repo) {
     this.id = repo.id;
-    this.title = this.title ? this.title : this.getTitle(repo.id);
+    this.name = repo.name;
+    this.title = this.title ? this.title : this.getTitle(repo.name);
     this.description = repo.description;
 
     if (repo.contents?.solution?.downloadURL || repo?.homepage) {
@@ -487,6 +491,7 @@ class Project extends Model {
   toProjectObject(): ProjectObject {
     return {
       id: this.id,
+      name: this.name,
       title: this.title,
       subtitle: this.subtitle,
       promotional_text: this.promotionalText,

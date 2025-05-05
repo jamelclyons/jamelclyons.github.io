@@ -36,7 +36,7 @@ export const getProject = createAsyncThunk(
       const repoDetailsResponse = await thunkAPI.dispatch(
         getRepoDetails(query)
       );
-
+console.log(repoDetailsResponse)
       if (
         getRepoDetails.fulfilled.match(repoDetailsResponse) &&
         repoDetailsResponse.payload

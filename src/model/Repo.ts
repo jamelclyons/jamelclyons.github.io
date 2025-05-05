@@ -7,9 +7,23 @@ import Contributors, { ContributorsObject } from './Contributors';
 import User from './User';
 import ProjectSkills, { ProjectSkillsObject } from './ProjectSkills';
 import Issues, { IssuesObject } from './Issues';
+import Issue, { IssuesGQL } from './Issue';
+import { OwnerGQL } from './Owner';
+
+export type RepositoryGQL = {
+  id: string;
+  name: string;
+  description: string;
+  url: string;
+  owner: OwnerGQL;
+  issues: {
+    nodes: IssuesGQL;
+  };
+};
 
 export interface RepoObject {
   id: string;
+  name: string;
   privacy: boolean;
   size: number;
   owner: OwnerObject | null;
@@ -28,6 +42,7 @@ export interface RepoObject {
 
 class Repo extends Model {
   id: string;
+  name: string;
   privacy: boolean;
   size: number;
   owner: Owner | null;
@@ -47,6 +62,7 @@ class Repo extends Model {
     super();
 
     this.id = data?.id;
+    this.name = data?.name;
     this.privacy = data?.privacy;
     this.size = data?.size;
     this.owner = data?.owner ? new Owner(data.owner) : null;
@@ -66,6 +82,31 @@ class Repo extends Model {
       data.issues && Array.isArray(data.issues.list)
         ? new Issues(data.issues.list)
         : null;
+  }
+
+  fromGitHubGraphQL(repo: RepositoryGQL) {
+    this.id = repo.id;
+    this.name = repo.name;
+    this.description = repo.description;
+    this.repoURL = repo.url;
+
+    let owner = null;
+
+    if (repo.owner) {
+      owner = new Owner();
+      owner.fromGitHubGraphQL(repo.owner);
+    }
+
+    this.owner = owner;
+
+    let issues = null;
+
+    if (Array.isArray(repo.issues.nodes) && repo.issues.nodes.length > 0) {
+      issues = new Issues();
+      issues.fromGitHubGraphQL(repo.issues.nodes);
+    }
+
+    this.issues = issues;
   }
 
   fromGitHub(data: Record<string, any>) {
@@ -335,6 +376,7 @@ class Repo extends Model {
   toRepoObject(): RepoObject {
     return {
       id: this.id,
+      name: this.name,
       privacy: this.privacy,
       size: this.size,
       owner: this.owner ? this.owner.toOwnerObject() : null,

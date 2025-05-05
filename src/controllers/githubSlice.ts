@@ -5,9 +5,8 @@ import {
   CreateSliceOptions,
 } from '@reduxjs/toolkit';
 
-import { instance } from '@/services/github/octokit';
-import { headers } from '@/services/github/octokit';
-
+import { instance, headers } from '@/services/github/octokit';
+import { graphql } from '@octokit/graphql';
 import { Octokit, RestEndpointMethodTypes } from '@octokit/rest';
 import { GetResponseTypeFromEndpointMethod } from '@octokit/types';
 
@@ -17,11 +16,14 @@ import RepoContentQuery from '@/model/RepoContentQuery';
 import Organization from '@/model/Organization';
 
 import Repo, { RepoObject } from '@/model/Repo';
-import User from '@/model/User';
+import User, { UserGQLResponse } from '@/model/User';
 
 import { setMessage } from './messageSlice';
 import Repos from '@/model/Repos';
 import ContactMethods from '@/model/ContactMethods';
+import RepoURL from '@/model/RepoURL';
+import RepoAPIURL from '@/model/RepoAPIURL';
+import Issue, { IssuesGQL } from '@/model/Issue';
 
 type OctokitResponse<T = any, S = number> = {
   data: T;
@@ -92,6 +94,99 @@ type RepoResponse = GetResponseTypeFromEndpointMethod<
   typeof octokit.rest.repos.get
 >;
 
+const getUserRepo = createAsyncThunk(
+  'github/getUserRepo',
+  async (query: GitHubRepoQuery) => {
+    try {
+      if (query.owner && query.repo) {
+        const queryIssues = `
+  query ($owner: String!) {
+    user(login: $owner) {
+      repositories(first: 100) {
+        nodes {
+          id
+          name
+          owner {
+            login
+          }
+          issues(first: 10) {
+            nodes {
+              number
+              title
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+        return octokit
+          .graphql(queryIssues, {
+            owner: query.owner,
+            repo: query.repo,
+            headers: headers,
+          })
+          .then((repos) => {
+            return repos;
+          });
+      }
+
+      return null;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
+const getOrganizationRepo = createAsyncThunk(
+  'github/getOrganizationRepo',
+  async (query: GitHubRepoQuery) => {
+    try {
+      if (query.owner && query.repo) {
+        const queryIssues = `
+  query ($owner: String!) {
+    organization(login: $owner) {
+      repositories(first: 100) {
+        nodes {
+          id
+          name
+          owner {
+            login
+          }
+          issues(first: 10) {
+            nodes {
+              number
+              title
+            }
+          }
+        }
+      }
+    }
+`;
+
+        return octokit
+          .graphql(queryIssues, {
+            owner: query.owner,
+            repo: query.repo,
+            headers: headers,
+          })
+          .then((repos) => {
+            return repos;
+          });
+      }
+
+      return null;
+    } catch (error) {
+      const err = error as Error;
+      console.error(err);
+      throw new Error(err.message);
+    }
+  }
+);
+
 export const getRepo = createAsyncThunk(
   'github/getRepo',
   async (query: GitHubRepoQuery) => {
@@ -123,7 +218,7 @@ export const getRepoContents = createAsyncThunk(
         repo: query.repo,
         path: '',
       });
-
+      console.log(repoContents);
       let contents: Array<Record<string, any>> = [];
 
       if (Array.isArray(repoContents.data) && repoContents.data.length > 0) {
@@ -238,6 +333,82 @@ export const getIssues = createAsyncThunk(
         headers: headers,
       });
 
+      const repoURL = new RepoAPIURL(url);
+
+      const queryIssues = `
+  query ($owner: String!, $repo: String!) {
+    repository(owner: $owner, name: $repo) {
+      issues(first: 10) {
+        nodes {
+          number
+        }
+      }
+    }
+  }
+`;
+
+     graphql<IssuesGQL>(queryIssues, {
+          owner: repoURL.owner,
+          repo: repoURL.repo,
+          headers: headers,
+        })
+        .then((github) => {
+          console.log(github)
+          let issueNums: Array<number> = github.repository.issues.nodes;
+          let issues: Record<string, any> = [];
+
+          issueNums.forEach((issueNumber) => {
+            const queryIssue = `query($owner: String!, $repo: String!, $issueNumber: Int!) {
+              repository(owner: $owner, name: $repo) {
+                issue(number: $issueNumber) {
+                  id
+                  createdAt
+                  updatedAt
+                  title
+                  body
+                  number
+                  state
+                  milestone {
+                    id
+                    title
+                  }
+                  labels(first: 10) {
+                    nodes {
+                      name
+                      color
+                    }
+                  }
+                  repository {
+                    nameWithOwner
+                  }
+                  trackedInIssues(first: 10) {
+                    nodes {
+                      number
+                      title
+                    }
+                  }
+                }
+              }
+            }`;
+
+            octokit
+              .graphql(queryIssue, {
+                owner: repoURL.owner,
+                repo: repoURL.repo,
+                issueNumber: issueNumber,
+                headers: headers,
+              })
+              .then((issue) => {
+                const issueFrom = new Issue();
+                issueFrom.fromGitHubGraphQL(issue);
+                issues.push(issueFrom);
+              });
+          });
+
+          return issues;
+        });
+      // .then(console.log);
+
       return response.data as Array<Record<string, any>>;
     } catch (error) {
       const err = error as Error;
@@ -268,7 +439,7 @@ export const getRepoDetails = createAsyncThunk(
         const contentsResponse = await thunkAPI
           .dispatch(getRepoContents(query))
           .unwrap();
-          
+
         if (contentsResponse) {
           repo.filterContents(contentsResponse);
         }
@@ -368,90 +539,121 @@ export const getAuthenticatedAccount = createAsyncThunk(
   'github/getAccount',
   async (_, thunkAPI) => {
     try {
-      const { data } = await octokit.users.getAuthenticated();
-
-      if (data) {
-        const user = new User();
-
-        user.fromGitHub(data);
-
-        if (user.organizationsURL) {
-          const orgResponse = await thunkAPI.dispatch(
-            getOrganizationDetailsList(user.organizationsURL)
-          );
-
-          if (
-            getOrganizationDetailsList.fulfilled.match(orgResponse) &&
-            orgResponse.payload
-          ) {
-            user.setOrganizations(orgResponse.payload);
+      const query = `
+  query {
+  viewer {
+    login
+    name
+    email
+    id
+    avatarUrl
+    bio
+    url
+    repositories(first: 10) {
+      nodes {
+        id
+        name
+        description
+        url
+        owner {
+          id
+          login
+        }
+        issues(first: 10) {
+          nodes {
+            id
+            number
+            title
+            createdAt
+            state
           }
         }
-
-        const repoResponse = await thunkAPI.dispatch(getRepoDetailsList());
-
-        if (
-          getRepoDetailsList.fulfilled.match(repoResponse) &&
-          repoResponse.payload
-        ) {
-          user.setRepoQueries(repoResponse.payload);
-        }
-
-        const contactsResponse = await thunkAPI.dispatch(
-          getSocialAccounts(user.id)
-        );
-
-        if (
-          getSocialAccounts.fulfilled.match(contactsResponse) &&
-          contactsResponse.payload
-        ) {
-          user.contactMethods
-            ? user.contactMethods
-            : (user.contactMethods = new ContactMethods());
-
-          user.contactMethods.fromGitHub(contactsResponse.payload);
-        }
-
-        const contentsResponse = await thunkAPI.dispatch(
-          getRepoContents(new GitHubRepoQuery(user.id, user.id))
-        );
-
-        if (
-          getRepoContents.fulfilled.match(contentsResponse) &&
-          contentsResponse.payload
-        ) {
-          if (
-            Array.isArray(contentsResponse.payload) &&
-            contentsResponse.payload.length > 0
-          ) {
-            const contents = contentsResponse.payload;
-            contents.forEach((content) => {
-              if (content.type === 'file') {
-                if (content.name === 'story.md') {
-                  user.setStory(content.download_url);
-                }
+      }
+    }
+    organizations(first: 10) {
+      nodes {
+        id
+        login
+        name
+        avatarUrl
+        repositories(first: 20) {
+          nodes {
+            id
+            name
+            description
+            url
+            owner {
+              id
+              login
+            }
+            issues(first: 10) {
+              nodes {
+                id
+                number
+                title
+                createdAt
+                state
               }
-            });
+            }
           }
         }
+      }
+    }
+  }
+}
+`;
 
-        if (user.repoQueries) {
-          const repos = await Promise.all(
-            user.repoQueries.map(async (repoQuery) => {
-              const reposResponse = await thunkAPI.dispatch(
-                getRepoDetails(repoQuery)
-              );
-              return reposResponse.payload as Record<string, any>;
-            })
-          );
+      const user: User = await graphql<UserGQLResponse>(query, {
+        headers: headers,
+      }).then((data) => {
+        console.log(data)
+        const user = new User();
+        user.fromGitHubGraphQL(data);
+        return user;
+      });
 
-          user.setRepos(repos);
-        }
+      const contactsResponse = await thunkAPI.dispatch(
+        getSocialAccounts(user.login)
+      );
 
-        return user.toUserObject();
+      if (
+        getSocialAccounts.fulfilled.match(contactsResponse) &&
+        contactsResponse.payload
+      ) {
+        user.contactMethods
+          ? user.contactMethods
+          : (user.contactMethods = new ContactMethods());
+
+        user.contactMethods.fromGitHub(contactsResponse.payload);
       }
 
-      return null;
+      const contentsResponse = user.login
+        ? await thunkAPI.dispatch(
+            getRepoContents(new GitHubRepoQuery(user.login, user.login))
+          )
+        : null;
+
+      if (
+        contentsResponse &&
+        getRepoContents.fulfilled.match(contentsResponse) &&
+        contentsResponse.payload
+      ) {
+        if (
+          Array.isArray(contentsResponse.payload) &&
+          contentsResponse.payload.length > 0
+        ) {
+          const contents = contentsResponse.payload;
+          contents.forEach((content) => {
+            if (content.type === 'file') {
+              if (content.name === 'story.md') {
+                user.setStory(content.download_url);
+              }
+            }
+          });
+        }
+      }
+
+      return user.toUserObject();
     } catch (error) {
       const err = error as Error;
       console.error(err);

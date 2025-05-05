@@ -1,6 +1,11 @@
 import Model from './Model';
 import * as UserJSON from '../../user.json';
 
+export type OwnerGQL = {
+  id: string;
+  login: string;
+};
+
 export interface OwnerObject {
   id: string;
   type: string;
@@ -36,6 +41,11 @@ class Owner extends Model {
     this.avatarURL = data?.avatar_url ? data.avatar_url : null;
     this.url = data?.url ?? UserJSON.website;
     this.reposURL = data?.repos_url ?? UserJSON.repos;
+  }
+
+  fromGitHubGraphQL(owner: OwnerGQL) {
+    this.id = owner.id;
+    this.login = owner.login;
   }
 
   toOwnerObject(): OwnerObject {

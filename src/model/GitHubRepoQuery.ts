@@ -8,12 +8,14 @@ export type GitHubRepoQueryObject = {
 class GitHubRepoQuery extends Model {
   owner: string;
   repo: string;
+  accountType: string;
 
-  constructor(owner: string, repo: string) {
+  constructor(owner: string, repo: string, accountType: string = 'user') {
     super();
 
     this.owner = owner;
     this.repo = repo;
+    this.accountType = accountType;
   }
 
   toGitHubRepoQueryObject(): GitHubRepoQueryObject {

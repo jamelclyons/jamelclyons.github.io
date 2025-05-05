@@ -5,12 +5,14 @@ import Repos from '@/model/Repos';
 import GitHubRepoQuery, {
   GitHubRepoQueryObject,
 } from '@/model/GitHubRepoQuery';
-import { RepoObject } from '@/model/Repo';
-import { OrganizationObject } from './Organization';
+import Repo, { RepoObject, RepositoryGQL } from '@/model/Repo';
+import { OrganizationGQL, OrganizationObject } from './Organization';
 import ContentURL from '@/model/ContentURL';
 
 import user from '../../user.json';
 import Account from './Account';
+
+import { graphql } from '@octokit/graphql';
 
 export interface UserObject {
   id: string;
@@ -32,6 +34,23 @@ export interface UserObject {
   repo_queries: Array<GitHubRepoQueryObject> | null;
   story: string | null;
 }
+
+export type UserGQLResponse = {
+  viewer: {
+    id: string;
+    login: string;
+    name: string;
+    email: string;
+    bio: string;
+    avatarUrl: string;
+    organizations: {
+      nodes: Array<OrganizationGQL>;
+    };
+    repositories: {
+      nodes: Array<RepositoryGQL>;
+    };
+  };
+};
 
 class User extends Account {
   id: string;
@@ -122,6 +141,49 @@ class User extends Account {
   getOrganizations(organizations: Array<Record<string, any>>) {
     const orgs = new Organizations(organizations);
     return orgs.list.map((org) => org.toOrganizationObject());
+  }
+
+  fromGitHubGraphQL(data: UserGQLResponse) {
+    const user = data.viewer;
+    this.id = user.id;
+    this.avatarURL = user.avatarUrl;
+    this.name = user.name;
+    this.bio = user.bio;
+    this.email = user.email;
+    this.login = user.login;
+
+    let organizations = null;
+
+    if (
+      Array.isArray(user.organizations.nodes) &&
+      user.organizations.nodes.length > 0
+    ) {
+      const orgs = new Organizations();
+      orgs.fromGitHubGraphQL(user.organizations.nodes);
+      organizations = orgs;
+    }
+
+    this.organizations = organizations;
+
+    let repositories = null;
+
+    if (
+      Array.isArray(user.repositories.nodes) &&
+      user.repositories.nodes.length > 0
+    ) {
+      const repos = new Repos();
+      const orgRepos =
+        this.organizations?.list?.flatMap((org) =>
+          Array.isArray(org.repos?.collection) ? org.repos.collection : []
+        ) || [];
+
+      repos.fromGitHubGraphQL(user.repositories.nodes);
+      const totalRepos: Array<Repo> = [...orgRepos, ...repos.collection];
+      repos.setCollection(totalRepos);
+      repositories = repos;
+    }
+
+    this.repos = repositories;
   }
 
   fromGitHub(data: Record<string, any>) {

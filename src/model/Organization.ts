@@ -5,8 +5,18 @@ import Repos from './Repos';
 import * as organization from '../../organization.json';
 
 import GitHubRepoQuery, { GitHubRepoQueryObject } from './GitHubRepoQuery';
-import { RepoObject } from './Repo';
+import { RepoObject, RepositoryGQL } from './Repo';
 import Account from './Account';
+
+export type OrganizationGQL = {
+  id: string;
+  login: string;
+  name: string;
+  avatarUrl: string;
+  repositories: {
+    nodes: Array<RepositoryGQL>;
+  };
+};
 
 export type OrganizationObject = {
   id: string | null;
@@ -75,6 +85,22 @@ class Organization extends Account {
     this.reposURL = repos_url ?? data?.repos_url;
     this.repos = data?.repos ? new Repos(data.repos) : new Repos();
     this.repoQueries = this.setRepoQueries(data?.repo_queries);
+  }
+
+  fromGitHubGraphQL(org: OrganizationGQL) {
+    this.id = org.id;
+    this.login = org.login;
+    this.name = org.name;
+    this.avatarURL = org.avatarUrl;
+
+    if (
+      Array.isArray(org.repositories.nodes) &&
+      org.repositories.nodes.length > 0
+    ) {
+      const repos = new Repos();
+      repos.fromGitHubGraphQL(org.repositories.nodes);
+      this.repos = repos;
+    }
   }
 
   getRepos(data: Array<Record<string, any>>) {
