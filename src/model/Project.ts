@@ -178,7 +178,7 @@ class Project extends Model {
         );
         tasks = repo.issues.list.filter(
           (issue) => issue.type && issue.type.includes('Task')
-        );console.log(repo.issues.list)
+        );
         designIssues = tasks.filter(
           (issue) => issue.labels && issue.labels.includes('design')
         );
@@ -289,8 +289,8 @@ class Project extends Model {
             .filter((issue) => issue.id && issue.title && issue.milestone)
             .map((issue) => {
               const feature = new Feature();
-              feature.setID(issue.id);
-              feature.setDescription(issue.title);
+              issue.id ? feature.setID(issue.id) : null;
+              issue.title ? feature.setDescription(issue.title) : null;
               issue.milestone ? feature.setVersion(issue.milestone) : null;
               return feature;
             });

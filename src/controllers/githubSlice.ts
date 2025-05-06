@@ -392,10 +392,20 @@ export const getIssues = createAsyncThunk(
             repository {
               nameWithOwner
             }
-            trackedInIssues(first: 10) {
+            trackedIssues(first: 10) {
               nodes {
+                id
                 number
                 title
+                state
+              }
+            }
+            trackedInIssues(first: 10) {
+              nodes {
+                id
+                number
+                title
+                state
               }
             }
           }
@@ -417,7 +427,7 @@ export const getIssues = createAsyncThunk(
       const issueArray = issueDetailsResponses.map((github) => {
         return github.repository.issue;
       });
-console.log(issueArray)
+
       const issues = new Issues();
       issues.fromGitHubGraphQL(issueArray);
       return issues.toIssuesObject();
