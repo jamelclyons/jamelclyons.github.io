@@ -7,7 +7,7 @@ import Contributors, { ContributorsObject } from './Contributors';
 import User from './User';
 import ProjectSkills, { ProjectSkillsObject } from './ProjectSkills';
 import Issues, { IssuesObject } from './Issues';
-import Issue, { IssuesGQL } from './Issue';
+import Issue, { IssueGQL, IssueObject } from './Issue';
 import { OwnerGQL } from './Owner';
 
 export type RepositoryGQL = {
@@ -17,7 +17,7 @@ export type RepositoryGQL = {
   url: string;
   owner: OwnerGQL;
   issues: {
-    nodes: IssuesGQL;
+    nodes: IssueGQL;
   };
 };
 
@@ -111,6 +111,7 @@ class Repo extends Model {
 
   fromGitHub(data: Record<string, any>) {
     this.id = data?.name;
+    this.name = data.name;
     this.privacy = data?.private;
     this.size = data?.size;
     this.owner = data?.owner ? new Owner(data.owner) : null;
@@ -367,10 +368,8 @@ class Repo extends Model {
     }
   }
 
-  setIssues(data: Array<Record<string, any>>) {
-    data && Array.isArray(data) && data.length > 0
-      ? (this.issues = new Issues(data))
-      : null;
+  setIssues(data: Array<IssueObject>) {
+    this.issues = new Issues(data);
   }
 
   toRepoObject(): RepoObject {

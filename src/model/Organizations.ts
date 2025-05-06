@@ -34,8 +34,6 @@ class Organizations extends Model {
     }
 
     this.list = organizations;
-
-    console.log(this.list)
   }
 }
 

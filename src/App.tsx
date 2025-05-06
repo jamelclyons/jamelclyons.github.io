@@ -43,12 +43,11 @@ const App: React.FC = () => {
   const [avatarURL, setAvatarURL] = useState<string | null>(user.avatarURL ?? userJson.avatar_url);
   const [skills, setSkills] = useState<Skills>(new Skills());
 
-  console.log(authenticatedUserObject)
   useEffect(() => {
     if (!authenticatedUserObject) {
       dispatch(getAuthenticatedUserAccount());
     }
-  }, [authenticatedUserObject, dispatch]);
+  }, [authenticatedUserObject]);
 
   useEffect(() => {
     if (authenticatedUserObject) {

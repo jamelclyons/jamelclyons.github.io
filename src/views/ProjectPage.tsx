@@ -6,12 +6,11 @@ import LoadingComponent from './components/LoadingComponent';
 import ProjectComponent from './components/project/ProjectComponent';
 
 import { setMessage, setMessageType, setShowStatusBar } from '../controllers/messageSlice';
-import { getProjectPage } from '@/controllers/projectSlice';
+import { getProject } from '@/controllers/projectSlice';
 
 import type { AppDispatch, RootState } from '@/model/store';
-import Project from '../model/Project';
-import GitHubRepoQuery from '../model/GitHubRepoQuery';
-import Portfolio from '@/model/Portfolio';
+import Project from '@/model/Project';
+import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 import User from '@/model/User';
 
 interface ProjectPageProps {
@@ -23,25 +22,12 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
 
   const { owner, projectID } = useParams<string>();
 
-  const { projectErrorMessage, projectPageObject } = useSelector(
+  const { projectErrorMessage, projectObject } = useSelector(
     (state: RootState) => state.project
   );
 
-  const [portfolio, setPortfolio] = useState<Portfolio | null>(user.repos ? new Portfolio(user.repos) : null);
   const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery | null>(null);
   const [project, setProject] = useState<Project | null>(null);
-
-  useEffect(() => {
-    if (user.repos) {
-      setPortfolio(new Portfolio(user.repos));
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (projectID && portfolio && portfolio.size > 0) {
-      setProject(portfolio.filterProject(projectID));
-    }
-  }, [projectID, portfolio]);
 
   useEffect(() => {
     if (owner && projectID) {
@@ -51,19 +37,18 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
 
   useEffect(() => {
     if (repoQuery) {
-      dispatch(getProjectPage(repoQuery));
+      dispatch(getProject(repoQuery));
     }
   }, [repoQuery]);
 
   useEffect(() => {
-    if (projectPageObject) {
-      console.log(projectPageObject)
-      setProject(new Project(projectPageObject));
+    if (projectObject) {
+      setProject(new Project(projectObject));
     }
-  }, [projectPageObject]);
+  }, [projectObject]);
 
   useEffect(() => {
-    if (project) {
+    if (project && project.title) {
       document.title = project.title.toUpperCase();
     }
   }, [project]);

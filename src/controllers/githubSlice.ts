@@ -23,7 +23,8 @@ import Repos from '@/model/Repos';
 import ContactMethods from '@/model/ContactMethods';
 import RepoURL from '@/model/RepoURL';
 import RepoAPIURL from '@/model/RepoAPIURL';
-import Issue, { IssuesGQL } from '@/model/Issue';
+import Issue, { IssueGQL } from '@/model/Issue';
+import Issues, { IssuesObject } from '@/model/Issues';
 
 type OctokitResponse<T = any, S = number> = {
   data: T;
@@ -51,6 +52,7 @@ interface GithubState {
   file: string | null;
   contributorsObject: Array<Record<string, any>>;
   organizationProjects: Array<Record<string, any>>;
+  issues: IssuesObject | null;
 }
 
 const initialState: GithubState = {
@@ -72,6 +74,7 @@ const initialState: GithubState = {
   file: null,
   contributorsObject: [],
   organizationProjects: [],
+  issues: null,
 };
 
 export const getSocialAccounts = createAsyncThunk(
@@ -218,7 +221,7 @@ export const getRepoContents = createAsyncThunk(
         repo: query.repo,
         path: '',
       });
-      console.log(repoContents);
+
       let contents: Array<Record<string, any>> = [];
 
       if (Array.isArray(repoContents.data) && repoContents.data.length > 0) {
@@ -325,91 +328,99 @@ export const getRepoFile = createAsyncThunk(
   }
 );
 
+type IssuesGQL = {
+  repository: {
+    issues: {
+      nodes: Array<IssueGQL>;
+    };
+  };
+};
+
 export const getIssues = createAsyncThunk(
   'github/getIssues',
   async (url: string) => {
     try {
-      const response = await octokit.request(`${url}/issues`, {
-        headers: headers,
-      });
-
       const repoURL = new RepoAPIURL(url);
 
       const queryIssues = `
-  query ($owner: String!, $repo: String!) {
-    repository(owner: $owner, name: $repo) {
-      issues(first: 10) {
-        nodes {
-          number
+        query ($owner: String!, $repo: String!) {
+          repository(owner: $owner, name: $repo) {
+            issues(first: 10) {
+              nodes {
+                number
+              }
+            }
+          }
         }
-      }
-    }
-  }
-`;
+      `;
 
-     graphql<IssuesGQL>(queryIssues, {
+      const issuesGQL = await graphql<IssuesGQL>(queryIssues, {
+        owner: repoURL.owner,
+        repo: repoURL.repo,
+        headers: headers,
+      });
+
+      let issueNums: Array<number> = issuesGQL.repository.issues.nodes.map(
+        (issue) => issue.number
+      );
+
+      const queryIssue = `query($owner: String!, $repo: String!, $issueNumber: Int!) {
+        repository(owner: $owner, name: $repo) {
+          issue(number: $issueNumber) {
+            id
+            createdAt
+            updatedAt
+            title
+            body
+            number
+            state
+            issueType {
+              id
+              name
+              description
+            }
+            milestone {
+              id
+              title
+            }
+            labels(first: 10) {
+              nodes {
+                name
+                color
+              }
+            }
+            repository {
+              nameWithOwner
+            }
+            trackedInIssues(first: 10) {
+              nodes {
+                number
+                title
+              }
+            }
+          }
+        }
+      }`;
+
+      const issueDetailPromises = issueNums.map((issueNumber) => {
+        const issue = graphql<{ repository: { issue: IssueGQL } }>(queryIssue, {
           owner: repoURL.owner,
           repo: repoURL.repo,
+          issueNumber: issueNumber,
           headers: headers,
-        })
-        .then((github) => {
-          console.log(github)
-          let issueNums: Array<number> = github.repository.issues.nodes;
-          let issues: Record<string, any> = [];
-
-          issueNums.forEach((issueNumber) => {
-            const queryIssue = `query($owner: String!, $repo: String!, $issueNumber: Int!) {
-              repository(owner: $owner, name: $repo) {
-                issue(number: $issueNumber) {
-                  id
-                  createdAt
-                  updatedAt
-                  title
-                  body
-                  number
-                  state
-                  milestone {
-                    id
-                    title
-                  }
-                  labels(first: 10) {
-                    nodes {
-                      name
-                      color
-                    }
-                  }
-                  repository {
-                    nameWithOwner
-                  }
-                  trackedInIssues(first: 10) {
-                    nodes {
-                      number
-                      title
-                    }
-                  }
-                }
-              }
-            }`;
-
-            octokit
-              .graphql(queryIssue, {
-                owner: repoURL.owner,
-                repo: repoURL.repo,
-                issueNumber: issueNumber,
-                headers: headers,
-              })
-              .then((issue) => {
-                const issueFrom = new Issue();
-                issueFrom.fromGitHubGraphQL(issue);
-                issues.push(issueFrom);
-              });
-          });
-
-          return issues;
         });
-      // .then(console.log);
+        return issue;
+      });
 
-      return response.data as Array<Record<string, any>>;
+      const issueDetailsResponses = await Promise.all(issueDetailPromises);
+
+      const issueArray = issueDetailsResponses.map((github) => {
+        return github.repository.issue;
+      });
+console.log(issueArray)
+      const issues = new Issues();
+      issues.fromGitHubGraphQL(issueArray);
+      return issues.toIssuesObject();
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -422,11 +433,11 @@ export const getRepoDetails = createAsyncThunk(
   'github/getRepoDetails',
   async (query: GitHubRepoQuery, thunkAPI) => {
     try {
-      const repoResponse = await thunkAPI.dispatch(getRepo(query));
+      const repoResponse = await thunkAPI.dispatch(getRepo(query)).unwrap();
 
-      if (getRepo.fulfilled.match(repoResponse) && repoResponse.payload) {
+      if (repoResponse) {
         const repo = new Repo();
-        repo.fromGitHub(repoResponse.payload);
+        repo.fromGitHub(repoResponse);
 
         const langResponse = await thunkAPI
           .dispatch(getRepoLanguages(query))
@@ -462,13 +473,12 @@ export const getRepoDetails = createAsyncThunk(
           }
         }
 
-        const issuesResponse = await thunkAPI.dispatch(getIssues(repo.apiURL));
+        const issuesResponse = await thunkAPI
+          .dispatch(getIssues(repo.apiURL))
+          .unwrap();
 
-        if (
-          getIssues.fulfilled.match(issuesResponse) &&
-          issuesResponse.payload
-        ) {
-          repo.setIssues(issuesResponse.payload);
+          if (issuesResponse && issuesResponse.list) {
+          repo.setIssues(issuesResponse.list);
         }
 
         return repo.toRepoObject();
@@ -540,73 +550,72 @@ export const getAuthenticatedAccount = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const query = `
-  query {
-  viewer {
-    login
-    name
-    email
-    id
-    avatarUrl
-    bio
-    url
-    repositories(first: 10) {
-      nodes {
-        id
-        name
-        description
-        url
-        owner {
-          id
-          login
-        }
-        issues(first: 10) {
-          nodes {
-            id
-            number
-            title
-            createdAt
-            state
-          }
-        }
-      }
-    }
-    organizations(first: 10) {
-      nodes {
-        id
-        login
-        name
-        avatarUrl
-        repositories(first: 20) {
-          nodes {
-            id
+        query {
+          viewer {
+            login
             name
-            description
+            email
+            id
+            avatarUrl
+            bio
             url
-            owner {
-              id
-              login
-            }
-            issues(first: 10) {
+            repositories(first: 10) {
               nodes {
                 id
-                number
-                title
-                createdAt
-                state
+                name
+                description
+                url
+                owner {
+                  id
+                  login
+                }
+                issues(first: 10) {
+                  nodes {
+                    id
+                    number
+                    title
+                    createdAt
+                    state
+                  }
+                }
+              }
+            }
+            organizations(first: 10) {
+              nodes {
+                id
+                login
+                name
+                avatarUrl
+                repositories(first: 20) {
+                  nodes {
+                    id
+                    name
+                    description
+                    url
+                    owner {
+                      id
+                      login
+                    }
+                    issues(first: 10) {
+                      nodes {
+                        id
+                        number
+                        title
+                        createdAt
+                        state
+                      }
+                    }
+                  }
+                }
               }
             }
           }
         }
-      }
-    }
-  }
-}
-`;
+      `;
 
       const user: User = await graphql<UserGQLResponse>(query, {
         headers: headers,
       }).then((data) => {
-        console.log(data)
         const user = new User();
         user.fromGitHubGraphQL(data);
         return user;
@@ -1019,6 +1028,12 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubError = null;
         state.organizationProjects = action.payload;
       })
+      .addCase(getIssues.fulfilled, (state, action) => {
+        state.githubLoading = false;
+        state.githubErrorMessage = '';
+        state.githubError = null;
+        state.issues = action.payload;
+      })
       .addMatcher(
         isAnyOf(
           getAuthenticatedAccount.pending,
@@ -1030,7 +1045,8 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
           getRepoDetailsList.pending,
           getSocialAccounts.pending,
           getRepoFile.pending,
-          getOrganizationProjects.pending
+          getOrganizationProjects.pending,
+          getIssues.pending
         ),
         (state) => {
           state.githubLoading = true;
@@ -1050,7 +1066,8 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
           getRepoDetailsList.rejected,
           getSocialAccounts.rejected,
           getRepoFile.rejected,
-          getOrganizationProjects.rejected
+          getOrganizationProjects.rejected,
+          getIssues.rejected
         ),
         (state, action) => {
           state.githubLoading = false;

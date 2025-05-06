@@ -1,13 +1,17 @@
 import SubIssueSummary, { SubIssueSummaryObject } from './SubIssueSummary';
 import User, { UserObject } from './User';
 
-export type IssuesGQL = {
+export type IssueGQL = {
   id: string;
   number: number;
   title: string;
   state: string;
   body: string;
-  type: string;
+  issueType: {
+    id: string;
+    name: string;
+    description: string;
+  };
   createdAt: string;
   url: string;
   labels: {
@@ -25,6 +29,7 @@ export type IssuesGQL = {
 
 export interface IssueObject {
   id: string | number;
+  number: number;
   created_at: string;
   updated_at: string;
   sub_issues_summary: SubIssueSummaryObject | null;
@@ -41,6 +46,7 @@ export interface IssueObject {
 
 class Issue {
   id: string | number;
+  number: number;
   createdAt: string;
   updatedAt: string;
   subIssuesSummary: SubIssueSummary | null;
@@ -57,6 +63,7 @@ class Issue {
 
   constructor(data: IssueObject | Record<string, any> = {}) {
     this.id = data.id;
+    this.number = data.number;
     this.createdAt = data.created_at;
     this.updatedAt = data.updated_at;
     this.subIssuesSummary = data.sub_issues_summary
@@ -92,13 +99,13 @@ class Issue {
     this.nameWithOwner = 'ppp';
   }
 
-  fromGitHubGraphQL(issue: IssuesGQL) {
-    console.log(issue);
+  fromGitHubGraphQL(issue: IssueGQL) {
     this.id = issue.id;
+    this.number = issue.number;
     this.title = issue.title;
     this.body = issue.body;
     this.state = issue.state;
-    this.type = issue.type;
+    this.type = issue.issueType.name;
     this.labels = issue.labels && issue.labels.nodes ? issue.labels.nodes : [];
     this.trackedBy =
       issue.trackedInIssues && issue.trackedInIssues.nodes
@@ -113,6 +120,7 @@ class Issue {
   toIssueObject(): IssueObject {
     return {
       id: this.id,
+      number: this.number,
       created_at: this.createdAt,
       updated_at: this.updatedAt,
       sub_issues_summary: this.subIssuesSummary

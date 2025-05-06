@@ -1,29 +1,26 @@
-import Issue, { IssueObject, IssuesGQL } from './Issue';
+import Issue, { IssueObject, IssueGQL } from './Issue';
 
 export interface IssuesObject {
   list: Array<IssueObject> | null;
 }
 
 class Issues {
-  list: Array<Issue>;
+  list: Array<Issue> = [];
 
-  constructor(data?: Array<IssueObject> | Array<Record<string, any>>) {
+  constructor(data?: Array<IssueObject>) {
     this.list =
       data && Array.isArray(data) ? data.map((issue) => new Issue(issue)) : [];
   }
 
-  fromGitHubGraphQL(issues: Array<IssuesGQL>) {
-    let list: Array<Issue> = [];
-
-    if (Array.isArray(issues) && issues.length > 0) {
-      issues.forEach((issue) => {
-        const issueClass = new Issue();
-        issueClass.fromGitHubGraphQL(issue);
-        list.push(issueClass);
-      });
-    }
-
-    this.list = list;
+  fromGitHubGraphQL(issues?: Array<IssueGQL>) {
+    this.list =
+      issues && issues.length > 0
+        ? issues.map((issueGQL) => {
+            const issue = new Issue();
+            issue.fromGitHubGraphQL(issueGQL);
+            return issue;
+          })
+        : [];
   }
 
   toIssuesObject(): IssuesObject {

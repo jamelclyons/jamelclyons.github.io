@@ -14,7 +14,6 @@ interface ProjectState {
   projectError: Error | null;
   projectErrorMessage: string;
   projectObject: ProjectObject | null;
-  projectPageObject: ProjectObject | null;
 }
 
 const initialState: ProjectState = {
@@ -24,7 +23,6 @@ const initialState: ProjectState = {
   projectError: null,
   projectErrorMessage: '',
   projectObject: null,
-  projectPageObject: null,
 };
 
 export const getProject = createAsyncThunk(
@@ -36,7 +34,7 @@ export const getProject = createAsyncThunk(
       const repoDetailsResponse = await thunkAPI.dispatch(
         getRepoDetails(query)
       );
-console.log(repoDetailsResponse)
+
       if (
         getRepoDetails.fulfilled.match(repoDetailsResponse) &&
         repoDetailsResponse.payload
@@ -57,28 +55,6 @@ console.log(repoDetailsResponse)
       }
 
       return project.toProjectObject();
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
-    }
-  }
-);
-
-export const getProjectPage = createAsyncThunk(
-  'project/getProjectPage',
-  async (query: GitHubRepoQuery, thunkAPI) => {
-    try {
-      const projectResponse = await thunkAPI.dispatch(getProject(query));
-
-      if (
-        getProject.fulfilled.match(projectResponse) &&
-        projectResponse.payload
-      ) {
-        return projectResponse.payload;
-      }
-
-      return null;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -111,25 +87,6 @@ export const projectSlice = createSlice({
         state.projectError = (action.error as Error) || null;
         state.projectErrorMessage = action.error.message || '';
         state.projectLoadingMessage = null;
-      })
-      .addCase(
-        getProjectPage.fulfilled,
-        (state, action: PayloadAction<any>) => {
-          state.projectLoading = false;
-          state.projectError = null;
-          state.projectErrorMessage = '';
-          state.projectPageObject = action.payload;
-        }
-      )
-      .addCase(getProjectPage.pending, (state) => {
-        state.projectPageLoading = true;
-        state.projectError = null;
-        state.projectErrorMessage = '';
-      })
-      .addCase(getProjectPage.rejected, (state, action) => {
-        state.projectLoading = false;
-        state.projectError = (action.error as Error) || null;
-        state.projectErrorMessage = action.error.message || '';
       });
   },
 });

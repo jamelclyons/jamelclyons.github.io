@@ -61,9 +61,9 @@ export type ProjectDataObject = {
 };
 
 class Project extends Model {
-  id: string;
-  name: string;
-  title: string;
+  id: string | null;
+  name: string | null;
+  title: string | null;
   subtitle: string | null;
   promotionalText: string | null;
   description: string | null;
@@ -73,13 +73,17 @@ class Project extends Model {
   owner: Owner;
   details: ProjectDetails | null;
 
-  constructor(data: Record<string, any> | ProjectObject = {}) {
+  constructor(data?: ProjectObject) {
     super();
 
     try {
-      this.id = data?.id;
-      this.name = data?.name;
-      this.title = data?.title ? data.title : this.getTitle(this.name);
+      this.id = data?.id ? data.id : null;
+      this.name = data?.name ? data.name : null;
+      this.title = data?.title
+        ? data.title
+        : this.name
+        ? this.getTitle(this.name)
+        : null;
       this.subtitle = data?.subtitle ?? null;
       this.promotionalText = data?.promotional_text ?? null;
       this.description = data?.description ?? null;
@@ -174,7 +178,7 @@ class Project extends Model {
         );
         tasks = repo.issues.list.filter(
           (issue) => issue.type && issue.type.includes('Task')
-        );
+        );console.log(repo.issues.list)
         designIssues = tasks.filter(
           (issue) => issue.labels && issue.labels.includes('design')
         );

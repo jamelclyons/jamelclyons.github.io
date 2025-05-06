@@ -8,7 +8,7 @@ import {
     setMessageType,
     setShowStatusBar,
 } from '@/controllers/messageSlice';
-import { getProjectPage } from '@/controllers/projectSlice';
+import { getProject } from '@/controllers/projectSlice';
 
 import UpdateDetails from './components/update/UpdateDetails';
 import UpdateProcess from './components/update/process/UpdateProcess';
@@ -34,7 +34,7 @@ const ProjectUpdate: React.FC<ProjectUpdateProps> = ({ user }) => {
 
     const { login, projectID } = useParams();
 
-    const { projectLoading, projectLoadingMessage, projectErrorMessage, projectPageObject } = useSelector(
+    const { projectLoading, projectLoadingMessage, projectErrorMessage, projectObject } = useSelector(
         (state: RootState) => state.project
     );
     const { portfolioObject } = useSelector(
@@ -86,7 +86,7 @@ const ProjectUpdate: React.FC<ProjectUpdateProps> = ({ user }) => {
 
     useEffect(() => {
         if (repoQuery) {
-            dispatch(getProjectPage(repoQuery));
+            dispatch(getProject(repoQuery));
         }
     }, [repoQuery]);
 
@@ -105,12 +105,6 @@ const ProjectUpdate: React.FC<ProjectUpdateProps> = ({ user }) => {
             dispatch(setShowStatusBar(Date.now));
         }
     }, [projectErrorMessage]);
-
-    useEffect(() => {
-        if (user.repos) {
-            setProject(new Project(user.repos));
-        }
-    }, [user]);
 
     useEffect(() => {
         if (updateLoading && updateLoadingMessage) {
@@ -143,7 +137,7 @@ const ProjectUpdate: React.FC<ProjectUpdateProps> = ({ user }) => {
     }, [updateStatusCode]);
 
     useEffect(() => {
-        if (project) {
+        if (project && project.title) {
             setTitle(project.title);
         }
     }, [project]);
@@ -184,7 +178,7 @@ const ProjectUpdate: React.FC<ProjectUpdateProps> = ({ user }) => {
 
                         if (repoURL.owner) {
                             const repoQuery = new GitHubRepoQuery(repoURL.owner, id);
-                            dispatch(getProjectPage(repoQuery));
+                            dispatch(getProject(repoQuery));
                         }
                     }
                 });
