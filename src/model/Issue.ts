@@ -1,11 +1,14 @@
 import SubIssueSummary, { SubIssueSummaryObject } from './SubIssueSummary';
 import User, { UserObject } from './User';
 
-type tIssue = {
+export type tIssue = {
   id: string;
   number: number;
   title: string;
   state: string;
+  repository: {
+    nameWithOwner: string;
+  };
 };
 
 export type IssueGQL = {
@@ -120,9 +123,9 @@ class Issue {
         : [];
     this.tracked =
       issue.trackedIssues &&
-      Array.isArray(issue.trackedIssues) &&
-      issue.trackedIssues.length > 0
-        ? issue.trackedIssues
+      Array.isArray(issue.trackedIssues.nodes) &&
+      issue.trackedIssues.nodes.length > 0
+        ? issue.trackedIssues.nodes
         : null;
     this.trackedBy =
       issue.trackedInIssues && issue.trackedInIssues.nodes

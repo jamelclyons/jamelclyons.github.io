@@ -45,7 +45,7 @@ class CheckList extends Model {
     this.title = title;
   }
 
-  getTasks(data: Array<Record<string, any>> | Array<TaskObject>) {
+  getTasks(data: Array<TaskObject>) {
     const tasks: Set<Task> = new Set();
 
     if (Array.isArray(data) && data.length > 0) {

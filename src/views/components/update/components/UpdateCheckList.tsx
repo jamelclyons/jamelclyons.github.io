@@ -85,7 +85,9 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
                     description: description,
                     status: status,
                     details: details,
-                    weight: weight
+                    weight: weight,
+                    link: '',
+                    subTasks: []
                 }) : t
         );
 
@@ -124,7 +126,9 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
             description: description,
             status: status,
             details: details,
-            weight: weight
+            weight: weight,
+            link: '',
+            subTasks: []
         }
 
         setTask(new Task(taskObject))

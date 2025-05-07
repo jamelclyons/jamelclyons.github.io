@@ -345,7 +345,7 @@ export const getIssues = createAsyncThunk(
       const queryIssues = `
         query ($owner: String!, $repo: String!) {
           repository(owner: $owner, name: $repo) {
-            issues(first: 10) {
+            issues(first: 20) {
               nodes {
                 number
               }
@@ -392,12 +392,15 @@ export const getIssues = createAsyncThunk(
             repository {
               nameWithOwner
             }
-            trackedIssues(first: 10) {
+            trackedIssues(first: 20) {
               nodes {
                 id
                 number
                 title
                 state
+                repository {
+                  nameWithOwner
+                }
               }
             }
             trackedInIssues(first: 10) {

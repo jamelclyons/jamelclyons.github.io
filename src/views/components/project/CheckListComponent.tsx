@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import Task from '@/model/Task';
 import CheckList from '@/model/CheckList';
+import TaskComponent from './TaskComponent';
 
 interface CheckListProps {
   checkList: CheckList;
@@ -19,25 +20,12 @@ const CheckListComponent: React.FC<CheckListProps> = ({ checkList }) => {
   return (
     <>
       {tasks && tasks.size > 0 && id ? (
-        <div className="checklist" id={id}>
+        <div className="checklist" >
 
           {title && <h4>{title}</h4>}
 
-          {Array.from(tasks).map((task, index) => (
-            <span className='task' key={index}>
-              <input
-                type="checkbox"
-                name={`task_${index}`}
-                id={`task_${index}`}
-                checked={task.status}
-                disabled
-              />
-              {task.details ?
-                (<a className='task-details' href={task.details} target="_blank">
-                  <h5>{task.description}</h5>
-                </a>) :
-                <h5>{task.description}</h5>}
-            </span>
+          {Array.from(tasks).map((task) => (
+            <TaskComponent task={task} key={task.id}/>
           ))}
         </div>
       ) : (

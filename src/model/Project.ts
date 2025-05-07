@@ -198,6 +198,9 @@ class Project extends Model {
               task.setID(issue.id);
               task.setDescription(issue.title);
               task.setStatus(issue.state === 'closed' ? true : false);
+              issue.tracked && Array.isArray(issue.tracked)
+                ? task.setSubTask(issue.tracked)
+                : null;
               return task;
             }
             return null;

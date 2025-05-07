@@ -1,5 +1,5 @@
 import Model from './Model';
-import Task from './Task';
+import Task, { TaskObject } from './Task';
 import ProjectVersions, { ProjectVersionsObject } from './ProjectVersions';
 import ProjectSkills, { ProjectSkillsDataObject } from './ProjectSkills';
 
@@ -54,7 +54,7 @@ class ProjectDevelopment extends Model {
     this.roadmap = new FeaturesRoadmap();
   }
 
-  toArrayTask(data: Array<Record<string, any>>) {
+  toArrayTask(data: Array<TaskObject>) {
     const checkList: Array<Task> = [];
 
     data.forEach((task) => {
