@@ -11,7 +11,7 @@ const OwnerComponent: React.FC<OwnerComponentProps> = ({ project }) => {
     const [login, setLogin] = useState<string | null>(null);
     const [avatarURL, setAvatarURL] = useState<string | null>(null);
     const [name, setName] = useState<string | null>(null);
-    console.log(project)
+
     useEffect(() => { if (project.owner.type) { setType(project.owner.type.toLowerCase()) } }, [project]);
 
     useEffect(() => { if (project.owner.login) { setLogin(project.owner.login) } }, [project]);

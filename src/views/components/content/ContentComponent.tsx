@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { marked } from 'marked';
 
 import { getRepoFile } from '@/controllers/githubSlice';
 
-import type { AppDispatch } from '@/model/store';
+import type { AppDispatch, RootState } from '@/model/store';
 import ContentURL from '@/model/ContentURL';
 import RepoContentQuery from '@/model/RepoContentQuery';
 
@@ -18,6 +18,7 @@ const ContentComponent: React.FC<ContentComponentProps> = ({ title, content }) =
   const dispatch = useDispatch<AppDispatch>();
 
   const [query, setQuery] = useState<RepoContentQuery | null>(null);
+  const [file, setFile] = useState<string | null>(null);
   const [html, setHTML] = useState<string | object | null>(null);
 
   useEffect(() => {
@@ -26,33 +27,36 @@ const ContentComponent: React.FC<ContentComponentProps> = ({ title, content }) =
     }
   }, [content]);
 
+  // useEffect(() => {
+  //   let isMounted = true;
+  
+  //   if (query && !file) {
+  //     const fetchContent = async () => {
+  //       try {
+  //         const response = await dispatch(getRepoFile(query)).unwrap();
+  //         if (response && isMounted) {
+  //           setFile(response);
+  //         }
+  //       } catch (error) {
+  //         console.error('Failed to fetch repo file:', error);
+  //       }
+  //     };
+  
+  //     fetchContent();
+  //   }
+  
+  //   return () => {
+  //     isMounted = false;
+  //   };
+  // }, [query]);
+
   useEffect(() => {
-    let isMounted = true;
-    const controller = new AbortController();
+    if (file) {
+      setHTML(marked.parse(file));
+    }
+  }, [file]);
 
-    const fetchContent = async () => {
-      try {
-        if (query) {
-          const contentObject = await dispatch(getRepoFile(query)).unwrap();
-
-          if (isMounted) {
-            const htmlContent = marked.parse(contentObject);
-            setHTML(htmlContent);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching content:', error);
-      }
-    };
-
-    fetchContent();
-
-    return () => {
-      isMounted = false;
-      controller.abort();
-    };
-  }, [query]);
-
+  console.log(file)
   return (
     <>
       {html && html != "" && (

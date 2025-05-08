@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import FeaturesComponent from './Features';
 import ProjectURLsComponent from './ProjectURLsComponent';
@@ -7,6 +7,7 @@ import ContentComponent from '../content/ContentComponent';
 
 import Project from '@/model/Project';
 import Version from '@/model/Version';
+import ContentURL from '@/model/ContentURL';
 
 interface SolutionProps {
   project: Project
@@ -14,6 +15,13 @@ interface SolutionProps {
 
 const TheSolution: React.FC<SolutionProps> = ({ project }) => {
   const hasContent = project.solution?.features || project.solution?.projectURLs || project.solution?.gallery || project.solution?.contentURL;
+  const [content, setContent] = useState<ContentURL | null>(null);
+
+  useEffect(() => {
+    if (project.solution && project.solution.contentURL) {
+      setContent(project.solution.contentURL)
+    }
+  }, [project]);
 
   return (
     <>
@@ -30,8 +38,8 @@ const TheSolution: React.FC<SolutionProps> = ({ project }) => {
           {project.solution.projectURLs &&
             <ProjectURLsComponent projectUrls={project.solution.projectURLs} />}
 
-          {project.solution.contentURL &&
-            <ContentComponent title={null} content={project.solution.contentURL} />}
+          {content &&
+            <ContentComponent title={null} content={content} />}
         </div>
       }
     </>
