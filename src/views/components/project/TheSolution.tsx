@@ -14,11 +14,11 @@ interface SolutionProps {
 }
 
 const TheSolution: React.FC<SolutionProps> = ({ project }) => {
-  const hasContent = project.solution?.features || project.solution?.projectURLs || project.solution?.gallery || project.solution?.contentURL;
+  const hasContent = project.solution && project.solution?.features || project.solution?.projectURLs || project.solution?.gallery || project.solution?.contentURL;
   const [content, setContent] = useState<ContentURL | null>(null);
 
   useEffect(() => {
-    if (project.solution && project.solution.contentURL) {
+    if (project.solution && project.solution.contentURL && project.solution.contentURL.path === 'TheSolution.md') {
       setContent(project.solution.contentURL)
     }
   }, [project]);

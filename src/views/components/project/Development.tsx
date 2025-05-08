@@ -20,6 +20,7 @@ import {
 import Project from '@/model/Project';
 import RoadmapComponent from './RoadmapComponent';
 import FeaturesRoadmap from '@/model/FeaturesRoadmap';
+import ContentURL from '@/model/ContentURL';
 
 interface DevelopmentProps {
   project: Project;
@@ -32,10 +33,19 @@ const Development: React.FC<DevelopmentProps> = ({ project }) => {
   const [buttonTitle, setButtonTitle] = useState<string | null>(null);
   const [messageType, setMessageType] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [content, setContent] = useState<ContentURL | null>(null);
 
   const { isAuthenticated } = useSelector(
     (state: RootState) => state.auth
   );
+
+  useEffect(() => {
+    if (project.process && project.process.development
+      && project.process.development.contentURL
+      && project.process.development.contentURL.path === 'Development.md') {
+      setContent(project.process.development.contentURL)
+    }
+  }, [project]);
 
   useEffect(() => {
     setRepoURL(project.process?.development?.repoURL ?? null)
@@ -77,7 +87,8 @@ const Development: React.FC<DevelopmentProps> = ({ project }) => {
 
         {project.process.development.skills && <ProjectSkillsComponent project={project} />}
 
-        {project.process.development.contentURL && <ContentComponent title={''} content={project.process.development.contentURL} />}
+        {content &&
+          <ContentComponent title={''} content={content} />}
 
         {project.process.development.versionsList && <Versions projectVersions={project.process.development.versionsList} />}
 

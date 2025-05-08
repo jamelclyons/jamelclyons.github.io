@@ -74,15 +74,19 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
   }, [projectErrorMessage]);
 
   if (githubLoading || projectLoading) {
-    return <LoadingComponent />;
+    return <section>
+      <main>
+        <LoadingComponent />
+      </main>
+    </section>;
   }
 
   if (githubErrorMessage || projectErrorMessage) {
     return <section>
-        <main>
-          <StatusBarComponent />
-        </main>
-      </section>;
+      <main>
+        <StatusBarComponent />
+      </main>
+    </section>;
   }
 
   return (

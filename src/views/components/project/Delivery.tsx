@@ -1,17 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import GalleryComponent from '../GalleryComponent';
 import ContentComponent from '../content/ContentComponent';
 import CheckListComponent from './CheckListComponent';
 
 import Project from '@/model/Project';
+import ContentURL from '@/model/ContentURL';
 
 interface DeliveryProps {
   project: Project;
 }
 
 const Delivery: React.FC<DeliveryProps> = ({ project }) => {
-  const hasContent = project.process?.delivery?.checkList || project.process?.delivery?.gallery || project.process?.delivery?.contentURL;
+  const hasContent = project.process && project.process.delivery && (project.process.delivery.checkList || project.process.delivery.gallery || project.process.delivery.contentURL);
+  const [content, setContent] = useState<ContentURL | null>(null);
+
+  useEffect(() => {
+    if (project.process && project.process.delivery
+      && project.process.delivery.contentURL
+      && project.process.delivery.contentURL.path === 'Delivery.md') {
+      setContent(project.process.delivery.contentURL)
+    }
+  }, [project]);
 
   return (
     project.process &&
@@ -26,7 +36,8 @@ const Delivery: React.FC<DeliveryProps> = ({ project }) => {
         {project.process.delivery.gallery && project.process.delivery.gallery.images && project.process.delivery.gallery.images.length > 0 &&
           <GalleryComponent gallery={project.process.delivery.gallery.images} title="" />}
 
-        {project.process.delivery.contentURL && <ContentComponent title={null} content={project.process.delivery.contentURL} />}
+        {content &&
+          <ContentComponent title={null} content={content} />}
       </div>
     )
   );

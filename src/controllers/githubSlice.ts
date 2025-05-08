@@ -219,27 +219,24 @@ export const getCommits = createAsyncThunk(
   }
 );
 
-export const getRepoFile = createAsyncThunk(
-  'github/getRepoFile',
-  async (query: RepoContentQuery) => {
-    try {
-      const { owner, repo, path, branch } = query;
+export const getRepoFile = async (query: RepoContentQuery) => {
+  try {
+    const { owner, repo, path, branch } = query;
 
-      const response: OctokitResponse = await octokit.repos.getContent({
-        owner: owner,
-        repo: repo,
-        path: path,
-        ref: branch,
-      });
+    const response: OctokitResponse = await octokit.repos.getContent({
+      owner: owner,
+      repo: repo,
+      path: path,
+      ref: branch,
+    });
 
-      return atob(response.data.content);
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
-    }
+    return atob(response.data.content);
+  } catch (error) {
+    const err = error as Error;
+    console.error(err);
+    throw new Error(err.message);
   }
-);
+};
 
 type IssuesGQL = {
   repository: {
@@ -929,12 +926,6 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubError = null;
         state.contents = action.payload ?? [];
       })
-      .addCase(getRepoFile.fulfilled, (state, action) => {
-        state.githubLoading = false;
-        state.githubErrorMessage = '';
-        state.githubError = null;
-        state.file = action.payload;
-      })
       .addCase(getRepoLanguages.fulfilled, (state, action) => {
         state.githubLoading = false;
         state.githubErrorMessage = '';
@@ -978,7 +969,6 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
           getRepoLanguages.pending,
           getRepoDetailsList.pending,
           getSocialAccounts.pending,
-          getRepoFile.pending,
           getOrganizationProjects.pending,
           getIssues.pending
         ),
@@ -999,7 +989,6 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
           getRepoLanguages.rejected,
           getRepoDetailsList.rejected,
           getSocialAccounts.rejected,
-          getRepoFile.rejected,
           getOrganizationProjects.rejected,
           getIssues.rejected
         ),

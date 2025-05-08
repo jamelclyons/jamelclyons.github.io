@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import CheckListComponent from './CheckListComponent';
 import Colors from './Colors';
@@ -6,13 +6,23 @@ import GalleryComponent from '../GalleryComponent';
 import ContentComponent from '../content/ContentComponent';
 
 import Project from '@/model/Project';
+import ContentURL from '@/model/ContentURL';
 
 interface DesignProps {
   project: Project;
 }
 
 const Design: React.FC<DesignProps> = ({ project }) => {
-  const hasContent = project.process?.design?.checkList || project.process?.design?.colorsList || project.process?.design?.gallery || project.process?.design?.contentURL;
+  const hasContent = project.process && project.process.design && (project.process?.design?.checkList || project.process?.design?.colorsList || project.process?.design?.gallery || project.process?.design?.contentURL);
+  const [content, setContent] = useState<ContentURL | null>(null);
+
+  useEffect(() => {
+    if (project.process && project.process.design
+      && project.process.design.contentURL
+      && project.process.design.contentURL.path === 'Design.md') {
+      setContent(project.process.design.contentURL)
+    }
+  }, [project]);
 
   return (
     <>
@@ -38,8 +48,8 @@ const Design: React.FC<DesignProps> = ({ project }) => {
           {project.process.design.gallery && project.process.design.gallery.umlDiagrams && project.process.design.gallery.umlDiagrams.length > 0 &&
             <GalleryComponent title={'uml diagrams'} gallery={project.process.design.gallery.umlDiagrams} />}
 
-          {project.process.design.contentURL &&
-            <ContentComponent title={null} content={project.process.design.contentURL} />}
+          {content &&
+            <ContentComponent title={null} content={content} />}
         </div>
       }
     </>

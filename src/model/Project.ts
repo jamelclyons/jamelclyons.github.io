@@ -309,7 +309,11 @@ class Project extends Model {
       }
     }
 
-    if (repo.contents?.problem?.downloadURL) {
+    if (
+      repo.contents &&
+      repo.contents.problem &&
+      repo.contents.problem.downloadURL
+    ) {
       this.problem ? this.problem : (this.problem = new ProjectProblem());
       this.problem.setContentURL(repo.contents.problem.downloadURL);
     }
