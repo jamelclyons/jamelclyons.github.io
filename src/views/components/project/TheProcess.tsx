@@ -7,6 +7,7 @@ import Development from './Development';
 import Delivery from './Delivery';
 
 import Project from '@/model/Project';
+import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 
 interface ProcessProps {
   project: Project;
@@ -14,7 +15,7 @@ interface ProcessProps {
 
 const TheProcess: React.FC<ProcessProps> = ({ project }) => {
   const hasContent = project.process?.status || project.process?.design || project.process?.development || project.process?.delivery;
-
+  
   return (
     <>
       {project.process && hasContent && (

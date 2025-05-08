@@ -20,8 +20,8 @@ const Delivery: React.FC<DeliveryProps> = ({ project }) => {
       <div className="project-process-delivery" id="project_process_delivery">
         <h3 className="title">delivery</h3>
 
-        {project.process.delivery.checkList &&
-          <CheckListComponent checkList={project.process.delivery.checkList} />}
+        {project.process.delivery.checkList && project.query &&
+          <CheckListComponent checkList={project.process.delivery.checkList} query={project.query} />}
 
         {project.process.delivery.gallery && project.process.delivery.gallery.images && project.process.delivery.gallery.images.length > 0 &&
           <GalleryComponent gallery={project.process.delivery.gallery.images} title="" />}

@@ -1,5 +1,6 @@
 import Issue, { tIssue } from './Issue';
 import Model from './Model';
+import ProjectQuery from './ProjectQuery';
 
 type tTask = {
   id: string | number;
@@ -100,7 +101,17 @@ class Task extends Model {
     this.link = issue.repository.nameWithOwner;
   }
 
-  fromTypeTask(typeTask: tTask) {}
+  fromSameProject(projectQuery: ProjectQuery): boolean {
+    if (this.link) {
+      const linkParts = this.link.split('/');
+      const owner = linkParts[0];
+      const name = linkParts[1];
+
+      return projectQuery.owner === owner && projectQuery.repo === name;
+    }
+
+    return false;
+  }
 
   toTaskObject(): TaskObject {
     return {

@@ -33,6 +33,7 @@ import ProjectSkills from './ProjectSkills';
 import RepoURL from './RepoURL';
 import Issue from './Issue';
 import Task from './Task';
+import ProjectQuery from './ProjectQuery';
 
 export type ProjectObject = {
   id: string | null;
@@ -72,6 +73,7 @@ class Project extends Model {
   problem: ProjectProblem | null;
   owner: Owner;
   details: ProjectDetails | null;
+  query: ProjectQuery | null;
 
   constructor(data?: ProjectObject) {
     super();
@@ -94,6 +96,10 @@ class Project extends Model {
       this.owner = data?.owner ? new Owner(data.owner) : new Owner();
       this.details = data?.details ? new ProjectDetails(data.details) : null;
       this.problem = data?.problem ? new ProjectProblem(data?.problem) : null;
+      this.query =
+        this.owner.login && this.name
+          ? new ProjectQuery(this.owner.login, this.name)
+          : null;
     } catch (error) {
       let err = error as Error;
       throw new Error(err.message);

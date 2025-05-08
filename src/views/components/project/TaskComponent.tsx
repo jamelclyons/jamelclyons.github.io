@@ -4,28 +4,32 @@ import Task from '@/model/Task'
 
 import TaskCheckbox from './TaskCheckbox';
 import TaskDescription from './TaskDescription';
+import ProjectQuery from '@/model/ProjectQuery';
 
 type TaskComponentProps = {
     task: Task;
+    query: ProjectQuery;
 }
 
-const TaskComponent: React.FC<TaskComponentProps> = ({ task }) => {
+const TaskComponent: React.FC<TaskComponentProps> = ({ task, query }) => {
     return (
         <>
             <div className='task' key={task.id}>
                 <span className='task-row'>
                     <TaskCheckbox task={task} />
-                    <TaskDescription task={task} />
+                    <TaskDescription task={task} query={query} />
                 </span>
 
                 {task.subTasks && Array.isArray(task.subTasks) &&
                     task.subTasks.length > 0 &&
                     <div className='sub-task'>
                         {task.subTasks.map((task) => (
-                            <span className='task-row' key={task.id}>
-                                <TaskCheckbox task={task} />
-                                <TaskDescription task={task} />
-                            </span>
+                            <div className='task' key={task.id}>
+                                <span className='task-row'>
+                                    <TaskCheckbox task={task} />
+                                    <TaskDescription task={task} query={query} />
+                                </span>
+                            </div>
                         ))}
                     </div>}
             </div>

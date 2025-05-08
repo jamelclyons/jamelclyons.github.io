@@ -1,16 +1,21 @@
 .checklist {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
   gap: 1.5rem;
 
-  .task {
+  .task,
+  .sub-task {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 1rem;
+    width: 100%;
+  }
 
+  .task {
     input[type='checkbox'] {
       appearance: none;
       width: 1.5rem;
@@ -43,14 +48,10 @@
       color: white; /* Keep the checkmark visible */
     }
   }
-}
 
-.sub-task {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
+  .sub-task {
+    margin-left: 2.5rem;
+  }
 }
 
 a.task-details h5 {

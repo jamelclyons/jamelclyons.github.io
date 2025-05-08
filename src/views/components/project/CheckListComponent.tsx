@@ -3,12 +3,14 @@ import React, { useEffect, useState } from 'react';
 import Task from '@/model/Task';
 import CheckList from '@/model/CheckList';
 import TaskComponent from './TaskComponent';
+import ProjectQuery from '@/model/ProjectQuery';
 
 interface CheckListProps {
   checkList: CheckList;
+  query: ProjectQuery;
 }
 
-const CheckListComponent: React.FC<CheckListProps> = ({ checkList }) => {
+const CheckListComponent: React.FC<CheckListProps> = ({ checkList, query }) => {
   const [id, setId] = useState<string | null>(null);
   const [title, setTitle] = useState<string | null>(null);
   const [tasks, setTasks] = useState<Set<Task> | null>(null);
@@ -25,7 +27,7 @@ const CheckListComponent: React.FC<CheckListProps> = ({ checkList }) => {
           {title && <h4>{title}</h4>}
 
           {Array.from(tasks).map((task) => (
-            <TaskComponent task={task} key={task.id}/>
+            <TaskComponent task={task} query={query} key={task.id}/>
           ))}
         </div>
       ) : (

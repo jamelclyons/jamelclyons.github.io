@@ -20,8 +20,8 @@ const Design: React.FC<DesignProps> = ({ project }) => {
         <div className="project-process-design" id="project_process_design">
           <h3 className="title">design</h3>
 
-          {project.process.design.checkList &&
-            <CheckListComponent checkList={project.process.design.checkList} />}
+          {project.process.design.checkList && project.query &&
+            <CheckListComponent checkList={project.process.design.checkList} query={project.query} />}
 
           {project.process.design.colorsList && project.process.design.colorsList.length > 0 &&
             <Colors colors={project.process.design.colorsList} />}

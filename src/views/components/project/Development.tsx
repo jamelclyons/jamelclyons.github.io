@@ -73,7 +73,7 @@ const Development: React.FC<DevelopmentProps> = ({ project }) => {
 
         <h3 className="title">development</h3>
 
-        {project.process.development.checkList && <CheckListComponent checkList={project.process.development.checkList} />}
+        {project.process.development.checkList && project.query && <CheckListComponent checkList={project.process.development.checkList} query={project.query} />}
 
         {project.process.development.skills && <ProjectSkillsComponent project={project} />}
 
