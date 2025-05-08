@@ -265,7 +265,7 @@ const UpdateCheckList: React.FC<UpdateCheckListProps> = ({ location, checkList }
 
                         <div className='form-item-flex'>
                             <label htmlFor="description">Description:</label>
-                            <input type="text" name='description' value={task.description} onChange={handleTaskChange} />
+                            <input type="text" name='description' value={task.description ?? ''} onChange={handleTaskChange} />
                         </div>
 
                         <div className='form-item-flex'>

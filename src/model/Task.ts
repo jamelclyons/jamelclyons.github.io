@@ -1,4 +1,4 @@
-import { tIssue } from './Issue';
+import Issue, { tIssue } from './Issue';
 import Model from './Model';
 
 type tTask = {
@@ -11,32 +11,32 @@ type tTask = {
 };
 
 export type TaskObject = {
-  id: string | number;
-  description: string;
+  id: string | number | null;
+  description: string | null;
   status: boolean;
-  details: string;
+  details: string | null;
   weight: number;
   link: string | null;
   subTasks: Array<TaskObject> | null;
 };
 
 export type TaskDataObject = {
-  id: string | number;
-  description: string;
+  id: string | number | null;
+  description: string | null;
   status: boolean;
-  details: string;
+  details: string | null;
   weight: number;
   link: string | null;
 };
 
 class Task extends Model {
-  id: string | number;
-  description: string;
+  id: string | number | null;
+  description: string | null;
   status: boolean;
-  details: string;
+  details: string | null;
   weight: number;
   link: string | null;
-  subTasks: Array<Task>;
+  subTasks: Array<Task> | null;
 
   constructor(data?: TaskObject) {
     super();
@@ -75,6 +75,24 @@ class Task extends Model {
     this.weight = weight;
   }
 
+  setSubTask(issuesType: Array<tIssue>) {
+    this.subTasks = issuesType.map((issue) => {
+      const task = new Task();
+      task.fromIssueType(issue);
+      return task;
+    });
+  }
+
+  fromIssue(issue: Issue) {
+    this.id = issue.id ? issue.id : null;
+    this.description = issue.title ? issue.title : null;
+    this.status = issue.state === 'OPEN' ? false : true;
+    this.link = issue.repo;
+    issue.tracked && Array.isArray(issue.tracked)
+      ? this.setSubTask(issue.tracked)
+      : null;
+  }
+
   fromIssueType(issue: tIssue) {
     this.id = issue.id;
     this.description = issue.title;
@@ -83,14 +101,6 @@ class Task extends Model {
   }
 
   fromTypeTask(typeTask: tTask) {}
-
-  setSubTask(issuesType: Array<tIssue>) {
-    this.subTasks = issuesType.map((issue) => {
-      const task = new Task();
-      task.fromIssueType(issue);
-      return task;
-    });
-  }
 
   toTaskObject(): TaskObject {
     return {

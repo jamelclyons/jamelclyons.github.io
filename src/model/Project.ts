@@ -195,12 +195,7 @@ class Project extends Model {
           .map((issue) => {
             if (issue.id && issue.title && issue.state) {
               const task = new Task();
-              task.setID(issue.id);
-              task.setDescription(issue.title);
-              task.setStatus(issue.state === 'closed' ? true : false);
-              issue.tracked && Array.isArray(issue.tracked)
-                ? task.setSubTask(issue.tracked)
-                : null;
+              task.fromIssue(issue);
               return task;
             }
             return null;
@@ -220,9 +215,7 @@ class Project extends Model {
           .map((issue) => {
             if (issue.id && issue.title && issue.state) {
               const task = new Task();
-              task.setID(issue.id);
-              task.setDescription(issue.title);
-              task.setStatus(issue.state === 'closed' ? true : false);
+              task.fromIssue(issue);
               return task;
             }
             return null;
@@ -242,9 +235,7 @@ class Project extends Model {
           .map((issue) => {
             if (issue.id && issue.title && issue.state) {
               const task = new Task();
-              task.setID(issue.id);
-              task.setDescription(issue.title);
-              task.setStatus(issue.state === 'closed' ? true : false);
+              task.fromIssue(issue);
               return task;
             }
             return null;
