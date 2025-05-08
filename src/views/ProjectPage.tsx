@@ -12,6 +12,7 @@ import type { AppDispatch, RootState } from '@/model/store';
 import Project from '@/model/Project';
 import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 import User from '@/model/User';
+import StatusBarComponent from './components/StatusBarComponent';
 
 interface ProjectPageProps {
   user: User;
@@ -22,7 +23,10 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
 
   const { owner, projectID } = useParams<string>();
 
-  const { projectErrorMessage, projectObject } = useSelector(
+  const { githubLoading, githubErrorMessage } = useSelector(
+    (state: RootState) => state.github
+  );
+  const { projectLoading, projectErrorMessage, projectObject } = useSelector(
     (state: RootState) => state.project
   );
 
@@ -54,6 +58,14 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
   }, [project]);
 
   useEffect(() => {
+    if (githubErrorMessage) {
+      dispatch(setMessageType('error'));
+      dispatch(setMessage(githubErrorMessage));
+      dispatch(setShowStatusBar(true));
+    }
+  }, [githubErrorMessage]);
+
+  useEffect(() => {
     if (projectErrorMessage) {
       dispatch(setMessageType('error'));
       dispatch(setMessage(projectErrorMessage));
@@ -61,11 +73,23 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
     }
   }, [projectErrorMessage]);
 
+  if (githubLoading || projectLoading) {
+    return <LoadingComponent />;
+  }
+
+  if (githubErrorMessage || projectErrorMessage) {
+    return <section>
+        <main>
+          <StatusBarComponent />
+        </main>
+      </section>;
+  }
+
   return (
     <section>
       <>
-        {project ?
-          <ProjectComponent user={user} project={project} /> : <LoadingComponent />
+        {project &&
+          <ProjectComponent user={user} project={project} />
         }
       </>
     </section>

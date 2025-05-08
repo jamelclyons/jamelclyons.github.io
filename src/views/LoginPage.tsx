@@ -7,6 +7,7 @@ import type { RootState } from '../model/store';
 import { auth } from '@/services/firebase/config';
 
 import LoginComponent from './components/LoginComponent';
+
 import { setIsAdmin, setIsAuthenticated } from '@/controllers/authSlice';
 
 const LoginPage: React.FC = () => {

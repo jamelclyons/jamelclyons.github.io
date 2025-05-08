@@ -1,5 +1,4 @@
 import Model from './Model';
-import * as UserJSON from '../../user.json';
 
 export type OwnerGQL = {
   id: string;
@@ -7,40 +6,40 @@ export type OwnerGQL = {
 };
 
 export interface OwnerObject {
-  id: string;
-  type: string;
-  login: string;
-  name: string;
-  company: string;
-  email: string;
+  id: string | null;
+  type: string | null;
+  login: string | null;
+  name: string | null;
+  company: string | null;
+  email: string | null;
   avatar_url: string | null;
-  url: string;
-  repos_url: string;
+  url: string | null;
+  repos_url: string | null;
 }
 
 class Owner extends Model {
-  id: string;
-  type: string;
-  login: string;
-  name: string;
-  company: string;
-  email: string;
-  avatarURL: string;
-  url: string;
-  reposURL: string;
+  id: string | null;
+  type: string | null;
+  login: string | null;
+  name: string | null;
+  company: string | null;
+  email: string | null;
+  avatarURL: string | null;
+  url: string | null;
+  reposURL: string | null;
 
   constructor(data: Record<string, any> | OwnerObject = {}) {
     super();
 
-    this.id = data?.id ?? '0';
-    this.type = data?.type ?? 'User';
-    this.login = data?.login;
-    this.name = data?.name ?? UserJSON.name;
-    this.company = data?.company ?? UserJSON.company.name;
-    this.email = data?.email ?? UserJSON.contact_methods.email;
+    this.id = data?.id ? data.id : null;
+    this.type = data?.type ? data.type : null;
+    this.login = data?.login ? data.login : null;
+    this.name = data?.name ? data.name : null;
+    this.company = data?.company ? data.company : null;
+    this.email = data?.email ? data.email : null;
     this.avatarURL = data?.avatar_url ? data.avatar_url : null;
-    this.url = data?.url ?? UserJSON.website;
-    this.reposURL = data?.repos_url ?? UserJSON.repos;
+    this.url = data?.url ? data.url : null;
+    this.reposURL = data?.repos_url ? data?.repos_url : null;
   }
 
   fromGitHubGraphQL(owner: OwnerGQL) {

@@ -9,6 +9,7 @@ import { instance, headers } from '@/services/github/octokit';
 import { graphql } from '@octokit/graphql';
 import { Octokit, RestEndpointMethodTypes } from '@octokit/rest';
 import { GetResponseTypeFromEndpointMethod } from '@octokit/types';
+import { RequestError } from '@octokit/request-error';
 
 import RepoContent from '../model/RepoContent';
 import GitHubRepoQuery from '../model/GitHubRepoQuery';
@@ -37,7 +38,7 @@ interface GithubState {
   githubLoading: boolean;
   githubStatusCode: number;
   githubError: Error | null;
-  githubErrorMessage: string;
+  githubErrorMessage: string | null;
   userObject: Record<string, any> | null;
   organizationObject: Record<string, any>;
   organizationReposObject: Array<Record<string, any>>;
@@ -97,99 +98,6 @@ type RepoResponse = GetResponseTypeFromEndpointMethod<
   typeof octokit.rest.repos.get
 >;
 
-const getUserRepo = createAsyncThunk(
-  'github/getUserRepo',
-  async (query: GitHubRepoQuery) => {
-    try {
-      if (query.owner && query.repo) {
-        const queryIssues = `
-  query ($owner: String!) {
-    user(login: $owner) {
-      repositories(first: 100) {
-        nodes {
-          id
-          name
-          owner {
-            login
-          }
-          issues(first: 10) {
-            nodes {
-              number
-              title
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-        return octokit
-          .graphql(queryIssues, {
-            owner: query.owner,
-            repo: query.repo,
-            headers: headers,
-          })
-          .then((repos) => {
-            return repos;
-          });
-      }
-
-      return null;
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
-    }
-  }
-);
-
-const getOrganizationRepo = createAsyncThunk(
-  'github/getOrganizationRepo',
-  async (query: GitHubRepoQuery) => {
-    try {
-      if (query.owner && query.repo) {
-        const queryIssues = `
-  query ($owner: String!) {
-    organization(login: $owner) {
-      repositories(first: 100) {
-        nodes {
-          id
-          name
-          owner {
-            login
-          }
-          issues(first: 10) {
-            nodes {
-              number
-              title
-            }
-          }
-        }
-      }
-    }
-`;
-
-        return octokit
-          .graphql(queryIssues, {
-            owner: query.owner,
-            repo: query.repo,
-            headers: headers,
-          })
-          .then((repos) => {
-            return repos;
-          });
-      }
-
-      return null;
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
-    }
-  }
-);
-
 export const getRepo = createAsyncThunk(
   'github/getRepo',
   async (query: GitHubRepoQuery) => {
@@ -205,8 +113,13 @@ export const getRepo = createAsyncThunk(
 
       return null;
     } catch (error) {
+      if (error instanceof RequestError) {
+        if (error.status === 404) {
+          throw new Error('Project could not be found or does not exits.');
+        }
+      }
+
       const err = error as Error;
-      console.error(err);
       throw new Error(err.message);
     }
   }
@@ -490,7 +403,7 @@ export const getRepoDetails = createAsyncThunk(
           .dispatch(getIssues(repo.apiURL))
           .unwrap();
 
-          if (issuesResponse && issuesResponse.list) {
+        if (issuesResponse && issuesResponse.list) {
           repo.setIssues(issuesResponse.list);
         }
 
@@ -1046,6 +959,14 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubErrorMessage = '';
         state.githubError = null;
         state.issues = action.payload;
+      })
+      .addCase(getRepo.rejected, (state, action) => {
+        state.githubLoading = false;
+        state.githubErrorMessage =
+          action.error && action.error.message
+            ? action.error.message
+            : 'An Error has occured.';
+        state.githubError = action.error as Error;
       })
       .addMatcher(
         isAnyOf(

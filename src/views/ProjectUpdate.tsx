@@ -79,7 +79,7 @@ const ProjectUpdate: React.FC<ProjectUpdateProps> = ({ user }) => {
     }, [id, portfolio]);
 
     useEffect(() => {
-        if (id) {
+        if (id && owner.login) {
             setRepoQuery(new GitHubRepoQuery(owner.login, id))
         }
     }, [owner, id]);

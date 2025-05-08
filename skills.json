@@ -663,6 +663,19 @@
                 "class_name": ""
             },
             "usage": ""
+        },
+        {
+            "id": "graphql",
+            "type": "technologies",
+            "title": "GraphQL",
+            "path": "technologies",
+            "image": {
+                "id": "graphql",
+                "title": "GraphQL",
+                "url": "https://skillicons.dev/icons?i=graphql",
+                "class_name": ""
+            },
+            "usage": ""
         }
     ],
     "services": [
@@ -675,6 +688,30 @@
                 "id": "firebase",
                 "title": "Firebase",
                 "url": "https://skillicons.dev/icons?i=firebase",
+                "class_name": ""
+            }
+        },
+        {
+            "id": "github",
+            "type": "plarform",
+            "title": "GitHub",
+            "path": "services",
+            "image": {
+                "id": "github",
+                "title": "GitHub",
+                "url": "https://skillicons.dev/icons?i=github",
+                "class_name": ""
+            }
+        },
+        {
+            "id": "github-actions",
+            "type": "cicd",
+            "title": "GitHub Actions",
+            "path": "services",
+            "image": {
+                "id": "github-actions",
+                "title": "GitHub Actions",
+                "url": "https://skillicons.dev/icons?i=githubactions",
                 "class_name": ""
             }
         }
