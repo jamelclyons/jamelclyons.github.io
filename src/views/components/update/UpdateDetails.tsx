@@ -90,7 +90,8 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
         client_id: clientID,
         content: content ? content.url : null,
         team_list: team,
-        story: story ? story.url : null
+        story: story ? story.url : null,
+        repo_size: 0   
       };
 
       const updatedProjectObject: ProjectObject = {

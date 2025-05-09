@@ -23,12 +23,12 @@ const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ user, project 
   useEffect(() => {
     setPrivacy(project.details?.privacy ?? 'private')
   }, [project]);
-  
+
   return (
     <>
       {(isAuthenticated || privacy === 'public') &&
         project && project.details &&
-        (project.details.content || (project.details.teamList && project.details.teamList.length > 0)) && (
+        (project.details.content || (project.details.teamList && project.details.teamList.length > 0) || project.details.repoSize) && (
           <div className="project-details">
             <h3 className="title">the details</h3>
 
@@ -37,6 +37,13 @@ const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ user, project 
 
             {project.details.teamList &&
               <ProjectTeamComponent user={user} projectTeam={project.details.teamList} />}
+
+            {project.details.repoSize &&
+              <h5>
+                Repo Size
+                <span className='colon'>:</span>
+                <span className='repo-size'>{project.details.repoSize.display()}</span>
+              </h5>}
           </div>
         )}
     </>

@@ -149,7 +149,10 @@ class Project extends Model {
     }
 
     if (
-      repo.contents?.design?.downloadURL ||
+      (repo.contents &&
+        repo.contents.design &&
+        repo.contents.design.size > 0 &&
+        repo.contents.design.downloadURL) ||
       repo.createdAt ||
       repo.updatedAt
     ) {
@@ -257,7 +260,10 @@ class Project extends Model {
       }
 
       if (
-        repo.contents?.development?.downloadURL ||
+        (repo.contents &&
+          repo.contents.development &&
+          repo.contents.development.size > 0 &&
+          repo.contents?.development?.downloadURL) ||
         repo.skills ||
         repo.repoURL
       ) {
@@ -301,7 +307,12 @@ class Project extends Model {
         }
       }
 
-      if (repo.contents?.delivery?.downloadURL) {
+      if (
+        repo.contents &&
+        repo.contents.delivery &&
+        repo.contents.delivery.size > 0 &&
+        repo.contents.delivery.downloadURL
+      ) {
         this.process.delivery
           ? this.process.delivery
           : (this.process.delivery = new ProjectDelivery());
@@ -312,6 +323,7 @@ class Project extends Model {
     if (
       repo.contents &&
       repo.contents.problem &&
+      repo.contents.problem.size > 0 &&
       repo.contents.problem.downloadURL
     ) {
       this.problem ? this.problem : (this.problem = new ProjectProblem());
@@ -328,8 +340,15 @@ class Project extends Model {
     }
 
     if (
-      repo.contents?.details?.downloadURL ||
-      repo.contents?.story?.downloadURL
+      (repo.contents &&
+        repo.contents.details &&
+        repo.contents.details.size > 0 &&
+        repo.contents.details?.downloadURL) ||
+      (repo.contents &&
+        repo.contents.story &&
+        repo.contents.story.size > 0 &&
+        repo.contents.story.downloadURL) ||
+      (repo.size && repo.size > 0)
     ) {
       this.details = new ProjectDetails();
       repo.contents?.details?.downloadURL
@@ -338,6 +357,7 @@ class Project extends Model {
       repo.contents?.story?.downloadURL
         ? this.details.setStory(repo.contents.story.downloadURL)
         : null;
+      repo.size && repo.size > 0 ? this.details.setRepoSize(repo.size) : null;
     }
   }
 
@@ -394,7 +414,19 @@ class Project extends Model {
           ? this.process.design
           : (this.process.design = new ProjectDesign());
 
-        data?.process.design.gallery
+        data.process.design.gallery &&
+        ((data.process.design.gallery.animations &&
+          data.process.design.gallery.animations?.length > 0) ||
+          (data.process.design.gallery.icons &&
+            data.process.design.gallery.icons.length > 0) ||
+          (data.process.design.gallery.logos &&
+            data.process.design.gallery.logos.length > 0) ||
+          (data.process.design.gallery.previews &&
+            data.process.design.gallery.previews.length > 0) ||
+          (data.process.design.gallery.screenshots &&
+            data.process.design.gallery.screenshots.length > 0) ||
+          (data.process.design.gallery.uml_diagrams &&
+            data.process.design.gallery.uml_diagrams.length > 0))
           ? (this.process.design.gallery = new Gallery(
               data?.process.design.gallery
             ))
@@ -420,7 +452,21 @@ class Project extends Model {
           );
         }
 
-        if (data?.process?.development?.gallery) {
+        if (
+          data.process.development.gallery &&
+          ((data.process.development.gallery.animations &&
+            data.process.development.gallery.animations?.length > 0) ||
+            (data.process.development.gallery.icons &&
+              data.process.development.gallery.icons.length > 0) ||
+            (data.process.development.gallery.logos &&
+              data.process.development.gallery.logos.length > 0) ||
+            (data.process.development.gallery.previews &&
+              data.process.development.gallery.previews.length > 0) ||
+            (data.process.development.gallery.screenshots &&
+              data.process.development.gallery.screenshots.length > 0) ||
+            (data.process.development.gallery.uml_diagrams &&
+              data.process.development.gallery.uml_diagrams.length > 0))
+        ) {
           this.process.development.gallery = new Gallery(
             data?.process.development.gallery
           );
@@ -444,7 +490,19 @@ class Project extends Model {
           ? this.process.delivery
           : (this.process.delivery = new ProjectDelivery());
 
-        data?.process?.delivery?.gallery
+        data.process.delivery.gallery &&
+        ((data.process.delivery.gallery.animations &&
+          data.process.delivery.gallery.animations?.length > 0) ||
+          (data.process.delivery.gallery.icons &&
+            data.process.delivery.gallery.icons.length > 0) ||
+          (data.process.delivery.gallery.logos &&
+            data.process.delivery.gallery.logos.length > 0) ||
+          (data.process.delivery.gallery.previews &&
+            data.process.delivery.gallery.previews.length > 0) ||
+          (data.process.delivery.gallery.screenshots &&
+            data.process.delivery.gallery.screenshots.length > 0) ||
+          (data.process.delivery.gallery.uml_diagrams &&
+            data.process.delivery.gallery.uml_diagrams.length > 0))
           ? (this.process.delivery.gallery = new Gallery(
               data?.process.delivery.gallery
             ))

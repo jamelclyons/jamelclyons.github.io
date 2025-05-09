@@ -30,9 +30,12 @@ class ProjectDesign extends Model {
 
     this.gallery = data?.gallery ? new Gallery(data.gallery) : null;
     this.checkList = data?.check_list ? new CheckList(data.check_list) : null;
-    this.colorsList = data?.colors_list
-      ? this.toArrayColor(data.colors_list)
-      : null;
+    this.colorsList =
+      data?.colors_list &&
+      Array.isArray(data.colors_list) &&
+      data.colors_list.length > 0
+        ? this.toArrayColor(data.colors_list)
+        : null;
     this.contentURL = data?.content_url
       ? new ContentURL(data.content_url)
       : null;

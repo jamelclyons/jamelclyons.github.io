@@ -5,8 +5,6 @@ import { getRepoFile } from '@/controllers/githubSlice';
 import ContentURL from '@/model/ContentURL';
 import RepoContentQuery from '@/model/RepoContentQuery';
 
-import { marked } from 'marked';
-
 interface ContentComponentProps {
   title: string | null;
   content: ContentURL;
@@ -27,7 +25,13 @@ const ContentComponent: React.FC<ContentComponentProps> = ({ title, content }) =
     let isMounted = true;
 
     if (query) {
-      getRepoFile(query).then((file) => setFile(file));
+      try {
+        getRepoFile(query)
+          .then((file) => setFile(file))
+          .catch(console.error);
+      } catch (error) {
+        console.error(error)
+      }
     }
 
     return () => {
@@ -37,7 +41,15 @@ const ContentComponent: React.FC<ContentComponentProps> = ({ title, content }) =
 
   useEffect(() => {
     if (file) {
-      setHTML(marked.parse(file));
+      try {
+        const htmlContent = content.fromMdtoHTML(file);
+
+        if (htmlContent) {
+          setHTML(htmlContent);
+        }
+      } catch (error) {
+        console.error(error)
+      }
     }
   }, [file]);
 

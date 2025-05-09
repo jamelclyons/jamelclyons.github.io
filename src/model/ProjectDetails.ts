@@ -2,6 +2,7 @@ import Model from './Model';
 import User, { UserObject } from './User';
 
 import ContentURL from './ContentURL';
+import RepoSize from './RepoSize';
 
 export type ProjectDetailsObject = {
   privacy: string | null;
@@ -9,6 +10,7 @@ export type ProjectDetailsObject = {
   content: string | null;
   team_list: Array<UserObject> | null;
   story: string | null;
+  repo_size: number | null;
 };
 
 export type ProjectDetailsDataObject = {
@@ -25,6 +27,7 @@ class ProjectDetails extends Model {
   content: ContentURL | null;
   teamList: Array<User> | null;
   story: ContentURL | null;
+  repoSize: RepoSize | null;
 
   constructor(data: Record<string, any> | ProjectDetailsObject = {}) {
     super();
@@ -34,6 +37,7 @@ class ProjectDetails extends Model {
     this.content = data?.content ? new ContentURL(data.content) : null;
     this.teamList = data?.team_list ? this.getTeamList(data.team_list) : null;
     this.story = data?.story ? new ContentURL(data.content) : null;
+    this.repoSize = data?.repo_size ? new RepoSize(data.repo_size) : null;
   }
 
   setClientID(id: string | null) {
@@ -59,6 +63,10 @@ class ProjectDetails extends Model {
     this.story = new ContentURL(url);
   }
 
+  setRepoSize(size: number) {
+    this.repoSize = new RepoSize(size);
+  }
+
   toDetailsObject(): ProjectDetailsObject {
     return {
       privacy: this.privacy,
@@ -68,6 +76,7 @@ class ProjectDetails extends Model {
         ? this.teamList.map((user) => user.toUserObject())
         : null,
       story: this.story ? this.story.url : null,
+      repo_size: this.repoSize ? this.repoSize.amount : null,
     };
   }
 

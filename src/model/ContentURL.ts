@@ -1,6 +1,8 @@
 import Model from './Model';
 import RepoContentQuery from './RepoContentQuery';
 
+import { marked } from 'marked';
+
 export interface ContentURLObject {
   owner: string | null;
   repo: string | null;
@@ -8,7 +10,7 @@ export interface ContentURLObject {
   branch: string | null;
   url: string | null;
   isValid: boolean;
-};
+}
 
 class ContentURL extends Model {
   owner: string | null;
@@ -45,6 +47,14 @@ class ContentURL extends Model {
     this.path = parts[4] ?? null;
     this.branch = parts[3] ?? null;
     this.url = url;
+  }
+
+  fromMdtoHTML(md: string) {
+    try {
+      return marked.parse(md);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   toContentURLObject(): ContentURLObject {

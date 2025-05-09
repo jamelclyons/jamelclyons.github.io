@@ -69,8 +69,8 @@ class RepoContents extends Model {
       development: this.development
         ? this.development.toRepoContentObject()
         : null,
-      delivery: this.development
-        ? this.development.toRepoContentObject()
+      delivery: this.delivery
+        ? this.delivery.toRepoContentObject()
         : null,
       problem: this.problem ? this.problem.toRepoContentObject() : null,
       details: this.details ? this.details.toRepoContentObject() : null,
