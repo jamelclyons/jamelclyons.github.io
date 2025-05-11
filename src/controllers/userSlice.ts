@@ -11,7 +11,7 @@ import {
 } from '@/controllers/githubSlice';
 import { getUserData } from '@/controllers/databaseSlice';
 
-import User from '@/model/User';
+import User, { UserObject } from '@/model/User';
 
 interface UserState {
   userLoading: boolean;
@@ -25,8 +25,8 @@ interface UserState {
   bio: string;
   resume: string;
   content: Array<string> | null;
-  userObject: Record<string, any> | null;
-  authenticatedUserObject: Record<string, any> | null;
+  userObject: UserObject | null;
+  authenticatedUserObject: UserObject | null;
   organizations: [];
   repos: [];
   socialAccounts: [];
@@ -63,9 +63,12 @@ export const getAuthenticatedUserAccount = createAsyncThunk(
       ) {
         const user = new User(userResponse.payload);
 
-        const databaseResponse = await thunkAPI.dispatch(getUserData(user.id));
+        const databaseResponse = user.id
+          ? await thunkAPI.dispatch(getUserData(user.id))
+          : null;
 
         if (
+          databaseResponse &&
           getUserData.fulfilled.match(databaseResponse) &&
           databaseResponse.payload?.data
         ) {
@@ -94,14 +97,19 @@ export const getUser = createAsyncThunk(
         getUserAccount.fulfilled.match(userResponse) &&
         userResponse.payload
       ) {
-        // const databaseResponse = await thunkAPI.dispatch(getUserData(user.id));
+        const user = new User();
 
-        // if (
-        //   getUserData.fulfilled.match(databaseResponse) &&
-        //   databaseResponse.payload
-        // ) {
-        //   user.fromDB(databaseResponse.payload);
-        // }
+        const databaseResponse = user.id
+          ? await thunkAPI.dispatch(getUserData(user.id))
+          : null;
+
+        if (
+          databaseResponse &&
+          getUserData.fulfilled.match(databaseResponse) &&
+          databaseResponse.payload
+        ) {
+          user.fromDB(databaseResponse.payload);
+        }
 
         return { ...userResponse.payload };
       }

@@ -5,7 +5,7 @@ import User from '@/model/User';
 import userJson from '../../../user.json';
 
 interface HeaderComponentProps {
-  user: User;
+  user: User | null;
 }
 
 const HeaderComponent: React.FC<HeaderComponentProps> = ({ user }) => {
@@ -13,7 +13,7 @@ const HeaderComponent: React.FC<HeaderComponentProps> = ({ user }) => {
   const [dropdown, setDropdown] = useState('hide');
 
   useEffect(() => {
-    if (user.name) {
+    if (user && user.name) {
       setName(user.name)
     }
   }, [user]);

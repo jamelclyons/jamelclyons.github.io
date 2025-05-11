@@ -8,14 +8,14 @@ import {
 import { getOrganizationDetails } from '@/controllers/githubSlice';
 import { getOrganizationData } from '@/controllers/databaseSlice';
 
-import Organization from '@/model/Organization';
+import Organization, { OrganizationObject } from '@/model/Organization';
 
 interface OrganizationState {
   organizationLoading: boolean;
   organizationStatusCode: string;
   organizationError: Error | null;
   organizationErrorMessage: string;
-  organizationObject: Record<string, any> | null;
+  organizationObject: OrganizationObject | null;
 }
 
 const initialState: OrganizationState = {

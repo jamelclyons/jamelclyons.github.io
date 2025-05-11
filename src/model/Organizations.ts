@@ -8,7 +8,7 @@ class Organizations extends Model {
   list: Array<Organization>;
   count: number;
 
-  constructor(data?: Array<Record<string, any>> | Array<OrganizationObject>) {
+  constructor(data?: Array<OrganizationObject>) {
     super();
 
     let organizations: Array<Organization> = [];

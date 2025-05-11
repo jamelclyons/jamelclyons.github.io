@@ -1,15 +1,27 @@
 import Model from '../model/Model';
-import Project from './Project';
+import Project, { ProjectObject } from './Project';
 import Repo from './Repo';
 import Repos from './Repos';
+
+export type PortfolioObject = {
+  projects: Array<ProjectObject> | null;
+};
 
 class Portfolio extends Model {
   projects: Set<Project>;
   size: number;
 
-  constructor(repos: Repos) {
+  constructor(portfolio?: PortfolioObject) {
     super();
 
+    this.projects =
+      portfolio && portfolio.projects && portfolio.projects.length > 0
+        ? new Set(portfolio.projects.map((project) => new Project(project)))
+        : new Set();
+    this.size = this.getCount();
+  }
+
+  fromRepos(repos: Repos) {
     this.projects =
       repos && repos.collection && repos.collection.length > 0
         ? this.getProjects(repos.collection)
@@ -133,11 +145,11 @@ class Portfolio extends Model {
     return updatedProjects;
   }
 
-  filterProject(id: string): Project {
+  filterProject(name: string): Project {
     let filteredProject = new Project();
 
     this.projects.forEach((project) => {
-      if (project.id == id) {
+      if (project.name == name) {
         filteredProject = project;
       }
     });
@@ -157,6 +169,14 @@ class Portfolio extends Model {
     }
 
     return updatedProjects;
+  }
+
+  toPortfolioObject(): PortfolioObject {
+    return {
+      projects: this.projects
+        ? Array.from(this.projects).map((project) => project.toProjectObject())
+        : null,
+    };
   }
 }
 

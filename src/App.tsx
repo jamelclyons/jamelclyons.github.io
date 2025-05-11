@@ -39,9 +39,24 @@ const App: React.FC = () => {
   const { authenticatedUserObject } = useSelector((state: RootState) => state.user);
   const { skillsObject } = useSelector((state: RootState) => state.taxonomies);
 
-  const [user, setUser] = useState<User>(new User(authenticatedUserObject ?? {}));
-  const [avatarURL, setAvatarURL] = useState<string | null>(user.avatarURL ?? userJson.avatar_url);
+  const usr = new User();
+  usr.fromJson(userJson);
+
+  const [user, setUser] = useState<User>(usr);
+  const [avatarURL, setAvatarURL] = useState<string | null>(null);
   const [skills, setSkills] = useState<Skills>(new Skills());
+
+  useEffect(() => {
+    if (authenticatedUserObject) {
+      setUser(new User(authenticatedUserObject))
+    }
+  }, [authenticatedUserObject]);
+
+  useEffect(() => {
+    if (user) {
+      setAvatarURL(user.avatarURL)
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!authenticatedUserObject) {
@@ -54,12 +69,6 @@ const App: React.FC = () => {
       setUser(new User(authenticatedUserObject));
     }
   }, [authenticatedUserObject]);
-
-  useEffect(() => {
-    if (user.avatarURL) {
-      setAvatarURL(user.avatarURL);
-    }
-  }, [user]);
 
   useEffect(() => {
     if (skillsObject) {

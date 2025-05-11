@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 
-import { setMessage, setMessageType, setShowStatusBar } from '@/controllers/messageSlice';
-import { getPortfolio } from '@/controllers/portfolioSlice';
-
-import type { AppDispatch, RootState } from '@/model/store';
 import User from '@/model/User';
 import Project from '@/model/Project';
 import Portfolio from '@/model/Portfolio';
@@ -16,12 +11,12 @@ interface PortfolioEditPageProps {
 }
 
 const PortfolioEditPage: React.FC<PortfolioEditPageProps> = ({ user }) => {
-    const [portfolio, setPortfolio] = useState<Portfolio | null>(user.repos ? new Portfolio(user.repos) : null);
+    const [portfolio, setPortfolio] = useState<Portfolio | null>(user.portfolio);
     const [projects, setProjects] = useState<Set<Project>>(portfolio && portfolio.projects ? portfolio.projects : new Set);
 
     useEffect(() => {
-        if (user.repos) {
-            setPortfolio(new Portfolio(user.repos));
+        if (user.portfolio) {
+            setPortfolio(user.portfolio);
         }
     }, [user]);
 

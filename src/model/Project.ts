@@ -534,7 +534,11 @@ class Project extends Model {
         : null;
 
       data.details?.team_list
-        ? data.details?.team_list.map((user) => new User({ id: user }))
+        ? data.details?.team_list.map((userID) => {
+            const usr = new User();
+            usr.setID(userID);
+            return usr;
+          })
         : null;
     }
   }

@@ -10,30 +10,18 @@ import { OrganizationGQL, OrganizationObject } from './Organization';
 import ContentURL from '@/model/ContentURL';
 
 import user from '../../user.json';
-import Account from './Account';
+import Account, { AccountObject } from './Account';
 
-import { graphql } from '@octokit/graphql';
-
-export interface UserObject {
-  id: string;
-  login: string;
-  avatar_url: string | null;
-  name: string | null;
+export type UserObject = AccountObject & {
   title: string | null;
   bio: string | null;
-  email: string | null;
+  website: string | null;
+  story: string | null;
   phone: string | null;
   resume: string | null;
-  website: string | null;
-  contact_methods: ContactMethodsObject | null;
-  images: Array<ImageObject> | null;
   organizations_url: string | null;
   organizations: Array<OrganizationObject> | null;
-  repos_url: string | null;
-  repos: Array<RepoObject> | null;
-  repo_queries: Array<GitHubRepoQueryObject> | null;
-  story: string | null;
-}
+};
 
 export type UserGQLResponse = {
   viewer: {
@@ -53,27 +41,18 @@ export type UserGQLResponse = {
 };
 
 class User extends Account {
-  id: string;
-  login: string;
-  avatarURL: string | null;
-  name: string | null;
+  type: string = 'User';
   title: string | null;
   bio: string | null;
-  email: string | null;
+  website: string | null;
+  story: ContentURL | null;
   phone: string | null;
   resume: string | null;
-  website: string | null;
-  contactMethods: ContactMethods | null;
-  images: Array<Image>;
   organizationsURL: string | null;
   organizations: Organizations | null;
-  reposURL: string | null;
-  repos: Repos | null;
-  repoQueries: Array<GitHubRepoQuery> | null;
-  story: ContentURL | null;
 
-  constructor(data: Record<string, any> | UserObject = {}) {
-    super();
+  constructor(data?: UserObject) {
+    super(data);
 
     this.id = data?.id || this.getID();
     this.login = data?.login || null;
@@ -88,22 +67,25 @@ class User extends Account {
     this.contactMethods = data?.contact_methods
       ? new ContactMethods(data.contact_methods)
       : null;
-    this.images = data?.images
-      ? data.images.map((image: ImageObject) => new Image(image))
+    this.organizationsURL = data?.organizations_url
+      ? data?.organizations_url
       : null;
-    this.organizationsURL = data?.organizations_url;
     this.organizations = data?.organizations
       ? new Organizations(data.organizations)
       : null;
-    this.reposURL = data?.repos_url;
-    this.repos = data?.repos ? new Repos(data.repos) : new Repos();
+    this.reposURL = data?.repos_url ? data?.repos_url : null;
+    this.repos = data?.repos ? new Repos(data.repos) : null;
     this.repoQueries = data?.repo_queries
       ? this.getRepoQueries(data.repo_queries)
-      : null;
+      : [];
     this.story =
       data?.story && typeof data.story === 'string'
         ? new ContentURL(data?.story)
         : null;
+  }
+
+  setID(id: string) {
+    this.id = id;
   }
 
   getID() {
@@ -134,11 +116,11 @@ class User extends Account {
     return repos.collection.map((repo) => repo.toObject());
   }
 
-  setOrganizations(organizations: Array<Record<string, any>>) {
+  setOrganizations(organizations: Array<OrganizationObject>) {
     this.organizations = new Organizations(organizations);
   }
 
-  getOrganizations(organizations: Array<Record<string, any>>) {
+  getOrganizations(organizations: Array<OrganizationObject>) {
     const orgs = new Organizations(organizations);
     return orgs.list.map((org) => org.toOrganizationObject());
   }
@@ -223,8 +205,6 @@ class User extends Account {
     } catch (error) {
       console.error(`Invalid URL: ${data?.resume}`, error);
     }
-
-    this.images = data?.images || '';
   }
 
   getRepoQueries(data: Array<Record<string, any>>) {
@@ -262,25 +242,41 @@ class User extends Account {
     this.story = new ContentURL(url);
   }
 
+  fromJson(json: Record<string, any>) {
+    this.id = '0';
+    this.login = json.contact_methods.login || null;
+    this.avatarURL = json.avatar_url || null;
+    this.name = json.name || null;
+    this.title = json.title || null;
+    this.email = json.contact_methods.email.value || null;
+    this.phone = json.contact_methods.phone.value || null;
+    this.resume = json.resume || null;
+    this.website = json.website || null;
+    this.contactMethods = json.contact_methods
+      ? new ContactMethods(json.contact_methods)
+      : null;
+  }
+
   toUserObject(): UserObject {
     return {
       id: this.id,
+      created_at: this.createdAt,
+      updated_at: this.updatedAt,
       login: this.login,
       avatar_url: this.avatarURL,
       name: this.name,
       title: this.title,
+      location: this.location,
       bio: this.bio,
       email: this.email,
       phone: this.phone,
       resume: this.resume,
       website: this.website,
+      story: this.story ? this.story.url : null,
+      url: this.url,
       contact_methods: this.contactMethods
         ? this.contactMethods.toContactMethodsObject()
         : null,
-      images:
-        this.images && this.images.length > 0
-          ? this.images.map((image) => image.toImageObject())
-          : null,
       organizations_url: this.organizationsURL,
       organizations:
         this.organizations && this.organizations.list.length > 0
@@ -297,7 +293,8 @@ class User extends Account {
               .filter((repoQuery) => repoQuery.owner && repoQuery.repo)
               .map((repoQuery) => repoQuery.toGitHubRepoQueryObject())
           : null,
-      story: this.story ? this.story.url : null,
+      skills: this.skills ? this.skills.toSkillsObject() : null,
+      portfolio: this.portfolio ? this.portfolio.toPortfolioObject() : null,
     };
   }
 }

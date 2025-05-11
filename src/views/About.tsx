@@ -26,7 +26,7 @@ const About: React.FC<AboutProps> = ({ user, skills }) => {
 
   const { githubLoading } = useSelector((state: RootState) => state.github);
 
-  const [portfolio, setPortfolio] = useState<Portfolio | null>(user.repos ? new Portfolio(user.repos) : null);
+  const [portfolio, setPortfolio] = useState<Portfolio | null>(user.portfolio);
 
   useEffect(() => {
     user.setName(userJson.name)
@@ -52,8 +52,8 @@ const About: React.FC<AboutProps> = ({ user, skills }) => {
   }, [githubLoading]);
 
   useEffect(() => {
-    if (user.repos) {
-      setPortfolio(new Portfolio(user.repos));
+    if (user.portfolio) {
+      setPortfolio(user.portfolio);
     }
   }, [user]);
 

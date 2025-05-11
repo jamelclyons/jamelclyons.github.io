@@ -4,7 +4,7 @@ import RepoContents, { RepoContentsObject } from './RepoContents';
 import RepoContent from './RepoContent';
 import { Language, Technology } from './Taxonomy';
 import Contributors, { ContributorsObject } from './Contributors';
-import User from './User';
+import User, { UserObject } from './User';
 import ProjectSkills, { ProjectSkillsObject } from './ProjectSkills';
 import Issues, { IssuesObject } from './Issues';
 import Issue, { IssueGQL, IssueObject } from './Issue';
@@ -75,9 +75,9 @@ class Repo extends Model {
     this.skills = data?.skills ? this.getSkills(data.skills) : null;
     this.contents = data?.contents ? new RepoContents(data.contents) : null;
     this.contributorsURL = data?.contributors_url;
-    this.contributors = new Contributors(
-      this.setContributors(data?.contributors)
-    );
+    this.contributors = data?.contributors
+      ? new Contributors(data.contributors)
+      : null;
     this.issues =
       data.issues && Array.isArray(data.issues.list)
         ? new Issues(data.issues.list)
@@ -339,33 +339,29 @@ class Repo extends Model {
     }
   }
 
-  contributorsFromGitHub(data?: Array<Record<string, any>>) {
-    const contributors: Array<User> = [];
+  contributorsFromGitHub(contributors?: Array<UserObject>) {
+    if (
+      contributors &&
+      Array.isArray(contributors) &&
+      contributors.length > 0
+    ) {
+      const users: Array<User> = [];
 
-    if (data && Array.isArray(data) && data.length > 0) {
-      data.forEach((contributor) => {
+      contributors.forEach((contributor) => {
         const user = new User(contributor);
-        contributors.push(user);
+        users.push(user);
       });
 
       this.contributors
         ? this.contributors
         : (this.contributors = new Contributors());
-      this.contributors.set(contributors);
+
+      this.contributors.set(users);
     }
   }
 
-  setContributors(data?: Array<Record<string, any>>) {
-    if (data && Array.isArray(data) && data.length > 0) {
-      const contributors: Array<User> = [];
-
-      data.forEach((contributor) => {
-        const user = new User(contributor);
-        contributors.push(user);
-      });
-
-      return contributors;
-    }
+  setContributors(contributors: Contributors) {
+    this.contributors = contributors;
   }
 
   setIssues(data: Array<IssueObject>) {

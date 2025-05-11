@@ -27,7 +27,7 @@ interface SearchProps {
 const Search: React.FC<SearchProps> = ({ user, skills }) => {
   const { taxonomy, term } = useParams<string>();
 
-  const [portfolio, setPortfolio] = useState<Portfolio | null>(user.repos ? new Portfolio(user.repos) : null);
+  const [portfolio, setPortfolio] = useState<Portfolio | null>(user.portfolio);
   const [projects, setProjects] = useState<Set<Project>>(new Set);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const Search: React.FC<SearchProps> = ({ user, skills }) => {
 
   useEffect(() => {
     if (user.repos) {
-      setPortfolio(new Portfolio(user.repos));
+      setPortfolio(user.portfolio);
     }
   }, [user]);
 

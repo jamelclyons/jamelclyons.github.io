@@ -17,7 +17,7 @@ import RepoContentQuery from '@/model/RepoContentQuery';
 import Organization from '@/model/Organization';
 
 import Repo, { RepoObject } from '@/model/Repo';
-import User, { UserGQLResponse } from '@/model/User';
+import User, { UserGQLResponse, UserObject } from '@/model/User';
 
 import { setMessage } from './messageSlice';
 import Repos from '@/model/Repos';
@@ -26,6 +26,7 @@ import RepoURL from '@/model/RepoURL';
 import RepoAPIURL from '@/model/RepoAPIURL';
 import Issue, { IssueGQL } from '@/model/Issue';
 import Issues, { IssuesObject } from '@/model/Issues';
+import Contributors from '@/model/Contributors';
 
 type OctokitResponse<T = any, S = number> = {
   data: T;
@@ -173,27 +174,24 @@ export const getRepoLanguages = createAsyncThunk(
   }
 );
 
+export type RepoContributorsResponse = GetResponseTypeFromEndpointMethod<
+  typeof octokit.rest.repos.listContributors
+>;
+
 export const getContributors = createAsyncThunk(
   'github/getContributors',
   async (query: GitHubRepoQuery) => {
     try {
-      const repoContributors = await octokit.rest.repos.listContributors({
-        owner: query.owner,
-        repo: query.repo,
-      });
-
-      let contributors: Array<Record<string, any>> = [];
-
-      if (
-        Array.isArray(repoContributors.data) &&
-        repoContributors.data.length > 0
-      ) {
-        repoContributors.data.forEach((user) => {
-          contributors.push(user);
+      const repoContributors: RepoContributorsResponse =
+        await octokit.rest.repos.listContributors({
+          owner: query.owner,
+          repo: query.repo,
         });
-      }
 
-      return contributors;
+      const contributors = new Contributors();
+      contributors.fromGitHub(repoContributors);
+
+      return contributors.toContributorsObject();
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -378,23 +376,32 @@ export const getRepoDetails = createAsyncThunk(
           repo.filterContents(contentsResponse);
         }
 
-        const contributorsResponse = await fetch(repo.contributorsURL, {
-          headers: headers,
-        });
+        const contributorsResponse = await thunkAPI
+          .dispatch(getContributors(query))
+          .unwrap();
 
-        if (contributorsResponse.status === 200) {
-          const contributorsJson = await contributorsResponse.json();
-
-          if (Array.isArray(contributorsJson) && contributorsJson.length > 0) {
-            const contributorsArray: Array<Record<string, any>> = [];
-
-            contributorsJson.forEach((contributor) => {
-              contributorsArray.push(new User(contributor).toUserObject());
-            });
-
-            repo.contributorsFromGitHub(contributorsArray);
-          }
+        if (contributorsResponse) {
+          const contributors = new Contributors(contributorsResponse);
+          repo.setContributors(contributors)
         }
+
+        // const contributorsResponse = await fetch(repo.contributorsURL, {
+        //   headers: headers,
+        // });
+
+        // if (contributorsResponse.status === 200) {
+        //   const contributorsJson = await contributorsResponse.json();
+
+        //   if (Array.isArray(contributorsJson) && contributorsJson.length > 0) {
+        //     const contributorsArray: Array<Record<string, any>> = [];
+
+        //     contributorsJson.forEach((contributor) => {
+        //       contributorsArray.push(new User(contributor).toUserObject());
+        //     });
+
+        //     repo.contributorsFromGitHub(contributorsArray);
+        //   }
+        // }
 
         const issuesResponse = await thunkAPI
           .dispatch(getIssues(repo.apiURL))
@@ -469,7 +476,7 @@ export const getRepoDetailsList = createAsyncThunk(
 );
 
 export const getAuthenticatedAccount = createAsyncThunk(
-  'github/getAccount',
+  'github/getAuthenticatedAccount',
   async (_, thunkAPI) => {
     try {
       const query = `
@@ -490,6 +497,7 @@ export const getAuthenticatedAccount = createAsyncThunk(
                 url
                 owner {
                   id
+                  __typename
                   login
                 }
                 issues(first: 10) {
@@ -517,6 +525,7 @@ export const getAuthenticatedAccount = createAsyncThunk(
                     url
                     owner {
                       id
+                      __typename
                       login
                     }
                     issues(first: 10) {
@@ -544,11 +553,12 @@ export const getAuthenticatedAccount = createAsyncThunk(
         return user;
       });
 
-      const contactsResponse = await thunkAPI.dispatch(
-        getSocialAccounts(user.login)
-      );
+      const contactsResponse = user.login
+        ? await thunkAPI.dispatch(getSocialAccounts(user.login))
+        : null;
 
       if (
+        contactsResponse &&
         getSocialAccounts.fulfilled.match(contactsResponse) &&
         contactsResponse.payload
       ) {
@@ -630,11 +640,12 @@ export const getUserAccount = createAsyncThunk(
           repos = repoResponse.payload;
         }
 
-        const contactsResponse = await thunkAPI.dispatch(
-          getSocialAccounts(user.id)
-        );
+        const contactsResponse = user.id
+          ? await thunkAPI.dispatch(getSocialAccounts(user.id))
+          : null;
 
         if (
+          contactsResponse &&
           getSocialAccounts.fulfilled.match(contactsResponse) &&
           contactsResponse.payload
         ) {
@@ -646,11 +657,7 @@ export const getUserAccount = createAsyncThunk(
           user.contactMethods.setContactEmail({ value: user.email });
         }
 
-        return {
-          ...user.toUserObject(),
-          organizations: organizations,
-          repos: repos,
-        };
+        return user.toUserObject();
       }
 
       return null;

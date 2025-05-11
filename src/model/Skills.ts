@@ -10,11 +10,11 @@ import * as skills from '../../skills.json';
 import ProjectSkills from './ProjectSkills';
 
 export type SkillsObject = {
-  types: Array<Record<string, any>>;
-  languages: Array<Record<string, any>>;
-  frameworks: Array<Record<string, any>>;
-  technologies: Array<Record<string, any>>;
-  services: Array<Record<string, any>>;
+  types: Array<Record<string, any>> | null;
+  languages: Array<Record<string, any>> | null;
+  frameworks: Array<Record<string, any>> | null;
+  technologies: Array<Record<string, any>> | null;
+  services: Array<Record<string, any>> | null;
 };
 
 class Skills extends Model {
@@ -232,6 +232,32 @@ class Skills extends Model {
       ...this.technologies,
       ...this.services,
     ]);
+  }
+
+  toSkillsObject(): SkillsObject {
+    return {
+      types: this.types
+        ? Array.from(this.types).map((type) => type.toTaxonomyObject())
+        : null,
+      languages: this.languages
+        ? Array.from(this.languages).map((language) =>
+            language.toTaxonomyObject()
+          )
+        : null,
+      frameworks: this.frameworks
+        ? Array.from(this.frameworks).map((framework) =>
+            framework.toTaxonomyObject()
+          )
+        : null,
+      technologies: this.technologies
+        ? Array.from(this.technologies).map((technology) =>
+            technology.toTaxonomyObject()
+          )
+        : null,
+      services: this.services
+        ? Array.from(this.services).map((service) => service.toTaxonomyObject())
+        : null,
+    };
   }
 }
 

@@ -2,6 +2,7 @@ import Model from './Model';
 
 export type OwnerGQL = {
   id: string;
+  __typename: string;
   login: string;
 };
 
@@ -44,6 +45,7 @@ class Owner extends Model {
 
   fromGitHubGraphQL(owner: OwnerGQL) {
     this.id = owner.id;
+    this.type = owner.__typename;
     this.login = owner.login;
   }
 

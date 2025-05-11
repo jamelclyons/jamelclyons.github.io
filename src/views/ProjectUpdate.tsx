@@ -44,7 +44,7 @@ const ProjectUpdate: React.FC<ProjectUpdateProps> = ({ user }) => {
         (state: RootState) => state.update
     );
 
-    const [portfolio, setPortfolio] = useState<Portfolio | null>(user.repos ? new Portfolio(user.repos) : null);
+    const [portfolio, setPortfolio] = useState<Portfolio | null>(user.portfolio);
 
     const [owner, setOwner] = useState<Owner>(new Owner());
     const [id, setId] = useState<string>();
@@ -68,7 +68,7 @@ const ProjectUpdate: React.FC<ProjectUpdateProps> = ({ user }) => {
 
     useEffect(() => {
         if (user.repos) {
-            setPortfolio(new Portfolio(user.repos));
+            setPortfolio(user.portfolio);
         }
     }, [user]);
 

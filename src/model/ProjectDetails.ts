@@ -29,14 +29,14 @@ class ProjectDetails extends Model {
   story: ContentURL | null;
   repoSize: RepoSize | null;
 
-  constructor(data: Record<string, any> | ProjectDetailsObject = {}) {
+  constructor(data?: ProjectDetailsObject) {
     super();
 
     this.privacy = data?.privacy ? data.privacy : 'private';
     this.clientID = data?.client_id ? data.client_id : '0';
     this.content = data?.content ? new ContentURL(data.content) : null;
     this.teamList = data?.team_list ? this.getTeamList(data.team_list) : null;
-    this.story = data?.story ? new ContentURL(data.content) : null;
+    this.story = data?.story ? new ContentURL(data.story) : null;
     this.repoSize = data?.repo_size ? new RepoSize(data.repo_size) : null;
   }
 
@@ -48,7 +48,7 @@ class ProjectDetails extends Model {
     this.content = new ContentURL(url);
   }
 
-  getTeamList(data: Array<Record<string, any>>) {
+  getTeamList(data: Array<UserObject>) {
     let teamList: Array<User> = [];
 
     if (Array.isArray(data) && data.length > 0) {
@@ -85,7 +85,9 @@ class ProjectDetails extends Model {
       privacy: this.privacy,
       client_id: this.clientID,
       content: this.content ? this.content.url : null,
-      team_list: this.teamList ? this.teamList.map((user) => user.id) : null,
+      team_list: this.teamList
+        ? this.teamList.map((user) => (user.id ? user.id : '0'))
+        : null,
       story: this.story ? this.story.url : null,
     };
   }

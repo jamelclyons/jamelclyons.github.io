@@ -1,8 +1,5 @@
-import Model from './Model';
 import ContactMethods, { ContactMethodsObject } from './ContactMethods';
 import Repos from './Repos';
-
-import * as organization from '../../organization.json';
 
 import GitHubRepoQuery, { GitHubRepoQueryObject } from './GitHubRepoQuery';
 import { RepoObject, RepositoryGQL } from './Repo';
@@ -38,43 +35,28 @@ export type OrganizationObject = {
 };
 
 class Organization extends Account {
-  id: string | null;
-  createdAt: string | null;
-  updatedAt: string | null;
-  avatarURL: string | null;
-  login: string | null;
-  description: string | null;
-  name: string | null;
+  type: string = 'Organization';
   company: string | null;
+  description: string | null;
   blog: string | null;
-  location: string | null;
-  email: string | null;
-  url: string | null;
-  contactMethods: ContactMethods | null;
-  reposURL: string | null;
-  repos: Repos | null;
-  repoQueries: Array<GitHubRepoQuery>;
 
-  constructor(data: Record<string, any> = {}) {
+  constructor(data?: OrganizationObject) {
     super();
 
-    const { name, company, founded_on, location, website, contact, repos_url } =
-      organization;
-
-    this.id = data?.id;
-    this.createdAt = founded_on ?? data?.created_at;
-    this.updatedAt = data?.updated_at;
-    this.login = data?.login;
+    this.id = data?.id ? data.id : null;
+    this.createdAt = data?.created_at ? data?.created_at : null;
+    this.updatedAt = data?.updated_at ? data.updated_at : null;
+    this.login = data?.login ? data.login : null;
     this.avatarURL = data?.avatar_url ? data?.avatar_url : null;
-    this.description = data?.description;
-    this.name = name ?? data?.name;
-    this.company = company ?? data?.company;
-    this.blog = data?.blog ? data.blog : website;
-    this.location = location ?? data?.location;
-    this.email = contact.email.value ?? data?.email;
-    this.url = data?.url;
+    this.description = data?.description ? data.description : null;
+    this.name = data?.name ? data.name : null;
+    this.company = data?.company ? data.company : null;
+    this.blog = data?.blog ? data.blog : null;
+    this.location = data?.location ? data.location : null;
+    this.email = data?.email ? data.email : null;
+    this.url = data?.url ? data?.url : null;
     this.contactMethods = data?.contact_methods
-      ? new ContactMethods(data?.contact_methods)
+      ? new ContactMethods(data.contact_methods)
       : null;
     this.contactMethods
       ? this.contactMethods.setContactEmail({ value: this.email })
@@ -82,9 +64,11 @@ class Organization extends Account {
     this.contactMethods
       ? this.contactMethods.setContactWebsite({ url: this.blog })
       : null;
-    this.reposURL = repos_url ?? data?.repos_url;
-    this.repos = data?.repos ? new Repos(data.repos) : new Repos();
-    this.repoQueries = this.setRepoQueries(data?.repo_queries);
+    this.reposURL = data?.repos_url ? data?.repos_url : null;
+    this.repos = data?.repos ? new Repos(data.repos) : null;
+    this.repoQueries = data?.repo_queries
+      ? this.setRepoQueries(data?.repo_queries)
+      : [];
   }
 
   fromGitHubGraphQL(org: OrganizationGQL) {

@@ -19,8 +19,8 @@ const PortfolioComponent: React.FC<PortfolioComponentProps> = ({ account }) => {
   const [projects, setProjects] = useState<Set<Project>>(new Set());
 
   useEffect(() => {
-    if ((account instanceof Account) && account.repos) {
-      setPortfolio(new Portfolio(account.repos));
+    if ((account instanceof Account) && account.portfolio) {
+      setPortfolio(account.portfolio);
     }
   }, [account]);
 
