@@ -130,7 +130,7 @@ class Project extends Model {
   fromRepo(repo: Repo) {
     this.id = repo.id;
     this.name = repo.name;
-    this.title = this.title ? this.title : this.getTitle(repo.name);
+    this.title = this.title ? this.title : this.getTitle(this.name || 'Untitled Project');
     this.description = repo.description;
 
     if (repo.contents?.solution?.downloadURL || repo?.homepage) {

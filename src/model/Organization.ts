@@ -4,6 +4,9 @@ import Repos from './Repos';
 import GitHubRepoQuery, { GitHubRepoQueryObject } from './GitHubRepoQuery';
 import { RepoObject, RepositoryGQL } from './Repo';
 import Account from './Account';
+import Portfolio, { PortfolioObject } from './Portfolio';
+
+import { OrganizationAccountResponse } from '@/controllers/githubSlice';
 
 export type OrganizationGQL = {
   id: string;
@@ -13,6 +16,10 @@ export type OrganizationGQL = {
   repositories: {
     nodes: Array<RepositoryGQL>;
   };
+};
+
+export type OrganizationResponseGQL = {
+  organization: OrganizationGQL;
 };
 
 export type OrganizationObject = {
@@ -32,6 +39,7 @@ export type OrganizationObject = {
   repos_url: string | null;
   repos: Array<RepoObject> | null;
   repo_queries: Array<GitHubRepoQueryObject> | null;
+  portfolio: PortfolioObject | null;
 };
 
 class Organization extends Account {
@@ -69,9 +77,16 @@ class Organization extends Account {
     this.repoQueries = data?.repo_queries
       ? this.setRepoQueries(data?.repo_queries)
       : [];
+    this.portfolio = data?.portfolio ? new Portfolio(data.portfolio) : null;
   }
 
-  fromGitHubGraphQL(org: OrganizationGQL) {
+  fromGitHubGraphQL(response: OrganizationGQL) {
+    const org = response ? response : null;
+
+    if (!org) {
+      return;
+    }
+
     this.id = org.id;
     this.login = org.login;
     this.name = org.name;
@@ -85,9 +100,15 @@ class Organization extends Account {
       repos.fromGitHubGraphQL(org.repositories.nodes);
       this.repos = repos;
     }
+
+    if (this.repos && this.repos.count > 0) {
+      const portfolio = new Portfolio();
+      portfolio.fromRepos(this.repos);
+      this.portfolio = portfolio;
+    }
   }
 
-  getRepos(data: Array<Record<string, any>>) {
+  getRepos(data: Array<RepoObject>) {
     const repos = new Repos(data);
     return repos.collection.map((repo) => {
       return {
@@ -127,13 +148,13 @@ class Organization extends Account {
     });
   }
 
-  setReposFromGitHub(data: Array<Record<string, any>>) {
+  setReposFromGitHub(data: Array<RepoObject>) {
     const repos = new Repos();
     repos.fromGitHub(data);
     this.repos = repos;
   }
 
-  getReposFromGitHub(data: Array<Record<string, any>>) {
+  getReposFromGitHub(data: Array<RepoObject>) {
     const repos = new Repos();
     repos.fromGitHub(data);
     return repos.collection.map((repo) => {
@@ -174,7 +195,7 @@ class Organization extends Account {
     });
   }
 
-  fromGitHub(data: Record<string, any>) {
+  fromGitHub(data: OrganizationAccountResponse) {
     this.id = data?.login ? data?.login : this.id;
     this.createdAt = data?.created_at ? data?.created_at : this.createdAt;
     this.updatedAt = data?.updated_at ? data?.updated_at : this.updatedAt;
@@ -255,6 +276,7 @@ class Organization extends Account {
             repoQuery.toGitHubRepoQueryObject()
           )
         : null,
+      portfolio: this.portfolio ? this.portfolio.toPortfolioObject() : null,
     };
   }
 }

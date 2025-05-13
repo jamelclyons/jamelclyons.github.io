@@ -1,10 +1,14 @@
-import { RepoContributorsResponse } from '@/controllers/githubSlice';
+import Contributor, { ContributorObject } from './Contributor';
 import Model from './Model';
 import User, { UserObject } from './User';
+
+import { RepoContributorsResponse } from '@/controllers/githubSlice';
 
 export interface ContributorsObject {
   users: Array<UserObject>;
 }
+
+export type RepoContributors = Array<ContributorObject>;
 
 class Contributors extends Model {
   users: Array<User>;
@@ -22,14 +26,15 @@ class Contributors extends Model {
     this.users = users;
   }
 
-  fromGitHub(response: RepoContributorsResponse) {
+  fromGitHub(contributors: RepoContributors) {
     let users: Array<User> = [];
 
-    if (Array.isArray(response.data) && response.data.length > 0) {
-      response.data.forEach((contributor) => {
-        const user = new User();
-        user.fromGitHub(contributor);
-        users.push(user);
+    if (Array.isArray(contributors) && contributors.length > 0) {
+      contributors.forEach((contributor) => {
+        const user = new Contributor();
+        console.log(contributor);
+        // user.fromGitHub(contributor);
+        // users.push(user);
       });
     }
     this.users = users;

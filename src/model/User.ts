@@ -1,16 +1,16 @@
-import Image, { ImageObject } from '@/model/Image';
-import ContactMethods, { ContactMethodsObject } from '@/model/ContactMethods';
-import Organizations from '@/model/Organizations';
+import Account, { AccountObject } from '@/model/Account';
+import ContactMethods from '@/model/ContactMethods';
+import Organizations, { OrganizationsGQL } from '@/model/Organizations';
 import Repos from '@/model/Repos';
-import GitHubRepoQuery, {
-  GitHubRepoQueryObject,
-} from '@/model/GitHubRepoQuery';
+import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 import Repo, { RepoObject, RepositoryGQL } from '@/model/Repo';
-import { OrganizationGQL, OrganizationObject } from './Organization';
+import { OrganizationObject } from '@/model/Organization';
 import ContentURL from '@/model/ContentURL';
+import Portfolio from '@/model/Portfolio';
 
 import user from '../../user.json';
-import Account, { AccountObject } from './Account';
+
+import { UserResponse } from '@/controllers/githubSlice';
 
 export type UserObject = AccountObject & {
   title: string | null;
@@ -23,21 +23,24 @@ export type UserObject = AccountObject & {
   organizations: Array<OrganizationObject> | null;
 };
 
-export type UserGQLResponse = {
-  viewer: {
-    id: string;
-    login: string;
-    name: string;
-    email: string;
-    bio: string;
-    avatarUrl: string;
-    organizations: {
-      nodes: Array<OrganizationGQL>;
-    };
-    repositories: {
-      nodes: Array<RepositoryGQL>;
-    };
+export type UserGQL = {
+  id: string;
+  __typename: string;
+  login: string;
+  name: string;
+  email: string;
+  bio: string;
+  avatarUrl: string;
+  organizations: {
+    nodes: OrganizationsGQL;
   };
+  repositories: {
+    nodes: Array<RepositoryGQL>;
+  };
+};
+
+export type UserGQLResponse = {
+  viewer: UserGQL;
 };
 
 class User extends Account {
@@ -54,33 +57,33 @@ class User extends Account {
   constructor(data?: UserObject) {
     super(data);
 
-    this.id = data?.id || this.getID();
-    this.login = data?.login || null;
-    this.avatarURL = data?.avatar_url || null;
-    this.name = data?.name || null;
-    this.title = data?.title || null;
-    this.bio = data?.bio || null;
-    this.email = data?.email || null;
-    this.phone = data?.phone || null;
-    this.resume = data?.resume || null;
-    this.website = data?.website || null;
+    this.id = data?.id ? data.id : this.getID();
+    this.login = data?.login ? data?.login : null;
+    this.avatarURL = data?.avatar_url ? data?.avatar_url : null;
+    this.name = data?.name ? data.name : null;
+    this.title = data?.title ? data.title : null;
+    this.bio = data?.bio ? data.bio : null;
+    this.email = data?.email ? data?.email : null;
+    this.phone = data?.phone ? data?.phone : null;
+    this.resume = data?.resume ? data?.resume : null;
+    this.website = data?.website ? data?.website : null;
     this.contactMethods = data?.contact_methods
       ? new ContactMethods(data.contact_methods)
       : null;
     this.organizationsURL = data?.organizations_url
-      ? data?.organizations_url
+      ? data.organizations_url
       : null;
     this.organizations = data?.organizations
       ? new Organizations(data.organizations)
       : null;
-    this.reposURL = data?.repos_url ? data?.repos_url : null;
+    this.reposURL = data?.repos_url ? data.repos_url : null;
     this.repos = data?.repos ? new Repos(data.repos) : null;
     this.repoQueries = data?.repo_queries
       ? this.getRepoQueries(data.repo_queries)
       : [];
     this.story =
       data?.story && typeof data.story === 'string'
-        ? new ContentURL(data?.story)
+        ? new ContentURL(data.story)
         : null;
   }
 
@@ -107,11 +110,11 @@ class User extends Account {
     this.avatarURL = url;
   }
 
-  setRepos(data: Array<Record<string, any>>) {
+  setRepos(data: Array<RepoObject>) {
     this.repos = new Repos(data);
   }
 
-  getRepos(data: Array<Record<string, any>>) {
+  getRepos(data: Array<RepoObject>) {
     const repos = new Repos(data);
     return repos.collection.map((repo) => repo.toObject());
   }
@@ -125,8 +128,7 @@ class User extends Account {
     return orgs.list.map((org) => org.toOrganizationObject());
   }
 
-  fromGitHubGraphQL(data: UserGQLResponse) {
-    const user = data.viewer;
+  fromGitHubGraphQL(user: UserGQL) {
     this.id = user.id;
     this.avatarURL = user.avatarUrl;
     this.name = user.name;
@@ -134,20 +136,14 @@ class User extends Account {
     this.email = user.email;
     this.login = user.login;
 
-    let organizations = null;
-
     if (
       Array.isArray(user.organizations.nodes) &&
       user.organizations.nodes.length > 0
     ) {
       const orgs = new Organizations();
       orgs.fromGitHubGraphQL(user.organizations.nodes);
-      organizations = orgs;
+      this.organizations = orgs;
     }
-
-    this.organizations = organizations;
-
-    let repositories = null;
 
     if (
       Array.isArray(user.repositories.nodes) &&
@@ -155,20 +151,25 @@ class User extends Account {
     ) {
       const repos = new Repos();
       const orgRepos =
-        this.organizations?.list?.flatMap((org) =>
-          Array.isArray(org.repos?.collection) ? org.repos.collection : []
-        ) || [];
-
+        this.organizations && this.organizations.list
+          ? this.organizations.list.flatMap((org) =>
+              Array.isArray(org.repos?.collection) ? org.repos.collection : []
+            )
+          : [];
       repos.fromGitHubGraphQL(user.repositories.nodes);
       const totalRepos: Array<Repo> = [...orgRepos, ...repos.collection];
       repos.setCollection(totalRepos);
-      repositories = repos;
+      this.repos = repos;
     }
 
-    this.repos = repositories;
+    if (this.repos && this.repos.collection.length > 0) {
+      const portfolio = new Portfolio();
+      portfolio.fromRepos(this.repos);
+      this.portfolio = portfolio;
+    }
   }
 
-  fromGitHub(data: Record<string, any>) {
+  fromGitHub(data: UserResponse) {
     this.id = data?.login;
     this.avatarURL = data?.avatar_url;
     this.name = data?.name;

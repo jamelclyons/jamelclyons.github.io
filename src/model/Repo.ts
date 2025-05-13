@@ -9,6 +9,7 @@ import ProjectSkills, { ProjectSkillsObject } from './ProjectSkills';
 import Issues, { IssuesObject } from './Issues';
 import Issue, { IssueGQL, IssueObject } from './Issue';
 import { OwnerGQL } from './Owner';
+import { RepoResponse } from '@/controllers/githubSlice';
 
 export type RepositoryGQL = {
   id: string;
@@ -22,17 +23,17 @@ export type RepositoryGQL = {
 };
 
 export interface RepoObject {
-  id: string;
-  name: string;
+  id: string | null;
+  name: string | null;
   privacy: boolean;
-  size: number;
+  size: number | null;
   owner: OwnerObject | null;
-  created_at: string;
-  updated_at: string;
-  homepage: string;
-  description: string;
-  api_url: string;
-  repo_url: string;
+  created_at: string | null;
+  updated_at: string | null;
+  homepage: string | null;
+  description: string | null;
+  api_url: string | null;
+  repo_url: string | null;
   skills: ProjectSkillsObject | null;
   contents: RepoContentsObject | null;
   contributors_url: string | null;
@@ -41,45 +42,47 @@ export interface RepoObject {
 }
 
 class Repo extends Model {
-  id: string;
-  name: string;
+  id: string | null;
+  name: string | null;
   privacy: boolean;
-  size: number;
+  size: number | null;
   owner: Owner | null;
-  createdAt: string;
-  updatedAt: string;
-  homepage: string;
-  description: string;
-  apiURL: string;
-  repoURL: string;
+  createdAt: string | null;
+  updatedAt: string | null;
+  homepage: string | null;
+  description: string | null;
+  apiURL: string | null;
+  repoURL: string | null;
   skills: ProjectSkills | null;
   contents: RepoContents | null;
-  contributorsURL: string;
+  contributorsURL: string | null;
   contributors: Contributors | null;
   issues: Issues | null;
 
-  constructor(data: Record<string, any> | RepoObject = {}) {
+  constructor(data?: RepoObject) {
     super();
 
-    this.id = data?.id;
-    this.name = data?.name;
-    this.privacy = data?.privacy;
-    this.size = data?.size;
+    this.id = data?.id ? data.id : null;
+    this.name = data?.name ? data.name : null;
+    this.privacy = data?.privacy ? data?.privacy : false;
+    this.size = data?.size ? data?.size : null;
     this.owner = data?.owner ? new Owner(data.owner) : null;
-    this.createdAt = data?.created_at;
-    this.updatedAt = data?.updated_at;
-    this.homepage = data?.homepage;
-    this.description = data?.description;
-    this.apiURL = data?.api_url;
-    this.repoURL = data?.repo_url;
-    this.skills = data?.skills ? this.getSkills(data.skills) : null;
+    this.createdAt = data?.created_at ? data?.created_at : null;
+    this.updatedAt = data?.updated_at ? data?.updated_at : null;
+    this.homepage = data?.homepage ? data.homepage : null;
+    this.description = data?.description ? data.description : null;
+    this.apiURL = data?.api_url ? data.api_url : null;
+    this.repoURL = data?.repo_url ? data.repo_url : null;
+    this.skills = data?.skills ? new ProjectSkills(data.skills) : null;
     this.contents = data?.contents ? new RepoContents(data.contents) : null;
-    this.contributorsURL = data?.contributors_url;
+    this.contributorsURL = data?.contributors_url
+      ? data.contributors_url
+      : null;
     this.contributors = data?.contributors
       ? new Contributors(data.contributors)
       : null;
     this.issues =
-      data.issues && Array.isArray(data.issues.list)
+      data?.issues && Array.isArray(data.issues.list)
         ? new Issues(data.issues.list)
         : null;
   }
@@ -109,19 +112,19 @@ class Repo extends Model {
     this.issues = issues;
   }
 
-  fromGitHub(data: Record<string, any>) {
-    this.id = data?.name;
-    this.name = data.name;
-    this.privacy = data?.private;
-    this.size = data?.size;
-    this.owner = data?.owner ? new Owner(data.owner) : null;
-    this.createdAt = data?.created_at;
-    this.updatedAt = data?.pushed_at;
-    this.homepage = data?.homepage;
-    this.description = data?.description;
-    this.apiURL = data?.url;
-    this.repoURL = data?.html_url;
-    this.contributorsURL = data?.contributors_url;
+  fromGitHub(response: RepoResponse) {
+    this.id = response?.name;
+    this.name = response.name;
+    this.privacy = response?.private;
+    this.size = response?.size;
+    this.owner = response?.owner ? new Owner(response.owner) : null;
+    this.createdAt = response?.created_at;
+    this.updatedAt = response?.pushed_at;
+    this.homepage = response?.homepage;
+    this.description = response?.description;
+    this.apiURL = response?.url;
+    this.repoURL = response?.html_url;
+    this.contributorsURL = response?.contributors_url;
   }
 
   getOwner(data: Record<string, any>) {

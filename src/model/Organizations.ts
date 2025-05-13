@@ -1,8 +1,12 @@
 import Model from './Model';
 import Organization, {
-  OrganizationObject,
   OrganizationGQL,
+  OrganizationObject,
 } from './Organization';
+
+export type OrganizationsGQL = {
+  nodes: Array<OrganizationGQL>;
+};
 
 class Organizations extends Model {
   list: Array<Organization>;
@@ -18,22 +22,19 @@ class Organizations extends Model {
         organizations.push(new Organization(organization));
       });
     }
+    
     this.list = organizations;
     this.count = organizations.length;
   }
 
-  fromGitHubGraphQL(orgs: Array<OrganizationGQL>) {
-    let organizations: Array<Organization> = [];
-
-    if (Array.isArray(orgs) && orgs.length > 0) {
-      orgs.map((organization) => {
+  fromGitHubGraphQL(organizations: OrganizationsGQL) {
+    if (Array.isArray(organizations) && organizations.length > 0) {
+      this.list = organizations.map((organization) => {
         const org = new Organization();
         org.fromGitHubGraphQL(organization);
-        organizations.push(org);
+        return org;
       });
     }
-
-    this.list = organizations;
   }
 }
 

@@ -1,9 +1,28 @@
 import ContactMethods, { ContactMethodsObject } from './ContactMethods';
 import GitHubRepoQuery, { GitHubRepoQueryObject } from './GitHubRepoQuery';
+import { OrganizationGQL } from './Organization';
 import Portfolio, { PortfolioObject } from './Portfolio';
-import { RepoObject } from './Repo';
+import { RepoObject, RepositoryGQL } from './Repo';
 import Repos from './Repos';
 import Skills, { SkillsObject } from './Skills';
+
+export type AccountGQLResponse = {
+  viewer: {
+    id: string;
+    __typename:string;
+    login: string;
+    name: string;
+    email: string;
+    bio: string;
+    avatarUrl: string;
+    organizations: {
+      nodes: Array<OrganizationGQL>;
+    };
+    repositories: {
+      nodes: Array<RepositoryGQL>;
+    };
+  };
+};
 
 export type AccountObject = {
   id: string | null;

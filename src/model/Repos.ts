@@ -1,23 +1,17 @@
+import { AuthenticatedUserRepoResponse } from '@/controllers/githubSlice';
 import Model from './Model';
-import Repo, { RepositoryGQL } from './Repo';
+import Repo, { RepoObject, RepositoryGQL } from './Repo';
 
 class Repos extends Model {
   collection: Array<Repo>;
   count: number = 0;
 
-  constructor(data?: Array<Record<string, any>>) {
+  constructor(repos?: Array<RepoObject>) {
     super();
 
-    let repos: Array<Repo> = [];
-
-    if (Array.isArray(data)) {
-      data.forEach((repo) => {
-        repos.push(new Repo(repo));
-      });
-    }
-
-    this.collection = repos;
-    this.count = repos.length;
+    this.collection =
+      repos && Array.isArray(repos) ? repos.map((repo) => new Repo(repo)) : [];
+    this.count = this.collection.length;
   }
 
   setCollection(collection: Array<Repo>) {
@@ -36,22 +30,16 @@ class Repos extends Model {
     }
 
     this.collection = repositories;
+    this.count = this.collection.length;
   }
 
-  fromGitHub(data?: Array<Record<string, any>>) {
-    let repos: Array<Repo> = [];
+  fromGitHub(repos?: Array<RepoObject>) {
+    this.collection = repos ? repos.map((repo) => new Repo(repo)) : [];
+    this.count = this.collection.length;
+  }
 
-    if (Array.isArray(data)) {
-      data.forEach((repoObject) => {
-        const repo = new Repo();
-        repo.fromGitHub(repoObject);
-        repos.push(repo);
-      });
-    }
-
-    this.collection = repos;
-    this.count = repos.length;
+  fromGitHubAuthenticatedUser(repos: AuthenticatedUserRepoResponse) {
+    console.log(repos);
   }
 }
-
 export default Repos;
