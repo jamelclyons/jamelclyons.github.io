@@ -1,14 +1,14 @@
 import Model from './Model';
-import User, { UserObject } from './User';
 
 import ContentURL from './ContentURL';
 import RepoSize from './RepoSize';
+import Contributor, { ContributorObject } from './Contributor';
 
 export type ProjectDetailsObject = {
   privacy: string | null;
   client_id: string | null;
   content: string | null;
-  team_list: Array<UserObject> | null;
+  team_list: Array<ContributorObject> | null;
   story: string | null;
   repo_size: number | null;
 };
@@ -17,7 +17,7 @@ export type ProjectDetailsDataObject = {
   privacy: string | null;
   client_id: string | null;
   content: string | null;
-  team_list: Array<string> | null;
+  team_list: Array<number> | null;
   story: string | null;
 };
 
@@ -25,7 +25,7 @@ class ProjectDetails extends Model {
   privacy: string | null;
   clientID: string | null;
   content: ContentURL | null;
-  teamList: Array<User> | null;
+  teamList: Array<Contributor> | null;
   story: ContentURL | null;
   repoSize: RepoSize | null;
 
@@ -48,14 +48,15 @@ class ProjectDetails extends Model {
     this.content = new ContentURL(url);
   }
 
-  getTeamList(data: Array<UserObject>) {
-    let teamList: Array<User> = [];
+  getTeamList(data: Array<ContributorObject>) {
+    let teamList: Array<Contributor> = [];
 
     if (Array.isArray(data) && data.length > 0) {
-      data.forEach((user) => {
-        teamList.push(new User(user));
+      data.forEach((contributor) => {
+        teamList.push(new Contributor(contributor));
       });
     }
+
     return teamList;
   }
 
@@ -67,13 +68,17 @@ class ProjectDetails extends Model {
     this.repoSize = new RepoSize(size);
   }
 
+  setTeamList(team: Array<Contributor>) {
+    this.teamList = team;
+  }
+
   toDetailsObject(): ProjectDetailsObject {
     return {
       privacy: this.privacy,
       client_id: this.clientID,
       content: this.content ? this.content.url : null,
       team_list: this.teamList
-        ? this.teamList.map((user) => user.toUserObject())
+        ? this.teamList.map((contributor) => contributor.toContributorObject())
         : null,
       story: this.story ? this.story.url : null,
       repo_size: this.repoSize ? this.repoSize.amount : null,
@@ -86,7 +91,9 @@ class ProjectDetails extends Model {
       client_id: this.clientID,
       content: this.content ? this.content.url : null,
       team_list: this.teamList
-        ? this.teamList.map((user) => (user.id ? user.id : '0'))
+        ? this.teamList
+            .filter((contributor) => contributor.id)
+            .map((contributor) => contributor.id)
         : null,
       story: this.story ? this.story.url : null,
     };

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 
 import User from '@/model/User'
+import Contributor from '@/model/Contributor';
 
 interface MemberPicProps {
-    user: User;
+    user: User | Contributor;
 }
 
 const MemberPic: React.FC<MemberPicProps> = ({ user }) => {

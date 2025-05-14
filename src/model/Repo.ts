@@ -342,26 +342,26 @@ class Repo extends Model {
     }
   }
 
-  contributorsFromGitHub(contributors?: Array<UserObject>) {
-    if (
-      contributors &&
-      Array.isArray(contributors) &&
-      contributors.length > 0
-    ) {
-      const users: Array<User> = [];
+  // contributorsFromGitHub(contributors?: Array<UserObject>) {
+  //   if (
+  //     contributors &&
+  //     Array.isArray(contributors) &&
+  //     contributors.length > 0
+  //   ) {
+  //     const users: Array<User> = [];
 
-      contributors.forEach((contributor) => {
-        const user = new User(contributor);
-        users.push(user);
-      });
+  //     contributors.forEach((contributor) => {
+  //       const user = new User(contributor);
+  //       users.push(user);
+  //     });
 
-      this.contributors
-        ? this.contributors
-        : (this.contributors = new Contributors());
+  //     this.contributors
+  //       ? this.contributors
+  //       : (this.contributors = new Contributors());
 
-      this.contributors.set(users);
-    }
-  }
+  //     this.contributors.set(users);
+  //   }
+  // }
 
   setContributors(contributors: Contributors) {
     this.contributors = contributors;

@@ -14,6 +14,7 @@ import {
 } from '@/controllers/messageSlice';
 import { updateProject } from '@/controllers/updateSlice';
 import { UserObject } from '@/model/User';
+import Contributor, { ContributorObject } from '@/model/Contributor';
 
 interface UpdateDetailsProps {
   project: Project;
@@ -27,7 +28,7 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
   const [privacy, setPrivacy] = useState<string>('private');
   const [clientID, setClientID] = useState<string>('0');
   const [content, setContent] = useState<ContentURL | null>(null);
-  const [team, setTeam] = useState<Array<UserObject>>([]);
+  const [team, setTeam] = useState<Array<ContributorObject>>([]);
   const [story, setStory] = useState<ContentURL | null>(null);
 
   useEffect(() => {
@@ -38,7 +39,7 @@ const UpdateDetails: React.FC<UpdateDetailsProps> = ({ project }) => {
     setPrivacy(project.details?.privacy ?? 'private')
     setClientID(project.details?.clientID ?? '0')
     setContent(project.details?.content ?? null)
-    setTeam(project.details?.teamList ? project.details?.teamList?.map((user) => user.toUserObject()) : [])
+    setTeam(project.details?.teamList ? project.details?.teamList?.map((user) => user.toContributorObject()) : [])
     setStory(project.details?.story ?? null)
   }, [project.details]);
 

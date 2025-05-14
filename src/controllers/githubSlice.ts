@@ -195,6 +195,8 @@ export type RepoContributorsResponse = GetResponseTypeFromEndpointMethod<
 
 export type RepoContributors = RepoContributorsResponse['data'];
 
+export type RepoContributor = RepoContributors[number];
+
 export const getContributors = createAsyncThunk(
   'github/getContributors',
   async (query: GitHubRepoQuery) => {
@@ -204,11 +206,16 @@ export const getContributors = createAsyncThunk(
           owner: query.owner,
           repo: query.repo,
         });
-console.log(repoContributors.data)
-      const contributors = new Contributors();
-      // contributors.fromGitHub(repoContributors.data);
 
-      return contributors.toContributorsObject();
+      if (repoContributors.data) {
+        const contributors = new Contributors();
+        const tRepoContributors = repoContributors.data as RepoContributors;
+        contributors.fromGitHub(tRepoContributors);
+
+        return contributors.toContributorsObject();
+      }
+
+      return null;
     } catch (error) {
       const err = error as Error;
       console.error(err);
@@ -392,14 +399,14 @@ export const getRepoDetails = createAsyncThunk(
           repo.filterContents(contentsResponse);
         }
 
-        // const contributorsResponse = await thunkAPI
-        //   .dispatch(getContributors(query))
-        //   .unwrap();
+        const contributorsResponse = await thunkAPI
+          .dispatch(getContributors(query))
+          .unwrap();
 
-        // if (contributorsResponse) {
-        //   const contributors = new Contributors(contributorsResponse);
-        //   repo.setContributors(contributors);
-        // }
+        if (contributorsResponse) {
+          const contributors = new Contributors(contributorsResponse);
+          repo.setContributors(contributors);
+        }
 
         const issuesResponse = repo.apiURL
           ? await thunkAPI.dispatch(getIssues(repo.apiURL)).unwrap()

@@ -2,47 +2,50 @@ import Contributor, { ContributorObject } from './Contributor';
 import Model from './Model';
 import User, { UserObject } from './User';
 
-import { RepoContributorsResponse } from '@/controllers/githubSlice';
+import {
+  RepoContributorsResponse,
+  RepoContributors,
+} from '@/controllers/githubSlice';
 
-export interface ContributorsObject {
-  users: Array<UserObject>;
-}
-
-export type RepoContributors = Array<ContributorObject>;
+export type ContributorsObject = {
+  list: Array<ContributorObject> | null;
+};
 
 class Contributors extends Model {
-  users: Array<User>;
+  list: Array<Contributor>;
 
   constructor(contributors?: ContributorsObject) {
     super();
 
-    this.users =
-      contributors && contributors.users
-        ? contributors.users.map((user) => new User(user))
+    this.list =
+      contributors && contributors.list
+        ? contributors.list.map((contributor) => new Contributor(contributor))
         : [];
   }
 
-  set(users: Array<User>) {
-    this.users = users;
+  set(list: Array<Contributor>) {
+    this.list = list;
   }
 
   fromGitHub(contributors: RepoContributors) {
-    let users: Array<User> = [];
+    let list: Array<Contributor> = [];
 
     if (Array.isArray(contributors) && contributors.length > 0) {
       contributors.forEach((contributor) => {
-        const user = new Contributor();
-        console.log(contributor);
-        // user.fromGitHub(contributor);
-        // users.push(user);
+        const contr = new Contributor();
+        contr.fromGitHub(contributor);
+        list.push(contr);
       });
     }
-    this.users = users;
+
+    this.list = list;
   }
 
   toContributorsObject(): ContributorsObject {
     return {
-      users: this.users.map((user) => user.toUserObject()),
+      list: this.list
+        ? this.list.map((contributor) => contributor.toContributorObject())
+        : null,
     };
   }
 }

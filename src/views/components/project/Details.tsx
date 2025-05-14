@@ -7,6 +7,7 @@ import ContentComponent from '../content/ContentComponent';
 import type { RootState } from '@/model/store';
 import User from '@/model/User';
 import Project from '@/model/Project';
+import Contributor from '@/model/Contributor';
 
 interface ProjectDetailsProps {
   user: User;
@@ -15,6 +16,7 @@ interface ProjectDetailsProps {
 
 const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ user, project }) => {
   const [privacy, setPrivacy] = useState(project.details?.privacy);
+  const [contributors, setContributors] = useState<Array<Contributor> | null>(null);
 
   const { isAuthenticated } = useSelector(
     (state: RootState) => state.auth
@@ -24,19 +26,25 @@ const ProjectDetailsComponent: React.FC<ProjectDetailsProps> = ({ user, project 
     setPrivacy(project.details?.privacy ?? 'private')
   }, [project]);
 
+  useEffect(() => {
+    if (project.details && project.details.teamList && project.details.teamList.length > 0) {
+      setContributors(project.details.teamList)
+    }
+  }, [project]);
+
   return (
     <>
-      {(isAuthenticated || privacy === 'public') &&
+      {
         project && project.details &&
-        (project.details.content || (project.details.teamList && project.details.teamList.length > 0) || project.details.repoSize) && (
+        (project.details.content || contributors || project.details.repoSize) && (
           <div className="project-details">
             <h3 className="title">the details</h3>
 
             {project.details.content &&
               <ContentComponent title={null} content={project.details.content} />}
 
-            {project.details.teamList &&
-              <ProjectTeamComponent user={user} projectTeam={project.details.teamList} />}
+            {contributors &&
+              <ProjectTeamComponent user={user} projectTeam={contributors} />}
 
             {project.details.repoSize &&
               <h5>

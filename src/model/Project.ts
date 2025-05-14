@@ -130,7 +130,9 @@ class Project extends Model {
   fromRepo(repo: Repo) {
     this.id = repo.id;
     this.name = repo.name;
-    this.title = this.title ? this.title : this.getTitle(this.name || 'Untitled Project');
+    this.title = this.title
+      ? this.title
+      : this.getTitle(this.name || 'Untitled Project');
     this.description = repo.description;
 
     if (repo.contents?.solution?.downloadURL || repo?.homepage) {
@@ -334,9 +336,9 @@ class Project extends Model {
       this.owner = repo.owner;
     }
 
-    if (repo.contributors?.users) {
+    if (repo.contributors?.list) {
       this.details ? this.details : (this.details = new ProjectDetails());
-      this.details.teamList = repo.contributors.users;
+      this.details.teamList = repo.contributors.list;
     }
 
     if (
@@ -348,7 +350,8 @@ class Project extends Model {
         repo.contents.story &&
         repo.contents.story.size > 0 &&
         repo.contents.story.downloadURL) ||
-      (repo.size && repo.size > 0)
+      (repo.size && repo.size > 0) ||
+      (repo.contributors && repo.contributors.list.length > 0)
     ) {
       this.details = new ProjectDetails();
       repo.contents?.details?.downloadURL
@@ -358,6 +361,9 @@ class Project extends Model {
         ? this.details.setStory(repo.contents.story.downloadURL)
         : null;
       repo.size && repo.size > 0 ? this.details.setRepoSize(repo.size) : null;
+      repo.contributors && repo.contributors.list.length > 0
+        ? this.details.setTeamList(repo.contributors.list)
+        : null;
     }
   }
 
@@ -533,13 +539,13 @@ class Project extends Model {
         ? this.details.setClientID(data.details.client_id)
         : null;
 
-      data.details?.team_list
-        ? data.details?.team_list.map((userID) => {
-            const usr = new User();
-            usr.setID(userID);
-            return usr;
-          })
-        : null;
+      // data.details?.team_list
+      //   ? data.details?.team_list.map((userID) => {
+      //       const usr = new User();
+      //       usr.setID(userID);
+      //       return usr;
+      //     })
+      //   : null;
     }
   }
 

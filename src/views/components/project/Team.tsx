@@ -3,10 +3,11 @@ import React from 'react';
 import Member from '../member/MemberCard';
 
 import User from '../../../model/User';
+import Contributor from '@/model/Contributor';
 
 interface TeamProps {
   user: User;
-  projectTeam: Array<User>
+  projectTeam: Array<Contributor>
 }
 
 const Team: React.FC<TeamProps> = ({ user, projectTeam }) => {

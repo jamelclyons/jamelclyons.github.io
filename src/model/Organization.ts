@@ -139,9 +139,9 @@ class Organization extends Account {
         contributors: {
           users:
             repo.contributors &&
-            Array.isArray(repo.contributors.users) &&
-            repo.contributors.users.length > 0
-              ? repo.contributors.users.map((user) => user.toUserObject())
+            Array.isArray(repo.contributors.list) &&
+            repo.contributors.list.length > 0
+              ? repo.contributors.list.map((user) => user.toContributorObject())
               : null,
         },
       };
@@ -186,9 +186,9 @@ class Organization extends Account {
         contributors: {
           users:
             repo.contributors &&
-            Array.isArray(repo.contributors.users) &&
-            repo.contributors.users.length > 0
-              ? repo.contributors.users.map((user) => user.toUserObject())
+            Array.isArray(repo.contributors.list) &&
+            repo.contributors.list.length > 0
+              ? repo.contributors.list.map((user) => user.toContributorObject())
               : null,
         },
       };
