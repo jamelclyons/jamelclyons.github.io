@@ -8,13 +8,17 @@ import {
 import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 
 import { getProject } from './projectSlice';
-import { setMessage } from './messageSlice';
+import Portfolio, { PortfolioObject } from '@/model/Portfolio';
+import Project from '@/model/Project';
+import { getProjectData } from './databaseSlice';
+import { getRepo, getRepoLanguages } from './githubSlice';
+import Repo from '@/model/Repo';
 
 interface PortfolioState {
   portfolioLoading: boolean;
   portfolioError: Error | null;
   portfolioErrorMessage: string;
-  portfolioObject: Array<Record<string, any>> | null;
+  portfolioObject: PortfolioObject | null;
   organizationPortfolioObject: Array<Record<string, any>> | null;
   projects: Array<Record<string, any>> | null;
 }
@@ -32,35 +36,51 @@ export const getPortfolio = createAsyncThunk(
   'portfolio/getPortfolio',
   async (queries: Array<GitHubRepoQuery>, thunkAPI) => {
     try {
-
       if (!Array.isArray(queries) || queries.length === 0) {
         return null;
       }
 
       const portfolioPromises = queries.map(async (query) => {
-        await thunkAPI.dispatch(
-          setMessage(
-            `Now Loading Project by ${query.owner} called ${query.repo}`
-          )
-        );
+        const repoResponse = await thunkAPI.dispatch(getRepo(query)).unwrap();
 
-        const projectResponse = await thunkAPI.dispatch(getProject(query));
+        if (repoResponse) {
+          const repo = new Repo(repoResponse);
 
-        if (
-          getProject.fulfilled.match(projectResponse) &&
-          projectResponse.payload
-        ) {
-          return projectResponse.payload;
+          const langResponse = await thunkAPI
+            .dispatch(getRepoLanguages(query))
+            .unwrap();
+
+          if (langResponse) {
+            repo.languagesFromGithub(langResponse);
+          }
+
+          const project = new Project();
+          project.fromRepo(repo);
+
+          const projectDataResponse = await thunkAPI.dispatch(
+            getProjectData(query.repo)
+          );
+
+          if (
+            getProjectData.fulfilled.match(projectDataResponse) &&
+            projectDataResponse.payload?.data
+          ) {
+            project.fromDocumentData(projectDataResponse.payload.data);
+          }
+          return null;
         }
-
-        return null;
       });
 
-      const portfolio = (await Promise.all(portfolioPromises)).filter(
+      const projects = (await Promise.all(portfolioPromises)).filter(
         (project) => project !== null
       );
 
-      return portfolio;
+      const portfolio = new Portfolio();
+      portfolio.setProjects(
+        new Set(projects.map((project) => new Project(project)))
+      );
+
+      return portfolio.toPortfolioObject();
     } catch (error) {
       console.error(error);
       throw new Error((error as Error).message);
@@ -77,12 +97,6 @@ export const getOrganizationPortfolio = createAsyncThunk(
       }
 
       const portfolioPromises = queries.map(async (query) => {
-        await thunkAPI.dispatch(
-          setMessage(
-            `Now Loading Project by ${query.owner} called ${query.repo}`
-          )
-        );
-
         const projectResponse = await thunkAPI.dispatch(getProject(query));
 
         if (

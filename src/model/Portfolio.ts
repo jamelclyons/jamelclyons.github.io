@@ -21,6 +21,10 @@ class Portfolio extends Model {
     this.size = this.getCount();
   }
 
+  setProjects(projects: Set<Project>) {
+    this.projects = projects;
+  }
+
   fromRepos(repos: Repos) {
     this.projects =
       repos && repos.collection && repos.collection.length > 0
