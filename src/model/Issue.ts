@@ -19,7 +19,10 @@ export type IssueGQL = {
   body: string;
   createdAt: string;
   updatedAt: string;
-  milestone: string;
+  milestone: {
+    id: string;
+    title: string;
+  };
   issueType: {
     id: string;
     name: string;
@@ -134,6 +137,10 @@ class Issue {
     this.repo =
       issue.repository && issue.repository.nameWithOwner
         ? issue.repository.nameWithOwner
+        : null;
+    this.milestone =
+      issue.milestone && issue.milestone.title
+        ? issue.milestone.title
         : null;
   }
 

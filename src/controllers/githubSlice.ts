@@ -354,6 +354,7 @@ export const getIssues = createAsyncThunk(
           issueNumber: issueNumber,
           headers: headers,
         });
+
         return issue;
       });
 

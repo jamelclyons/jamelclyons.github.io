@@ -4,11 +4,11 @@ import RepoContents, { RepoContentsObject } from './RepoContents';
 import RepoContent from './RepoContent';
 import { Language, Technology } from './Taxonomy';
 import Contributors, { ContributorsObject } from './Contributors';
-import User, { UserObject } from './User';
 import ProjectSkills, { ProjectSkillsObject } from './ProjectSkills';
 import Issues, { IssuesObject } from './Issues';
-import Issue, { IssueGQL, IssueObject } from './Issue';
+import { IssueGQL, IssueObject } from './Issue';
 import { OwnerGQL } from './Owner';
+
 import { RepoResponse } from '@/controllers/githubSlice';
 
 export type RepositoryGQL = {
@@ -341,27 +341,6 @@ class Repo extends Model {
       });
     }
   }
-
-  // contributorsFromGitHub(contributors?: Array<UserObject>) {
-  //   if (
-  //     contributors &&
-  //     Array.isArray(contributors) &&
-  //     contributors.length > 0
-  //   ) {
-  //     const users: Array<User> = [];
-
-  //     contributors.forEach((contributor) => {
-  //       const user = new User(contributor);
-  //       users.push(user);
-  //     });
-
-  //     this.contributors
-  //       ? this.contributors
-  //       : (this.contributors = new Contributors());
-
-  //     this.contributors.set(users);
-  //   }
-  // }
 
   setContributors(contributors: Contributors) {
     this.contributors = contributors;

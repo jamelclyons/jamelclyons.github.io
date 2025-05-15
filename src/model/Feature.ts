@@ -12,7 +12,7 @@ class Feature extends Model {
   description: string;
   version: Version | null;
 
-  constructor(data?: Record<string, any> | FeatureObject) {
+  constructor(data?: FeatureObject) {
     super();
 
     this.id = data?.id ?? '';

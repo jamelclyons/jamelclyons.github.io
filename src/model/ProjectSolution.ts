@@ -46,7 +46,7 @@ class ProjectSolution extends Model {
     this.contentURL = new ContentURL(url);
   }
 
-  setFeatures(data?: Array<Record<string, any>>): Set<Feature> {
+  setFeatures(data?: Array<FeatureObject>): Set<Feature> {
     let features = new Set<Feature>();
 
     if (data && data?.length > 0) {
