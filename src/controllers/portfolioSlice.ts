@@ -2,7 +2,6 @@ import {
   createSlice,
   createAsyncThunk,
   isAnyOf,
-  PayloadAction,
 } from '@reduxjs/toolkit';
 
 import GitHubRepoQuery from '@/model/GitHubRepoQuery';
@@ -88,38 +87,38 @@ export const getPortfolio = createAsyncThunk(
   }
 );
 
-export const getOrganizationPortfolio = createAsyncThunk(
-  'portfolio/getOrganizationPortfolio',
-  async (queries: Array<GitHubRepoQuery>, thunkAPI) => {
-    try {
-      if (!Array.isArray(queries) || queries.length === 0) {
-        return null;
-      }
+// export const getOrganizationPortfolio = createAsyncThunk(
+//   'portfolio/getOrganizationPortfolio',
+//   async (queries: Array<GitHubRepoQuery>, thunkAPI) => {
+//     try {
+//       if (!Array.isArray(queries) || queries.length === 0) {
+//         return null;
+//       }
 
-      const portfolioPromises = queries.map(async (query) => {
-        const projectResponse = await thunkAPI.dispatch(getProject(query));
+//       const portfolioPromises = queries.map(async (query) => {
+//         const projectResponse = await thunkAPI.dispatch(getProject(query));
 
-        if (
-          getProject.fulfilled.match(projectResponse) &&
-          projectResponse.payload
-        ) {
-          return projectResponse.payload;
-        }
+//         if (
+//           getProject.fulfilled.match(projectResponse) &&
+//           projectResponse.payload
+//         ) {
+//           return projectResponse.payload;
+//         }
 
-        return null;
-      });
+//         return null;
+//       });
 
-      const portfolio = (await Promise.all(portfolioPromises)).filter(
-        (project) => project !== null
-      );
+//       const portfolio = (await Promise.all(portfolioPromises)).filter(
+//         (project) => project !== null
+//       );
 
-      return portfolio;
-    } catch (error) {
-      console.error(error);
-      throw new Error((error as Error).message);
-    }
-  }
-);
+//       return portfolio;
+//     } catch (error) {
+//       console.error(error);
+//       throw new Error((error as Error).message);
+//     }
+//   }
+// );
 
 export const portfolioSlice = createSlice({
   name: 'portfolio',
@@ -133,28 +132,28 @@ export const portfolioSlice = createSlice({
         state.portfolioErrorMessage = '';
         state.portfolioObject = action.payload;
       })
-      .addCase(getOrganizationPortfolio.fulfilled, (state, action) => {
-        state.portfolioLoading = false;
-        state.portfolioError = null;
-        state.portfolioErrorMessage = '';
-        state.organizationPortfolioObject = action.payload;
-      })
-      .addMatcher(
-        isAnyOf(getPortfolio.pending, getOrganizationPortfolio.pending),
-        (state) => {
-          state.portfolioLoading = true;
-          state.portfolioError = null;
-          state.portfolioErrorMessage = '';
-        }
-      )
-      .addMatcher(
-        isAnyOf(getPortfolio.rejected, getOrganizationPortfolio.rejected),
-        (state, action) => {
-          state.portfolioLoading = false;
-          state.portfolioError = (action.error as Error) || null;
-          state.portfolioErrorMessage = action.error.message || '';
-        }
-      );
+      // .addCase(getOrganizationPortfolio.fulfilled, (state, action) => {
+      //   state.portfolioLoading = false;
+      //   state.portfolioError = null;
+      //   state.portfolioErrorMessage = '';
+      //   state.organizationPortfolioObject = action.payload;
+      // })
+      // .addMatcher(
+      //   isAnyOf(getPortfolio.pending, getOrganizationPortfolio.pending),
+      //   (state) => {
+      //     state.portfolioLoading = true;
+      //     state.portfolioError = null;
+      //     state.portfolioErrorMessage = '';
+      //   }
+      // )
+      // .addMatcher(
+      //   isAnyOf(getPortfolio.rejected, getOrganizationPortfolio.rejected),
+      //   (state, action) => {
+      //     state.portfolioLoading = false;
+      //     state.portfolioError = (action.error as Error) || null;
+      //     state.portfolioErrorMessage = action.error.message || '';
+      //   }
+      // );
   },
 });
 
