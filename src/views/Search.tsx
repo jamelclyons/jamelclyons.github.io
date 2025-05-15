@@ -31,6 +31,10 @@ const Search: React.FC<SearchProps> = ({ user, skills }) => {
   const [projects, setProjects] = useState<Set<Project>>(new Set);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [taxonomy, term]);
+
+  useEffect(() => {
     if (term) {
       const skill = term.toUpperCase();
 

@@ -22,6 +22,10 @@ const OrganizationPage: React.FC = () => {
     const [organization, setOrganization] = useState<Organization | null>(null);
 
     useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [login]);
+
+    useEffect(() => {
         if (!organizationObject && login) {
             dispatch(getOrganization(login));
         }

@@ -19,6 +19,10 @@ const PortfolioPage: React.FC<PortfolioProps> = ({ user }) => {
   const { portfolioLoading, portfolioObject, portfolioErrorMessage } = useSelector((state: RootState) => state.portfolio);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  useEffect(() => {
     if (portfolioLoading) {
       dispatch(setMessage('Now Loading Portfolio'));
       dispatch(setShowStatusBar('show'));

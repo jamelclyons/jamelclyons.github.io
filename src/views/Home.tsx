@@ -25,8 +25,12 @@ const Home: React.FC<HomeProps> = ({ user, skills }) => {
 
   const { githubLoading } = useSelector((state: RootState) => state.github);
 
-  useEffect(() => { 
-    if(!user.title){
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  useEffect(() => {
+    if (!user.title) {
       user.setTitle(userJson.title)
     }
   }, [user]);

@@ -29,6 +29,10 @@ const About: React.FC<AboutProps> = ({ user, skills }) => {
   const [portfolio, setPortfolio] = useState<Portfolio | null>(user.portfolio);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  useEffect(() => {
     user.setName(userJson.name)
   }, []);
 

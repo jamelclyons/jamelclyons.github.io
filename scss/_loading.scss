@@ -1,4 +1,7 @@
-// .loading {
-//   justify-content: center;
-//   height: calc(100vh - 5.25rem);
-// }
+section.loading {
+  justify-content: center;
+  
+  .close {
+    display: none;
+  }
+}

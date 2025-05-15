@@ -1,17 +1,20 @@
 .status-bar.card {
   background-color: black;
   &.info {
-      background-color: blue;
+    background-color: blue;
+  }
+  &.caution {
+    background-color: yellow;
+    span {
+      color: black;
     }
-    &.caution {
-      background-color: yellow;
-    }
-    &.error {
-      background-color: red;
-    }
-    &.success {
-      background-color: green;
-    }
+  }
+  &.error {
+    background-color: red;
+  }
+  &.success {
+    background-color: green;
+  }
   span {
     color: white;
   }

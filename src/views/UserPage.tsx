@@ -24,6 +24,10 @@ const UserPage: React.FC = () => {
   const [user, setUser] = useState<User>();
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [login]);
+
+  useEffect(() => {
     if (login) {
       dispatch(getUser(login));
     }
@@ -35,13 +39,13 @@ const UserPage: React.FC = () => {
     }
   }, [userObject]);
 
-    useEffect(() => {
-      if (userLoading) {
-        dispatch(setShowStatusBar('show'));
-        dispatch(setMessageType('info'));
-        dispatch(setMessage(`Now Loading User ${login}`));
-      }
-    }, [userLoading]);
+  useEffect(() => {
+    if (userLoading) {
+      dispatch(setShowStatusBar('show'));
+      dispatch(setMessageType('info'));
+      dispatch(setMessage(`Now Loading User ${login}`));
+    }
+  }, [userLoading]);
 
   return (
     <section className='user' id='top'>

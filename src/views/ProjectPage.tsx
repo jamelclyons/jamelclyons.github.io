@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import LoadingComponent from './components/LoadingComponent';
 import ProjectComponent from './components/project/ProjectComponent';
+import StatusBarComponent from './components/StatusBarComponent';
 
 import { setMessage, setMessageType, setShowStatusBar } from '../controllers/messageSlice';
 import { getProject } from '@/controllers/projectSlice';
@@ -12,7 +13,6 @@ import type { AppDispatch, RootState } from '@/model/store';
 import Project from '@/model/Project';
 import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 import User from '@/model/User';
-import StatusBarComponent from './components/StatusBarComponent';
 
 interface ProjectPageProps {
   user: User;
@@ -33,6 +33,10 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
   const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [title, setTitle] = useState<string | null>(null);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [projectID]);
 
   useEffect(() => {
     if (user.portfolio && user.portfolio.projects.size > 0 && projectID) {
@@ -83,21 +87,20 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
 
   useEffect(() => {
     if (title && (githubLoading || projectLoading)) {
+      dispatch(setMessageType('caution'));
       dispatch(setMessage(`Now Loading ${title}`));
       dispatch(setShowStatusBar(true));
     }
   }, [githubLoading, projectLoading, title]);
 
   if (githubLoading || projectLoading) {
-    return <section>
-      <main>
-        <LoadingComponent />
-      </main>
+    return <section className='loading'>
+      <LoadingComponent />
     </section>;
   }
 
   if (githubErrorMessage || projectErrorMessage) {
-    return <section>
+    return <section className='error-page'>
       <main>
         <StatusBarComponent />
       </main>
