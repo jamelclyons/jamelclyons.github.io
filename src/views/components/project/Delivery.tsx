@@ -6,14 +6,26 @@ import CheckListComponent from './CheckListComponent';
 
 import Project from '@/model/Project';
 import ContentURL from '@/model/ContentURL';
+import Gallery from '@/model/Gallery';
+import CheckList from '@/model/CheckList';
+import ProjectQuery from '@/model/ProjectQuery';
 
 interface DeliveryProps {
   project: Project;
 }
 
 const Delivery: React.FC<DeliveryProps> = ({ project }) => {
-  const hasContent = project.process && project.process.delivery && (project.process.delivery.checkList || project.process.delivery.gallery || project.process.delivery.contentURL);
+  const [gallery, setGallery] = useState<Gallery | null>(null);
   const [content, setContent] = useState<ContentURL | null>(null);
+  const [checkList, setCheckList] = useState<CheckList | null>(null);
+  const [query, setQuery] = useState<ProjectQuery | null>(null);
+
+  useEffect(() => {
+    if (project.process && project.process.delivery
+      && project.process.delivery.gallery) {
+      setGallery(project.process.delivery.gallery)
+    }
+  }, [project]);
 
   useEffect(() => {
     if (project.process && project.process.delivery
@@ -23,23 +35,35 @@ const Delivery: React.FC<DeliveryProps> = ({ project }) => {
     }
   }, [project]);
 
-  return (
-    project.process &&
-    project.process.delivery &&
-    hasContent && (
-      <div className="project-process-delivery" id="project_process_delivery">
-        <h3 className="title">delivery</h3>
+  useEffect(() => {
+    if (project.process && project.process.delivery
+      && project.process.delivery.checkList) {
+      setCheckList(project.process.delivery.checkList)
+    }
+  }, [project]);
 
-        {project.process.delivery.checkList && project.query &&
-          <CheckListComponent checkList={project.process.delivery.checkList} query={project.query} />}
+  useEffect(() => {
+    if (project.query) {
+      setQuery(project.query)
+    }
+  }, [project]);
 
-        {project.process.delivery.gallery && project.process.delivery.gallery.images && project.process.delivery.gallery.images.length > 0 &&
-          <GalleryComponent gallery={project.process.delivery.gallery.images} title="" />}
+  const hasContent = gallery || content || (checkList && query);
 
-        {content &&
-          <ContentComponent title={null} content={content} />}
-      </div>
-    )
+  return (hasContent && (
+    <div className="project-process-delivery" id="project_process_delivery">
+      <h3 className="title">delivery</h3>
+
+      {gallery && gallery.images && gallery.images.length > 0 &&
+        <GalleryComponent gallery={gallery.images} title="" />}
+
+      {content &&
+        <ContentComponent title={null} content={content} />}
+
+      {checkList && query &&
+        <CheckListComponent checkList={checkList} query={query} />}
+    </div>
+  )
   );
 };
 
