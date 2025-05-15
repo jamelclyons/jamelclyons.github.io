@@ -127,6 +127,14 @@ class Project extends Model {
     return features;
   }
 
+  setID(id: string) {
+    this.id = id;
+  }
+
+  setOwner(owner: Owner) {
+    this.owner = owner;
+  }
+
   fromRepo(repo: Repo) {
     this.id = repo.id;
     this.name = repo.name;
@@ -134,6 +142,10 @@ class Project extends Model {
       ? this.title
       : this.getTitle(this.name || 'Untitled Project');
     this.description = repo.description;
+
+    if (repo.owner) {
+      this.setOwner(repo.owner);
+    }
 
     if (repo.contents?.solution?.downloadURL || repo?.homepage) {
       this.solution = new ProjectSolution();
@@ -309,10 +321,6 @@ class Project extends Model {
       ) {
         this.problem ? this.problem : (this.problem = new ProjectProblem());
         this.problem.setContentURL(repo.contents.problem.downloadURL);
-      }
-
-      if (repo.owner) {
-        this.owner = repo.owner;
       }
 
       if (repo.contributors?.list) {

@@ -6,7 +6,7 @@ import { RepoObject, RepositoryGQL } from './Repo';
 import Account from './Account';
 import Portfolio, { PortfolioObject } from './Portfolio';
 
-import { OrganizationAccountResponse } from '@/controllers/githubSlice';
+// import { OrganizationAccountResponse } from '@/controllers/githubSlice';
 
 export type OrganizationGQL = {
   id: string;
@@ -195,29 +195,29 @@ class Organization extends Account {
     });
   }
 
-  fromGitHub(data: OrganizationAccountResponse) {
-    this.id = data?.login ? data?.login : this.id;
-    this.createdAt = data?.created_at ? data?.created_at : this.createdAt;
-    this.updatedAt = data?.updated_at ? data?.updated_at : this.updatedAt;
-    this.login = data?.login ? data?.login : this.login;
-    this.avatarURL = data?.avatar_url ? data?.avatar_url : this.avatarURL;
-    this.name = data?.name ? data?.name : this.name;
-    this.company = data?.company ? data?.company : this.company;
-    this.description = data?.description ? data?.description : this.description;
-    this.email = data?.email ? data?.email : this.email;
-    this.blog = data?.blog ? data?.blog : this.blog;
-    this.location = data?.location ? data?.location : this.location;
-    this.reposURL = data?.repos_url ? data?.repos_url : this.reposURL;
-    this.url = data?.url ? data?.url : this.url;
+  // fromGitHub(data: OrganizationAccountResponse) {
+  //   this.id = data?.login ? data?.login : this.id;
+  //   this.createdAt = data?.created_at ? data?.created_at : this.createdAt;
+  //   this.updatedAt = data?.updated_at ? data?.updated_at : this.updatedAt;
+  //   this.login = data?.login ? data?.login : this.login;
+  //   this.avatarURL = data?.avatar_url ? data?.avatar_url : this.avatarURL;
+  //   this.name = data?.name ? data?.name : this.name;
+  //   this.company = data?.company ? data?.company : this.company;
+  //   this.description = data?.description ? data?.description : this.description;
+  //   this.email = data?.email ? data?.email : this.email;
+  //   this.blog = data?.blog ? data?.blog : this.blog;
+  //   this.location = data?.location ? data?.location : this.location;
+  //   this.reposURL = data?.repos_url ? data?.repos_url : this.reposURL;
+  //   this.url = data?.url ? data?.url : this.url;
 
-    data?.html_url && this.contactMethods
-      ? this.contactMethods.setContactGitHub({ url: data?.html_url })
-      : (this.contactMethods = new ContactMethods());
+  //   data?.html_url && this.contactMethods
+  //     ? this.contactMethods.setContactGitHub({ url: data?.html_url })
+  //     : (this.contactMethods = new ContactMethods());
 
-    data?.html_url
-      ? this.contactMethods.setContactGitHub({ url: data?.html_url })
-      : null;
-  }
+  //   data?.html_url
+  //     ? this.contactMethods.setContactGitHub({ url: data?.html_url })
+  //     : null;
+  // }
 
   fromDB(data: Record<string, any>) {
     this.company = data?.company ? data?.company : this.company;

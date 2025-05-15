@@ -7,32 +7,27 @@ import {
 
 import { instance, headers } from '@/services/github/octokit';
 import { graphql } from '@octokit/graphql';
-import { Octokit, RestEndpointMethodTypes } from '@octokit/rest';
 import {
   GetResponseDataTypeFromEndpointMethod,
   GetResponseTypeFromEndpointMethod,
 } from '@octokit/types';
 import { RequestError } from '@octokit/request-error';
 
-import RepoContent from '../model/RepoContent';
-import GitHubRepoQuery from '../model/GitHubRepoQuery';
+import RepoContent from '@/model/RepoContent';
+import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 import RepoContentQuery from '@/model/RepoContentQuery';
 import Organization, {
-  OrganizationGQL,
   OrganizationObject,
   OrganizationResponseGQL,
 } from '@/model/Organization';
-
 import Repo, { RepoObject } from '@/model/Repo';
 import User, { UserGQLResponse, UserObject } from '@/model/User';
-
 import Repos from '@/model/Repos';
 import ContactMethods from '@/model/ContactMethods';
 import RepoAPIURL from '@/model/RepoAPIURL';
-import Issue, { IssueGQL } from '@/model/Issue';
+import { IssueGQL } from '@/model/Issue';
 import Issues, { IssuesObject } from '@/model/Issues';
-import Contributors from '@/model/Contributors';
-import { AccountGQLResponse } from '@/model/Account';
+import Contributors, { ContributorsObject } from '@/model/Contributors';
 
 type OctokitResponse<T = any, S = number> = {
   data: T;
@@ -46,20 +41,20 @@ interface GithubState {
   githubStatusCode: number;
   githubError: Error | null;
   githubErrorMessage: string | null;
-  userObject: Record<string, any> | null;
-  organizationObject: Record<string, any>;
-  organizationReposObject: Array<Record<string, any>>;
-  organizationsObject: Array<Record<string, any>>;
+  userObject: UserObject | null;
+  organizationObject: OrganizationObject | null;
+  organizationReposObject: Array<RepoObject> | null;
+  organizationsObject: Array<OrganizationObject> | null;
   organizationDetailsList: Array<Record<string, any>> | null;
-  repos: Array<Record<string, any>>;
+  // repos: ReposObject | null;
   repoDetailsList: Array<Record<string, any>> | null;
-  socialAccounts: OctokitResponse | null;
-  repoObject: Record<string, any> | null;
-  repoLanguages: Array<Record<string, any>>;
+  socialAccounts: SocialAccounts | null;
+  repoObject: RepoObject | null;
+  repoLanguages: Array<Record<string, any>> | null;
   contents: Array<Record<string, any>> | null;
   file: string | null;
-  contributorsObject: Array<Record<string, any>>;
-  organizationProjects: Array<Record<string, any>>;
+  contributorsObject: ContributorsObject | null;
+  organizationProjects: Array<Record<string, any>> | null;
   issues: IssuesObject | null;
 }
 
@@ -69,28 +64,36 @@ const initialState: GithubState = {
   githubError: null,
   githubErrorMessage: '',
   userObject: null,
-  organizationObject: {},
-  organizationReposObject: [],
-  organizationsObject: [],
+  organizationObject: null,
+  organizationReposObject: null,
+  organizationsObject: null,
   organizationDetailsList: null,
-  repos: [],
+  // repos: null,
   repoDetailsList: null,
   socialAccounts: null,
   repoObject: null,
-  repoLanguages: [],
+  repoLanguages: null,
   contents: null,
   file: null,
-  contributorsObject: [],
-  organizationProjects: [],
+  contributorsObject: null,
+  organizationProjects: null,
   issues: null,
 };
+
+type SocialAccountsResponse = GetResponseTypeFromEndpointMethod<
+  typeof octokit.rest.users.listSocialAccountsForUser
+>;
+
+export type SocialAccounts = SocialAccountsResponse['data'];
+
+export type SocialAccount = SocialAccounts[number];
 
 export const getSocialAccounts = createAsyncThunk(
   'github/getSocialAccounts',
   async (username: string) => {
     try {
-      const response: OctokitResponse =
-        await octokit.users.listSocialAccountsForUser({ username });
+      const response: SocialAccountsResponse =
+        await octokit.rest.users.listSocialAccountsForUser({ username });
 
       return response.data;
     } catch (error) {
@@ -101,21 +104,18 @@ export const getSocialAccounts = createAsyncThunk(
   }
 );
 
-export const getUserRepo = async () => {
-  try {
-  } catch (error) {}
-};
-
-export type RepoResponse = GetResponseDataTypeFromEndpointMethod<
+type RepoResponse = GetResponseTypeFromEndpointMethod<
   typeof octokit.rest.repos.get
 >;
+
+export type GitHubRepo = RepoResponse['data'];
 
 export const getRepo = createAsyncThunk(
   'github/getRepo',
   async (query: GitHubRepoQuery) => {
     try {
       if (query.owner && query.repo) {
-        const repoResponse = await octokit.rest.repos.get({
+        const repoResponse: RepoResponse = await octokit.rest.repos.get({
           owner: query.owner,
           repo: query.repo,
         });
@@ -141,15 +141,22 @@ export const getRepo = createAsyncThunk(
   }
 );
 
+type RepoContentsResponse = GetResponseTypeFromEndpointMethod<
+  typeof octokit.rest.repos.getContent
+>;
+
+export type GitHubContents = RepoContentsResponse['data'];
+
 export const getRepoContents = createAsyncThunk(
   'github/getRepoContents',
   async (query: GitHubRepoQuery) => {
     try {
-      const repoContents = await octokit.rest.repos.getContent({
-        owner: query.owner,
-        repo: query.repo,
-        path: '',
-      });
+      const repoContents: RepoContentsResponse =
+        await octokit.rest.repos.getContent({
+          owner: query.owner,
+          repo: query.repo,
+          path: '',
+        });
 
       let contents: Array<Record<string, any>> = [];
 
@@ -167,14 +174,21 @@ export const getRepoContents = createAsyncThunk(
   }
 );
 
+type RepoLanguagesResponse = GetResponseTypeFromEndpointMethod<
+  typeof octokit.rest.repos.listLanguages
+>;
+
+export type GitHubLanguages = RepoLanguagesResponse['data'];
+
 export const getRepoLanguages = createAsyncThunk(
   'github/getRepoLanguages',
   async (query: GitHubRepoQuery) => {
     try {
-      const repoLanguages = await octokit.rest.repos.listLanguages({
-        owner: query.owner,
-        repo: query.repo,
-      });
+      const repoLanguages: RepoLanguagesResponse =
+        await octokit.rest.repos.listLanguages({
+          owner: query.owner,
+          repo: query.repo,
+        });
 
       if (!repoLanguages.data) return [];
 
@@ -189,7 +203,7 @@ export const getRepoLanguages = createAsyncThunk(
   }
 );
 
-export type RepoContributorsResponse = GetResponseTypeFromEndpointMethod<
+type RepoContributorsResponse = GetResponseTypeFromEndpointMethod<
   typeof octokit.rest.repos.listContributors
 >;
 
@@ -224,22 +238,34 @@ export const getContributors = createAsyncThunk(
   }
 );
 
-export const getCommits = createAsyncThunk(
-  'github/getCommits',
-  async (username: string) => {
-    try {
-      const response = await octokit.request(`users/${username}/repos`);
+// type CommitsResponse = GetResponseTypeFromEndpointMethod<
+//   typeof octokit.rest.repos.ge
+// >;
 
-      console.log(response);
+// export type GitHubContents = RepoContentsResponse['data'];
 
-      return response;
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
-    }
-  }
-);
+// export const getCommits = createAsyncThunk(
+//   'github/getCommits',
+//   async (username: string) => {
+//     try {
+//       const response:CommitsResponse = await octokit.request(`users/${username}/repos`);
+
+//       console.log(response);
+
+//       return response;
+//     } catch (error) {
+//       const err = error as Error;
+//       console.error(err);
+//       throw new Error(err.message);
+//     }
+//   }
+// );
+
+type RepoFileResponse = GetResponseTypeFromEndpointMethod<
+  typeof octokit.rest.repos.getContent
+>;
+
+export type GitHubRepoFile = RepoFileResponse['data'];
 
 export const getRepoFile = async (query: RepoContentQuery) => {
   try {
@@ -429,17 +455,17 @@ export const getRepoDetails = createAsyncThunk(
   }
 );
 
-export const getRepos = createAsyncThunk('github/getRepos', async () => {
-  try {
-    const { data } = await octokit.request('/user/repos');
+// export const getRepos = createAsyncThunk('github/getRepos', async () => {
+//   try {
+//     const { data } = await octokit.request('/user/repos');
 
-    return data;
-  } catch (error) {
-    const err = error as Error;
-    console.error(err);
-    throw new Error(err.message);
-  }
-});
+//     return data;
+//   } catch (error) {
+//     const err = error as Error;
+//     console.error(err);
+//     throw new Error(err.message);
+//   }
+// });
 
 export type AuthenticatedUserRepoResponse =
   GetResponseDataTypeFromEndpointMethod<
@@ -687,24 +713,20 @@ export const getUserAccount = createAsyncThunk(
   }
 );
 
-export const getOrganizations = createAsyncThunk(
-  'github/getOrganizations',
-  async () => {
-    try {
-      const { data } = await octokit.request('/user/orgs');
+// export const getOrganizations = createAsyncThunk(
+//   'github/getOrganizations',
+//   async () => {
+//     try {
+//       const { data } = await octokit.request('/user/orgs');
 
-      return data as Array<Record<string, any>>;
-    } catch (error) {
-      const err = error as Error;
-      console.error(err);
-      throw new Error(err.message);
-    }
-  }
-);
-
-export type OrganizationAccountResponse = GetResponseDataTypeFromEndpointMethod<
-  typeof octokit.orgs.get
->;
+//       return data as Array<Record<string, any>>;
+//     } catch (error) {
+//       const err = error as Error;
+//       console.error(err);
+//       throw new Error(err.message);
+//     }
+//   }
+// );
 
 export const getOrganizationAccount = createAsyncThunk(
   'github/getOrganization',
@@ -854,12 +876,12 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubError = null;
         state.userObject = action.payload;
       })
-      .addCase(getOrganizations.fulfilled, (state, action) => {
-        state.githubLoading = false;
-        state.githubErrorMessage = '';
-        state.githubError = null;
-        state.organizationsObject = action.payload;
-      })
+      // .addCase(getOrganizations.fulfilled, (state, action) => {
+      //   state.githubLoading = false;
+      //   state.githubErrorMessage = '';
+      //   state.githubError = null;
+      //   state.organizationsObject = action.payload;
+      // })
       .addCase(getOrganizationDetailsList.fulfilled, (state, action) => {
         state.githubLoading = false;
         state.githubErrorMessage = '';
@@ -872,12 +894,12 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         state.githubError = null;
         state.organizationObject = action.payload;
       })
-      .addCase(getRepos.fulfilled, (state, action) => {
-        state.githubLoading = false;
-        state.githubErrorMessage = '';
-        state.githubError = null;
-        state.repos = action.payload;
-      })
+      // .addCase(getRepos.fulfilled, (state, action) => {
+      //   state.githubLoading = false;
+      //   state.githubErrorMessage = '';
+      //   state.githubError = null;
+      //   state.repos = action.payload;
+      // })
       .addCase(getRepoDetailsList.fulfilled, (state, action) => {
         state.githubLoading = false;
         state.githubErrorMessage = '';
@@ -926,8 +948,8 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
       .addMatcher(
         isAnyOf(
           getAuthenticatedAccount.pending,
-          getOrganizations.pending,
-          getRepos.pending,
+          // getOrganizations.pending,
+          // getRepos.pending,
           getRepo.pending,
           getRepoContents.pending,
           getRepoLanguages.pending,
@@ -945,8 +967,8 @@ const githubSliceOptions: CreateSliceOptions<GithubState> = {
         isAnyOf(
           getAuthenticatedAccount.rejected,
           getOrganizationAccount.rejected,
-          getOrganizations.rejected,
-          getRepos.rejected,
+          // getOrganizations.rejected,
+          // getRepos.rejected,
           getRepo.rejected,
           getRepoContents.rejected,
           getRepoLanguages.rejected,

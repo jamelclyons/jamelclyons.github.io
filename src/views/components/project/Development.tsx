@@ -75,10 +75,10 @@ const Development: React.FC<DevelopmentProps> = ({ project }) => {
   }, [project]);
 
   useEffect(() => {
-    if (project.query) {
+    if (project?.query) {
       setQuery(project.query)
     }
-  }, [project]);
+  }, [project?.query]);
 
   useEffect(() => {
     if (project.process && project.process.development

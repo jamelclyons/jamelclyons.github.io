@@ -33,13 +33,11 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
   const [repoQuery, setRepoQuery] = useState<GitHubRepoQuery | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [title, setTitle] = useState<string | null>(null);
-  const [type, setType] = useState<string | null>(null);
 
   useEffect(() => {
     if (user.portfolio && user.portfolio.projects.size > 0 && projectID) {
       const selectedProject = user.portfolio.filterProject(projectID);
       setTitle(selectedProject.title)
-      setType(selectedProject.owner.type)
     }
   }, [user, projectID]);
 
@@ -50,16 +48,10 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
   }, [title]);
 
   useEffect(() => {
-    if (owner && projectID && type) {
-      setRepoQuery(new GitHubRepoQuery(owner, projectID, type))
-    }
-  }, [owner, projectID, type]);
-
-  useEffect(() => {
-    if (owner && projectID && !type) {
+    if (owner && owner !== 'null' && projectID) {
       setRepoQuery(new GitHubRepoQuery(owner, projectID))
     }
-  }, [owner, projectID, type]);
+  }, [owner, projectID]);
 
   useEffect(() => {
     if (repoQuery) {

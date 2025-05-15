@@ -10,9 +10,9 @@ interface ProjectURLsProps {
 }
 
 const ProjectURLsComponent: React.FC<ProjectURLsProps> = ({ projectUrls }) => {
-  const [homepage, setHomepage] = useState<ProjectURL| null>(projectUrls.homepage);
-  const [ios, setIos] = useState<ProjectURL| null>(projectUrls.ios);
-  const [android, setAndroid] = useState<ProjectURL| null>(projectUrls.android);
+  const [homepage, setHomepage] = useState<ProjectURL | null>(null);
+  const [ios, setIos] = useState<ProjectURL | null>(null);
+  const [android, setAndroid] = useState<ProjectURL | null>(null);
 
   useEffect(() => {
     if (projectUrls.homepage) {
@@ -32,15 +32,17 @@ const ProjectURLsComponent: React.FC<ProjectURLsProps> = ({ projectUrls }) => {
     }
   }, [projectUrls.android]);
 
+  const hasContent = homepage || ios || android;
+
   return (
-    <>
+    <>{hasContent && (
       <div className="project-urls">
         {homepage && <ButtonIconExternal buttonProps={homepage} />}
 
         {ios && <ButtonIconExternal buttonProps={ios} />}
 
         {android && <ButtonIconExternal buttonProps={android} />}
-      </div>
+      </div>)}
     </>
   );
 }

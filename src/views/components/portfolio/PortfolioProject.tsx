@@ -10,11 +10,10 @@ interface PortfolioProjectProps {
 
 const PortfolioProject: React.FC<PortfolioProjectProps> = ({ project }) => {
     const { name, owner } = project;
-
     return (
-        <a href={`/#/portfolio/${owner?.login}/${name}`}>
+        owner && owner.login && name && (<a href={`/#/portfolio/${owner?.login}/${name}`}>
             <ProjectCard project={project} />
-        </a>
+        </a>)
     )
 }
 

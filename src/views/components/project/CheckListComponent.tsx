@@ -15,9 +15,23 @@ const CheckListComponent: React.FC<CheckListProps> = ({ checkList, query }) => {
   const [title, setTitle] = useState<string | null>(null);
   const [tasks, setTasks] = useState<Set<Task> | null>(null);
 
-  useEffect(() => { setId(checkList.id) }, [checkList]);
-  useEffect(() => { setTitle(checkList.title) }, [checkList]);
-  useEffect(() => { setTasks(checkList.tasks) }, [checkList]);
+  useEffect(() => {
+    if (checkList.id) {
+      setId(checkList.id)
+    }
+  }, [checkList, query]);
+
+  useEffect(() => {
+    if (checkList.title) {
+      setTitle(checkList.title)
+    }
+  }, [checkList, query]);
+
+  useEffect(() => {
+    if (checkList.tasks) {
+      setTasks(checkList.tasks)
+    }
+  }, [checkList, query]);
 
   return (
     <>
@@ -27,7 +41,7 @@ const CheckListComponent: React.FC<CheckListProps> = ({ checkList, query }) => {
           {title && <h4>{title}</h4>}
 
           {Array.from(tasks).map((task) => (
-            <TaskComponent task={task} query={query} key={task.id}/>
+            <TaskComponent task={task} query={query} key={task.id} />
           ))}
         </div>
       ) : (

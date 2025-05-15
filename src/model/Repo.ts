@@ -9,7 +9,7 @@ import Issues, { IssuesObject } from './Issues';
 import { IssueGQL, IssueObject } from './Issue';
 import { OwnerGQL } from './Owner';
 
-import { RepoResponse } from '@/controllers/githubSlice';
+import { GitHubRepo } from '@/controllers/githubSlice';
 
 export type RepositoryGQL = {
   id: string;
@@ -112,7 +112,7 @@ class Repo extends Model {
     this.issues = issues;
   }
 
-  fromGitHub(response: RepoResponse) {
+  fromGitHub(response: GitHubRepo) {
     this.id = response?.name;
     this.name = response.name;
     this.privacy = response?.private;

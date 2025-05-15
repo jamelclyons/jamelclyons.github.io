@@ -12,11 +12,11 @@ const OwnerComponent: React.FC<OwnerComponentProps> = ({ project }) => {
     const [avatarURL, setAvatarURL] = useState<string | null>(null);
     const [name, setName] = useState<string | null>(null);
 
-    useEffect(() => { if (project.owner.type) { setType(project.owner.type.toLowerCase()) } }, [project]);
+    useEffect(() => { if (project?.owner?.type) { setType(project.owner.type.toLowerCase()) } }, [project?.owner]);
 
-    useEffect(() => { if (project.owner.login) { setLogin(project.owner.login) } }, [project]);
+    useEffect(() => { if (project?.owner?.login) { setLogin(project.owner.login) } }, [project?.owner]);
 
-    useEffect(() => { if (project.owner.avatarURL) { setAvatarURL(project.owner.avatarURL) } }, [project]);
+    useEffect(() => { if (project?.owner?.avatarURL) { setAvatarURL(project.owner.avatarURL) } }, [project?.owner]);
 
     useEffect(() => {
         if (project.owner.type === 'User') {
@@ -24,7 +24,7 @@ const OwnerComponent: React.FC<OwnerComponentProps> = ({ project }) => {
         } else if (project.owner.type === 'Organization') {
             setName(project.owner.company ? project.owner.company : project.owner.name)
         }
-    }, [project]);
+    }, [project?.owner]);
 
     const handleClick = () => {
         window.location.href = `/#/${type}/${login}`;

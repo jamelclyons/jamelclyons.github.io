@@ -9,6 +9,11 @@ import OwnerComponent from './OwnerComponent';
 
 import Project from '@/model/Project';
 import User from '@/model/User';
+import ProjectSolution from '@/model/ProjectSolution';
+import ProjectProcess from '@/model/ProjectProcess';
+import ProjectDetails from '@/model/ProjectDetails';
+import ProjectProblem from '@/model/ProjectProblem';
+import Owner from '@/model/Owner';
 
 interface ProjectComponentProps {
   user: User;
@@ -19,12 +24,59 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ user, project }) =>
   const [title, setTitle] = useState<string | null>(null);
   const [subtitle, setSubtitle] = useState<string | null>(null);
   const [description, setDescription] = useState<string | null>(null);
+  const [solution, setSolution] = useState<ProjectSolution | null>(null);
+  const [process, setProcess] = useState<ProjectProcess | null>(null);
+  const [details, setDetails] = useState<ProjectDetails | null>(null);
+  const [problem, setProblem] = useState<ProjectProblem | null>(null);
+  const [owner, setOwner] = useState<Owner | null>(null);
 
-  useEffect(() => { setTitle(project.title) }, [project]);
+  useEffect(() => {
+    if (project?.title) {
+      setTitle(project.title)
+    }
+  }, [project?.title]);
 
-  useEffect(() => { setSubtitle(project.subtitle) }, [project]);
+  useEffect(() => {
+    if (project?.subtitle) {
+      setSubtitle(project.subtitle)
+    }
+  }, [project?.subtitle]);
 
-  useEffect(() => { setDescription(project.description) }, [project]);
+  useEffect(() => {
+    if (project?.description) {
+      setDescription(project.description)
+    }
+  }, [project?.description]);
+
+  useEffect(() => {
+    if (project?.solution) {
+      setSolution(project.solution)
+    }
+  }, [project?.solution]);
+
+  useEffect(() => {
+    if (project?.process) {
+      setProcess(project.process)
+    }
+  }, [project?.process]);
+
+  useEffect(() => {
+    if (project?.details) {
+      setDetails(project.details)
+    }
+  }, [project?.details]);
+
+  useEffect(() => {
+    if (project?.problem) {
+      setProblem(project.problem)
+    }
+  }, [project?.problem]);
+
+  useEffect(() => {
+    if (project?.owner) {
+      setOwner(project.owner)
+    }
+  }, [project?.owner]);
 
   return (
     <>
@@ -35,15 +87,15 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ user, project }) =>
 
         {description && <DescriptionComponent description={description} />}
 
-        {project.solution && <TheSolution project={project} />}
+        {solution && <TheSolution project={project} />}
 
-        {project.process && <TheProcess project={project} />}
+        {process && <TheProcess project={project} />}
 
-        {project.details && <Details user={user} project={project} />}
+        {details && <Details user={user} project={project} />}
 
-        {project.problem && <TheProblem project={project} />}
+        {problem && <TheProblem project={project} />}
 
-        {project.owner && <OwnerComponent project={project} />}
+        {owner && <OwnerComponent project={project} />}
       </main>
     </>
   );

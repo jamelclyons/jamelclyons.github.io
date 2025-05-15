@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import ProjectStatusComponent from './Status';
 
@@ -7,28 +7,60 @@ import Development from './Development';
 import Delivery from './Delivery';
 
 import Project from '@/model/Project';
-import GitHubRepoQuery from '@/model/GitHubRepoQuery';
+import ProjectStatus from '@/model/ProjectStatus';
+import ProjectDesign from '@/model/ProjectDesign';
+import ProjectDevelopment from '@/model/ProjectDevelopment';
+import ProjectDelivery from '@/model/ProjectDelivery';
 
 interface ProcessProps {
   project: Project;
 }
 
 const TheProcess: React.FC<ProcessProps> = ({ project }) => {
-  const hasContent = project.process?.status || project.process?.design || project.process?.development || project.process?.delivery;
-  
+  const [status, setStatus] = useState<ProjectStatus | null>(null);
+  const [design, setDesign] = useState<ProjectDesign | null>(null);
+  const [development, setDevelopment] = useState<ProjectDevelopment | null>(null);
+  const [delivery, setDelivery] = useState<ProjectDelivery | null>(null);
+
+  useEffect(() => {
+    if (project?.process?.status) {
+      setStatus(project.process.status)
+    }
+  }, [project?.process?.status]);
+
+  useEffect(() => {
+    if (project?.process?.design) {
+      setDesign(project.process.design)
+    }
+  }, [project?.process?.design]);
+
+  useEffect(() => {
+    if (project?.process?.development) {
+      setDevelopment(project.process.development)
+    }
+  }, [project?.process?.development]);
+
+  useEffect(() => {
+    if (project?.process?.delivery) {
+      setDelivery(project.process.delivery)
+    }
+  }, [project?.process?.delivery]);
+
+  const hasContent = status || design || development || delivery;
+
   return (
     <>
-      {project.process && hasContent && (
+      {hasContent && (
         <div className="project-section project-process" id="project_process">
           <h2 className="title">the process</h2>
 
-          {project.process.status && <ProjectStatusComponent project={project} />}
+          {status && <ProjectStatusComponent project={project} />}
 
-          {project.process.design && <Design project={project} />}
+          {design && <Design project={project} />}
 
-          {project.process.development && <Development project={project} />}
+          {development && <Development project={project} />}
 
-          {project.process.delivery && <Delivery project={project} />}
+          {delivery && <Delivery project={project} />}
         </div>
       )}
     </>

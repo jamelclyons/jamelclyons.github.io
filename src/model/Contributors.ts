@@ -1,11 +1,7 @@
 import Contributor, { ContributorObject } from './Contributor';
 import Model from './Model';
-import User, { UserObject } from './User';
 
-import {
-  RepoContributorsResponse,
-  RepoContributors,
-} from '@/controllers/githubSlice';
+import { RepoContributors } from '@/controllers/githubSlice';
 
 export type ContributorsObject = {
   list: Array<ContributorObject> | null;
