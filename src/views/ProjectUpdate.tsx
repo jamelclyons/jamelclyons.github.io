@@ -67,14 +67,17 @@ const ProjectUpdate: React.FC<ProjectUpdateProps> = ({ user }) => {
     }, [projectID]);
 
     useEffect(() => {
-        if (user.repos) {
+        if (user.portfolio) {
             setPortfolio(user.portfolio);
         }
-    }, [user]);
+    }, [user?.portfolio]);
 
     useEffect(() => {
         if (portfolio && portfolio.size > 0 && id) {
-            setProject(portfolio.filterProject(id));
+            const filteredProject = portfolio.filterProject(id);
+            if (filteredProject) {
+                setProject(filteredProject);
+            }
         }
     }, [id, portfolio]);
 
@@ -89,6 +92,12 @@ const ProjectUpdate: React.FC<ProjectUpdateProps> = ({ user }) => {
             dispatch(getProject(repoQuery));
         }
     }, [repoQuery]);
+
+    useEffect(() => {
+        if (projectObject) {
+            setProject(new Project(projectObject));
+        }
+    }, [projectObject]);
 
     useEffect(() => {
         if (projectLoading && projectLoadingMessage) {
@@ -189,7 +198,7 @@ const ProjectUpdate: React.FC<ProjectUpdateProps> = ({ user }) => {
             dispatch(setShowStatusBar(Date.now()));
         }
     };
-
+    console.log(project)
     return (
         <section className='update-project'>
             <h1 className='title'>update project</h1>

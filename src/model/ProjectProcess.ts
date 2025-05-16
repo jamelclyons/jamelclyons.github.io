@@ -15,6 +15,7 @@ import ProjectStatus, { ProjectStatusObject } from './ProjectStatus';
 import ProjectProgress from './ProjectProgress';
 import ProjectCheckList, { ProjectCheckListObject } from './ProjectCheckList';
 import { ProjectDataObject } from './Project';
+import Repo from './Repo';
 
 export type ProjectProcessObject = {
   status: ProjectStatusObject | null;
@@ -37,7 +38,7 @@ class ProjectProcess extends Model {
   status: ProjectStatus | null;
   checkList: ProjectCheckList | null;
 
-  constructor(data: Record<string, any> | ProjectProcessObject = {}) {
+  constructor(data?: ProjectProcessObject) {
     super();
 
     this.design = data?.design ? new ProjectDesign(data.design) : null;
@@ -94,25 +95,58 @@ class ProjectProcess extends Model {
     this.delivery = delivery;
   }
 
+  fromRepo(repo: Repo) {
+    let status = null;
+    let design = null;
+    let development = null;
+    let delivery = null;
+
+    if (repo.createdAt || repo.updatedAt) {
+      status = new ProjectStatus();
+      status.fromRepo(repo);
+    }
+
+    if (repo.contents?.design || repo.issues?.design) {
+      design = new ProjectDesign();
+      design.fromRepo(repo);
+    }
+
+    if (repo.contents?.development || repo.skills || repo.repoURL) {
+      development = new ProjectDevelopment();
+      development.fromRepo(repo);
+    }
+
+    if (repo.contents?.delivery) {
+      delivery = new ProjectDelivery();
+      delivery.fromRepo(repo);
+    }
+
+    status ? this.setStatus(status) : null;
+    design ? this.setDesign(design) : null;
+    development ? this.setDevelopment(development) : null;
+    delivery ? this.setDelivery(delivery) : null;
+  }
+
   fromDocumentData(data: ProjectDataObject) {
     if (data?.process) {
       if (data.process?.status) {
         this.status ? this.status : (this.status = new ProjectStatus());
+        this.status.fromDocumentData(data);
       }
 
-      if (data?.process.design) {
+      if (data.process.design) {
         this.design ? this.design : (this.design = new ProjectDesign());
         this.design.fromDocumentData(data);
       }
 
-      if (data?.process?.development) {
+      if (data.process?.development) {
         this.development
           ? this.development
           : (this.development = new ProjectDevelopment());
         this.development.fromDocumentData(data);
       }
 
-      if (data?.process?.delivery) {
+      if (data.process?.delivery) {
         this.delivery ? this.delivery : (this.delivery = new ProjectDelivery());
         this.delivery.fromDocumentData(data);
       }

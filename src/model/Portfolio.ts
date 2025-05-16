@@ -15,7 +15,10 @@ class Portfolio extends Model {
     super();
 
     this.projects =
-      portfolio && portfolio.projects && portfolio.projects.length > 0
+      portfolio &&
+      portfolio.projects &&
+      Array.isArray(portfolio.projects) &&
+      portfolio.projects.length > 0
         ? new Set(portfolio.projects.map((project) => new Project(project)))
         : new Set();
     this.size = this.getCount();
@@ -25,12 +28,8 @@ class Portfolio extends Model {
     this.projects = projects;
   }
 
-  fromRepos(repos: Repos) {
-    this.projects =
-      repos && repos.collection && repos.collection.length > 0
-        ? this.getProjects(repos.collection)
-        : new Set();
-    this.size = this.getCount();
+  setSize(size: number) {
+    this.size = size;
   }
 
   getProjects(repos: Array<Repo>) {
@@ -47,39 +46,6 @@ class Portfolio extends Model {
 
   getCount() {
     return this.projects.size;
-  }
-
-  getProjectsFromRepos(repos: Repos) {
-    let repoProjectsObject: Array<Record<string, any>> = [];
-
-    if (repos.count > 0) {
-      repos.collection.forEach((repo) => {
-        console.log(repo);
-        let project = new Project();
-        project.fromRepo(repo);
-        repoProjectsObject.push(project.toObject());
-      });
-    }
-
-    return repoProjectsObject;
-  }
-
-  getProjectsFromDB(docs: Array<Record<string, any>>) {
-    let projects: Set<Project> = new Set();
-
-    if (docs.length > 0) {
-      this.projects.forEach((project) => {
-        const matchingDoc = docs.find((doc) => doc.id === project.id);
-
-        if (matchingDoc) {
-          project.fromDocumentData(matchingDoc.data());
-        }
-
-        projects.add(project);
-      });
-    }
-
-    this.projects = projects;
   }
 
   filterProjects(taxonomy: string, term: string): Set<Project> {
@@ -149,8 +115,8 @@ class Portfolio extends Model {
     return updatedProjects;
   }
 
-  filterProject(name: string): Project {
-    let filteredProject = new Project();
+  filterProject(name: string): Project | null {
+    let filteredProject = null;
 
     this.projects.forEach((project) => {
       if (project.name == name) {
@@ -173,6 +139,19 @@ class Portfolio extends Model {
     }
 
     return updatedProjects;
+  }
+
+  fromRepos(repos: Repos) {
+    if (
+      repos &&
+      repos.collection &&
+      Array.isArray(repos.collection) &&
+      repos.collection.length > 0
+    ) {
+      const projects = this.getProjects(repos.collection);
+      this.setProjects(projects);
+      this.setSize(projects.size);
+    }
   }
 
   toPortfolioObject(): PortfolioObject {

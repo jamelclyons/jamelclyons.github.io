@@ -178,37 +178,7 @@ class Project extends Model {
       repo.repoURL
     ) {
       const process = new ProjectProcess();
-
-      let status = null;
-      let design = null;
-      let development = null;
-      let delivery = null;
-
-      if (repo.createdAt || repo.updatedAt) {
-        status = new ProjectStatus();
-        status.fromRepo(repo);
-      }
-
-      if (repo.contents?.design || repo.issues?.design) {
-        design = new ProjectDesign();
-        design.fromRepo(repo);
-      }
-
-      if (repo.contents?.development || repo.skills || repo.repoURL) {
-        development = new ProjectDevelopment();
-        development.fromRepo(repo);
-      }
-
-      if (repo.contents?.delivery) {
-        delivery = new ProjectDelivery();
-        delivery.fromRepo(repo);
-      }
-
-      status ? process.setStatus(status) : null;
-      design ? process.setDesign(design) : null;
-      development ? process.setDevelopment(development) : null;
-      delivery ? process.setDelivery(delivery) : null;
-
+      process.fromRepo(repo);
       this.setProcess(process);
     }
 
@@ -252,21 +222,6 @@ class Project extends Model {
       this.details ? this.details : (this.details = new ProjectDetails());
       this.details.fromDocumentData(data);
     }
-  }
-
-  toObject(): Record<string, any> {
-    return {
-      id: this.id,
-      owner: this.owner ? this.owner.toObject() : null,
-      title: this.title,
-      subtitle: this.subtitle,
-      promotional_text: this.promotionalText,
-      description: this.description,
-      solution: this.solution ? this.solution.toObject() : null,
-      process: this.process ? this.process.toObject() : null,
-      problem: this.problem ? this.problem.toObject() : null,
-      details: this.details ? this.details.toObject() : null,
-    };
   }
 
   toProjectObject(): ProjectObject {

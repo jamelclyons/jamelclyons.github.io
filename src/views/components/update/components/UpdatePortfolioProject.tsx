@@ -13,7 +13,7 @@ const UpdatePortfolioProject: React.FC<UpdatePortfolioProjectProps> = ({ project
     const [id, setID] = useState<string | null>(null);
     const [owner, setOwner] = useState<Owner | null>(null);
 
-    useEffect(() => { setID(project.id) }, [project, setID])
+    useEffect(() => { setID(project.name) }, [project, setID])
 
     useEffect(() => { setOwner(project.owner) }, [project, setOwner])
 

@@ -28,6 +28,18 @@ class ProjectCheckList extends Model {
     this.totalWeight = this.getTotalWeight();
   }
 
+  setDesignCheckList(checkList: CheckList) {
+    this.designCheckList = checkList;
+  }
+
+  setDevelopmentCheckList(checkList: CheckList) {
+    this.developmentCheckList = checkList;
+  } 
+
+  setDeliveryCheckList(checkList: CheckList) {
+    this.deliveryCheckList = checkList;
+  }
+
   getTotalWeight(): number {
     return (
       (this.designCheckList ? this.designCheckList.totalWeight : 0) +

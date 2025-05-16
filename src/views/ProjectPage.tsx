@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -41,9 +41,11 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ user }) => {
   useEffect(() => {
     if (user.portfolio && user.portfolio.projects.size > 0 && projectID) {
       const selectedProject = user.portfolio.filterProject(projectID);
-      setTitle(selectedProject.title)
+      if (selectedProject) {
+        setTitle(selectedProject.title);
+      }
     }
-  }, [user, projectID]);
+  }, [user?.portfolio?.projects, projectID]);
 
   useEffect(() => {
     if (title) {
