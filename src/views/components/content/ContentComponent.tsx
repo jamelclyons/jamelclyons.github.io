@@ -27,7 +27,16 @@ const ContentComponent: React.FC<ContentComponentProps> = ({ title, content }) =
     if (query) {
       try {
         getRepoFile(query)
-          .then((file) => setFile(file))
+          .then((file) => {
+            const regex = /<(\w+)[^>]*>(.*?)<\/\1>/;
+            const match = file.match(regex);
+
+            if (match && match[2]) {
+              setFile(file)
+            } else {
+              return null;
+            }
+          })
           .catch(console.error);
       } catch (error) {
         console.error(error)

@@ -338,7 +338,7 @@ class Repo extends Model {
       contentsObject.forEach((content) => {
         this.contents ? this.contents : (this.contents = new RepoContents());
 
-        if (content.type === 'file') {
+        if (content.type === 'file' && content.size > 7) {
           switch (content.name) {
             case 'TheSolution.md':
               this.contents.setSolution(new RepoContent(content));
