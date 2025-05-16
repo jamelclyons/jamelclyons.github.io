@@ -1,17 +1,13 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  isAnyOf,
-} from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, isAnyOf } from '@reduxjs/toolkit';
 
-import GitHubRepoQuery from '@/model/GitHubRepoQuery';
-
-import { getProject } from './projectSlice';
-import Portfolio, { PortfolioObject } from '@/model/Portfolio';
-import Project from '@/model/Project';
 import { getProjectData } from './databaseSlice';
 import { getRepo, getRepoLanguages } from './githubSlice';
+
+import GitHubRepoQuery from '@/model/GitHubRepoQuery';
+import Portfolio, { PortfolioObject } from '@/model/Portfolio';
+import Project from '@/model/Project';
 import Repo from '@/model/Repo';
+import Repos from '@/model/Repos';
 
 interface PortfolioState {
   portfolioLoading: boolean;
@@ -31,33 +27,22 @@ const initialState: PortfolioState = {
   projects: null,
 };
 
-export const getPortfolio = createAsyncThunk(
+export const getPortfolioDetails = createAsyncThunk(
   'portfolio/getPortfolio',
-  async (queries: Array<GitHubRepoQuery>, thunkAPI) => {
+  async (repos: Repos, thunkAPI) => {
     try {
-      if (!Array.isArray(queries) || queries.length === 0) {
+      if (!Array.isArray(repos.queries) || repos.queries.length === 0) {
         return null;
       }
 
-      const portfolioPromises = queries.map(async (query) => {
-        const repoResponse = await thunkAPI.dispatch(getRepo(query)).unwrap();
-
-        if (repoResponse) {
-          const repo = new Repo(repoResponse);
-
-          const langResponse = await thunkAPI
-            .dispatch(getRepoLanguages(query))
-            .unwrap();
-
-          if (langResponse) {
-            repo.languagesFromGithub(langResponse);
-          }
-
+      const portfolioPromises = repos.collection.map(async (repo) => {
+        
+        if (repo.name) {
           const project = new Project();
           project.fromRepo(repo);
 
           const projectDataResponse = await thunkAPI.dispatch(
-            getProjectData(query.repo)
+            getProjectData(repo.name)
           );
 
           if (
@@ -66,8 +51,11 @@ export const getPortfolio = createAsyncThunk(
           ) {
             project.fromDocumentData(projectDataResponse.payload.data);
           }
-          return null;
+
+          return project;
         }
+
+        return null;
       });
 
       const projects = (await Promise.all(portfolioPromises)).filter(
@@ -75,9 +63,7 @@ export const getPortfolio = createAsyncThunk(
       );
 
       const portfolio = new Portfolio();
-      portfolio.setProjects(
-        new Set(projects.map((project) => new Project(project)))
-      );
+      portfolio.setProjects(new Set(projects));
 
       return portfolio.toPortfolioObject();
     } catch (error) {
@@ -87,73 +73,28 @@ export const getPortfolio = createAsyncThunk(
   }
 );
 
-// export const getOrganizationPortfolio = createAsyncThunk(
-//   'portfolio/getOrganizationPortfolio',
-//   async (queries: Array<GitHubRepoQuery>, thunkAPI) => {
-//     try {
-//       if (!Array.isArray(queries) || queries.length === 0) {
-//         return null;
-//       }
-
-//       const portfolioPromises = queries.map(async (query) => {
-//         const projectResponse = await thunkAPI.dispatch(getProject(query));
-
-//         if (
-//           getProject.fulfilled.match(projectResponse) &&
-//           projectResponse.payload
-//         ) {
-//           return projectResponse.payload;
-//         }
-
-//         return null;
-//       });
-
-//       const portfolio = (await Promise.all(portfolioPromises)).filter(
-//         (project) => project !== null
-//       );
-
-//       return portfolio;
-//     } catch (error) {
-//       console.error(error);
-//       throw new Error((error as Error).message);
-//     }
-//   }
-// );
-
 export const portfolioSlice = createSlice({
   name: 'portfolio',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getPortfolio.fulfilled, (state, action) => {
+      .addCase(getPortfolioDetails.fulfilled, (state, action) => {
         state.portfolioLoading = false;
         state.portfolioError = null;
         state.portfolioErrorMessage = '';
         state.portfolioObject = action.payload;
       })
-      // .addCase(getOrganizationPortfolio.fulfilled, (state, action) => {
-      //   state.portfolioLoading = false;
-      //   state.portfolioError = null;
-      //   state.portfolioErrorMessage = '';
-      //   state.organizationPortfolioObject = action.payload;
-      // })
-      // .addMatcher(
-      //   isAnyOf(getPortfolio.pending, getOrganizationPortfolio.pending),
-      //   (state) => {
-      //     state.portfolioLoading = true;
-      //     state.portfolioError = null;
-      //     state.portfolioErrorMessage = '';
-      //   }
-      // )
-      // .addMatcher(
-      //   isAnyOf(getPortfolio.rejected, getOrganizationPortfolio.rejected),
-      //   (state, action) => {
-      //     state.portfolioLoading = false;
-      //     state.portfolioError = (action.error as Error) || null;
-      //     state.portfolioErrorMessage = action.error.message || '';
-      //   }
-      // );
+      .addMatcher(isAnyOf(getPortfolioDetails.pending), (state) => {
+        state.portfolioLoading = true;
+        state.portfolioError = null;
+        state.portfolioErrorMessage = '';
+      })
+      .addMatcher(isAnyOf(getPortfolioDetails.rejected), (state, action) => {
+        state.portfolioLoading = false;
+        state.portfolioError = (action.error as Error) || null;
+        state.portfolioErrorMessage = action.error.message || '';
+      });
   },
 });
 

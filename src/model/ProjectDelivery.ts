@@ -3,6 +3,8 @@ import CheckList, { CheckListObject } from './CheckList';
 import Gallery, { GalleryObject } from './Gallery';
 import ContentURL from './ContentURL';
 import Task from './Task';
+import Repo from './Repo';
+import { ProjectDataObject } from './Project';
 
 export type ProjectDeliveryObject = {
   check_list: CheckListObject | null;
@@ -31,10 +33,6 @@ class ProjectDelivery extends Model {
       : null;
   }
 
-  setContentURL(url: string) {
-    this.contentURL = new ContentURL(url);
-  }
-
   setCheckList(tasks: Array<Task>) {
     if (tasks && Array.isArray(tasks) && tasks.length > 0) {
       const checkList = new CheckList();
@@ -42,7 +40,49 @@ class ProjectDelivery extends Model {
       this.checkList = checkList;
     }
   }
-  
+
+  setGallery(gallery: Gallery) {
+    this.gallery = gallery;
+  }
+
+  setContentURL(url: string) {
+    this.contentURL = new ContentURL(url);
+  }
+
+  fromRepo(repo: Repo) {
+    if (repo.contents?.delivery?.downloadURL) {
+      this.setContentURL(repo.contents.delivery.downloadURL);
+    }
+
+    if (repo.issues?.delivery) {
+      const tasks = repo.issues.toTask(repo.issues.delivery);
+      this.setCheckList(tasks);
+    }
+  }
+
+  fromDocumentData(data: ProjectDataObject) {
+    if (data.process?.delivery) {
+      if (
+        data.process.delivery.gallery &&
+        ((data.process.delivery.gallery.animations &&
+          data.process.delivery.gallery.animations?.length > 0) ||
+          (data.process.delivery.gallery.icons &&
+            data.process.delivery.gallery.icons.length > 0) ||
+          (data.process.delivery.gallery.logos &&
+            data.process.delivery.gallery.logos.length > 0) ||
+          (data.process.delivery.gallery.previews &&
+            data.process.delivery.gallery.previews.length > 0) ||
+          (data.process.delivery.gallery.screenshots &&
+            data.process.delivery.gallery.screenshots.length > 0) ||
+          (data.process.delivery.gallery.uml_diagrams &&
+            data.process.delivery.gallery.uml_diagrams.length > 0))
+      ) {
+        const gallery = new Gallery(data.process.delivery.gallery);
+        this.setGallery(gallery);
+      }
+    }
+  }
+
   toProjectDeliveryObject(): ProjectDeliveryObject {
     return {
       check_list: this.checkList ? this.checkList.toCheckListObject() : null,

@@ -6,6 +6,8 @@ import ProjectURLs, {
 } from './ProjectURLs';
 import Gallery, { GalleryObject } from './Gallery';
 import ContentURL from './ContentURL';
+import Repo from './Repo';
+import { ProjectDataObject } from './Project';
 
 export type ProjectSolutionObject = {
   gallery: GalleryObject | null;
@@ -31,22 +33,32 @@ class ProjectSolution extends Model {
     super();
 
     this.gallery = data?.gallery ? new Gallery(data.gallery) : new Gallery();
-    this.features = data?.features ? this.setFeatures(data.features) : null;
+    this.features = data?.features ? this.getFeatures(data.features) : null;
     this.contentURL = data?.content_url
       ? new ContentURL(data.content_url)
       : null;
     this.projectURLs =
       data?.project_urls &&
-      (data.project_urls.homepage || data.project_urls.ios || data.project_urls.android)
+      (data.project_urls.homepage ||
+        data.project_urls.ios ||
+        data.project_urls.android)
         ? new ProjectURLs(data.project_urls)
         : null;
+  }
+
+  setGallery(gallery: Gallery) {
+    this.gallery = gallery;
   }
 
   setContentURL(url: string) {
     this.contentURL = new ContentURL(url);
   }
 
-  setFeatures(data?: Array<FeatureObject>): Set<Feature> {
+  setFeatures(features: Set<Feature>) {
+    this.features = features;
+  }
+
+  getFeatures(data?: Array<FeatureObject>): Set<Feature> {
     let features = new Set<Feature>();
 
     if (data && data?.length > 0) {
@@ -56,6 +68,51 @@ class ProjectSolution extends Model {
     }
 
     return features;
+  }
+
+  setProjectURLs(projectURLs: ProjectURLs) {
+    this.projectURLs = projectURLs;
+  }
+
+  fromRepo(repo: Repo) {
+    if (repo.contents?.solution?.downloadURL) {
+      this.setContentURL(repo.contents.solution.downloadURL);
+    }
+
+    if (repo?.homepage) {
+      const projectURLs = new ProjectURLs();
+      projectURLs.setHomepage(repo.homepage);
+      this.setProjectURLs(projectURLs);
+    }
+
+    if (repo.issues?.features) {
+      this.setFeatures(new Set(repo.issues.toFeatures(repo.issues?.features)));
+    }
+  }
+
+  fromDocumentData(data: ProjectDataObject) {
+    if (data?.solution) {
+      if (data?.solution?.project_urls) {
+        const projectURLs = new ProjectURLs();
+
+        if (data.solution.project_urls?.homepage) {
+          projectURLs.setHomepage(data.solution.project_urls.homepage);
+        }
+
+        if (data.solution.project_urls?.ios) {
+          projectURLs?.setIos(data.solution.project_urls.ios);
+        }
+
+        if (data.solution.project_urls?.android) {
+          projectURLs.setAndroid(data.solution.project_urls.android);
+        }
+      }
+
+      if (data.solution?.gallery) {
+        const gallery = new Gallery(data?.solution?.gallery);
+        this.setGallery(gallery);
+      }
+    }
   }
 
   toProjectSolutionObject(): ProjectSolutionObject {

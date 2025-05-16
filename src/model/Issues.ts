@@ -1,4 +1,6 @@
+import Feature from './Feature';
 import Issue, { IssueObject, IssueGQL } from './Issue';
+import Task from './Task';
 
 export interface IssuesObject {
   list: Array<IssueObject> | null;
@@ -30,6 +32,31 @@ class Issues {
     this.delivery = this.tasks.filter(
       (issue) => issue.labels && issue.labels.includes('delivery')
     );
+  }
+
+  toFeatures(issues: Array<Issue>) {
+    return issues
+      .filter((issue) => issue.id && issue.title && issue.milestone)
+      .map((issue) => {
+        const feature = new Feature();
+        issue.id ? feature.setID(issue.id) : null;
+        issue.title ? feature.setDescription(issue.title) : null;
+        issue.milestone ? feature.setVersion(issue.milestone) : null;
+        return feature;
+      });
+  }
+
+  toTask(issues: Array<Issue>) {
+    return issues
+      .map((issue) => {
+        if (issue.id && issue.title && issue.state) {
+          const task = new Task();
+          task.fromIssue(issue);
+          return task;
+        }
+        return null;
+      })
+      .filter((task): task is Task => task !== null);
   }
 
   fromGitHubGraphQL(issues?: Array<IssueGQL>) {

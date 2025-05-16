@@ -7,7 +7,7 @@ import {
 
 import { getAuthenticatedUserAccount } from '@/controllers/userSlice';
 import { getSkills } from '@/controllers/taxonomiesSlice';
-import { getPortfolio } from '@/controllers/portfolioSlice';
+// import { getPortfolio } from '@/controllers/portfolioSlice';
 
 import User from '@/model/User';
 
@@ -80,18 +80,18 @@ export const getAccount = createAsyncThunk(
           await thunkAPI.dispatch(setMessage('Now Loading Portfolio'));
           const user = new User(accountResponse.payload);
 
-          const portfolioResponse =
-            user.repoQueries && user.repoQueries.length > 0
-              ? await thunkAPI.dispatch(getPortfolio(user.repoQueries))
-              : null;
+        //   const portfolioResponse =
+        //     user.repoQueries && user.repoQueries.length > 0
+        //       ? await thunkAPI.dispatch(getPortfolio(user.repoQueries))
+        //       : null;
 
-          if (
-            portfolioResponse &&
-            getPortfolio.fulfilled.match(portfolioResponse) &&
-            portfolioResponse.payload
-          ) {
-            projects = portfolioResponse.payload;
-          }
+        //   if (
+        //     portfolioResponse &&
+        //     getPortfolio.fulfilled.match(portfolioResponse) &&
+        //     portfolioResponse.payload
+        //   ) {
+        //     projects = portfolioResponse.payload;
+        //   }
         }
 
         return {

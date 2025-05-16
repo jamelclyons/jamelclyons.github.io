@@ -534,6 +534,15 @@ export const getAuthenticatedAccount = createAsyncThunk(
                 name
                 description
                 url
+                languages(first: 5) {
+                  edges {
+                    size
+                    node {
+                      name
+                      color
+                    }
+                  }
+                }
                 owner {
                   id
                   __typename

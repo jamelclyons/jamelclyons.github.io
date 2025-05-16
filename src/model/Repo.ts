@@ -11,12 +11,23 @@ import { OwnerGQL } from './Owner';
 
 import { GitHubRepo } from '@/controllers/githubSlice';
 
+export type LanguageGQL = {
+  size: number;
+  node: {
+    name: string;
+    color: string;
+  };
+};
+
 export type RepositoryGQL = {
   id: string;
   name: string;
   description: string;
   url: string;
   owner: OwnerGQL;
+  languages: {
+    edges: Array<LanguageGQL>;
+  };
   issues: {
     nodes: IssueGQL;
   };
@@ -110,6 +121,20 @@ class Repo extends Model {
     }
 
     this.issues = issues;
+
+    let skills = null;
+
+    if (
+      repo.languages &&
+      repo.languages.edges &&
+      Array.isArray(repo.languages.edges) &&
+      repo.languages.edges.length > 0
+    ) {
+      skills = new ProjectSkills();
+      skills.fromGitHubGraphQL(repo.languages.edges);
+    }
+
+    this.skills = skills;
   }
 
   fromGitHub(response: GitHubRepo) {

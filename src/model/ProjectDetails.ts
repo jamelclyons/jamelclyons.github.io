@@ -3,6 +3,8 @@ import Model from './Model';
 import ContentURL from './ContentURL';
 import RepoSize from './RepoSize';
 import Contributor, { ContributorObject } from './Contributor';
+import Repo from './Repo';
+import { ProjectDataObject } from './Project';
 
 export type ProjectDetailsObject = {
   privacy: string | null;
@@ -40,6 +42,10 @@ class ProjectDetails extends Model {
     this.repoSize = data?.repo_size ? new RepoSize(data.repo_size) : null;
   }
 
+  setPrivacy(privacy: string) {
+    this.privacy = privacy;
+  }
+
   setClientID(id: string | null) {
     this.clientID = id;
   }
@@ -70,6 +76,60 @@ class ProjectDetails extends Model {
 
   setTeamList(team: Array<Contributor>) {
     this.teamList = team;
+  }
+
+  fromRepo(repo: Repo) {
+    if (
+      repo.contributors &&
+      repo.contributors.list &&
+      Array.isArray(repo.contributors.list) &&
+      repo.contributors.list.length > 0
+    ) {
+      this.setTeamList(repo.contributors.list);
+    }
+
+    if (
+      repo.contents &&
+      repo.contents.details &&
+      repo.contents.details.size > 0 &&
+      repo.contents.details.downloadURL
+    ) {
+      this.setContentURL(repo.contents.details.downloadURL);
+    }
+
+    if (
+      repo.contents &&
+      repo.contents.story &&
+      repo.contents.story.size > 0 &&
+      repo.contents.story.downloadURL
+    ) {
+      this.setStory(repo.contents.story.downloadURL);
+    }
+
+    if (repo.size && repo.size > 0) {
+      this.setRepoSize(repo.size);
+    }
+
+    if (
+      repo.contributors &&
+      Array.isArray(repo.contributors.list) &&
+      repo.contributors.list.length > 0
+    ) {
+      this.setTeamList(repo.contributors.list);
+    }
+  }
+
+  fromDocumentData(data: ProjectDataObject) {
+    if (data?.details) {
+      
+      if (data.details?.privacy) {
+        this.setPrivacy(data.details.privacy);
+      }
+
+      if (data.details?.client_id) {
+        this.setClientID(data.details.client_id);
+      }
+    }
   }
 
   toDetailsObject(): ProjectDetailsObject {

@@ -4,6 +4,8 @@ import Color, { ColorObject } from './Color';
 import CheckList, { CheckListObject } from './CheckList';
 import ContentURL, { ContentURLObject } from './ContentURL';
 import Task from './Task';
+import Repo from './Repo';
+import { ProjectDataObject } from './Project';
 
 export type ProjectDesignObject = {
   gallery: GalleryObject | null;
@@ -41,12 +43,20 @@ class ProjectDesign extends Model {
       : null;
   }
 
+  setGallery(gallery: Gallery) {
+    this.gallery = gallery;
+  }
+
   setCheckList(tasks: Array<Task>) {
     if (tasks && Array.isArray(tasks) && tasks.length > 0) {
       const checkList = new CheckList();
       checkList.setTasks(new Set(tasks));
       this.checkList = checkList;
     }
+  }
+
+  setColors(colors: Array<Color>) {
+    this.colorsList = colors;
   }
 
   setContentURL(url: string) {
@@ -61,6 +71,47 @@ class ProjectDesign extends Model {
     });
 
     return colorsList;
+  }
+
+  fromRepo(repo: Repo) {
+    if (repo.contents?.design?.downloadURL) {
+      this.setContentURL(repo.contents.design.downloadURL);
+    }
+
+    if (repo.issues?.design) {
+      const tasks = repo.issues?.toTask(repo.issues.design);
+      this.setCheckList(tasks);
+    }
+  }
+
+  fromDocumentData(data: ProjectDataObject) {
+    if (data.process && data.process.design) {
+      if (
+        data.process.design.gallery &&
+        ((data.process.design.gallery.animations &&
+          data.process.design.gallery.animations?.length > 0) ||
+          (data.process.design.gallery.icons &&
+            data.process.design.gallery.icons.length > 0) ||
+          (data.process.design.gallery.logos &&
+            data.process.design.gallery.logos.length > 0) ||
+          (data.process.design.gallery.previews &&
+            data.process.design.gallery.previews.length > 0) ||
+          (data.process.design.gallery.screenshots &&
+            data.process.design.gallery.screenshots.length > 0) ||
+          (data.process.design.gallery.uml_diagrams &&
+            data.process.design.gallery.uml_diagrams.length > 0))
+      ) {
+        const gallery = new Gallery(data?.process.design.gallery);
+        this.setGallery(gallery);
+      }
+
+      if (data?.process?.design?.colors_list) {
+        const colors = Array.from(data?.process?.design?.colors_list).map(
+          (color) => new Color(color as Record<string, any>)
+        );
+        this.setColors(colors);
+      }
+    }
   }
 
   toProjectDesignObject(): ProjectDesignObject {

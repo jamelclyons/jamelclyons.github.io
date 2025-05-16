@@ -7,13 +7,12 @@ import Portfolio from '../model/Portfolio';
 import Skills from '@/model/Skills';
 import User from '@/model/User';
 
-import { getPortfolio } from '@/controllers/portfolioSlice';
+import { getPortfolioDetails } from '@/controllers/portfolioSlice';
 
 import ProjectsComponent from './components/portfolio/ProjectsComponent';
 import SkillsComponent from './components/SkillsComponent';
 import HeaderTaxonomyComponent from './components/HeaderTaxonomyComponent';
 import Project from '@/model/Project';
-import GitHubRepoQuery from '@/model/GitHubRepoQuery';
 
 interface SearchProps {
   user: User;
@@ -31,7 +30,6 @@ const Search: React.FC<SearchProps> = ({ user, skills }) => {
 
   const [portfolio, setPortfolio] = useState<Portfolio | null>(user.portfolio);
   const [projects, setProjects] = useState<Set<Project>>(new Set);
-  const [queries, setQueries] = useState<Array<GitHubRepoQuery> | null>(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -47,42 +45,21 @@ const Search: React.FC<SearchProps> = ({ user, skills }) => {
 
   useEffect(() => {
     if (user.repos) {
-      setPortfolio(user.portfolio);
+      dispatch(getPortfolioDetails(user.repos))
     }
-  }, [user]);
-
-  useEffect(() => {
-    if (portfolio && taxonomy && term) {
-      setProjects(portfolio.filterProjects(taxonomy, term));
-    }
-  }, [portfolio, taxonomy, term]);
-
-  useEffect(() => {
-    if (portfolio) {
-      const newQueries = Array.from(portfolio.projects)
-        .map((project) => {
-          if (project.owner?.login && project.name) {
-            return new GitHubRepoQuery(project.owner.login, project.name);
-          }
-          return null;
-        })
-        .filter((query): query is GitHubRepoQuery => query !== null);
-
-      setQueries(newQueries);
-    }
-  }, [portfolio]);
-
-  useEffect(() => {
-    if (queries && queries.length > 0) {
-      dispatch(getPortfolio(queries));
-    }
-  }, [queries]);
+  }, [user?.repos]);
 
   useEffect(() => {
     if (portfolioObject) {
       setPortfolio(new Portfolio(portfolioObject))
     }
   }, [portfolioObject]);
+
+  useEffect(() => {
+    if (portfolio && taxonomy && term) {
+      setProjects(portfolio.filterProjects(taxonomy, term));
+    }
+  }, [portfolio, taxonomy, term]);
 
   return (
     <section className="search" id="top">

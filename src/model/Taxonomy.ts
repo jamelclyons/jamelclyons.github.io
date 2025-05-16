@@ -40,6 +40,18 @@ class Taxonomy extends Model {
       : null;
   }
 
+  setID(id: string) {
+    this.id = id;
+  }
+
+  setTitle(title: string) {
+    this.title = title;
+  }
+
+  setUsage(usage: number) {
+    this.usage = usage;
+  }
+
   isValid(): boolean {
     if (this.id == '') {
       throw new Error('ID is not valid');
@@ -228,4 +240,3 @@ export const existsInSet = (taxonomy: Taxonomy, set: Set<Taxonomy>) => {
 
   return map.has(taxonomy.id);
 };
-

@@ -11,6 +11,14 @@ import Taxonomy, {
   Technology,
 } from './Taxonomy';
 
+export type LanguageGQL = {
+  size: number;
+  node: {
+    name: string;
+    color: string;
+  };
+};
+
 export type ProjectSkillsObject = {
   types: Array<ProjectTypeObject> | null;
   languages: Array<TaxonomyObject> | null;
@@ -69,7 +77,6 @@ class ProjectSkills extends Model {
   }
 
   addByID(skillsData: ProjectSkillsDataObject) {
-
     if (
       skillsData.types &&
       Array.isArray(skillsData.types) &&
@@ -394,7 +401,205 @@ class ProjectSkills extends Model {
       : 0;
     const servicesSize: number = this.services ? this.services.size : 0;
 
-    return typesSize + languagesSize + frameworksSize + technologiesSize;
+    return (
+      typesSize +
+      languagesSize +
+      frameworksSize +
+      technologiesSize +
+      servicesSize
+    );
+  }
+
+  fromGitHubGraphQL(languages: Array<LanguageGQL>) {
+    if (Array.isArray(languages) && languages.length > 0) {
+      languages.forEach((language) => {
+        const name = language.node.name;
+        const usage = language.size;
+
+        if (name === 'Dockerfile') {
+          const dockerFile = new Technology();
+          dockerFile.setID('docker');
+          dockerFile.setTitle('Docker');
+          dockerFile.setUsage(usage);
+
+          if (this.technologies) {
+            this.technologies.add(dockerFile);
+          } else {
+            this.technologies = new Set([dockerFile]);
+          }
+        }
+
+        if (name === 'SCSS') {
+          const scss = new Technology();
+          scss.setID('sass');
+          scss.setTitle('Sass');
+          scss.setUsage(usage);
+
+          if (this.technologies) {
+            this.technologies.add(scss);
+          } else {
+            this.technologies = new Set([scss]);
+          }
+        }
+
+        if (name === 'hack') {
+          const hack = new Language();
+          hack.setID('hack');
+          hack.setTitle('Hack');
+          hack.setUsage(usage);
+
+          if (this.languages) {
+            this.languages.add(hack);
+          } else {
+            this.languages = new Set([hack]);
+          }
+        }
+
+        if (name !== 'hack' && name !== 'SCSS' && name !== 'Dockerfile') {
+          const lang = new Language();
+          lang.setID(name.toLowerCase());
+          lang.setTitle(name.toUpperCase());
+          lang.setUsage(usage);
+
+          if (this.languages) {
+            this.languages.add(lang);
+          } else {
+            this.languages = new Set([lang]);
+          }
+        }
+      });
+    }
+  }
+
+  languagesFromGithub(data: Array<Record<string, any>>) {
+    if (Array.isArray(data) && data.length > 0) {
+      let languages: Array<Record<string, any>> = [];
+
+      data.forEach(({ language, usage }) => {
+        let skill: Record<string, any> = {};
+
+        if (language === 'Dockerfile') {
+          skill = {
+            type: 'technology',
+            id: 'docker',
+            title: 'Docker',
+            icon_url: '',
+            class_name: '',
+            usage: usage,
+          };
+        }
+
+        if (language === 'SCSS') {
+          skill = {
+            type: 'technology',
+            id: 'sass',
+            title: 'Sass',
+            icon_url: '',
+            class_name: '',
+            usage: usage,
+          };
+        }
+
+        if (language === 'hack') {
+          skill = {
+            type: 'language',
+            id: 'hack',
+            title: 'Hack',
+            icon_url: '',
+            class_name: '',
+            usage: usage,
+          };
+        }
+
+        if (
+          language !== 'hack' &&
+          language !== 'SCSS' &&
+          language !== 'Dockerfile'
+        ) {
+          skill = {
+            type: 'language',
+            id: language.toLowerCase(),
+            title: language.toUpperCase(),
+            icon_url: '',
+            class_name: '',
+            usage: usage,
+          };
+        }
+
+        languages.push(skill);
+      });
+
+      // this.setSkills(languages);
+    }
+  }
+
+  fromDocumentData(data: ProjectSkillsDataObject) {
+    const skills = new ProjectSkills();
+
+    if (
+      data?.frameworks &&
+      Array.isArray(data.frameworks) &&
+      data.frameworks.length > 0
+    ) {
+      data.frameworks.forEach((id) => {
+        skills.frameworks ? skills.frameworks : (skills.frameworks = new Set());
+        const framework = new Framework();
+        framework.setID(id);
+        skills.frameworks.add(framework);
+      });
+    }
+
+    if (
+      data?.languages &&
+      Array.isArray(data.languages) &&
+      data.languages.length > 0
+    ) {
+      data.languages.forEach((id) => {
+        skills.languages ? skills.languages : (skills.languages = new Set());
+        const language = new Language();
+        language.setID(id);
+        skills.languages.add(language);
+      });
+    }
+
+    if (
+      data?.services &&
+      Array.isArray(data.services) &&
+      data.services.length > 0
+    ) {
+      data.services.forEach((id) => {
+        skills.services ? skills.services : (skills.services = new Set());
+        const service = new Service();
+        service.setID(id);
+        skills.services.add(service);
+      });
+    }
+
+    if (
+      data?.technologies &&
+      Array.isArray(data.technologies) &&
+      data.technologies.length > 0
+    ) {
+      data.technologies.forEach((id) => {
+        skills.technologies
+          ? skills.technologies
+          : (skills.technologies = new Set());
+        const technology = new Technology();
+        technology.setID(id);
+        skills.technologies.add(technology);
+      });
+    }
+
+    if (data?.types && Array.isArray(data.types) && data.types.length > 0) {
+      data.types.forEach((id) => {
+        skills.types ? skills.types : (skills.types = new Set());
+        const type = new ProjectType();
+        type.setID(id);
+        skills.types.add(type);
+      });
+    }
+
+    this.add(skills);
   }
 
   toProjectSkillsObject(): ProjectSkillsObject {

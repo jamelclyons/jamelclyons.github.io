@@ -3,7 +3,6 @@ import ProjectSolution, {
   ProjectSolutionDataObject,
   ProjectSolutionObject,
 } from './ProjectSolution';
-import ProjectURLs from './ProjectURLs';
 import ProjectProcess, {
   ProjectProcessDataObject,
   ProjectProcessObject,
@@ -16,23 +15,12 @@ import ProjectDetails, {
   ProjectDetailsDataObject,
   ProjectDetailsObject,
 } from './ProjectDetails';
-import ProjectVersions from './ProjectVersions';
 import Repo from './Repo';
 import Owner, { OwnerObject } from './Owner';
-import Feature, { FeatureObject } from './Feature';
 import ProjectDesign from './ProjectDesign';
-import Gallery from './Gallery';
-import CheckList from './CheckList';
-import Color from './Color';
 import ProjectDevelopment from './ProjectDevelopment';
 import ProjectDelivery from './ProjectDelivery';
 import ProjectStatus from './ProjectStatus';
-import User from './User';
-import ProjectProgress from './ProjectProgress';
-import ProjectSkills from './ProjectSkills';
-import RepoURL from './RepoURL';
-import Issue from './Issue';
-import Task from './Task';
 import ProjectQuery from './ProjectQuery';
 
 export type ProjectObject = {
@@ -106,6 +94,54 @@ class Project extends Model {
     }
   }
 
+  setID(id: string) {
+    this.id = id;
+  }
+
+  setName(name: string) {
+    this.name = name;
+  }
+
+  setTitle(title: string) {
+    this.title = title;
+  }
+
+  setSubtitle(subtitle: string) {
+    this.subtitle = subtitle;
+  }
+
+  setPromotionalText(promotionalText: string) {
+    this.promotionalText = promotionalText;
+  }
+
+  setDescription(description: string) {
+    this.description = description;
+  }
+
+  setSolution(solution: ProjectSolution) {
+    this.solution = solution;
+  }
+
+  setProcess(process: ProjectProcess) {
+    this.process = process;
+  }
+
+  setProblem(problem: ProjectProblem) {
+    this.problem = problem;
+  }
+
+  setOwner(owner: Owner) {
+    this.owner = owner;
+  }
+
+  setDetails(details: ProjectDetails) {
+    this.details = details;
+  }
+
+  setQuery(query: ProjectQuery) {
+    this.query = query;
+  }
+
   getTitle(id?: string): string {
     return id
       ? id
@@ -113,26 +149,6 @@ class Project extends Model {
           .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
           .join(' ')
       : '';
-  }
-
-  setFeatures(featuresObject: FeatureObject) {
-    const features = new Set<Feature>();
-
-    if (Array.isArray(featuresObject) && featuresObject.length > 0) {
-      featuresObject.map((feature) => {
-        features.add(new Feature(feature));
-      });
-    }
-
-    return features;
-  }
-
-  setID(id: string) {
-    this.id = id;
-  }
-
-  setOwner(owner: Owner) {
-    this.owner = owner;
   }
 
   fromRepo(repo: Repo) {
@@ -148,210 +164,69 @@ class Project extends Model {
     }
 
     if (repo.contents?.solution?.downloadURL || repo?.homepage) {
-      this.solution = new ProjectSolution();
-      repo.contents?.solution?.downloadURL
-        ? this.solution.setContentURL(repo.contents.solution.downloadURL)
-        : this.solution;
-
-      repo?.homepage
-        ? this.solution && this.solution.projectURLs
-          ? this.solution.projectURLs.setHomepage(repo.homepage)
-          : (this.solution.projectURLs = new ProjectURLs({
-              homepage: repo.homepage,
-            }))
-        : this.solution;
+      const solution = new ProjectSolution();
+      solution.fromRepo(repo);
+      this.setSolution(solution);
     }
 
     if (
-      (repo.contents &&
-        repo.contents.design &&
-        repo.contents.design.size > 0 &&
-        repo.contents.design.downloadURL) ||
       repo.createdAt ||
-      repo.updatedAt
+      repo.updatedAt ||
+      repo.contents ||
+      repo.issues ||
+      repo.skills ||
+      repo.repoURL
     ) {
-      this.process ? this.process : (this.process = new ProjectProcess());
+      const process = new ProjectProcess();
 
-      this.process.status
-        ? this.process.status
-        : (this.process.status = new ProjectStatus());
+      let status = null;
+      let design = null;
+      let development = null;
+      let delivery = null;
 
-      this.process.status.createdAt = repo.createdAt;
-      this.process.status.updatedAt = repo.updatedAt;
-
-      if (repo.contents && repo.contents.design) {
-        this.process.design
-          ? this.process.design
-          : (this.process.design = new ProjectDesign());
-
-        repo.contents.design.downloadURL
-          ? this.process.design.setContentURL(repo.contents.design.downloadURL)
-          : null;
+      if (repo.createdAt || repo.updatedAt) {
+        status = new ProjectStatus();
+        status.fromRepo(repo);
       }
 
-      if (repo.issues && repo.issues.list && repo.issues.list.length > 0) {
-        if (repo.issues.features) {
-          this.solution
-            ? this.solution
-            : (this.solution = new ProjectSolution());
-          const roadMap = repo.issues.features
-            .filter((issue) => issue.id && issue.title && issue.milestone)
-            .map((issue) => {
-              const feature = new Feature();
-              issue.id ? feature.setID(issue.id) : null;
-              issue.title ? feature.setDescription(issue.title) : null;
-              issue.milestone ? feature.setVersion(issue.milestone) : null;
-              return feature;
-            });
-          this.solution.features =
-            roadMap && Array.isArray(roadMap) && roadMap.length > 0
-              ? new Set(roadMap)
-              : null;
-        }
-
-        if (repo.issues.design) {
-          const designTask = repo.issues.design
-            .map((issue) => {
-              if (issue.id && issue.title && issue.state) {
-                const task = new Task();
-                task.fromIssue(issue);
-                return task;
-              }
-              return null;
-            })
-            .filter((task): task is Task => task !== null);
-
-          if (designTask.length > 0) {
-            this.process.design
-              ? this.process.design
-              : (this.process.design = new ProjectDesign());
-            this.process.design.setCheckList(designTask);
-          }
-        }
-
-        if (repo.issues.development) {
-          const developmentTask = repo.issues.development
-            .map((issue) => {
-              if (issue.id && issue.title && issue.state) {
-                const task = new Task();
-                task.fromIssue(issue);
-                return task;
-              }
-              return null;
-            })
-            .filter((task): task is Task => task !== null);
-
-          if (developmentTask.length > 0) {
-            this.process.development
-              ? this.process.development
-              : (this.process.development = new ProjectDevelopment());
-            this.process.development.setCheckList(developmentTask);
-          }
-        }
-
-        if (repo.issues.delivery) {
-          const deliveryTask = repo.issues.delivery
-            .map((issue) => {
-              if (issue.id && issue.title && issue.state) {
-                const task = new Task();
-                task.fromIssue(issue);
-                return task;
-              }
-              return null;
-            })
-            .filter((task): task is Task => task !== null);
-
-          if (deliveryTask.length > 0) {
-            this.process.delivery
-              ? this.process.delivery
-              : (this.process.delivery = new ProjectDelivery());
-            this.process.delivery.setCheckList(deliveryTask);
-          }
-        }
+      if (repo.contents?.design || repo.issues?.design) {
+        design = new ProjectDesign();
+        design.fromRepo(repo);
       }
 
-      if (
-        (repo.contents &&
-          repo.contents.development &&
-          repo.contents.development.size > 0 &&
-          repo.contents?.development?.downloadURL) ||
-        repo.skills ||
-        repo.repoURL
-      ) {
-        this.process.development
-          ? this.process.development
-          : (this.process.development = new ProjectDevelopment());
-        repo.contents?.development?.downloadURL
-          ? this.process.development.setContentURL(
-              repo.contents.development.downloadURL
-            )
-          : this.process.development;
-
-        if (repo.skills) {
-          this.process.development.skills
-            ? this.process.development.skills
-            : (this.process.development.skills = new ProjectSkills());
-          this.process.development.skills.add(repo.skills);
-        }
-
-        if (repo.repoURL) {
-          this.process.development.repoURL = new RepoURL(repo.repoURL);
-        }
-
-        if (
-          repo.contents &&
-          repo.contents.delivery &&
-          repo.contents.delivery.size > 0 &&
-          repo.contents.delivery.downloadURL
-        ) {
-          this.process.delivery
-            ? this.process.delivery
-            : (this.process.delivery = new ProjectDelivery());
-          this.process.delivery.setContentURL(
-            repo.contents.delivery.downloadURL
-          );
-        }
+      if (repo.contents?.development || repo.skills || repo.repoURL) {
+        development = new ProjectDevelopment();
+        development.fromRepo(repo);
       }
 
-      if (
-        repo.contents &&
-        repo.contents.problem &&
-        repo.contents.problem.size > 0 &&
-        repo.contents.problem.downloadURL
-      ) {
-        this.problem ? this.problem : (this.problem = new ProjectProblem());
-        this.problem.setContentURL(repo.contents.problem.downloadURL);
+      if (repo.contents?.delivery) {
+        delivery = new ProjectDelivery();
+        delivery.fromRepo(repo);
       }
 
-      if (repo.contributors?.list) {
-        this.details ? this.details : (this.details = new ProjectDetails());
-        this.details.teamList = repo.contributors.list;
-      }
+      status ? process.setStatus(status) : null;
+      design ? process.setDesign(design) : null;
+      development ? process.setDevelopment(development) : null;
+      delivery ? process.setDelivery(delivery) : null;
 
-      if (
-        (repo.contents &&
-          repo.contents.details &&
-          repo.contents.details.size > 0 &&
-          repo.contents.details?.downloadURL) ||
-        (repo.contents &&
-          repo.contents.story &&
-          repo.contents.story.size > 0 &&
-          repo.contents.story.downloadURL) ||
-        (repo.size && repo.size > 0) ||
-        (repo.contributors && repo.contributors.list.length > 0)
-      ) {
-        this.details = new ProjectDetails();
-        repo.contents?.details?.downloadURL
-          ? this.details.setContentURL(repo.contents.details.downloadURL)
-          : null;
-        repo.contents?.story?.downloadURL
-          ? this.details.setStory(repo.contents.story.downloadURL)
-          : null;
-        repo.size && repo.size > 0 ? this.details.setRepoSize(repo.size) : null;
-        repo.contributors && repo.contributors.list.length > 0
-          ? this.details.setTeamList(repo.contributors.list)
-          : null;
-      }
+      this.setProcess(process);
+    }
+
+    if (repo.contents && repo.contents.problem) {
+      const problem = new ProjectProblem();
+      problem.fromRepo(repo);
+      this.setProblem(problem);
+    }
+
+    if (
+      repo.contents?.details ||
+      repo.contents?.story ||
+      repo.size ||
+      repo.contributors
+    ) {
+      const details = new ProjectDetails();
+      details.fromRepo(repo);
+      this.setDetails(details);
     }
   }
 
@@ -360,180 +235,22 @@ class Project extends Model {
 
     if (data?.solution) {
       this.solution ? this.solution : (this.solution = new ProjectSolution());
-
-      if (data?.solution?.project_urls) {
-        this.solution.projectURLs
-          ? this.solution.projectURLs
-          : (this.solution.projectURLs = new ProjectURLs());
-
-        data.solution.project_urls?.homepage
-          ? this.solution.projectURLs.setHomepage(
-              data.solution.project_urls.homepage
-            )
-          : null;
-
-        data.solution.project_urls?.ios
-          ? this.solution.projectURLs?.setIos(data.solution.project_urls.ios)
-          : null;
-
-        data.solution.project_urls?.android
-          ? this.solution.projectURLs?.setAndroid(
-              data.solution.project_urls.android
-            )
-          : null;
-      }
-
-      data.solution?.gallery
-        ? (this.solution.gallery = new Gallery(data?.solution?.gallery))
-        : null;
+      this.solution.fromDocumentData(data);
     }
 
     if (data?.process) {
       this.process ? this.process : (this.process = new ProjectProcess());
-
-      if (data.process?.status) {
-        this.process.status
-          ? this.process.status
-          : (this.process.status = new ProjectStatus());
-
-        data.process.status?.progress
-          ? (this.process.status.progress = new ProjectProgress(
-              data.process.status?.progress
-            ))
-          : null;
-      }
-
-      if (data?.process.design) {
-        this.process.design
-          ? this.process.design
-          : (this.process.design = new ProjectDesign());
-
-        data.process.design.gallery &&
-        ((data.process.design.gallery.animations &&
-          data.process.design.gallery.animations?.length > 0) ||
-          (data.process.design.gallery.icons &&
-            data.process.design.gallery.icons.length > 0) ||
-          (data.process.design.gallery.logos &&
-            data.process.design.gallery.logos.length > 0) ||
-          (data.process.design.gallery.previews &&
-            data.process.design.gallery.previews.length > 0) ||
-          (data.process.design.gallery.screenshots &&
-            data.process.design.gallery.screenshots.length > 0) ||
-          (data.process.design.gallery.uml_diagrams &&
-            data.process.design.gallery.uml_diagrams.length > 0))
-          ? (this.process.design.gallery = new Gallery(
-              data?.process.design.gallery
-            ))
-          : null;
-
-        data?.process?.design?.colors_list
-          ? (this.process.design.colorsList = Array.from(
-              data?.process?.design?.colors_list
-            ).map((color) => new Color(color as Record<string, any>)))
-          : null;
-      }
-
-      if (data?.process?.development) {
-        this.process.development
-          ? this.process.development
-          : (this.process.development = new ProjectDevelopment());
-        if (data?.process?.development?.skills) {
-          this.process.development.skills
-            ? this.process.development.skills
-            : (this.process.development.skills = new ProjectSkills());
-          this.process.development.skills.addByID(
-            data?.process?.development?.skills
-          );
-        }
-
-        if (
-          data.process.development.gallery &&
-          ((data.process.development.gallery.animations &&
-            data.process.development.gallery.animations?.length > 0) ||
-            (data.process.development.gallery.icons &&
-              data.process.development.gallery.icons.length > 0) ||
-            (data.process.development.gallery.logos &&
-              data.process.development.gallery.logos.length > 0) ||
-            (data.process.development.gallery.previews &&
-              data.process.development.gallery.previews.length > 0) ||
-            (data.process.development.gallery.screenshots &&
-              data.process.development.gallery.screenshots.length > 0) ||
-            (data.process.development.gallery.uml_diagrams &&
-              data.process.development.gallery.uml_diagrams.length > 0))
-        ) {
-          this.process.development.gallery = new Gallery(
-            data?.process.development.gallery
-          );
-        }
-
-        if (data?.process?.development?.repo_url) {
-          this.process.development.repoURL = new RepoURL(
-            data.process.development.repo_url
-          );
-        }
-
-        if (data?.process?.development?.versions_list) {
-          this.process.development.versionsList = new ProjectVersions(
-            data.process.development.versions_list
-          );
-        }
-      }
-
-      if (data?.process?.delivery) {
-        this.process.delivery
-          ? this.process.delivery
-          : (this.process.delivery = new ProjectDelivery());
-
-        data.process.delivery.gallery &&
-        ((data.process.delivery.gallery.animations &&
-          data.process.delivery.gallery.animations?.length > 0) ||
-          (data.process.delivery.gallery.icons &&
-            data.process.delivery.gallery.icons.length > 0) ||
-          (data.process.delivery.gallery.logos &&
-            data.process.delivery.gallery.logos.length > 0) ||
-          (data.process.delivery.gallery.previews &&
-            data.process.delivery.gallery.previews.length > 0) ||
-          (data.process.delivery.gallery.screenshots &&
-            data.process.delivery.gallery.screenshots.length > 0) ||
-          (data.process.delivery.gallery.uml_diagrams &&
-            data.process.delivery.gallery.uml_diagrams.length > 0))
-          ? (this.process.delivery.gallery = new Gallery(
-              data?.process.delivery.gallery
-            ))
-          : null;
-      }
+      this.process.fromDocumentData(data);
     }
 
     if (data?.problem) {
       this.problem ? this.problem : (this.problem = new ProjectProblem());
-
-      data.problem?.gallery
-        ? (this.problem.gallery = new Gallery(data?.problem.gallery))
-        : null;
-
-      data.problem.whitepaper_url
-        ? this.problem.setWhitepaperURL(data?.problem.whitepaper_url)
-        : null;
+      this.problem.fromDocumentData(data);
     }
 
     if (data?.details) {
       this.details ? this.details : (this.details = new ProjectDetails());
-
-      data.details?.privacy
-        ? (this.details.privacy = data.details.privacy)
-        : null;
-
-      data.details?.client_id
-        ? this.details.setClientID(data.details.client_id)
-        : null;
-
-      // data.details?.team_list
-      //   ? data.details?.team_list.map((userID) => {
-      //       const usr = new User();
-      //       usr.setID(userID);
-      //       return usr;
-      //     })
-      //   : null;
+      this.details.fromDocumentData(data);
     }
   }
 

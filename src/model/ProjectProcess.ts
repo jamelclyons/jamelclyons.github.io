@@ -14,6 +14,7 @@ import ProjectDelivery, {
 import ProjectStatus, { ProjectStatusObject } from './ProjectStatus';
 import ProjectProgress from './ProjectProgress';
 import ProjectCheckList, { ProjectCheckListObject } from './ProjectCheckList';
+import { ProjectDataObject } from './Project';
 
 export type ProjectProcessObject = {
   status: ProjectStatusObject | null;
@@ -75,6 +76,47 @@ class ProjectProcess extends Model {
       data?.status && progress
         ? new ProjectStatus(data?.status, progress)
         : null;
+  }
+
+  setStatus(status: ProjectStatus) {
+    this.status = status;
+  }
+
+  setDesign(design: ProjectDesign) {
+    this.design = design;
+  }
+
+  setDevelopment(development: ProjectDevelopment) {
+    this.development = development;
+  }
+
+  setDelivery(delivery: ProjectDelivery) {
+    this.delivery = delivery;
+  }
+
+  fromDocumentData(data: ProjectDataObject) {
+    if (data?.process) {
+      if (data.process?.status) {
+        this.status ? this.status : (this.status = new ProjectStatus());
+      }
+
+      if (data?.process.design) {
+        this.design ? this.design : (this.design = new ProjectDesign());
+        this.design.fromDocumentData(data);
+      }
+
+      if (data?.process?.development) {
+        this.development
+          ? this.development
+          : (this.development = new ProjectDevelopment());
+        this.development.fromDocumentData(data);
+      }
+
+      if (data?.process?.delivery) {
+        this.delivery ? this.delivery : (this.delivery = new ProjectDelivery());
+        this.delivery.fromDocumentData(data);
+      }
+    }
   }
 
   toProjectProcessObject(): ProjectProcessObject {

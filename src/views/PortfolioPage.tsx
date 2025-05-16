@@ -7,7 +7,6 @@ import type { AppDispatch, RootState } from '@/model/store';
 import User from '../model/User';
 
 import { setMessage, setMessageType, setShowStatusBar } from '@/controllers/messageSlice';
-import { getPortfolio } from '@/controllers/portfolioSlice';
 
 interface PortfolioProps {
   user: User;
@@ -28,12 +27,6 @@ const PortfolioPage: React.FC<PortfolioProps> = ({ user }) => {
       dispatch(setShowStatusBar('show'));
     }
   }, [portfolioLoading]);
-
-  useEffect(() => {
-    if (user.repoQueries && portfolioObject === null) {
-      dispatch(getPortfolio(user.repoQueries));
-    }
-  }, [portfolioObject, user, dispatch]);
 
   useEffect(() => {
     if (portfolioLoading) {

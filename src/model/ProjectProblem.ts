@@ -2,6 +2,8 @@ import Model from './Model';
 import Gallery, { GalleryObject } from './Gallery';
 import DocumentURL from '@/model/DocumentURL';
 import ContentURL from './ContentURL';
+import Repo from './Repo';
+import { ProjectDataObject } from './Project';
 
 export type ProjectProblemObject = {
   gallery: GalleryObject | null;
@@ -32,12 +34,39 @@ class ProjectProblem extends Model {
       : null;
   }
 
+  setGallery(gallery: Gallery) {
+    this.gallery = gallery;
+  }
+  
   setContentURL(url: string) {
     this.contentURL = new ContentURL(url);
   }
 
   setWhitepaperURL(url: string) {
     this.whitepaperURL = new DocumentURL(url);
+  }
+
+  fromRepo(repo: Repo) {
+    if (
+      repo.contents &&
+      repo.contents.problem &&
+      repo.contents.problem.downloadURL
+    ) {
+      this.setContentURL(repo.contents.problem.downloadURL);
+    }
+  }
+
+  fromDocumentData(data: ProjectDataObject) {
+    if (data?.problem) {
+      if (data.problem?.gallery) {
+        const gallery = new Gallery(data?.problem.gallery);
+        this.setGallery(gallery);
+      }
+
+      if (data.problem.whitepaper_url) {
+        this.setWhitepaperURL(data.problem.whitepaper_url);
+      }
+    }
   }
 
   toProjectProblemObject(): ProjectProblemObject {

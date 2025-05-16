@@ -2,6 +2,8 @@ import Model from './Model';
 
 import { formatTime } from '@/utilities/String';
 import ProjectProgress, { ProjectProgressObject } from './ProjectProgress';
+import Repo from './Repo';
+import { ProjectDataObject } from './Project';
 
 export type ProjectStatusObject = {
   created_at: string | null;
@@ -34,6 +36,18 @@ class ProjectStatus extends Model {
     this.updatedAt = dateTime ? formatTime(dateTime) : null;
   }
 
+  fromRepo(repo: Repo) {
+    if (repo.createdAt) {
+      this.setCreatedAt(repo.createdAt);
+    }
+
+    if (repo.updatedAt) {
+      this.setUpdatedAt(repo.updatedAt);
+    }
+  }
+
+  fromDocumentData(data: ProjectDataObject){}
+  
   toProjectStatusObject(): ProjectStatusObject {
     return {
       created_at: this.createdAt,
