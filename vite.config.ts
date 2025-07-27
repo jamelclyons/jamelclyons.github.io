@@ -50,15 +50,21 @@ const gitport = path.resolve(packagesRoot, 'github-portfolio');
 
 const packages = [uiux, communications, gateway, gitport];
 
+const isDev = process.env.NODE_ENV === 'development';
+
+const localPackages = {
+  '@the7ofdiamonds/ui-ux': uiux,
+  '@the7ofdiamonds/communications': communications,
+  '@the7ofdiamonds/gateway': gateway,
+  '@the7ofdiamonds/github-portfolio': gitport,
+};
+
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@the7ofdiamonds/ui-ux': uiux,
-      '@the7ofdiamonds/communications': communications,
-      '@the7ofdiamonds/gateway': gateway,
-      '@the7ofdiamonds/github-portfolio': gitport,
+      ...(isDev ? localPackages : {}),
     },
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     preserveSymlinks: true,
@@ -66,9 +72,14 @@ export default defineConfig({
   plugins: [
     react(),
     gulp(),
-    Restart({
-      restart: [...packages],
-    }),
+    ...(isDev
+      ? [
+          Restart({
+            restart: Object.values(packages).map((dir) => `${dir}/dist/**`),
+          }),
+        ]
+      : []),
+    ,
   ],
   define: {
     'import.meta.env': process.env,
