@@ -65,6 +65,14 @@ const App: React.FC = () => {
   const [skills, setSkills] = useState<Skills>(new Skills);
   const [contactMethods, setContactMethods] = useState<ContactMethods | null>();
 
+  useEffect(() => {
+    const redirect = sessionStorage.redirect;
+    if (redirect) {
+      sessionStorage.removeItem('redirect');
+      window.history.replaceState(null, '', redirect);
+    }
+  }, []);
+
   const aboutPage = new Link();
   aboutPage.setHref('/about');
   aboutPage.setText('About');
