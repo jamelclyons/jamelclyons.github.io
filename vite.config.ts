@@ -2,11 +2,11 @@ import { defineConfig, PluginOption } from 'vite';
 import react from '@vitejs/plugin-react';
 import rollupOptions from './rollup.config';
 
+import Restart from 'vite-plugin-restart';
+
 import { exec } from 'child_process';
 
 import path from 'path';
-
-import typescript from '@rollup/plugin-typescript';
 
 const gulp = (): PluginOption => {
   return {
@@ -40,15 +40,36 @@ const gulp = (): PluginOption => {
   };
 };
 
+const packagesRoot =
+  '/Users/jamellyons/Documents/J_C_LYONS_ENTERPRISES_LLC/Packages/javascript';
+
+const uiux = path.resolve(packagesRoot, 'ui-ux');
+const communications = path.resolve(packagesRoot, 'communications');
+const gateway = path.resolve(packagesRoot, 'gateway');
+const gitport = path.resolve(packagesRoot, 'github-portfolio');
+
+const packages = [uiux, communications, gateway, gitport];
+
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
+      '@': path.resolve(__dirname, './src'),
+      '@the7ofdiamonds/ui-ux': uiux,
+      '@the7ofdiamonds/communications': communications,
+      '@the7ofdiamonds/gateway': gateway,
+      '@the7ofdiamonds/github-portfolio': gitport,
     },
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    preserveSymlinks: true,
   },
-  plugins: [react(), typescript({ tsconfig: './tsconfig.json' }), gulp()],
+  plugins: [
+    react(),
+    gulp(),
+    Restart({
+      restart: [...packages],
+    }),
+  ],
   define: {
     'import.meta.env': process.env,
   },
@@ -58,8 +79,11 @@ export default defineConfig({
     port: 3000,
     cors: true,
     open: true,
+    fs: {
+      allow: [__dirname, ...packages],
+    },
     watch: {
-      ignored: ['**/node_modules/**', './src/services/firebase/functions'],
+      ignored: ['./src/services/firebase/functions'],
       usePolling: true,
       interval: 300,
     },

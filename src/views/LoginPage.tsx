@@ -1,50 +1,31 @@
 import React, { useEffect } from 'react'
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import type { RootState } from '../model/store';
+import { Section, Main } from '@the7ofdiamonds/ui-ux';
 
-import { auth } from '@/services/firebase/config';
+import { LoginComponent } from '@the7ofdiamonds/gateway';
 
-import LoginComponent from './components/LoginComponent';
-
-import { setIsAdmin, setIsAuthenticated } from '@/controllers/authSlice';
+import { useAppSelector } from '@/model/hooks';
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
 
-    const { isAdmin, isAuthenticated } = useSelector(
-        (state: RootState) => state.auth
+    const { isAdmin, isAuthenticated } = useAppSelector(
+        (state) => state.auth
     );
-
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(async (user) => {
-            console.log(user)
-            if (user) {
-                setIsAuthenticated();
-                setIsAdmin();
-            } else {
-
-
-                console.log('User logged out');
-            }
-        });
-
-        return () => unsubscribe();
-    }, []);
 
     useEffect(() => {
         if (isAuthenticated && isAdmin) {
             navigate('/admin/dashboard');
         }
-    }, [navigate, isAuthenticated, isAdmin]);
+    }, [isAuthenticated, isAdmin]);
 
     return (
-        <section className='login'>
-            <main>
+        <Section>
+            <Main>
                 <LoginComponent />
-            </main>
-        </section>
+            </Main>
+        </Section>
     )
 }
 

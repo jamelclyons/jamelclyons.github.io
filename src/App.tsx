@@ -1,62 +1,100 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { HashRouter as Router, Route, Routes } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-import LoadingComponent from './views/components/LoadingComponent';
-import HeaderComponent from './views/components/HeaderComponent';
-import FooterComponent from './views/components/FooterComponent';
+import { Link, User, Skills, ContactMethods, Portfolio, Organization, Project } from '@the7ofdiamonds/ui-ux';
+import { ContactBar } from '@the7ofdiamonds/communications';
+import { getAuthenticatedUserAccount } from '@the7ofdiamonds/github-portfolio';
 
-const Home = lazy(() => import('./views/Home'));
+const HeaderComponent = lazy(() => import('@the7ofdiamonds/ui-ux')
+  .then(mod => ({ default: mod.HeaderComponent })));
+const LoadingComponent = lazy(() => import('@the7ofdiamonds/ui-ux')
+  .then(mod => ({ default: mod.LoadingComponent })));
+const FooterComponent = lazy(() => import('@the7ofdiamonds/ui-ux')
+  .then(mod => ({ default: mod.FooterComponent })));
+
+const Contact = lazy(() => import('@the7ofdiamonds/communications')
+  .then(mod => ({ default: mod.ContactPage })));
+const Resume = lazy(() => import('@the7ofdiamonds/communications')
+  .then(mod => ({ default: mod.ResumePage })));
+const UserPage = lazy(() => import('@the7ofdiamonds/communications')
+  .then(mod => ({ default: mod.UserPage })));
+
+const Dashboard = lazy(() => import('@the7ofdiamonds/github-portfolio')
+  .then(mod => ({ default: mod.DashboardPage })));
+const OrganizationPage = lazy(() => import('@the7ofdiamonds/github-portfolio')
+  .then(mod => ({ default: mod.OrganizationPage })));
+const PortfolioPage = lazy(() => import('@the7ofdiamonds/github-portfolio')
+  .then(mod => ({ default: mod.PortfolioPage })));
+const ProjectPage = lazy(() => import('@the7ofdiamonds/github-portfolio')
+  .then(mod => ({ default: mod.ProjectPage })));
+const ProjectsEditPage = lazy(() => import('@the7ofdiamonds/github-portfolio')
+  .then(mod => ({ default: mod.PortfolioEditPage })));
+const ProjectUpdate = lazy(() => import('@the7ofdiamonds/github-portfolio')
+  .then(mod => ({ default: mod.ProjectEditPage })));
+const Search = lazy(() => import('@the7ofdiamonds/github-portfolio')
+  .then(mod => ({ default: mod.SearchPage })));
+const SkillAdd = lazy(() => import('@the7ofdiamonds/github-portfolio')
+  .then(mod => ({ default: mod.SkillAddPage })));
+
 const About = lazy(() => import('./views/About'));
-const PortfolioPage = lazy(() => import('./views/PortfolioPage'));
-const ProjectPage = lazy(() => import('./views/ProjectPage'));
-const Search = lazy(() => import('./views/Search'));
-const Resume = lazy(() => import('./views/Resume'));
-const Contact = lazy(() => import('./views/Contact'));
-const AddSkill = lazy(() => import('./views/SkillAdd'));
-const ProjectsEditPage = lazy(() => import('./views/ProjectsEditPage'));
+const Home = lazy(() => import('./views/Home'));
 const NotFound = lazy(() => import('./views/NotFound'));
-const ProjectUpdate = lazy(() => import('./views/ProjectUpdate'));
 const LoginPage = lazy(() => import('./views/LoginPage'));
-const UserPage = lazy(() => import('./views/UserPage'));
 
 import ProtectedRoute from './ProtectedRoute';
 
-import type { AppDispatch, RootState } from '@/model/store';
-import Skills from './model/Skills';
-import User from './model/User';
-
-import OrganizationPage from './views/OrganizationPage';
-import Dashboard from './views/Dashboard';
-
-import { getAuthenticatedUserAccount } from '@/controllers/userSlice';
+import { useAppSelector, useAppDispatch } from './model/hooks';
 
 import userJson from '../user.json';
+import skillsJson from '../skills.json';
 
 const App: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
-  const { authenticatedUserObject } = useSelector((state: RootState) => state.user);
-  const { skillsObject } = useSelector((state: RootState) => state.taxonomies);
+  const { authenticatedUserObject } = useAppSelector((state) => state.user);
+  const { skillsObject } = useAppSelector((state) => state.skill);
 
-  const usr = new User();
-  usr.fromJson(userJson);
+  const [leftMenu, setLeftMenu] = useState<Link[]>([]);
+  const [centerMenu, setCenterMenu] = useState<Link[]>([]);
+  const [rightMenu, setRightMenu] = useState<Link[]>([]);
 
-  const [user, setUser] = useState<User>(usr);
+  const [user, setUser] = useState<User>(new User());
   const [avatarURL, setAvatarURL] = useState<string | null>(null);
-  const [skills, setSkills] = useState<Skills>(new Skills());
+  const [organization, setOrganization] = useState<Organization | null>(null);
+  const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
+  const [skills, setSkills] = useState<Skills>(new Skills);
+  const [contactMethods, setContactMethods] = useState<ContactMethods | null>();
+
+  const aboutPage = new Link();
+  aboutPage.setHref('/about');
+  aboutPage.setText('About');
+  const portfolioPage = new Link();
+  portfolioPage.setHref('/portfolio');
+  portfolioPage.setText('Portfolio');
+  const resumePage = new Link();
+  resumePage.setHref('/resume');
+  resumePage.setText('Resume');
+  const contactPage = new Link();
+  contactPage.setHref('/contact')
+  contactPage.setText('Contact')
 
   useEffect(() => {
-    if (authenticatedUserObject) {
-      setUser(new User(authenticatedUserObject))
-    }
-  }, [authenticatedUserObject]);
+    setLeftMenu([aboutPage, portfolioPage])
+  }, []);
 
   useEffect(() => {
-    if (user) {
-      setAvatarURL(user.avatarURL)
-    }
-  }, [user]);
+    setCenterMenu([aboutPage, portfolioPage, resumePage, contactPage])
+  }, []);
+
+  useEffect(() => {
+    setRightMenu([resumePage, contactPage])
+  }, []);
+
+  useEffect(() => {
+    user.fromJson(userJson);
+    user.setSkills(new Skills({ list: skillsJson }));
+    setUser(user)
+  }, []);
 
   useEffect(() => {
     if (!authenticatedUserObject) {
@@ -66,15 +104,18 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (authenticatedUserObject) {
-      setUser(new User(authenticatedUserObject));
+      const authenticatedUser = new User(authenticatedUserObject);
+      authenticatedUser.fromJson(userJson);
+      authenticatedUser.setSkills(new Skills({ list: skillsJson }));
+      setUser(authenticatedUser);
     }
   }, [authenticatedUserObject]);
 
   useEffect(() => {
-    if (skillsObject) {
-      setSkills(new Skills(skillsObject));
+    if (user) {
+      setAvatarURL(user.avatarURL)
     }
-  }, [skillsObject]);
+  }, [user]);
 
   useEffect(() => {
     if (avatarURL) {
@@ -94,43 +135,99 @@ const App: React.FC = () => {
     }
   }, [avatarURL]);
 
+  useEffect(() => {
+    if (user?.portfolio || user?.organizations) {
+      const combinedPortfolio = new Portfolio();
+
+      if (user?.portfolio?.projects) {
+        Array.from(user?.portfolio?.projects).map((project) => {
+          combinedPortfolio.projects.add(project)
+        })
+      }
+
+      user?.organizations?.list.map((org: Organization) => {
+        if (org?.portfolio?.projects) {
+          Array.from(org?.portfolio?.projects).forEach((project) => {
+            combinedPortfolio.projects.add(project)
+          })
+        }
+      })
+
+      setPortfolio(combinedPortfolio)
+    }
+  }, [user.portfolio, user?.organizations]);
+
+  useEffect(() => {
+    if (skillsObject) {
+      const skillsFromObject = new Skills(skillsObject)
+      skills.list.push(...skillsFromObject.list)
+      setSkills(skills);
+    }
+  }, [skillsObject]);
+
+  useEffect(() => {
+    setSkills(user.skills);
+  }, [user]);
+
+  useEffect(() => {
+    if (user.contactMethods) {
+      setContactMethods(user.contactMethods)
+    }
+
+    if (userJson && userJson.contact_methods) {
+      const contacts = new ContactMethods(userJson.contact_methods);
+      setContactMethods(contacts)
+    }
+  }, []);
+
+  useEffect(() => {
+    if (userJson && userJson.company) {
+      const org = new Organization();
+      org.fromJson(userJson.company);
+      setOrganization(org)
+    }
+  }, []);
+
   return (
     <>
-      <HeaderComponent user={user} />
+      <HeaderComponent branding={'Jamel C. Lyons'} leftMenu={leftMenu} centerMenu={centerMenu} rightMenu={rightMenu} />
       <Router>
-        <Suspense fallback={<LoadingComponent />}>
+        <Suspense fallback={<LoadingComponent page='' />}>
           <Routes>
-            <Route path="/" element={<Home user={user} skills={skills} />} />
-            <Route path="/about" element={<About user={user} skills={skills} />} />
-            <Route path={`/user/${user.login}`} element={<About user={user} skills={skills} />} />
-            <Route path="/organization/:login" element={<OrganizationPage />} />
+            <Route path="/" element={<Home user={user} portfolio={portfolio} skills={skills} />} />
+            <Route path="/about" element={<About user={user} skills={skills} portfolio={portfolio} />} />
+            <Route path={`/user/${user.username}`} element={<About user={user} skills={skills} portfolio={portfolio} />} />
+            <Route path="/organization/:login" element={<OrganizationPage skills={skills} organization={organization} />} />
             <Route path="/user/:login" element={<UserPage />} />
-            <Route path="/portfolio" element={<PortfolioPage user={user} />} />
-            <Route path="/portfolio/:owner/:projectID" element={<ProjectPage user={user} />} />
-            <Route path="/projects/:taxonomy/:term" element={<Search user={user} skills={skills} />} />
+            <Route path="/portfolio" element={<PortfolioPage account={user} portfolio={portfolio} skills={skills} />} />
+            <Route path="/portfolio/:owner/:projectID" element={<ProjectPage account={user} portfolio={portfolio} skills={skills} />} />
+            <Route path="/taxonomy/:taxonomy/:term" element={<Search user={user} skills={skills} />} />
             <Route path="/resume" element={<Resume user={user} />} />
-            <Route path="/contact" element={<Contact user={user} />} />
+            <Route path="/contact" element={<Contact account={user} />} />
 
             <Route path="/admin/dashboard" element={
               <ProtectedRoute>
-                <Dashboard user={user} />
+                <Dashboard />
               </ProtectedRoute>
             } />
+
             <Route path="/admin/update/portfolio" element={
               <ProtectedRoute>
                 <ProjectsEditPage user={user} />
               </ProtectedRoute>
             } />
+
             <Route path="/admin/update/project/:login/:projectID" element={
               <ProtectedRoute>
                 <ProjectUpdate user={user} />
               </ProtectedRoute>
             } />
-            {/* <Route path="/admin/add/skill" element={
+
+            <Route path="/admin/add/skill" element={
               <ProtectedRoute>
-                <AddSkill user={user} />
+                <SkillAdd />
               </ProtectedRoute>
-            } /> */}
+            } />
 
             <Route path="/login" element={<LoginPage />} />
 
@@ -138,9 +235,9 @@ const App: React.FC = () => {
           </Routes>
         </Suspense>
       </Router >
-      <FooterComponent
-        user={user}
-      />
+      <FooterComponent name='Jamel C. Lyons'>
+        {contactMethods && <ContactBar contactMethods={contactMethods} location={'footer'} />}
+      </FooterComponent>
     </>
   );
 }

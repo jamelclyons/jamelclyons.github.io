@@ -3,11 +3,13 @@ import { RollupOptions } from 'rollup';
 import path from 'path';
 
 import typescript from '@rollup/plugin-typescript';
-import react from '@vitejs/plugin-react';
 import resolve from '@rollup/plugin-node-resolve';
 
 const rollupConfig: RollupOptions = {
-  input: path.resolve(__dirname, 'index.html'),
+  input: {
+    main: path.resolve(__dirname, 'index.html'),
+    notFound: path.resolve(__dirname, 'index.html'),
+  },
   output: {
     dir: 'dist',
     entryFileNames: 'js/index.js',
@@ -18,7 +20,7 @@ const rollupConfig: RollupOptions = {
       vendor: ['react', 'react-dom', 'react-router-dom'],
     },
   },
-  plugins: [resolve(), typescript({ tsconfig: './tsconfig.json' }), react()],
+  plugins: [resolve(), typescript({ tsconfig: './tsconfig.json' })],
 };
 
 export default rollupConfig;

@@ -2,7 +2,11 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@the7ofdiamonds/ui-ux": ["/Users/jamellyons/Documents/J_C_LYONS_ENTERPRISES_LLC/Packages/javascript/ui-ux/dist/types/index"],
+      "@the7ofdiamonds/communications": ["/Users/jamellyons/Documents/J_C_LYONS_ENTERPRISES_LLC/Packages/javascript/communications/dist/types/index"],
+      "@the7ofdiamonds/gateway": ["/Users/jamellyons/Documents/J_C_LYONS_ENTERPRISES_LLC/Packages/javascript/gateway/dist/types/index"],
+      "@the7ofdiamonds/github-portfolio": ["/Users/jamellyons/Documents/J_C_LYONS_ENTERPRISES_LLC/Packages/javascript/github-portfolio/dist/types/index"],
     },
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
@@ -13,7 +17,7 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": false,

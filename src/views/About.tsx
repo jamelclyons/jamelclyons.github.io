@@ -1,68 +1,70 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 
-import MemberPic from './components/member/MemberPic';
-import SkillsComponent from './components/SkillsComponent';
-import OrganizationsComponent from './components/OrganizationsComponent';
-import StoryComponent from './components/StoryComponent';
-import LoadingComponent from './components/LoadingComponent';
+import { LoadingComponent, ContentComponent, RepoContentQuery, Organizations } from '@the7ofdiamonds/ui-ux';
+import { User, Skills, Portfolio } from '@the7ofdiamonds/ui-ux';
 
-import type { AppDispatch, RootState } from '@/model/store';
-import User from '@/model/User';
-import Skills from '@/model/Skills';
-import Portfolio from '@/model/Portfolio';
+import { UserPic } from '@the7ofdiamonds/communications';
 
-import { setMessage, setShowStatusBar } from '@/controllers/messageSlice';
+import { SkillsComponent, OrganizationsComponent } from '@the7ofdiamonds/github-portfolio';
+import { getRepoFile } from '@the7ofdiamonds/github-portfolio';
 
-import userJson from '../../user.json';
+import { useAppDispatch } from '@/model/hooks';
 
 interface AboutProps {
   user: User;
-  skills: Skills;
+  skills: Skills | null;
+  portfolio: Portfolio | null;
 }
 
-const About: React.FC<AboutProps> = ({ user, skills }) => {
-  const dispatch = useDispatch<AppDispatch>();
+const About: React.FC<AboutProps> = ({ user, skills, portfolio }) => {
+  const dispatch = useAppDispatch();
 
-  const { githubLoading } = useSelector((state: RootState) => state.github);
-
-  const [portfolio, setPortfolio] = useState<Portfolio | null>(user.portfolio);
+  const [documentTitle, setDocumentTitle] = useState<string>('About');
+  const [avatarURL, setAvatarURL] = useState<string | null>(null);
+  const [title, setTitle] = useState<string | null>(null);
+  const [repoContentQuery, setRepoContentQuery] = useState<RepoContentQuery | null>(null);
+  const [organizations, setOrganizations] = useState<Organizations | null>(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   useEffect(() => {
-    user.setName(userJson.name)
-  }, []);
+    document.title = documentTitle;
+  }, [documentTitle]);
 
   useEffect(() => {
-    user.setAvatarURL(userJson.avatar_url)
-  }, []);
-
-  useEffect(() => {
-    user.setTitle(userJson.title)
-  }, []);
-
-  useEffect(() => {
-    document.title = `About - ${user.name}`;
+    if (user?.name) {
+      setDocumentTitle(`About - ${user.name}`);
+    }
   }, [user]);
 
   useEffect(() => {
-    if (githubLoading) {
-      dispatch(setMessage('Now Loading story'));
-      dispatch(setShowStatusBar('show'));
+    if (user?.avatarURL) {
+      setAvatarURL(user.avatarURL)
     }
-  }, [githubLoading]);
+  }, [user]);
 
   useEffect(() => {
-    if (user.portfolio) {
-      setPortfolio(user.portfolio);
+    if (user?.title) {
+      setTitle(user.title)
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user?.login) {
+      setRepoContentQuery(new RepoContentQuery(user.login, user.login, 'story.md', ''))
+    }
+  }, [user?.login]);
+
+  useEffect(() => {
+    if (user?.organizations) {
+      setOrganizations(user.organizations)
     }
   }, [user]);
 
   const handleProjects = () => {
-    window.location.href = '/#/portfolio';
+    window.location.href = '/portfolio';
   };
 
   const handleSkills = () => {
@@ -82,18 +84,19 @@ const About: React.FC<AboutProps> = ({ user, skills }) => {
   };
 
   const handleResume = () => {
-    window.location.href = '/#/resume';
+    window.location.href = '/resume';
   };
 
   return (
     <>
       <section className="about" id='top'>
         <div className='stats'>
-          <div className="stats-user">
-            <MemberPic user={user} />
+          {(avatarURL || title) &&
+            <div className="stats-user">
+              {avatarURL && <UserPic url={avatarURL} />}
 
-            <h2 className="title">{user.title}</h2>
-          </div>
+              {title && <h2 className="title">{title}</h2>}
+            </div>}
 
           <div className="stats-bar">
             {portfolio && portfolio.projects.size > 0 &&
@@ -127,11 +130,13 @@ const About: React.FC<AboutProps> = ({ user, skills }) => {
           </div>
         </div>
 
-        <SkillsComponent projectSkills={null} />
+        {skills && <SkillsComponent skills={skills} />}
 
-        {user.story ? <StoryComponent story={user.story} /> : <LoadingComponent />}
+        {repoContentQuery ?
+          <ContentComponent title={'story'} query={repoContentQuery} dispatch={dispatch} getFile={getRepoFile} />
+          : <LoadingComponent page='Story' />}
 
-        {user.organizations && <OrganizationsComponent organizations={user.organizations} />}
+        {organizations && <OrganizationsComponent organizations={organizations} />}
       </section>
     </>
   );

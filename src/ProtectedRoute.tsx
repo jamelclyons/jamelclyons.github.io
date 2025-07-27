@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 
-import type { AppDispatch, RootState } from '@/model/store';
 
-import { setIsAdmin, setIsAuthenticated } from './controllers/authSlice';
-import { dispatch } from './model/hooks';
+import { setIsAdmin, setIsAuthenticated } from '@the7ofdiamonds/gateway';
+
+import { useAppDispatch, useAppSelector } from './model/hooks';
 
 interface ProtectedRouteProps {
     children: JSX.Element;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-    const dispatch = useDispatch<AppDispatch>();
+    const dispatch = useAppDispatch();
     
     const {
         isAdmin
-    } = useSelector((state: RootState) => state.auth);
+    } = useAppSelector((state) => state.auth);
 
     useEffect(()=>{
         dispatch(setIsAdmin())

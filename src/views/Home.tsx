@@ -1,66 +1,80 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 
-import { setMessage, setMessageType } from '@/controllers/messageSlice';
+import { StatusBar, Section, Portfolio } from '@the7ofdiamonds/ui-ux';
+import { ContactComponent, UserIntroductionComponent, UserKnowledgeComponent } from '@the7ofdiamonds/communications';
+import { PortfolioComponent } from '@the7ofdiamonds/github-portfolio';
+import { User, Skills } from '@the7ofdiamonds/ui-ux';
 
-import PortfolioComponent from './components/portfolio/PortfolioComponent';
-import MemberIntroductionComponent from './components/member/MemberComponent';
-import ContactComponent from './components/contact/ContactComponent';
-import MemberKnowledgeComponent from './components/member/MemberKnowledgeComponent';
-import LoadingComponent from './components/LoadingComponent';
-
-import type { AppDispatch, RootState } from '@/model/store';
-import User from '@/model/User';
-import Skills from '@/model/Skills';
-
-import userJson from '../../user.json';
+import { useAppSelector } from '@/model/hooks';
 
 interface HomeProps {
   user: User;
-  skills: Skills;
+  portfolio: Portfolio | null;
+  skills: Skills | null;
 }
 
-const Home: React.FC<HomeProps> = ({ user, skills }) => {
-  const dispatch = useDispatch<AppDispatch>();
+const Home: React.FC<HomeProps> = ({ user, portfolio, skills }) => {
+  const { githubLoading, githubLoadingMessage } = useAppSelector((state) => state.github);
+  const { userLoading, userLoadingMessage } = useAppSelector((state) => state.user);
 
-  const { githubLoading } = useSelector((state: RootState) => state.github);
+  const [title, setTitle] = useState<string | null>(null);
+
+  const [showStatusBar, setShowStatusBar] = useState<'show' | 'hide'>('hide');
+  const [messageType, setMessageType] = useState<'info' | 'error' | 'success'>('info');
+  const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   useEffect(() => {
-    if (!user.title) {
-      user.setTitle(userJson.title)
-    }
-  }, [user]);
-
-  useEffect(() => {
     if (user.name) {
-      document.title = user.name;
+      setTitle(`${user.name}`)
     }
   }, [user]);
 
   useEffect(() => {
-    if (githubLoading) {
-      dispatch(setMessageType('info'));
-      dispatch(setMessage('Now Loading Portfolio'));
+    if (title) {
+      document.title = title;
     }
-  }, [githubLoading]);
+  }, [title]);
+
+  useEffect(() => {
+    if (userLoading || githubLoading) {
+      setShowStatusBar('show')
+      setMessageType('info');
+    }
+  }, [userLoading, githubLoading]);
+
+  useEffect(() => {
+    if (!userLoadingMessage || !githubLoadingMessage) {
+      setMessage(null);
+    }
+  }, [userLoadingMessage, githubLoadingMessage]);
+
+  useEffect(() => {
+    if (userLoadingMessage) {
+      setMessage(userLoadingMessage);
+    }
+
+    if (githubLoadingMessage) {
+      setMessage(githubLoadingMessage);
+    }
+  }, [userLoadingMessage, githubLoadingMessage]);
 
   return (
     <>
-      <section className="home">
-        <MemberIntroductionComponent
-          user={user}
-        />
+      <Section>
+        <UserIntroductionComponent user={user} />
 
-        <MemberKnowledgeComponent skills={skills} />
+        <UserKnowledgeComponent skills={skills} />
 
-        {user ? <PortfolioComponent account={user} /> : <LoadingComponent />}
+        <PortfolioComponent portfolio={portfolio} skills={skills} />
 
-        <ContactComponent user={user} />
-      </section>
+        <ContactComponent />
+
+        {showStatusBar && message && <StatusBar show={showStatusBar} messageType={messageType} message={message} />}
+      </Section>
     </>
   );
 }
