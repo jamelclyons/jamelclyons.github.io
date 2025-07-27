@@ -34,7 +34,7 @@ jobs:
 
       - name: Configure npm for GitHub Packages
         run: |
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PACKAGES_TOKEN }}" >> ~/.npmrc
           echo "@the7ofdiamonds:registry=https://npm.pkg.github.com" >> ~/.npmrc
 
       - name: Install dependencies
