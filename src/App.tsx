@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { Link, User, Skills, ContactMethods, Portfolio, Organization, Project } from '@the7ofdiamonds/ui-ux';
 import { ContactBar } from '@the7ofdiamonds/communications';
@@ -199,7 +199,7 @@ const App: React.FC = () => {
   return (
     <>
       <HeaderComponent branding={'Jamel C. Lyons'} leftMenu={leftMenu} centerMenu={centerMenu} rightMenu={rightMenu} />
-      <Router>
+      <BrowserRouter>
         <Suspense fallback={<LoadingComponent page='' />}>
           <Routes>
             <Route path="/" element={<Home user={user} portfolio={portfolio} skills={skills} />} />
@@ -242,7 +242,7 @@ const App: React.FC = () => {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
-      </Router >
+      </BrowserRouter >
       <FooterComponent name='Jamel C. Lyons'>
         {contactMethods && <ContactBar contactMethods={contactMethods} location={'footer'} />}
       </FooterComponent>
