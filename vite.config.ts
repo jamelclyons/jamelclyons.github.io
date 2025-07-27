@@ -61,6 +61,7 @@ const localPackages = {
 
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
+  base: '/jamelclyons.github.io',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -84,7 +85,6 @@ export default defineConfig({
   define: {
     'import.meta.env': process.env,
   },
-  base: '/',
   server: {
     host: '0.0.0.0',
     port: 3000,
