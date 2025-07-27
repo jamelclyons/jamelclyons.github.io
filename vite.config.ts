@@ -61,7 +61,7 @@ const localPackages = {
 
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
-  base: '/jamelclyons.github.io',
+  base: '/jamelclyons.github.io/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
